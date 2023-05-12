@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/white"
+    app:cardElevation="1dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@drawable/editbox_outlet"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtIndex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
+            android:text="1"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/superSmallFont" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/materialCode"
+                app:boxBackgroundColor="@color/disable"
+                android:textColorHint="@color/darkGray"
+                app:hintAnimationEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtIdMaterial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/darkGray"
+                    android:padding="5dp"
+                    android:enabled="false"
+                    android:textSize="@dimen/superExtraSmallFont"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/caldroid_gray"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:text="Product Code" />-->
+<!--    -->
+<!--            <TextView-->
+<!--                android:id="@+id/txtIdMaterial"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:enabled="false"-->
+<!--                android:textColor="@color/darkGray"-->
+<!--                android:background="@drawable/editbox"-->
+<!--                android:imeOptions="actionDone"-->
+<!--                android:inputType="text"-->
+<!--                android:padding="10dp"-->
+<!--                android:textSize="@dimen/superSmallFont"/>-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/productName"
+                android:textColorHint="@color/darkGray"
+                app:boxBackgroundColor="@color/disable"
+                app:hintAnimationEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtMaterialName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/darkGray"
+                    android:padding="5dp"
+                    android:textSize="@dimen/superExtraSmallFont"
+                    android:enabled="false"
+                    android:inputType="text"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:textColor="@color/caldroid_gray"-->
+<!--                android:text="@string/productName" />-->
+<!--    -->
+<!--            <TextView-->
+<!--                android:id="@+id/txtMaterialName"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:textColor="@color/darkGray"-->
+<!--                android:enabled="false"-->
+<!--                android:background="@drawable/editbox"-->
+<!--                android:imeOptions="actionDone"-->
+<!--                android:inputType="text"-->
+<!--                android:padding="10dp"-->
+<!--                android:textSize="@dimen/superSmallFont"/>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Quantity 1"
+                    android:layout_marginEnd="2dp"
+                    android:textColorHint="@color/darkGray"
+                    app:hintAnimationEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtTxtQty1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/darkGray"
+                        android:padding="5dp"
+                        android:textSize="@dimen/superExtraSmallFont"
+                        android:inputType="numberDecimal"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpinnerInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textColorHint="@color/darkGray"
+                    android:hint="@string/uom"
+                    app:hintAnimationEnabled="true">
+
+                    <Spinner
+                        android:id="@+id/q1Type"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:padding="0dp"
+                        android:textColor="@color/darkGray"
+                        android:focusableInTouchMode="false"
+                        android:textSize="@dimen/superExtraSmallFont"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:orientation="horizontal">-->
+<!--    -->
+<!--                <TextView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textColor="@color/caldroid_gray"-->
+<!--                    android:text="Quantity 1" />-->
+<!--    -->
+<!--                <TextView-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:textColor="@color/caldroid_gray"-->
+<!--                    android:text="Quantity 2" />-->
+<!--    -->
+<!--            </LinearLayout>-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Quantity 2"
+                    android:layout_marginEnd="2dp"
+                    android:textColorHint="@color/darkGray"
+                    app:hintAnimationEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtTxtQty2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/darkGray"
+                        android:padding="5dp"
+                        android:textSize="@dimen/superExtraSmallFont"
+                        android:inputType="numberDecimal"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpinnerInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textColorHint="@color/darkGray"
+                    android:hint="@string/uom"
+                    app:hintAnimationEnabled="true">
+
+                    <Spinner
+                        android:id="@+id/q2Type"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:padding="0dp"
+                        android:textColor="@color/darkGray"
+                        android:focusableInTouchMode="false"
+                        android:textSize="@dimen/superExtraSmallFont"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical">-->
+<!--    -->
+<!--                <LinearLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal">-->
+<!--    -->
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:layout_weight="1">-->
+<!--    -->
+<!--                        <EditText-->
+<!--                            android:id="@+id/edtTxtQty1"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:ems="10"-->
+<!--                            android:padding="5dp"-->
+<!--                            android:gravity="center"-->
+<!--                            android:hint="qty1"-->
+<!--                            android:imeOptions="actionDone"-->
+<!--                            android:inputType="number"-->
+<!--                            android:singleLine="true"-->
+<!--                            android:background="@drawable/editbox"-->
+<!--                            android:textColor="@color/darkGray"-->
+<!--                            android:textSize="12sp" />-->
+<!--    -->
+<!--                        <Spinner-->
+<!--                            android:id="@+id/q1Type"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="5dp"-->
+<!--                            android:layout_marginEnd="5dp"-->
+<!--                            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
+<!--                            android:background="@drawable/bg_spinner_new"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:hint="UOM1"-->
+<!--                            android:scrollIndicators="right"-->
+<!--                            android:spinnerMode="dropdown"-->
+<!--                            android:popupBackground="@drawable/editbox_popup"-->
+<!--                            android:textSize="12sp" />-->
+<!--    -->
+<!--                    </LinearLayout>-->
+<!--    -->
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:gravity="center_vertical"-->
+<!--                        android:orientation="horizontal"-->
+<!--                        android:layout_weight="1">-->
+<!--    -->
+<!--                        <EditText-->
+<!--                            android:id="@+id/edtTxtQty2"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:padding="5dp"-->
+<!--                            android:ems="10"-->
+<!--                            android:gravity="center"-->
+<!--                            android:hint="qty2"-->
+<!--                            android:imeOptions="actionDone"-->
+<!--                            android:inputType="number"-->
+<!--                            android:singleLine="true"-->
+<!--                            android:background="@drawable/editbox"-->
+<!--                            android:textColor="@color/darkGray"-->
+<!--                            android:textSize="12sp" />-->
+<!--    -->
+<!--                        <Spinner-->
+<!--                            android:id="@+id/q2Type"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_marginStart="5dp"-->
+<!--                            android:layout_marginEnd="5dp"-->
+<!--                            android:theme="@style/ThemeOverlay.AppCompat.Light"-->
+<!--                            android:background="@drawable/bg_spinner_new"-->
+<!--                            android:popupBackground="@drawable/editbox_popup"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:hint="UOM1"-->
+<!--                            android:scrollIndicators="right"-->
+<!--                            android:spinnerMode="dropdown"-->
+<!--                            android:textSize="12sp" />-->
+<!--    -->
+<!--                    </LinearLayout>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/TextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/price"
+                android:textColorHint="@color/darkGray"
+                app:hintAnimationEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/darkGray"
+                    android:padding="5dp"
+                    android:textSize="@dimen/superExtraSmallFont"
+                    android:inputType="numberDecimal"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:textColor="@color/caldroid_gray"-->
+<!--                android:text="@string/price" />-->
+<!--    -->
+<!--            <EditText-->
+<!--                android:id="@+id/edtPrice"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:textColor="@color/darkGray"-->
+<!--                android:background="@drawable/editbox"-->
+<!--                android:imeOptions="actionDone"-->
+<!--                android:inputType="number"-->
+<!--                android:padding="10dp"-->
+<!--                android:textSize="@dimen/superSmallFont"/>-->
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

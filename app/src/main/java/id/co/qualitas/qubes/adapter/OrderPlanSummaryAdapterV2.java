@@ -32,7 +32,7 @@ public class OrderPlanSummaryAdapterV2 extends RecyclerView.Adapter<OrderPlanSum
         private CardView row;
         private TextView index, txtIdMaterial, txtMaterialName, txtViewTop;
         private EditText edtQty1, edtQty2, edtPrice;
-        private AutoCompleteTextView spnUom1, spnUom2;
+        private Spinner spnUom1, spnUom2;
         private ImageView icDelete, btnGetPrice;
         private Spinner spinnerJenisJual;
 
@@ -67,7 +67,7 @@ public class OrderPlanSummaryAdapterV2 extends RecyclerView.Adapter<OrderPlanSum
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_view_order_plan_detail_v3_new, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_view_order_plan_summary_v3_new, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -102,7 +102,7 @@ public class OrderPlanSummaryAdapterV2 extends RecyclerView.Adapter<OrderPlanSum
         if (material.getNewQty2() != null) {
             holder.edtQty2.setText(Helper.toRupiahFormat2(String.valueOf(material.getNewQty2())));
         }
-        if(material.getPrice() != null){
+        if (material.getPrice() != null) {
             holder.edtPrice.setText(Helper.toRupiahFormat2(String.valueOf(material.getPrice())));
         }
         List<String> temp = new ArrayList<>();
@@ -150,8 +150,8 @@ public class OrderPlanSummaryAdapterV2 extends RecyclerView.Adapter<OrderPlanSum
 
         holder.spnUom1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-//                String uom1 = holder.spnUom1.getSelectedItem().toString();
-                String uom1 = holder.spnUom1.getText().toString();
+                String uom1 = holder.spnUom1.getSelectedItem().toString();
+//                String uom1 = holder.spnUom1.getText().toString();
                 List<String> temp = new ArrayList<>();
                 for (int i = 0; i < material.getListUomName().size(); i++) {
                     if (material.getListUomName().get(pos).getConversion() > material.getListUomName().get(i).getConversion()) {
@@ -159,7 +159,7 @@ public class OrderPlanSummaryAdapterV2 extends RecyclerView.Adapter<OrderPlanSum
                     }
                 }
                 if (temp.size() != 0) {
-                    if(material.getNewQty2() != null){
+                    if (material.getNewQty2() != null) {
                         String[] listUom = new String[temp.size()];
                         listUom = temp.toArray(listUom);
                         mcontext.setSpinnerAdapter3(listUom, holder.spnUom2);

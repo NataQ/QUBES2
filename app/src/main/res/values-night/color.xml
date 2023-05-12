@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#5E81F4</color>
+    <color name="colorPrimaryDark">#5E81F4</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+
+<!--    <color name="windowBackground">#000</color>-->
+<!--    <color name="navigationBarColor">#fff</color>-->
+<!--    <color name="colorAccent">#FF80AB</color>-->
+<!--    <color name="textOverlay">#ffffffff</color>-->
+<!--    <color name="background">#f0f6f8</color>-->
+<!--    <color name="white">#000</color>-->
+<!--    <color name="red">#ff0000</color>-->
+<!--    <color name="green">#FF36DF00</color>-->
+<!--    <color name="black">#fff</color>-->
+<!--    <color name="darkBlackCyan">#5E81F4</color>-->
+<!--    <color name="pureBlue">#008AFA</color>-->
+<!--    <color name="darkBlue">#004969</color>-->
+<!--    <color name="veryDarkCyan">#262bc1</color>-->
+<!--    <color name="darkCyan">#5E81F4</color>-->
+<!--    <color name="darkGray">#fff</color>-->
+<!--    <color name="brightRed">#FB683B</color>-->
+<!--    <color name="grey">#999999</color>-->
+<!--    <color name="greyBox">#fff</color>-->
+<!--    <color name="off_white">#000</color>-->
+<!--    <color name="off_grey">#000</color>-->
+
+
+<!--    <color name="blue3">#3333FF</color>-->
+<!--    <color name="blue4">#6a8fff</color>-->
+<!--    <color name="blue5">#536DFE</color>-->
+<!--    <color name="blue6">#BBDEFB</color>-->
+<!--    <color name="blue7">#2196F3</color>-->
+<!--    <color name="blue8">#67B8FA</color>-->
+<!--    <color name="grey2">#BDBDBD</color>-->
+<!--    <color name="grey3">#fff</color>-->
+<!--    <color name="red1">#EF9A9A</color>-->
+<!--    <color name="yellow1">#FFF59D</color>-->
+
+<!--    <color name="veryLightGray">#f9f9f9</color>-->
+<!--    <color name="veryLightGray2">#e0e0e0</color>-->
+
+<!--    <color name="spinner_base_color">#fff</color>-->
+<!--    <color name="spinner_hint_text_color">#000</color>-->
+
+
+<!--    <color name="disable">#d3d3d3</color>-->
+<!--    <color name="transRed">#8CEBDB</color>-->
+
+<!--    &lt;!&ndash;new color&ndash;&gt;-->
+<!--    <color name="space_transparent">#00000000</color>-->
+
+<!--    <color name="new_blue">#5E81F4</color>-->
+<!--    <color name="new_blue1">#4b67c3</color>-->
+<!--    <color name="new_blue2">#9eb3f8</color>-->
+<!--    <color name="new_pink">#F26CA7</color>-->
+
+<!--    <color name="caldroid_gray">#CCC</color>-->
+</resources>

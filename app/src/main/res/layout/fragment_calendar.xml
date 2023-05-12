@@ -236,7 +236,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
                 android:layout_below="@+id/LLTotalOutlet"
-                android:background="@drawable/bg_top_corner_white"/>
+                android:background="@drawable/bg_top_corner_white" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -271,13 +271,13 @@
                             style="?android:attr/progressBarStyleLarge"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
-                            android:progressDrawable="@drawable/circular_progress_bar"/>
+                            android:progressDrawable="@drawable/circular_progress_bar" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
-                            android:text="@string/fetching_data"/>
+                            android:text="@string/fetching_data" />
 
 
                     </LinearLayout>
