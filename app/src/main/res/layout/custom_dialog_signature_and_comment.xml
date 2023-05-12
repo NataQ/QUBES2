@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/darkGray"
+            android:gravity="center"
+            android:textSize="@dimen/smallFont"
+            android:textAllCaps="true"
+            android:text="@string/pleaseSignHere" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/editbox_outlet"
+                android:layout_weight="2"
+                android:padding="@dimen/normalPadding"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:id="@+id/imgSignatureSaved"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <com.github.gcacace.signaturepad.views.SignaturePad
+                    android:id="@+id/signature_pad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:penColor="@color/new_blue" />
+
+            </RelativeLayout>
+
+            <EditText
+                android:id="@+id/edtTxtComment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/editbox_outlet"
+                android:gravity="top|left"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/darkGray"
+                android:hint="@string/leaveCommentHere"
+                android:inputType="textMultiLine"
+                android:imeOptions="actionDone"
+                android:lines="8"
+                android:maxLines="10"
+                android:padding="10dp"
+                android:scrollbars="vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginEnd="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnReset"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reset"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/caldroid_gray" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/new_blue" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+<!--<?xml version='1.0' encoding='utf-8'?>-->
+<!--<RelativeLayout xmlns:android='http://schemas.android.com/apk/res/android'-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@android:color/transparent">-->
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_centerInParent="true"-->
+<!--        android:layout_marginBottom="30dp"-->
+<!--        android:layout_marginTop="100dp"-->
+<!--        android:background="@drawable/whitebox">-->
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/r1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:layout_marginTop="10dp">-->
+
+
+<!--            <Button-->
+<!--                android:id="@+id/btnReset"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="#FB683B"-->
+<!--                android:text="@string/reset"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="#fff" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/btnSave"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="@color/blue3"-->
+<!--                android:text="@string/save"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="#fff" />-->
+<!--        </LinearLayout>-->
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/r2"-->
+<!--            android:layout_width="25dp"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:layout_alignEnd="@+id/r1"-->
+<!--            android:layout_alignLeft="@+id/r1"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_alignRight="@+id/r1"-->
+<!--            android:layout_alignStart="@+id/r1" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@+id/r2"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:text="@string/pleaseSignHere"-->
+<!--            android:textSize="@dimen/smallFont" />-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:layout_above="@+id/r1"-->
+<!--            android:layout_below="@id/textView"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_marginBottom="10dp"-->
+<!--                android:layout_toLeftOf="@+id/btnClear"-->
+<!--                android:layout_toStartOf="@+id/btnClear"-->
+<!--                android:background="@drawable/editbox_sign"-->
+<!--                android:layout_weight="2"-->
+<!--                android:padding="@dimen/normalPadding"-->
+<!--                android:gravity="center_horizontal">-->
+
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/imgSignatureSaved"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:visibility="gone" />-->
+
+<!--                <com.github.gcacace.signaturepad.views.SignaturePad-->
+<!--                    android:id="@+id/signature_pad"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:penColor="@android:color/black" />-->
+
+
+<!--            </RelativeLayout>-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/edtTxtComment"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="0dp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:background="@drawable/editbox"-->
+<!--                android:gravity="top|left"-->
+<!--                android:hint="@string/leaveCommentHere"-->
+<!--                android:inputType="textMultiLine"-->
+<!--                android:imeOptions="actionDone"-->
+<!--                android:lines="8"-->
+<!--                android:maxLines="10"-->
+<!--                android:padding="10dp"-->
+<!--                android:scrollbars="vertical" />-->
+<!--        </LinearLayout>-->
+<!--    </RelativeLayout>-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="130dp"-->
+<!--        android:layout_height="130dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:src="@drawable/ic_pen" />-->
+<!--</RelativeLayout>-->

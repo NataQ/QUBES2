@@ -1,0 +1,230 @@
+<resources xmlns:android="urn:oasis:names:tc:xliff:document:1.2" xmlns:tools="http://schemas.android.com/tools" tools:ignore="NewApi">
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!--        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
+<!--        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>-->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/new_blue</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="colorPrimary">@color/new_blue</item>
+        <item name="colorPrimaryVariant">@color/blue4</item>
+        <item name="colorOnPrimary">@color/blue5</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue3</item>
+        <item name="colorSecondaryVariant">@color/blue3</item>
+        <item name="colorOnSecondary">@color/blue4</item>
+        <item name="android:textColorSecondary">@color/darkGray</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/changebounds</item>
+        <item name="android:windowSharedElementExitTransition">@transition/changebounds</item>
+    </style>
+
+    <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="fab" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="fab_backgroundColor">@color/white</item>
+        <item name="fab_iconSrc">@drawable/ic_plus</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="AppTheme.Base">
+        <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TextAppearance</item>
+        <item name="android:subtitleTextStyle">@style/AppTheme.ActionBar.TextAppearance.SubTitle
+        </item>
+    </style>
+
+    <style name="AppTheme.ActionBar.TextAppearance" parent="AppTheme.Base">
+        <item name="fontPath">fonts/Helvetica.ttf</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.TextAppearance.SubTitle" parent="AppTheme.Base">
+        <item name="fontPath">fonts/Helvetica.ttf</item>
+    </style>
+
+    <style name="ButtonField" parent="AppTheme.Base">
+        <item name="fontPath">fonts/Helvetica.ttf</item>
+        <item name="android:textSize">@dimen/abc_text_size_small_material</item>
+    </style>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/new_blue</item>
+        <item name="colorPrimaryDark">@color/new_blue1</item>
+        <item name="colorAccent">@color/new_blue</item>
+        <!--<item name="colorAccent">@color/darkCyan</item>-->
+    </style>
+
+    <style name="attachmentStyle" parent="android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <!--supaya layout default dialog ngga ikut tampil-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="spinner_style">
+        <item name="android:background">@drawable/ic_down_png</item>
+        <item name="android:text">12sp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">5dp</item>
+    </style>
+
+    <!-- Dark theme. -->
+    <style name="CaldroidDefaultCustom" parent="CaldroidDefault">
+        <item name="styleCaldroidViewLayout">@style/CaldroidDefaultCustomCalendarViewLayout</item>
+        <item name="styleCaldroidMonthName">@style/CaldroidDefaultCustomMonthName</item>
+        <item name="styleCaldroidNormalCell">@style/CaldroidDefaultCustomNormalCell</item>
+        <item name="styleCaldroidSquareCell">@style/CaldroidDefaultCustomSquareCell</item>
+        <item name="styleCaldroidGridView">@style/CaldroidDefaultCustomGridView</item>
+        <item name="styleCaldroidLeftArrow">@style/CaldroidDefaultCustomLeftButton</item>
+        <item name="styleCaldroidRightArrow">@style/CaldroidDefaultCustomRightButton</item>
+        <item name="styleCaldroidWeekdayView">@style/CaldroidDefaultCustomWeekday</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomCalendarViewLayout">
+        <item name="android:background">@color/new_blue</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomMonthName">
+        <!--<item name="android:textColor">@color/darkCyan</item>-->
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomGridView" parent="CaldroidDefaultGridView">
+        <item name="android:background">@color/new_blue</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomCell" parent="CaldroidDefaultCell">
+        <item name="android:textColor">@color/cell_text_color_dark</item>
+        <item name="android:background">@drawable/cell_bg_dark</item>
+    </style>
+
+    <style name="CaldroidDefaultDarkCell" parent="CaldroidDefaultCell">
+        <item name="android:textColor">@drawable/cell_text_color_calldroid</item>
+        <item name="android:background">@drawable/cell_bg_calldroid</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="CaldroidDefaultDarkNormalCell" parent="CaldroidDefaultDarkCell">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomNormalCell" parent="CaldroidDefaultCustomCell">
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomSquareCell" parent="CaldroidDefaultCustomCell" />
+
+    <style name="CaldroidDefaultCustomLeftButton" parent="CaldroidDefaultArrowButton">
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="iconTint">@color/white</item>
+        <item name="icon">@drawable/left_arrow_calldroid</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomRightButton" parent="CaldroidDefaultArrowButton">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="iconTint">@color/white</item>
+        <item name="icon">@drawable/right_arrow_calldroid</item>
+    </style>
+
+    <style name="CaldroidDefaultCustomWeekday">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:background">@color/new_blue</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="myToolbarTheme">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/pureBlue</item>
+    </style>
+
+    <style name="TextAppearance.Design.Hint" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">?attr/colorControlActivated</item>
+    </style>
+
+    <style name="InputLabel" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:paddingBottom">@dimen/input_label_vertical_spacing</item>
+        <item name="android:paddingLeft">@dimen/input_label_horizontal_spacing</item>
+        <item name="android:paddingRight">@dimen/input_label_horizontal_spacing</item>
+    </style>
+
+    <style name="ThemeSpinner">
+        <!-- Color when pressed -->
+        <item name="colorAccent">#ffa000</item>
+        <!-- Default color for the dropdown arrow and line -->
+        <item name="colorControlNormal">#ffc107</item>
+    </style>
+
+    <style name="TextAppearance.MaterialComponents.Headline4" parent="TextAppearance.AppCompat.Display1">
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">34sp</item>
+        <item name="android:letterSpacing">0.00735294118</item>
+    </style>
+
+    <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textSize">@dimen/superExtraSmallFont</item>
+        <item name="android:padding">0dp</item>
+        <item name="color">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="boxCornerRadiusBottomEnd">5dp</item>
+        <item name="boxCornerRadiusBottomStart">5dp</item>
+        <item name="boxCornerRadiusTopEnd">5dp</item>
+        <item name="boxCornerRadiusTopStart">5dp</item>
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+
+    <style name="TextLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textSize">@dimen/superExtraSmallFont</item>
+        <item name="android:padding">0dp</item>
+        <item name="color">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="SpinnerInputLayoutMaterial" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="android:padding">0dp</item>
+        <item name="color">@color/blue3</item>
+        <item name="colorAccent">@color/blue3</item>
+        <item name="boxCornerRadiusBottomEnd">5dp</item>
+        <item name="boxCornerRadiusBottomStart">5dp</item>
+        <item name="boxCornerRadiusTopEnd">5dp</item>
+        <item name="boxCornerRadiusTopStart">5dp</item>
+        <item name="iconEndPadding">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="endIconDrawable">@drawable/ic_drop_down</item>
+        <item name="android:drawablePadding">0dp</item>
+    </style>
+
+    <style name="CustomTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textSize">@dimen/superSmallFont</item>
+    </style>
+
+</resources>

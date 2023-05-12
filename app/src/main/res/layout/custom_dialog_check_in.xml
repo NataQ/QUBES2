@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.cardview.widget.CardView xmlns:android='http://schemas.android.com/apk/res/android'
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardCornerRadius="14dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/namaPerusahaan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Matahari Putra Prima Tbk, PT"
+            android:textSize="@dimen/mediumFont2" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="14dp"
+            android:gravity="center"
+            android:background="@drawable/editbox_outlet">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="20dp"
+                android:src="@drawable/ic_store_check" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/alamatPerusahaan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Kembangan Sel., Kembangan"
+            android:textSize="@dimen/superSmallFont" />
+
+        <TextView
+            android:id="@+id/kota"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Kota Jakarta, 11610"
+            android:textSize="@dimen/superSmallFont" />
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/r1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10dp">-->
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button"
+            android:id="@+id/btnCheckIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_in"
+            android:layout_marginTop="20dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+            app:cornerRadius="8dp"
+            app:backgroundTint="@color/new_blue" />
+<!--        </LinearLayout>-->
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

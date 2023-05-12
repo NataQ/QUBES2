@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.cardview.widget.CardView xmlns:android='http://schemas.android.com/apk/res/android'
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="14dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="@string/price"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textSize="@dimen/mediumFont" />
+
+        <ScrollView
+            android:id="@+id/layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:fillViewport="true"
+            android:scrollbarStyle="outsideInset"
+            android:scrollbars="horizontal">
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:scrollbars="horizontal|vertical">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp" />
+
+                    <TextView
+                        android:id="@+id/noPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/priceNotFound"
+                        android:visibility="gone" />
+                </RelativeLayout>
+
+            </HorizontalScrollView>
+
+        </ScrollView>
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Widget.MaterialComponents.Button"
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:layout_marginTop="20dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:padding="12dp"
+            app:cornerRadius="8dp"
+            app:backgroundTint="@color/new_blue" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+<!--<?xml version='1.0' encoding='utf-8'?>-->
+<!--<RelativeLayout xmlns:android='http://schemas.android.com/apk/res/android'-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@android:color/transparent">-->
+
+<!--    <FrameLayout-->
+<!--        android:id="@+id/content"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerInParent="true">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/r2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/heightIconDialogHalf" />-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/r2"-->
+<!--                android:background="@color/white">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:id="@+id/r3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/heightIconDialogHalf" />-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/r3"-->
+<!--                    android:background="@android:color/transparent">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:text="@string/price"-->
+<!--                        android:textSize="@dimen/mediumFont" />-->
+
+<!--                    <View-->
+<!--                        android:id="@+id/div"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="1dp"-->
+<!--                        android:layout_below="@+id/textView"-->
+<!--                        android:layout_marginLeft="@dimen/normalPadding"-->
+<!--                        android:layout_marginRight="@dimen/normalPadding"-->
+<!--                        android:background="@color/black" />-->
+
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/rel2"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_below="@+id/div"-->
+<!--                        android:layout_marginTop="@dimen/normalPadding">-->
+
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/lContent"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentLeft="true"-->
+<!--                            android:layout_alignParentStart="true"-->
+<!--                            android:layout_alignParentTop="true"-->
+<!--                            android:orientation="vertical">-->
+
+<!--                                <ScrollView-->
+<!--                                    android:id="@+id/layout"-->
+<!--                                    android:layout_width="wrap_content"-->
+<!--                                    android:layout_height="match_parent"-->
+<!--                                    android:layout_marginTop="5dip"-->
+<!--                                    android:fillViewport="true"-->
+<!--                                    android:scrollbarStyle="outsideInset"-->
+<!--                                    android:scrollbars="horizontal">-->
+
+<!--                                    <HorizontalScrollView-->
+<!--                                        android:id="@+id/horizontalView"-->
+<!--                                        android:layout_width="wrap_content"-->
+<!--                                        android:layout_height="wrap_content"-->
+<!--                                        android:layout_marginTop="5dip"-->
+<!--                                        android:scrollbars="horizontal|vertical">-->
+
+<!--                                        <RelativeLayout-->
+<!--                                            android:layout_width="match_parent"-->
+<!--                                            android:layout_height="match_parent">-->
+
+<!--                                            <androidx.recyclerview.widget.RecyclerView-->
+<!--                                                android:id="@+id/recycler_view_price"-->
+<!--                                                android:layout_width="match_parent"-->
+<!--                                                android:layout_height="wrap_content"-->
+<!--                                                android:layout_margin="4dp" />-->
+
+<!--                                            <TextView-->
+<!--                                                android:id="@+id/noPrice"-->
+<!--                                                android:layout_width="wrap_content"-->
+<!--                                                android:layout_height="wrap_content"-->
+<!--                                                android:layout_centerInParent="true"-->
+<!--                                                android:text="@string/priceNotFound"-->
+<!--                                                android:visibility="gone" />-->
+<!--                                        </RelativeLayout>-->
+
+<!--                                    </HorizontalScrollView>-->
+
+<!--                                </ScrollView>-->
+
+<!--                            <LinearLayout-->
+<!--                                android:id="@+id/r1"-->
+<!--                                android:layout_width="match_parent"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_alignParentBottom="true"-->
+<!--                                android:layout_marginTop="10dp">-->
+
+<!--                                <Button-->
+<!--                                    android:id="@+id/btnCancel"-->
+<!--                                    android:layout_width="match_parent"-->
+<!--                                    android:layout_height="wrap_content"-->
+<!--                                    android:layout_weight="1"-->
+<!--                                    android:background="@color/brightRed"-->
+<!--                                    android:text="@string/cancel"-->
+<!--                                    android:textColor="@color/white" />-->
+<!--                            </LinearLayout>-->
+
+<!--                        </LinearLayout>-->
+
+<!--                    </RelativeLayout>-->
+<!--                </RelativeLayout>-->
+
+<!--            </RelativeLayout>-->
+
+<!--        </LinearLayout>-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="@dimen/heightIconDialog"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:src="@drawable/ic_price_tag" />-->
+
+<!--    </FrameLayout>-->
+
+<!--</RelativeLayout>-->

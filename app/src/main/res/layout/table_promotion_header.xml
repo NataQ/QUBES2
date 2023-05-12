@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_margin="1dp"
+        android:layout_weight="1"
+        android:background="@color/white">
+
+        <!--row 1-->
+        <TextView
+            android:id="@+id/discName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="0"
+            android:layout_weight="3"
+            android:fontFamily="@font/montserrat_regular"
+            android:background="@drawable/bg_table_promotion_left"
+            android:gravity="center"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:text="Disc. Name"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/icStatus"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="1"
+            android:background="@drawable/bg_table_promotion_center"
+            android:layout_weight="2"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Status"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+
+        <!--row 2-->
+
+        <TextView
+            android:id="@+id/productId"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="2"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Id"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/productName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="3"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Material"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/klasifikasi"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="4"
+            android:layout_weight="3"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Klasifikasi"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/discValue"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="5"
+            android:layout_weight="1.5"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Price"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <!--row 3-->
+
+        <TextView
+            android:id="@+id/outletName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="6"
+            android:fontFamily="@font/montserrat_regular"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Customer"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <!--row 4-->
+        <TextView
+            android:id="@+id/salesDocTY"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="7"
+            android:fontFamily="@font/montserrat_regular"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Sales Doc Type"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/pmntTerms"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="8"
+            android:fontFamily="@font/montserrat_regular"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="TOP"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/minPScale"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="9"
+            android:layout_weight="1"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="Per"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/perUom"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="10"
+            android:layout_weight="1.5"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="UOM"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/noKc"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="11"
+            android:layout_weight="2"
+            android:background="@drawable/bg_table_promotion_center"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="No. KC"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <!--row 5-->
+        <TextView
+            android:id="@+id/validFromTo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_column="12"
+            android:layout_weight="3"
+            android:background="@drawable/bg_table_promotion_right"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:padding="2dp"
+            android:text="ValidFromTo"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+    </TableRow>
+
+</LinearLayout>

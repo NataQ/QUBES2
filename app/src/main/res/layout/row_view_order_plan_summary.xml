@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp">
+
+        <TextView
+            android:id="@+id/kode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="@string/kode"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/superExtraSmallFont" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingRight="3dp">
+
+            <TextView
+                android:id="@+id/lastO1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="50"
+                android:text="@string/lastQ1"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+
+            <TextView
+                android:id="@+id/lastO2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="50"
+                android:text="@string/lastQ1"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingRight="3dp">
+
+            <TextView
+                android:id="@+id/lastS1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="50"
+                android:text="@string/lastQ2"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+
+            <TextView
+                android:id="@+id/lastS2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="50"
+                android:text="@string/lastQ2"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/q1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/lastQ2"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/superExtraSmallFont" />
+
+        <TextView
+            android:id="@+id/q2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/lastQ2"
+            android:textColor="@color/darkGray"
+            android:textSize="@dimen/superExtraSmallFont" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:text="@string/rp"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superExtraSmallFont" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/namaProduk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp"
+        android:text="ENFAMIL"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/superExtraSmallFont" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8sp"
+        android:background="@color/darkGray" />
+</LinearLayout>

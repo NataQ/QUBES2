@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--            <ImageView-->
+            <!--                android:id="@+id/imgClose"-->
+            <!--                android:layout_width="20dp"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                android:layout_alignParentEnd="true"-->
+            <!--                app:tint="@color/caldroid_gray"-->
+            <!--                android:src="@android:drawable/ic_menu_close_clear_cancel" />-->
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="@dimen/smallFont"
+            android:textAllCaps="false"
+            android:text="@string/pleaseWriteYourReason" />
+
+        <EditText
+            android:id="@+id/edtReason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/editbox"
+            android:gravity="top"
+            android:inputType="text"
+            android:lines="3"
+            android:padding="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginEnd="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/caldroid_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/new_blue" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+<!--<?xml version='1.0' encoding='utf-8'?>-->
+<!--<RelativeLayout xmlns:android='http://schemas.android.com/apk/res/android'-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@android:color/transparent">-->
+
+<!--    <FrameLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_centerInParent="true">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/r2"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="@dimen/heightIconDialogHalf" />-->
+
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@drawable/whitebox2"-->
+<!--                android:layout_below="@+id/r2">-->
+
+<!--                <RelativeLayout-->
+<!--                    android:id="@+id/r3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="@dimen/heightIconDialogHalf" />-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_below="@+id/r3">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/textView"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerHorizontal="true"-->
+<!--                        android:text="@string/pleaseWriteYourReason"-->
+<!--                        android:textSize="@dimen/smallFont" />-->
+
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/rel2"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_below="@+id/textView">-->
+
+<!--                        <EditText-->
+<!--                            android:id="@+id/edtReason"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_centerHorizontal="true"-->
+<!--                            android:layout_marginLeft="30dp"-->
+<!--                            android:layout_marginRight="30dp"-->
+<!--                            android:background="@drawable/editbox"-->
+<!--                            android:gravity="center"-->
+<!--                            android:inputType="text"-->
+<!--                            android:lines="3"-->
+<!--                            android:padding="10dp" />-->
+
+<!--                        <LinearLayout-->
+<!--                            android:id="@+id/r1"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_below="@+id/edtReason"-->
+<!--                            android:layout_marginTop="10dp">-->
+
+<!--                            <Button-->
+<!--                                android:id="@+id/btnCancel"-->
+<!--                                android:layout_width="0dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_weight="1"-->
+<!--                                android:background="@color/brightRed"-->
+<!--                                android:text="@string/cancel"-->
+<!--                                android:textColor="@color/white" />-->
+
+<!--                            <Button-->
+<!--                                android:id="@+id/btnSave"-->
+<!--                                android:layout_width="0dp"-->
+<!--                                android:layout_height="wrap_content"-->
+<!--                                android:layout_weight="1"-->
+<!--                                android:background="@color/blue3"-->
+<!--                                android:text="@string/save"-->
+<!--                                android:textAllCaps="true"-->
+<!--                                android:textColor="@color/white" />-->
+<!--                        </LinearLayout>-->
+<!--                    </RelativeLayout>-->
+<!--                </RelativeLayout>-->
+
+
+<!--            </RelativeLayout>-->
+<!--        </LinearLayout>-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="@dimen/heightIconDialog"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:src="@drawable/ic_reason" />-->
+
+<!--    </FrameLayout>-->
+
+
+<!--</RelativeLayout>-->

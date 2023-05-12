@@ -1,0 +1,1112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TabHost
+        android:id="@+id/tabHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"/>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/tab2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white">
+                </RelativeLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:id="@+id/btnMonthly"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:padding="0dp"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="@string/monthly"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:background="@drawable/button_target_selected"
+            android:textColor="@color/white" />
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:id="@+id/btnDaily"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:padding="0dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@+id/btnMonthly"
+            android:text="@string/daily"
+            android:fontFamily="@font/montserrat_regular"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:background="@drawable/button_target_unselected"
+            android:textColor="@color/caldroid_gray" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:tint="@color/new_blue"
+                    android:src="@drawable/ic_filter"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/filter"
+                    android:fontFamily="@font/montserrat_regular"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutMonthly"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/linearTryAgain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noDataTarget"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtTryAgain"
+                android:layout_gravity="center"
+                android:textColor="@color/new_blue"
+                android:text="@string/tryAgain"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/linearSummaryMonthly"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceSalesMonthly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sales"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartMonthlySales"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceCallMonthly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Call"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartMonthlyCall"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceECMonthly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EC"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartMonthlyEC"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceEAMonthly"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EA"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartMonthlyEA"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/totalRetur"
+                            android:textStyle="bold"
+                            android:textColor="@color/darkGray"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:id="@+id/txtTotalReturn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="0"
+                            android:textColor="@color/caldroid_gray"
+                            android:textSize="@dimen/superSmallFont" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llTop"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_top_corner_blue">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/target"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/actual"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/balancegap"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llData"
+                        android:layout_below="@+id/llTop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="Total Sales"
+                                android:textStyle="bold"
+                                android:textColor="@color/darkGray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetSales"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualSales"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/nullData"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceSales"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Total Call"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetCall"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualCall"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceCall"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Total EC"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetEc"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualEc"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceEc"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="Total EA"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetEA"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualEA"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceEA"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:gravity="center"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutDaily"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <ProgressBar
+            android:id="@+id/progressBar2"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/linearTryAgain2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noDataTarget"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/txtTryAgain2"
+                android:layout_gravity="center"
+                android:textColor="@color/new_blue"
+                android:text="@string/tryAgain"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/linearSummaryDaily"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceSalesDaily"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sales"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartDailySales"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceCallDaily"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Call"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartDailyCall"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceECDaily"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EC"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartDailyEC"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:id="@+id/txtBalanceEADaily"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EA"
+                        android:layout_marginBottom="8dp"
+                        android:layout_gravity="center"
+                        android:textStyle="bold"
+                        android:textColor="@color/darkGray" />
+
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/chartDailyEA"
+                        android:layout_width="match_parent"
+                        android:layout_height="300dp"
+                        android:layout_marginBottom="10dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/totalRetur"
+                            android:textStyle="bold"
+                            android:textColor="@color/darkGray"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:id="@+id/txtTotalReturn2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:text="0"
+                            android:textColor="@color/caldroid_gray"
+                            android:textSize="@dimen/superSmallFont" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llTop2"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:visibility="gone"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_top_corner_blue">
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/target"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/actual"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/balancegap"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/superSmallFont" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llData2"
+                        android:layout_below="@+id/llTop2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="Total Sales"
+                                android:textStyle="bold"
+                                android:textColor="@color/darkGray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetSales2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualSales2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/nullData"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceSales2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Total Call"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetCall2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualCall2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceCall2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Total EC"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetEc2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualEc2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceEc2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_table_summary"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:text="Total EA"
+                                android:textColor="@color/darkGray"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtTargetEA2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtActualEA2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:background="@color/new_blue2"/>
+
+                            <TextView
+                                android:id="@+id/txtBalanceEA2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp"
+                                android:layout_weight="1"
+                                android:padding="5dp"
+                                android:gravity="center"
+                                android:text="@string/nullData"
+                                android:textColor="@color/caldroid_gray"
+                                android:textSize="@dimen/superSmallFont" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </ScrollView>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

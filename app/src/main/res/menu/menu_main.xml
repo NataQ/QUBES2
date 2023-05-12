@@ -1,0 +1,89 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="">
+
+
+    <item
+        android:id="@+id/action_pause"
+        android:icon="@drawable/ic_pause_24dp"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_continue"
+        android:icon="@drawable/ic_play_24dp"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_finish"
+        android:icon="@drawable/ic_stop_24dp"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+
+
+    <item
+        android:id="@+id/action_attachment"
+        android:icon="@drawable/ic_attachment_black_24dp"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+
+    <item
+        android:id="@+id/action_detail"
+        android:icon="@drawable/ic_details_24dp"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+
+
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:title="@string/action_search"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/action_search"
+        android:visible="false"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_edit"
+        android:icon="@drawable/ic_edit_black_24dp"
+        android:title="@string/action_edit"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+    <item
+        android:id="@+id/action_next"
+        android:icon="@drawable/ic_navigate_next_24dp"
+        android:title="@string/action_next"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/save"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:visible="false"
+        app:showAsAction="never" />
+</menu>

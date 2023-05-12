@@ -1,0 +1,35 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_drawer_width">240dp</dimen>
+    <dimen name="activity_input_padding_bottom">30dp</dimen>
+
+    <!--Dimen for fragment-->
+    <dimen name="splashScreenBig">48sp</dimen>
+    <dimen name="fragmentHeader">33sp</dimen>
+    <dimen name="fragmentHeaderExtra">35sp</dimen>
+    <dimen name="BigFont">30sp</dimen>
+    <dimen name="smallFont">18sp</dimen>
+    <dimen name="mediumFont">25sp</dimen>
+    <dimen name="mediumPlusFont">28sp</dimen>
+    <dimen name="mediumFont2">22sp</dimen>
+    <dimen name="superSmallFont">14sp</dimen>
+    <dimen name="superExtraSmallFont">12sp</dimen>
+    <dimen name="verySmall">10sp</dimen>
+
+    <dimen name="normalPadding">8sp</dimen>
+    <dimen name="normalPaddingx2">16sp</dimen>
+    <dimen name="normalPaddingx3">24sp</dimen>
+    <dimen name="normalPaddingx4">32sp</dimen>
+    <dimen name="normalPaddingx5">40sp</dimen>
+
+    <dimen name="heightIconDialog">130sp</dimen>
+    <dimen name="heightIconDialogHalf">65sp</dimen>
+
+    <dimen name="marginFilterPromotion">4sp</dimen>
+    <dimen name="input_label_vertical_spacing">8dp</dimen>
+    <dimen name="input_label_horizontal_spacing">4dp</dimen>
+
+
+</resources>

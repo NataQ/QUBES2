@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="wrap_content"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    app:cardBackgroundColor="@color/white"-->
+<!--    app:cardElevation="5dp"-->
+<!--    android:layout_margin="12dp"-->
+<!--    app:cardCornerRadius="12dp">-->
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="14dp"-->
+<!--        android:background="@drawable/editbox_outlet"-->
+<!--        android:orientation="vertical">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/txtIndex"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:text="1"-->
+<!--                android:textColor="@color/darkGray"-->
+<!--                android:textSize="@dimen/mediumFont2"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/txtNo"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:src="@drawable/ic_action_close"/>-->
+
+<!--        </RelativeLayout>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/materialCode" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/txtIdMaterial"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:imeOptions="actionDone"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/productName" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/txtMaterialName"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:enabled="false"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:imeOptions="actionDone"-->
+<!--            android:inputType="text"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:textColor="@color/caldroid_gray"-->
+<!--                android:text="Quantity 1" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:textColor="@color/caldroid_gray"-->
+<!--                android:text="Quantity 2" />-->
+
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_weight="1">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/qty"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:ems="10"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:gravity="center"-->
+<!--                        android:singleLine="true"-->
+<!--                        android:background="@drawable/editbox"-->
+<!--                        android:textColor="@color/darkGray"-->
+<!--                        android:textColorHint="@color/darkGray"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/uom1"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:layout_marginEnd="5dp"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:background="@drawable/editbox"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:textColor="@color/caldroid_gray"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                </LinearLayout>-->
+
+<!--                <LinearLayout-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:layout_weight="1">-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/qty2"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:ems="10"-->
+<!--                        android:gravity="center"-->
+<!--                        android:singleLine="true"-->
+<!--                        android:background="@drawable/editbox"-->
+<!--                        android:textColor="@color/darkGray"-->
+<!--                        android:textColorHint="@color/darkGray"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/uom2"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="5dp"-->
+<!--                        android:layout_marginEnd="5dp"-->
+<!--                        android:padding="5dp"-->
+<!--                        android:background="@drawable/editbox"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:textColor="@color/caldroid_gray"-->
+<!--                        android:textSize="12sp" />-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--        </LinearLayout>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/batch" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/batch"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:singleLine="true"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/expiredDate" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/date"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:focusableInTouchMode="false"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/reason" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/reason"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:focusableInTouchMode="false"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/category" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/categoryReturn"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:focusableInTouchMode="false"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:textColor="@color/caldroid_gray"-->
+<!--            android:text="@string/description" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/notesDetail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:textColor="@color/darkGray"-->
+<!--            android:background="@drawable/editbox"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="@dimen/superSmallFont"/>-->
+
+<!--    </LinearLayout>-->
+<!--</androidx.cardview.widget.CardView>-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/row_color"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtIdMaterial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/spinnerJenisJual"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline37"
+        app:layout_constraintRight_toLeftOf="@+id/guideline52"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="01015054RI" />
+
+    <TextView
+        android:id="@+id/txtIndex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="1"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/q1Type"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/guideline37"
+        app:layout_constraintVertical_bias="0.827" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline41"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <TextView
+        android:id="@+id/txtMaterialName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtViewTop"
+        app:layout_constraintEnd_toStartOf="@+id/guideline63"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline37"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerJenisJual"
+        tools:text="SANAFLU PLUS BATUK KAPLET 25X4 S" />
+
+
+    <Spinner
+        android:id="@+id/spinnerJenisJual"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:hint="UOM1"
+        android:scrollIndicators="right"
+        android:textSize="12sp"
+        android:spinnerMode="dropdown"
+        android:background="@drawable/bg_spinner_new"
+        android:popupBackground="@drawable/editbox_popup"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_del"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline52"
+        app:layout_constraintRight_toLeftOf="@+id/ic_del"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layQty2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/layQty1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline48"
+        app:layout_constraintRight_toLeftOf="@+id/guideline52"
+        app:layout_constraintTop_toTopOf="@+id/layQty1"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_editor_absoluteX="150dp"
+        tools:layout_editor_absoluteY="83dp">
+
+        <EditText
+            android:id="@+id/edtTxtQty2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="qty2"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="12sp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!--style="@style/Base.Widget.AppCompat.Spinner.Underlined"-->
+
+    <Spinner
+        android:id="@+id/q1Type"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:hint="UOM1"
+        android:scrollIndicators="right"
+        android:spinnerMode="dropdown"
+        android:background="@drawable/bg_spinner_new"
+        android:popupBackground="@drawable/editbox_popup"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/layQty1"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline47"
+        app:layout_constraintRight_toLeftOf="@+id/guideline48"
+        app:layout_constraintTop_toTopOf="@+id/layQty1" />
+
+
+    <Spinner
+        android:id="@+id/q2Type"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        android:gravity="center"
+        android:scrollIndicators="right"
+        android:spinnerMode="dropdown"
+        android:background="@drawable/bg_spinner_new"
+        android:popupBackground="@drawable/editbox_popup"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/q1Type"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline52"
+        app:layout_constraintRight_toLeftOf="@+id/guideline41"
+        app:layout_constraintTop_toTopOf="@+id/q1Type"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline47"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline52"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.55" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layPrice"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/layQty2"
+        app:layout_constraintLeft_toRightOf="@+id/q2Type"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/q2Type">
+
+
+        <EditText
+            android:id="@+id/edtPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:enabled="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="right"
+            android:hint="@string/price"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/ic_attach"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_find_in_page_black_24dp"
+        app:layout_constraintBottom_toTopOf="@+id/layPrice"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@+id/guideline63"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ic_del" />
+
+    <ImageView
+        android:id="@+id/ic_del"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_close_black_24dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_close_black_24dp"
+        tools:ignore="VectorDrawableCompat" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layQty1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline37"
+        app:layout_constraintRight_toLeftOf="@+id/guideline47"
+        app:layout_constraintTop_toBottomOf="@+id/txtMaterialName">
+
+        <EditText
+            android:id="@+id/edtTxtQty1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="qty1"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="12sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/txtViewTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="0dp"
+        android:text="0 hari"
+        app:layout_constraintBottom_toBottomOf="@+id/ic_attach"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline52"
+        app:layout_constraintRight_toLeftOf="@+id/ic_attach"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerJenisJual"
+        app:layout_constraintVertical_bias="0.545" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline63"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.76111114" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

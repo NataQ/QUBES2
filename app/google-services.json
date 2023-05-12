@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "207231334524",
+    "project_id": "qubes-294504",
+    "storage_bucket": "qubes-294504.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207231334524:android:394760dc67e395763331f9",
+        "android_client_info": {
+          "package_name": "id.co.qualitas.qubes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "207231334524-npmh5qasud993ja48hp17rprjsamaf4n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU2lbQDKQetCh8vBfMfTfzx76A4habVq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "207231334524-npmh5qasud993ja48hp17rprjsamaf4n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

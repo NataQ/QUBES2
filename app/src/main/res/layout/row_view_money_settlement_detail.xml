@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:id="@+id/rr"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/l1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/noToValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="0.8"
+            android:gravity="center"
+            android:text="12345"
+            android:layout_marginRight="8dp"
+            android:textSize="@dimen/superSmallFont" />
+
+
+        <TextView
+            android:id="@+id/dateValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.1"
+            android:gravity="center"
+            android:layout_marginRight="8dp"
+            android:text="19 Sept 2016"
+            android:textSize="@dimen/superSmallFont" />
+
+        <TextView
+            android:id="@+id/amountValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.2"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:text="Rp. 3.000.000,00"
+            android:textSize="@dimen/superSmallFont" />
+
+        <TextView
+            android:id="@+id/paidValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.2"
+            android:gravity="center"
+            android:layout_marginRight="8dp"
+            android:text="Rp. 2.000.000,00"
+            android:textSize="@dimen/superSmallFont" />
+
+        <TextView
+            android:id="@+id/leftValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.2"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:text="Rp. 1.000.000,00"
+            android:textSize="@dimen/superSmallFont" />
+
+        <TextView
+            android:id="@+id/statusValue"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Partial Paid"
+            android:textSize="@dimen/superSmallFont" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/l1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/darkGray" />
+    </LinearLayout>
+
+</RelativeLayout>

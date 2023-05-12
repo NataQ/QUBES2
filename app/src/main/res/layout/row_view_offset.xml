@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <CheckBox
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.2"
+        android:id="@+id/cbOffList"/>
+    
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/offsetType"
+        android:textSize="@dimen/superSmallFont"
+        android:text="choose list"/>
+
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.7"
+        android:id="@+id/paid"
+        android:textSize="@dimen/superSmallFont"
+        android:padding="8dp"
+        android:background="@drawable/editbox"
+        android:hint="@string/paid"/>
+</LinearLayout>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="4">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="352dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/yellow1"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/customerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="-"
+                android:textSize="@dimen/smallFont"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/layDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="-"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/superSmallFont" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        android:visibility="gone"
+        card_view:layout_constraintBottom_toBottomOf="@+id/cardView2"
+        card_view:layout_constraintEnd_toStartOf="@+id/cardView2"
+        card_view:layout_constraintStart_toStartOf="@+id/cardView2"
+        card_view:layout_constraintTop_toBottomOf="@+id/cardView2" />
+
+    <TextView
+        android:id="@+id/errData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/errorData"
+        android:visibility="gone"
+        card_view:layout_constraintBottom_toBottomOf="@+id/cardView2"
+        card_view:layout_constraintEnd_toStartOf="@+id/cardView2"
+        card_view:layout_constraintStart_toStartOf="@+id/cardView2"
+        card_view:layout_constraintTop_toBottomOf="@+id/cardView2" />
+
+
+    <TextView
+
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginLeft="64dp"
+        android:padding="4dp"
+        android:text="@string/creditLimit"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="@string/creditAvailable"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/textView4"
+        card_view:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <TextView
+        android:id="@+id/textView17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="@string/creditExposure"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/textView9"
+        card_view:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="@string/overdue"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/textView17"
+        card_view:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+
+    <id.co.qualitas.qubes.helper.RupiahTextView
+        android:id="@+id/valueCreditLimit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:padding="4dp"
+        android:text="0"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintBottom_toTopOf="@+id/textView9"
+        card_view:layout_constraintEnd_toEndOf="parent" />
+
+    <id.co.qualitas.qubes.helper.RupiahTextView
+        android:id="@+id/valueCreditAvailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="0"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/valueCreditLimit"
+        card_view:layout_constraintTop_toBottomOf="@+id/valueCreditLimit" />
+
+    <id.co.qualitas.qubes.helper.RupiahTextView
+        android:id="@+id/valueOverdue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="0"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/valueCreditAvailable"
+        card_view:layout_constraintTop_toBottomOf="@+id/valueCreditAvailable" />
+
+    <id.co.qualitas.qubes.helper.RupiahTextView
+        android:id="@+id/valueOverdue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:text="0"
+        android:textColor="@color/darkGray"
+        android:textSize="@dimen/mediumFont"
+        card_view:layout_constraintStart_toStartOf="@+id/valueOverdue"
+        card_view:layout_constraintTop_toBottomOf="@+id/valueOverdue" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

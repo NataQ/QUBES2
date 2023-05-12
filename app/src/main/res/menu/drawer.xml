@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group
+        android:id="@+id/menu_top"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navigation_item_1"
+            android:checked="true"
+            android:icon="@drawable/ic_home_selector"
+            android:title="@string/home"/>
+        <item
+            android:id="@+id/navigation_item_2"
+            android:icon="@drawable/ic_target_selector"
+            android:title="@string/target" />
+        <item
+            android:id="@+id/navigation_item_3"
+            android:icon="@drawable/ic_orderplan_selector"
+            android:title="@string/orderPlan"
+            />
+        <item
+            android:id="@+id/navigation_item_4"
+            android:icon="@drawable/ic_visit_selector"
+            android:title="@string/visit" />
+        <item
+            android:id="@+id/navigation_item_5"
+            android:icon="@drawable/ic_summary_selector"
+            android:title="@string/summary"/>
+        <item
+            android:id="@+id/navigation_item_6"
+            android:icon="@drawable/ic_profile_selector"
+            android:title="@string/profile"/>
+    </group>
+
+</menu>

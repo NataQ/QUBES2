@@ -1,0 +1,647 @@
+<resources>
+    <string name="app_name">QUBES</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_next">Next</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <!--<string name="nav_item_home">Home</string>-->
+    <string name="nav_item_retail">Retail Outlets</string>
+    <string name="nav_item_return">Return</string>
+    <string name="nav_item_shipment">Shipment Cost</string>
+    <string name="action_search_here">Search here</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <!--<item>@string/nav_item_home</item>-->
+        <item>@string/nav_item_retail</item>
+        <item>@string/nav_item_return</item>
+        <item>@string/nav_item_shipment</item>
+    </string-array>
+
+
+    <string name="title_home">Home</string>
+    <string name="title_retail">Retail Outlets</string>
+    <string name="title_return">Return</string>
+    <string name="title_shipment">Shipment Cost</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="today_retail">Today`s Retail Outlet</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="outlets">Outlets</string>
+    <string name="delivery">Delivery</string>
+    <string name="returns">Return</string>
+    <string name="materialNo">Material No</string>
+    <string name="materialDesc">Material Desc</string>
+    <string name="uom">UOM</string>
+    <string name="batch">Batch</string>
+    <string name="qty">QTY</string>
+    <string name="qtyReturn">Qty Return</string>
+    <string name="reason">Reason</string>
+    <string name="empty">Empty</string>
+    <string name="check_out">Check Out</string>
+    <string name="save">Save</string>
+    <string name="success">Success</string>
+    <string name="complete">Complete</string>
+    <string name="check_all">Please check all material(s)!</string>
+    <string name="check_data">You haven\'t checked material. Are you sure?</string>
+    <string name="check_in_first">Please Check In First</string>
+    <string name="check_in">Check In</string>
+    <string name="ok">OK</string>
+    <string name="check_out_first">Please check out before check in this outlet!</string>
+    <string name="pass">Pass</string>
+    <string name="incomplete">Incomplete</string>
+    <string name="fill_reason">Please fill the reason!</string>
+    <string name="save_alert">Please save for complete!</string>
+    <string name="attachment">Attachment</string>
+    <string name="returnActivity">Return</string>
+    <string name="materialCode">Material Code</string>
+    <string name="colon">:</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="make_sure">Are you sure?</string>
+
+    <string name="category">Category</string>
+    <string name="voucherno">Voucher No.</string>
+    <string name="litre">Litre</string>
+    <string name="amount">Amount</string>
+    <string name="description">Description</string>
+    <string name="createnewshipmentcost">Tap icon to create new shipment cost</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
+    <string name="date">Date</string>
+    <string name="left">Left</string>
+
+    <string name="idcategory">ZSB11</string>
+    <string name="inputdatasuccess">Input data success</string>
+
+    <string name="msg_error_category">Please choose category</string>
+    <string name="msg_error_desc">Please input description</string>
+    <string name="msg_error_amount">Please input valid amount</string>
+    <string name="msg_error_voucher">Please input voucher number</string>
+    <string name="msg_error_litre">Please input valid BBM litre</string>
+    <string name="msg_error_attachment">Please choose attachment</string>
+    <string name="inputActivity">Input Shipment Cost Activity</string>
+    <string name="create_new_return">Tap icon to create new return</string>
+    <string name="msg_error_material_code">Please input material code</string>
+    <string name="msg_error_qty">Please input qty</string>
+    //new 23
+    <string name="msg_error_field">Please input the field</string>
+    <string name="msg_error_field_customer">No Customer attached yet</string>
+    <string name="msg_error_batch">Please input batch</string>
+    <string name="update">Update</string>
+    <string name="deliveryNumber">Delivery Number</string>
+    <string name="msg_error_delivery_number">Please input delivery number</string>
+    <string name="checkInFirst">Please check in first to see this content</string>
+    <string name="shipmentCost">Shipment cost</string>
+    <string name="createReturn">Create new return</string>
+    <string name="add">Add</string>
+    <string name="addNew">add new</string>
+    <string name="menu">Menu</string>
+    <string name="outlet_name">Outlet Name</string>
+    <string name="outlet_address">Outlet Address</string>
+    <string name="attach_here">Attach your photo here</string>
+    <string name="materialno">Material No.</string>
+    <string name="noTo">No. TO</string>
+
+    <string name="paid">Paid</string>
+    <string name="amountToPay">amount to pay</string>
+    <string name="moneySettlement">Money Settlement</string>
+    <string name="settlement">SETTLEMENT</string>
+    <string name="itemsSettlement">Items Settlement</string>
+    <string name="itemsPickUp">Items Pick Up</string>
+    <string name="items_name">Items Name</string>
+    <string name="today_delivery">today\'s delivery</string>
+
+    <string name="timerVal">00:00</string>
+    <string name="pauseButtonLabel">Pause</string>
+    <string name="startButtonLabel">Start</string>
+
+    <string name="userNumber">User number</string>
+    <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="forgetPassText">Enter your email to reset password</string>
+
+    <string name="janjiBayar">Janji Bayar</string>
+    <string name="invoice">INVOICE</string>
+    <string name="order">Order</string>
+    <string name="collection_settlement">Collection Settlement</string>
+    <string name="items_settlement">Items Settlement</string>
+    <string name="items_pickup">Items Pick Up</string>
+
+    <string name="purchaseDate">Purchase Date</string>
+    <string name="dueDate">Due Date</string>
+
+    <string-array name="filterArray">
+        <item>Object</item>
+        <item>Customer</item>
+        <item>Product</item>
+    </string-array>
+
+
+    <string name="deleteCompetitor"><u>Delete Competitor</u></string>
+
+    <string name="MODIS">MOBILE DISTRIBUTION</string>
+
+    <!--dialog-->
+    <string name="toDateAchievement">To Date Achievement</string>
+    <string name="monthToDate">Month to Date</string>
+    <string name="target">Target</string>
+    <string name="actl">Actl</string>
+    <string name="bal">Bal.</string>
+    <string name="toDay">To Day</string>
+    <string name="prevGap">Prev GAP</string>
+    <string name="totalTarget">Total Target</string>
+    <string name="eal">Eal.</string>
+    <string name="highOff">High. Off</string>
+    <string name="collectPayment">Collect Payment</string>
+    <string name="amountPaid">amount paid</string>
+    <string name="materialName">Material Name</string>
+    <string name="materialCode2">Material Code</string>
+    <string name="desc">Description</string>
+    <string name="addCompetitor">add competitor</string>
+    <string name="addMaterial">add material</string>
+    <string name="competitorName">competitor name</string>
+    <string name="addReturn">add return</string>
+    <string name="code">code</string>
+    <string name="itemsName">items name</string>
+    <string name="quantity">Quantity</string>
+    <string name="quantityReturn">Quantity Return</string>
+    <string name="areYouSure">Are you sure?</string>
+    <string name="pleaseWriteYourReason">Please write your reason</string>
+    <string name="pleaseSignHere">Please sign here</string>
+    <string name="reset">Reset</string>
+    <string name="leaveCommentHere">Leave your comment here</string>
+    <string name="noBrb">No. BRB</string>
+    <string name="noReturRep">No. RR</string>
+    <string name="bacode">bacode</string>
+    <string name="expiredDate">Expired Date</string>
+    <string name="expired">Expired</string>
+    <!--<string name="goodStock">Good Stock</string>-->
+
+    <!--Profile-->
+    <string name="changePwd">Change Password</string>
+    <string name="logout">Log out</string>
+
+    <!--Collection-->
+    <string name="profomaInvoice">Profoma Invoice</string>
+    <string name="collection">Collection</string>
+
+    <!--Halaman Visit-->
+    <string name="creditInfo">Credit Info</string>
+    <string name="stockOpnameCapital">STORE CHECK</string>
+    <string name="orderCapital">ORDER</string>
+    <string name="returnCapital">RETURN</string>
+    <string name="cancelCapital">CANCEL</string>
+    <string name="backCapital">BACK</string>
+    <string name="saveCapital">SAVE</string>
+    <string name="submitCapital">SUBMIT</string>
+    <string name="list">LIST</string>
+    <string name="creditLimit">Credit Limit</string>
+    <string name="creditAvailable">Credit Available</string>
+    <string name="creditExposure">Credit Exposure</string>
+    <string name="overdue">Overdue</string>
+    <string name="tgl">Tgl</string>
+    <string name="tJml">T. Jml</string>
+    <string name="cnReturn">create new return</string>
+
+    <!--Summary-->
+    <string name="summaryReport">Summary Report</string>
+    <string name="effectiveSummary">Effective Summary</string>
+    <string name="orderStatus">Order Status</string>
+    <string name="summary">Summary</string>
+    <string name="monthly">Monthly</string>
+    <string name="daily">Daily</string>
+    <string name="salesOrder">Sales Order</string>
+    <string name="totalSales">Total Sales</string>
+    <string name="totalCall">Total Call</string>
+    <string name="totalEa">Total EA</string>
+    <string name="totalEc">Total EC</string>
+    <string name="totalSp">Total SP</string>
+    <string name="callPlan">Call Plan</string>
+    <string name="totalRetur">Total Return</string>
+    <string name="totalCp">Total CP</string>
+    <string name="totalNoo">Total Noo</string>
+    <string name="sisaTarget">Sisa Target</string>
+    <string name="actual">Actual</string>
+
+    <!--Profile-->
+    <string name="oldPassword">Old Password</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmPassword">Confirm Password</string>
+
+    <!--Order-->
+    <string name="next">NEXT</string>
+    <string name="quantityOrd">Quantity</string>
+    <string name="discT">Disc. T</string>
+    <string name="priceBefore">Price Before</string>
+    <string name="priceNett">Price Nett</string>
+    <string name="orderPlan">Order Plan</string>
+    <string name="orderPlanSummary">Order Plan Summary</string>
+    <string name="kode">Kode</string>
+    <string name="nama">Nama</string>
+    <string name="kontak">Kontak</string>
+    <string name="objects">Objects</string>
+    <string name="act1">Act1</string>
+    <string name="rp">Rp.</string>
+    <string name="tglVisit">Tgl Visit</string>
+    <string name="noVisit">No. Visit</string>
+    <string name="orderSummary">Order Summary</string>
+    <string name="viewDetails">View Details</string>
+    <string name="hna">HNA</string>
+    <string name="discTd">Disc. TD</string>
+    <string name="totalDisc">Total Disc.</string>
+    <string name="ppn">PPN</string>
+    <string name="total">Total</string>
+    <string name="totalItems">Total Items</string>
+    <string name="totalOp">Total Order Plan</string>
+    <string name="totalOrd">Total Item</string>
+    <string name="noPo">No. PO</string>
+    <string name="tglPo">Tgl. PO</string>
+    <string name="edPo">ED PO</string>
+    <string name="jenisJual">Jenis Jual</string>
+    <string name="top">TOP</string>
+    <string name="q1">Q1</string>
+    <string name="q2">Q2</string>
+    <string name="q3">Q3</string>
+    <string name="q4">Q4</string>
+    <string name="notes">Notes</string>
+    <string name="totalDoc">Total Doc</string>
+    <string name="requestToSa">Request to SA</string>
+    <string name="requestToSaHint">request yang disampaikan oleh customer</string>
+
+    <string name="soldTo">Sold To</string>
+    <string name="shipTo">Ship To</string>
+    <string name="fakturPajak">Faktur Pajak</string>
+    <string name="noPO">No. PO</string>
+    <string name="tglPO">Tgl. PO</string>
+    <string name="edPO">ED. PO</string>
+    <string name="jenisBayar">Jenis Bayar</string>
+    <string name="canvasOrder">Canvas Order</string>
+    <string name="takingOrder">Taking Order</string>
+    <string name="price">Price</string>
+    <string name="salesOffice">Sales Office</string>
+
+    <!--SO History-->
+    <string name="noSp">No. SP: </string>
+    <string name="salesOrderhistory">Sales Order History</string>
+    <string name="noSo">No. SO</string>
+    <string name="vol">Vol</string>
+    <string name="outlet">Outlet</string>
+    <string name="tanggal">Tanggal</string>
+    <string name="status">Status</string>
+
+    <!--Stock Opname-->
+    <string name="stockOpname">Store Check</string>
+    <string name="rms">RMS</string>
+    <string name="updated">Updated</string>
+    <string name="suggest">Suggest</string>
+    <string name="stock">Stock</string>
+    <string name="lastOrder">Last Order</string>
+    <string name="promotion">Promotion</string>
+    <string name="promotionCapital">PROMOTION</string>
+
+    <!--New Open Outlet-->
+    <string name="name">Name</string>
+    <string name="street1">Street 1</string>
+    <string name="street2">Street 2</string>
+    <string name="country">Country</string>
+    <string name="province">Province</string>
+    <string name="city">City</string>
+    <string name="kecamatan">Kecamatan</string>
+    <string name="kelurahan">Kelurahan</string>
+    <string name="postalCode">Postal Code</string>
+    <string name="phone">Phone</string>
+    <string name="ktp">KTP</string>
+    <string name="npwp">NPWP</string>
+
+    <!--New Input Order-->
+    <string name="orderTerakhir">Order Terakhir</string>
+    <string name="disc">Disc</string>
+    <string name="discount">Discount</string>
+    <string name="stokTersedia">Stok Tersedia</string>
+    <string name="saranOrder">Saran Order</string>
+
+
+    <string name="salesTarget">Sales Target</string>
+    <string name="objectTarget">Object Target</string>
+
+    <string name="kodeBarang">Kode Barang</string>
+    <string name="competitor">Competitor</string>
+    <string name="editCompetitor">Edit Competitor</string>
+    <string name="rememberme">Remember me</string>
+    <string name="forgetpass">Forget password</string>
+
+    <string name="newMat">New Material</string>
+    <string name="specimen">Specimen</string>
+
+    <string name="namaBarang">Nama Barang</string>
+    <string name="klasifikasi">Klasifikasi</string>
+
+    <string name="collapsed">collapsed</string>
+    <string name="expanded">expanded</string>
+
+    <string name="idMaterial">Material Code</string>
+
+    <string name="cash">Cash</string>
+    <string name="giro">Giro</string>
+    <string name="transfer">Transfer</string>
+    <string name="dispute">Dispute</string>
+    <string name="open">Open </string>
+    <string name="close">Close </string>
+    <string name="totalAmount">Total Amount</string>
+    <string name="noRef">No Referensi</string>
+    <string name="rounding">Rounding</string>
+    <string name="transferNo">Transfer No</string>
+    <string name="bank">Bank</string>
+    <string name="tglGiro">Tanggal Giro</string>
+    <string name="tglCair">Tanggal Cair</string>
+    <string name="noGiro">No Giro</string>
+    <string name="noRekCust">No Rekening Customer</string>
+    <string name="pleaseChooseYourReason">please choose your reason</string>
+    <string name="tglJatuhTemp">Tgl. Jatuh Tempo</string>
+    <string name="paymentLessNotice">Payment is less than amount to pay</string>
+
+    <string name="collect">COLLECT</string>
+    <string name="openst">Open - </string>
+    <string name="offset">OFFSET</string>
+
+    <string name="biayaMaterai">Biaya Materai</string>
+    <string name="biayaAdmin">Biaya Administrasi Bank</string>
+    <string name="pembulatanKurang">Pembulatan Kurang</string>
+    <string name="pembulatanLebih">Pembulatan Lebih</string>
+    <string name="pph">PPH</string>
+
+    <string name="lastQ1">Last Order</string>
+    <string name="lastQ2">Last Store Check</string>
+
+    <string name="qubes">Qualitas Better Equipped Salesman</string>
+    <string name="user1"><u>Login sebagai pengganti</u></string>
+    <string name="user2"><u>Login sebagai user</u></string>
+    <string name="loginAsSupervisor">Login as Supervisor!</string>
+    <string name="loginAsSalesman">Login as Salesman!</string>
+
+
+    <string name="targetperbulan"><b>Target per Bulan</b></string>
+    <string name="targetpercall"><b>Target per Call</b></string>
+    <string name="sisapercall"><b>Sisa Target per Call</b></string>
+    <string name="plan"><b>Plan</b></string>
+    <string name="planWb">Plan</string>
+    <string name="archievement"><b>Achievement</b></string>
+    <string name="balancegap">Balance/GAP</string>
+
+    <string name="tglBRB">Tanggal BRB</string>
+    <string name="tglRR">Tanggal RR</string>
+
+    <string name="errorNoBRB">No. BRB tidak boleh kosong</string>
+    <string name="usedNoBrb">No. BRB telah terpakai</string>
+    <string name="errorNoRR">No. RR tidak boleh kosong</string>
+    <string name="errorTglBRB">Tgl. BRB tidak boleh kosong</string>
+    <string name="errorTglRR">Tgl. RR tidak boleh kosong</string>
+    <string name="errorMaterialReturn">Material tidak boleh kosong</string>
+
+    <string name="inputTextHint">Input your request here</string>
+
+    <string name="wrongUser">Wrong Username or Password</string>
+    <string name="cannotAccess">Cannot Access</string>
+    <string name="errCon">Error Connection</string>
+    <string name="errorData">No Data.\n Please Contact your Administrator</string>
+
+    <string name="nullData">-</string>
+
+    <string name="pleaseFillUsername">"Please fill the username field"</string>
+    <string name="pleaseChoose">"Please Choose your reason"</string>
+    <string name="pleaseFillSupervisor">"Please fill the supervisor field"</string>
+    <string name="pleaseFillPassword">"Please fill the password field"</string>
+    <string name="pleaseFillOldPass">Please fill old password field</string>
+    <string name="pleaseFillNewPass">Please fill new password field</string>
+    <string name="pleaseFillConfPass">Please fill conf password field</string>
+    <string name="passwordNotMatched">New password not match with your old one</string>
+    <string name="pleaseFillReason">Please fill reason first !!</string>
+
+
+    <string name="noticeDelete">Anda yakin ingin menghapus?</string>
+
+    //home
+    <string name ="matriksSalesman">Matriks Salesman</string>
+    <string name ="emptyText">-</string>
+
+    //new
+    <string name="serverError">Server Error</string>
+    <string name="selectSales">Select</string>
+    <string name="select_sales_office">Please input the correct sales office</string>
+    <string name="select_shipto">Please input the correct ship to</string>
+    <string name="input_all_field">Please input all field</string>
+    <string name="hari">hari</string>
+    <string name="barangSudahAda">Barang sudah ada di dalam list.</string>
+    <string name="emptyValidation">Please fill this field</string>
+
+    <string name="lagiKunjungan">Selesaikan kunjungan di outlet terlebih dahulu</string>
+    <string name="sudahDiKunjungi">Outlet telah dikunjungi</string>
+
+    <string name="pleasefillipaddress">Please fill IP Address field</string>
+
+    <string name="changeipmessage">Are you sure to change IP address?</string>
+
+    <string name="ipaddress_has_been_changed">IP Address has been changed</string>
+
+    <string name="Month">Month</string>
+    <string name="Day">Day</string>
+
+    <string name="textDialogLogout">Are you sure want to logout?</string>
+    <string name="home">Home</string>
+    <string name="visit">Visit</string>
+    <string name="profile">Profile</string>
+    <string name="all">All</string>
+    <string name="allCaps">ALL</string>
+    <string name="No.OP">No. OP</string>
+    <string name="totalOutlet">Total Outlet Selected: </string>
+    <string name="warningXMaterial">tolong pilih nama material dengan benar</string>
+    <string name="storeCheck">Store Check</string>
+    <string name="freeGoods">Free Goods</string>
+
+    <string name="orderHeader">Order Header</string>
+    <string name="newOrder">New Order</string>
+    <string name="noOrderYet">No Order yet..</string>
+    <string name="newVisit">new visit</string>
+
+    <string name="setting">Settings</string>
+    <string name="goodStock">Good stock </string>
+    <string name="badStock">Bad stock </string>
+    <string name="textDialogConfirm">Are you sure?</string>
+
+    <string name="warnChooseRbutton">please choose the radio button..</string>
+    <string name="warnChooseRbutton1">Wanna choose </string>
+    <string name="warnChooseRbutton2"> for this list? </string>
+    <string name="noStoreCheck">Please go to store check first...</string>
+    <string name="continuekah">Continue ?</string>
+    <string name="pleaseWait">Please wait...</string>
+
+    <string name="menu7TitleHeader">Summary Report</string>
+    <string name="targetSummary">Target Summary</string>
+    <string name="klProduct">KL. Product</string>
+    <string name="customer">Customer</string>
+    <string name="initialTarget">Initial Target</string>
+    <string name="currentTarget">Current Target</string>
+    <string name="pipe">|</string>
+    <string name="createNewOrderPlan">Create New Order Plan</string>
+    <string name="clear">Clear</string>
+    <string name="addOutlet">Add Outlet</string>
+    <string name="stockTersedia">Stock tersedia: </string>
+
+    <string name="saveOffline">No Internet, Your data will be saved in local database</string>
+    <string name="getPrice">Get Price</string>
+    <string name="syncing">Syncing..</string>
+    <string name="syncComplete">Sync succesfull</string>
+    <string name="syncFailed">Sync failed</string>
+    <string name="priceNotFound">Price not found</string>
+
+    <string name="totalPrice">Total Price</string>
+    <string name="viewDetail">View Detail</string>
+
+    //Promotion Detail
+    <string name="from">From: </string>
+    <string name="to">To: </string>
+    <string name="value">Value : </string>
+    <string name="salesDocTy">SalesDocTy</string>
+    <string name="scale">Scale</string>
+    <string name="minimumPScale">Min. P Scale</string>
+    <string name="pmntTerms">Pmnt Terms</string>
+    <string name="perUom">Per Uom</string>
+    <string name="validFromTo">Valid fr to</string>
+
+    <string name="productId">Product Id</string>
+    <string name="productName">Product Name</string>
+    <string name="discType">Disc. Type</string>
+    <string name="validFrom">Valid From</string>
+    <string name="validTo">Valid To</string>
+    <string name="materialGroup">Material Group</string>
+    <string name="plant">Plant</string>
+    <string name="salesOrganization">Sales Org.</string>
+    <string name="distributionChannel">Distr. Ch.</string>
+    <string name="jenisAccount">Jenis Account</string>
+    <string name="segmen">Segmen</string>
+    <string name="product">Product</string>
+    <string name="filter">Filter</string>
+
+
+
+    <string name="warningInputFilter">Please enter the correct field!</string>
+    <string name="offlineSavedWarn">No Internet, will be saved in your local storage</string>
+
+    <string name="noData">No data</string>
+    <string name="noDataTarget">Tidak ada data target.</string>
+    <string name="syncornot">Are you sure want to sync?</string>
+    <string name="saveReturnOrNot">Save Return?</string>
+    <string name="nikSalesman">NIK Salesman</string>
+    <string name="nikSupervisor">NIK Supervisor</string>
+    <string name="ipAddress">Ip Address</string>
+    <string name="navmenu1">Home</string>
+    <string name="navmenu2">Target</string>
+    <string name="navmenu2a">Sales Target</string>
+    <string name="navmenu2b">Object</string>
+    <string name="navmenu2z">Target Detail</string>
+    <string name="navmenu3">Order Plan</string>
+    <string name="navmenu3a">Order Plan Detail</string>
+    <string name="navmenu3az">Order Plan Summary</string>
+    <string name="navmenu4">Promotion</string>
+    <string name="navmenu5">Visit</string>
+    <string name="navmenu5a">Credit Info</string>
+    <string name="navmenu5b">Store Check</string>
+    <string name="navmenu5c">Order</string>
+    <string name="navmenu5cz">Order Summary</string>
+    <string name="navmenu5d">Return Header</string>
+    <string name="navmenu5dz">Edit Return</string>
+    <string name="navmenu5dx">Return Detail</string>
+    <string name="navmenu6">Summary</string>
+    <string name="navmenu6a">Summary Report</string>
+    <string name="navmenu6b">Sales Order History</string>
+    <string name="navmenu7">Profile</string>
+    <string name="navmenu7z">Change Profile</string>
+    <string name="navmenu8">Sync</string>
+    <string name="navmenu9">Log</string>
+    <string name="navmenu10">Setting</string>
+    <string name="navmenu11">Specimen</string>
+
+    <string name="noticeSync">Missing data. Please sync or re login</string>
+    <string name="reTypeNewPassword">Re-type New Password</string>
+
+
+    <string name="coma">,</string>
+    <string name="dot">.</string>
+    <string name="IDR">IDR</string>
+    <string name="PPN">PPN</string>
+    <string name="op_brackets">(</string>
+    <string name="percent">%</string>
+    <string name="cl_brackets">)</string>
+    <string name="percent_amount">100</string>
+    <string name="zero">0</string>
+    <string name="indo_currency">Rp.</string>
+    <string name="cond_type_disc">MWST</string>
+    <string name="no_freegoods_data">No FreeGoods Data</string>
+    <string name="pleaseSignFirst">please sign first</string>
+    <string name="pleaseAttachPhoto">please attach photo</string>
+    <string name="status_on_progress">ON PROGRESS</string>
+    <string name="input_no_po">Please input no po</string>
+    <string name="input_ed_po">Please input ed po</string>
+    <string name="filterBy">Filter By</string>
+    <string name="apply">APPLY</string>
+    <string name="DivProd">Div Product</string>
+    <string name="Period">Period</string>
+    <string name="FLAG_UPDATE_ORDER_PLAN">1</string>
+
+    <string name="missingData">Missing data. Please contact your admin</string>
+    <string name="noticeAddFirst">Press + button to create</string>
+    <string name="orderDate">Order Date</string>
+    <string name="valid">Valid</string>
+    <string name="toolbarSearchHint">Search..</string>
+    <string name="toolbarSearchHintForPromotion">DiscName|Customer|Material|Plant</string>
+    <string name="hide">Hide</string>
+    <string name="status_price_unavailable">N</string>
+    <string name="status_price_available">A</string>
+    <string name="string_notice_checked_in">Anda sedang melakukan check-in di outlet</string>
+    <string name="connectorIdWithName"> - </string>
+    <string name="reload">Reload</string>
+    <string name="tryAgain"><u>Coba lagi</u></string>
+    <string name="STATUS_TRUE">true</string>
+    <string name="STATUS_FALSE">false</string>
+    <string name="STATUS_TRUE_SYNCED">TS</string>
+    <string name="ID_JJ_ABSOLUTE_CANVAS_ORDER">ZB07</string>
+    <string name="clientId">|000</string>
+    <string name="getTokenError">Get Token Error</string>
+    <string name="otherLogIn">Orang lain sedang log in dengan akun yang sama. Anda yakin ingin tetap masuk? Jika "ya", maka orang yang sedang log in akan otomatis keluar.</string>
+    <string name="mtka_mandatory_notice">tolong isi nomor dan tanggal PO</string>
+
+    <string name="alertExit">Anda yakin ingin keluar ?</string>
+
+    <string name="masterData">Master Data</string>
+    <string name="fetching_data">fetching data..</string>
+    <string name="uomPercentFreeGoods">PRC</string>
+    <string name="permission_status">permissionStatus</string>
+    <string name="need_multiple_permissions">Need Multiple Permissions</string>
+    <string name="need_gallery_and_location_permission">This app needs Gallery and Location permissions.</string>
+    <string name="unable_to_get_permission">Unable to get Permission</string>
+    <string name="go_to_permisson_to_grant_gallery_and_location">Go to Permissions to Grant Gallery and Location</string>
+    <string name="grant">Grant</string>
+    <string name="missing_id">Error data, missing id</string>
+    <string name="no_attachment">Tidak ada lampiran</string>
+    <string name="failedLoaded">Failed loaded</string>
+    <string name="space">&#160;</string>
+    <string name="digantikan_oleh">Digantikan oleh:</string>
+    <string name="strip">-</string>
+    <string name="klproduct">KlProduct</string>
+    <string name="tanggal_hint">tanggal..</string>
+    <string name="warning_belum_pilih_outlet">Pilih outlet terlebih dahulu</string>
+    <string name="no_partner_notice">tidak ada data partner, silahkan hubungi admin</string>
+    <string name="load_more"><u>load more</u></string>
+    <string name="alert_notice_order_back">Anda sedang memasukkan data order. Yakin ingin ke halaman sebelumnya?</string>
+    <string name="info_sync_all">Sync all mungkin akan memakan waktu lama. Jika muncul dialog untuk wait/tunggu. Silahkan pilih tunggu.</string>
+    <string name="press_material_for_view">Press material for view</string>
+    <string name="account">Account</string>
+
+</resources>

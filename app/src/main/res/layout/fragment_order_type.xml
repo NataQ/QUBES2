@@ -1,0 +1,128 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LLOutlet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="24dp"
+        android:background="@color/darkGray"/>
+
+    <LinearLayout
+        android:id="@+id/llCanvasOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/canvasOIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/canvasorder" />
+
+        <LinearLayout
+            android:id="@+id/linearCOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="25dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/canvasOTriangle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/right_triangle"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/canvasOTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/caldroid_transparent"
+                    android:gravity="center_horizontal"
+                    android:text="@string/canvasOrder"
+                    android:textAllCaps="true"
+                    android:textColor="@color/darkBlue"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="24dp"
+        android:background="@color/darkGray"/>
+
+    <LinearLayout
+        android:id="@+id/llTakingOrder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/takingOrderIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/takingorder" />
+
+        <LinearLayout
+            android:id="@+id/linearTOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="25dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/takingOrderTriangle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:src="@drawable/right_triangle"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/takingOTxt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/takingOrder"
+                    android:textAllCaps="true"
+                    android:textColor="@color/darkBlue"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="24dp"
+        android:background="@color/darkGray"/>
+</LinearLayout>
+
+

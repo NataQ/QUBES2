@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/darkGray"
+            android:gravity="center"
+            android:textSize="@dimen/smallFont"
+            android:textAllCaps="true"
+            android:text="@string/pleaseAttachPhoto" />
+
+        <LinearLayout
+            android:id="@+id/linContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:background="@drawable/grey_box"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtImagePathAttachment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:paddingBottom="5dp"
+                android:text="@string/attach_here"
+                android:textColor="@color/white"
+                android:textSize="@dimen/smallFont" />
+
+            <ImageView
+                android:id="@+id/imgAttachment"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/ic_attachnew" />
+
+            <LinearLayout
+                android:id="@+id/l1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imgCameraPhoto"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_cameranew" />
+
+                <ImageView
+                    android:id="@+id/imgGalleryPhoto"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_gallerynew" />
+
+                <ImageView
+                    android:id="@+id/imgCancelPhoto"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_cancelnew" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginEnd="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cancel"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/caldroid_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginStart="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/btnSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/save"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:padding="12dp"
+                    app:cornerRadius="5dp"
+                    app:backgroundTint="@color/new_blue" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+
+<!--<?xml version='1.0' encoding='utf-8'?>-->
+<!--<RelativeLayout xmlns:android='http://schemas.android.com/apk/res/android'-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:layout_centerInParent="true"-->
+<!--    android:background="@android:color/transparent">-->
+
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/rtrans1"-->
+<!--        android:layout_width="1dp"-->
+<!--        android:layout_height="@dimen/heightIconDialogHalf"-->
+<!--        android:layout_alignParentTop="true" />-->
+
+<!--    <RelativeLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_below="@+id/rtrans1"-->
+<!--        android:background="@drawable/whitebox2">-->
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/rtrans2"-->
+<!--            android:layout_width="1dp"-->
+<!--            android:layout_height="@dimen/heightIconDialogHalf"-->
+<!--            android:layout_alignParentTop="true" />-->
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/linAct1"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="300dp"-->
+<!--            android:layout_below="@id/rtrans2"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:orientation="vertical">-->
+
+<!--            <LinearLayout-->
+<!--                android:id="@+id/linContent"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_above="@+id/linearAct2"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_margin="8dp"-->
+<!--                android:background="@drawable/grey_box"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/txtImagePathAttachment"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:paddingBottom="5dp"-->
+<!--                    android:text="@string/attach_here"-->
+<!--                    android:textColor="@color/white"-->
+<!--                    android:textSize="@dimen/smallFont" />-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/imgAttachment"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_above="@+id/l1"-->
+<!--                    android:layout_below="@+id/txtImagePathAttachment"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginTop="8dp"-->
+<!--                    android:layout_weight="1.5"-->
+<!--                    android:src="@drawable/ic_attachnew" />-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/l1"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_alignParentBottom="true"-->
+<!--                    android:layout_below="@id/imgAttachment"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginBottom="16dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:orientation="horizontal">-->
+
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imgCameraPhoto"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:src="@drawable/ic_cameranew" />-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imgGalleryPhoto"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:src="@drawable/ic_gallerynew" />-->
+
+<!--                    <ImageView-->
+<!--                        android:id="@+id/imgCancelPhoto"-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:src="@drawable/ic_cancelnew" />-->
+
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
+<!--            -->
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/r1"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@+id/linAct1"-->
+<!--            android:layout_marginTop="10dp">-->
+
+
+<!--            <Button-->
+<!--                android:id="@+id/btnCancel"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="#FB683B"-->
+<!--                android:text="@string/cancel"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="#fff" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/btnSave"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_weight="50"-->
+<!--                android:background="@color/blue3"-->
+<!--                android:text="@string/save"-->
+<!--                android:textAllCaps="true"-->
+<!--                android:textColor="#fff" />-->
+<!--        </LinearLayout>-->
+<!--    </RelativeLayout>-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/imageView"-->
+<!--        android:layout_width="125dp"-->
+<!--        android:layout_height="125dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:src="@drawable/ic_camera" />-->
+<!--</RelativeLayout>-->

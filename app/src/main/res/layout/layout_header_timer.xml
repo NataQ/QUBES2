@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/normalPadding"
+        android:layout_weight="0.7"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rh1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/normalPadding">
+
+            <TextView
+                android:id="@+id/dateValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="-"
+                android:textSize="@dimen/smallFont" />
+
+            <Chronometer
+                android:id="@+id/timerValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/dateValue"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/darkGray"
+                android:textSize="@dimen/smallFont" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/separator1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/rh1"
+            android:background="@color/darkGray" />
+
+        <RelativeLayout
+            android:id="@+id/rh2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/normalPaddingx2"
+            android:layout_toRightOf="@+id/separator1">
+
+            <TextView
+                android:id="@+id/namaClient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="@color/pureBlue"
+                android:textSize="@dimen/mediumFont" />
+
+            <TextView
+                android:id="@+id/keterangan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/namaClient"
+                android:text="-"
+                android:textSize="@dimen/superSmallFont" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rh3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/rh2">
+
+            <TextView
+                android:id="@+id/separator2"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/darkGray"
+                android:layout_toLeftOf="@+id/relativePause"/>
+
+            <RelativeLayout
+                android:id="@+id/relativePause"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="6dp"
+                android:layout_toLeftOf="@+id/separator3">
+
+                <ImageView
+                    android:id="@+id/btnPause"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/pausen" />
+
+                <ImageView
+                    android:id="@+id/btnContinue"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_continuen"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/separator3"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/normalPadding"
+                android:layout_toLeftOf="@+id/btnStop"
+                android:background="@color/darkGray" />
+
+            <ImageView
+                android:id="@+id/btnStop"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/stopn" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/sepLast"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

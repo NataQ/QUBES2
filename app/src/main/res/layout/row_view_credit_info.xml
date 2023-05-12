@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:id="@+id/r1">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="apa aja dah"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/superSmallFont"
+            android:id="@+id/num"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="apa aja dah"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/superSmallFont"
+            android:id="@+id/date"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="apa aja dah"
+            android:gravity="right"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/superSmallFont"
+            android:id="@+id/total"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/superSmallFont"
+            android:id="@+id/div"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey"
+        android:layout_below="@+id/r1"/>
+</RelativeLayout>

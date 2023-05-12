@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/new_pink">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtOutlet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center"
+                tools:text="ROBINSON PADALARANG" />
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="-"
+                android:textSize="@dimen/superSmallFont" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_sales_order_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/txtViewEmpty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:text="@string/errorData"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/topContent"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:cardElevation="4dp"-->
+<!--        app:layout_constraintVertical_bias="0.0"-->
+<!--        card_view:cardCornerRadius="3dp"-->
+<!--        card_view:cardUseCompatPadding="true"-->
+<!--        tools:layout_editor_absoluteX="16dp"-->
+<!--        tools:layout_editor_absoluteY="0dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:background="@color/yellow1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="8dp">-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/txtDate"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textSize="@dimen/smallFont"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/txtOutlet"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:text="All Outlet"-->
+<!--                android:textColor="@color/darkGray"-->
+<!--                android:textSize="@dimen/superSmallFont" />-->
+<!--        </LinearLayout>-->
+
+<!--    </androidx.cardview.widget.CardView>-->
+
+<!--    <ScrollView-->
+<!--        android:id="@+id/layout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginTop="5dip"-->
+<!--        android:fillViewport="true"-->
+<!--        android:scrollbarStyle="outsideInset"-->
+<!--        android:scrollbars="horizontal">-->
+
+<!--        &lt;!&ndash;<HorizontalScrollView&ndash;&gt;-->
+<!--            &lt;!&ndash;android:id="@+id/horizontalView"&ndash;&gt;-->
+<!--            &lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+<!--            &lt;!&ndash;android:layout_height="0dp"&ndash;&gt;-->
+<!--            &lt;!&ndash;android:layout_marginTop="5dip"&ndash;&gt;-->
+<!--            &lt;!&ndash;android:layout_weight="92"&ndash;&gt;-->
+<!--            &lt;!&ndash;android:scrollbars="horizontal|vertical">&ndash;&gt;-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:orientation="vertical">-->
+
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/l3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginBottom="5dp"-->
+<!--                    android:layout_marginTop="5dp"-->
+<!--                    android:background="@color/blue6"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:weightSum="1">-->
+
+<!--                    <TableRow-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content">-->
+
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin="4dp"-->
+<!--                            android:layout_weight="0.25"-->
+<!--                            android:minEms="4"-->
+<!--                            android:text="@string/noTo"-->
+<!--                            android:textColor="@color/blue3"-->
+<!--                            android:textSize="@dimen/smallFont" />-->
+
+
+<!--                        &lt;!&ndash;<TextView&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:id="@+id/textView2"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:layout_margin="4dp"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:layout_weight="0.25"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:minEms="4"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:text="@string/noSo"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:textColor="@color/blue3"&ndash;&gt;-->
+<!--                            &lt;!&ndash;android:textSize="@dimen/smallFont" />&ndash;&gt;-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight="0.25"-->
+<!--                            android:layout_margin="4dp"-->
+<!--                            android:minEms="4"-->
+<!--                            android:text="@string/vol"-->
+<!--                            android:textColor="@color/blue3"-->
+<!--                            android:textSize="@dimen/smallFont" />-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin="4dp"-->
+<!--                            android:layout_weight="0.25"-->
+<!--                            android:minEms="4"-->
+<!--                            android:text="@string/outlet"-->
+<!--                            android:textColor="@color/blue3"-->
+<!--                            android:textSize="@dimen/smallFont" />-->
+
+<!--                        <TextView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_margin="4dp"-->
+<!--                            android:layout_weight="0.25"-->
+<!--                            android:minEms="4"-->
+<!--                            android:text="@string/status"-->
+<!--                            android:textColor="@color/blue3"-->
+<!--                            android:textSize="@dimen/smallFont" />-->
+<!--                    </TableRow>-->
+
+
+<!--                </LinearLayout>-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/l4"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="1dp"-->
+<!--                    android:layout_below="@+id/l3"-->
+<!--                    android:background="@color/blue3" />-->
+
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_weight="90">-->
+
+<!--                    <androidx.recyclerview.widget.RecyclerView-->
+<!--                        android:id="@+id/recycler_view_sales_order_history"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:layout_weight="90" />-->
+
+<!--                    <ProgressBar-->
+<!--                        android:id="@+id/progressBar"-->
+<!--                        style="?android:attr/progressBarStyleLarge"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerInParent="true"-->
+<!--                        android:progressDrawable="@drawable/circular_progress_bar"-->
+<!--                        android:visibility="gone" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/txtViewEmpty"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerInParent="true"-->
+<!--                        android:text="@string/errorData"-->
+<!--                        android:visibility="gone" />-->
+<!--                </RelativeLayout>-->
+
+
+<!--            </LinearLayout>-->
+<!--        &lt;!&ndash;</HorizontalScrollView>&ndash;&gt;-->
+<!--    </ScrollView>-->
+
+</LinearLayout>
