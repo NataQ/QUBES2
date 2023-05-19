@@ -196,7 +196,7 @@ public class SplashScreenActivity extends BaseActivity {
             }
 
             public void onFinish() {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);//LoginActivity
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -220,6 +220,7 @@ public class SplashScreenActivity extends BaseActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_STORAGE: {
                 // If request is cancelled, the result arrays are empty.

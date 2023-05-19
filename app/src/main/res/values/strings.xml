@@ -428,8 +428,8 @@
     <string name="noticeDelete">Anda yakin ingin menghapus?</string>
 
     //home
-    <string name ="matriksSalesman">Matriks Salesman</string>
-    <string name ="emptyText">-</string>
+    <string name="matriksSalesman">Matriks Salesman</string>
+    <string name="emptyText">-</string>
 
     //new
     <string name="serverError">Server Error</string>
@@ -528,7 +528,6 @@
     <string name="segmen">Segmen</string>
     <string name="product">Product</string>
     <string name="filter">Filter</string>
-
 
 
     <string name="warningInputFilter">Please enter the correct field!</string>
