@@ -642,5 +642,7 @@
     <string name="info_sync_all">Sync all mungkin akan memakan waktu lama. Jika muncul dialog untuk wait/tunggu. Silahkan pilih tunggu.</string>
     <string name="press_material_for_view">Press material for view</string>
     <string name="account">Account</string>
+    <string name="pleaseEnablePermission">Please enable all permission</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
 
 </resources>

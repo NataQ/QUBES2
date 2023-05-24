@@ -521,4 +521,11 @@ public class Helper extends BaseFragment {
     public static String splitIdFailed(String input, int pos){
         return input.split(";")[pos];
     }
+
+    public static String getTodayDate(String format) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(
+                format, Locale.getDefault());
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
 }

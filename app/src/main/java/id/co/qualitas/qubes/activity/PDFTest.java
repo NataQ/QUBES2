@@ -1,11 +1,21 @@
 package id.co.qualitas.qubes.activity;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
@@ -25,6 +35,15 @@ public class PDFTest extends BaseActivity {
     private Boolean success = false;
     private PDFView pdfView;
     private TextView txtPath;
+    //EXPORT N IMPORT
+    private static final int PERMISSION_STORAGE_END = 222;
+    private static final int PERMISSION_READ_STORAGE_CODE = 2000;
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,7 +52,18 @@ public class PDFTest extends BaseActivity {
         pdfView = findViewById(R.id.pdfView);
         txtPath = findViewById(R.id.path);
         pdfUtils = LashPdfUtils.getInstance(PDFTest.this);
-        new AsyncTaskGeneratePDF().execute();//first
+
+        new AsyncTaskGeneratePDF().execute();
+
+        txtPath.setOnClickListener(v -> {
+//            if (checkPermission()) {
+                new AsyncTaskGeneratePDF().execute();
+//                exportDB(getApplicationContext());
+//            } else {
+//                setToast(getString(R.string.pleaseEnablePermission));
+//                requestPermission();
+//            }
+        });
     }
 
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
@@ -45,9 +75,9 @@ public class PDFTest extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/text.pdf");
+                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lash.pdf");
 //                if (pdfFile.getParentFile().exists()) {
-                    success = pdfUtils.createPDF(pdfFile);
+                success = pdfUtils.createPDF(pdfFile);
 //                } else {
 //                    setToast(pdfFile.getAbsolutePath() + " doesn't exists");
 //                }
@@ -93,6 +123,76 @@ public class PDFTest extends BaseActivity {
                     }
                 }).nightMode(false) // toggle night mode
                 .load();
+    }
+
+    //EXPORT N IMPORT SQLITE
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean check = Environment.isExternalStorageManager() && (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            return check;
+        } else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private void requestPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", new Object[]{getApplicationContext().getPackageName()})));
+                    startActivityForResult(intent, 2296);
+                } catch (Exception e) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, 2296);
+                }
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            //below android 11
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void requestPermission11() {
+        ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    new AsyncTaskGeneratePDF().execute();//first
+                } else {
+                    setToast(getString(R.string.pleaseEnablePermission));
+                }
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2296) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    requestPermission11();
+                } else {
+                    setToast("Allow permission for storage access!");
+                }
+            }
+        }
     }
 
 }

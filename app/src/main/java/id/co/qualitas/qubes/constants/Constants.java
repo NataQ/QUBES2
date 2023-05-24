@@ -468,4 +468,7 @@ public class Constants {
     public static final String LIST_SELECTED_CUSTOMER_ORDER_PLAN = "list sel cus op";
 
     public static final String VERSION = "version";
+
+    public static final String DATE_FORMAT_1 = "dd/MM/yyyy";
+    public static final String DATE_FORMAT_2 = "yyyy-MM-dd HH:mm:ss";//2023-01-14 10:25:48
 }

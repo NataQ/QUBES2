@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -58,6 +59,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,6 +94,7 @@ import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
 import id.co.qualitas.qubes.model.VisitOrderRequest;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.utils.Utils;
 
 //import android.support.multidex.MultiDex;
 
@@ -1534,5 +1541,56 @@ public class BaseActivity extends AppCompatActivity {
             encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         }
         return encodedImage;
+    }
+
+    public void exportDB(Context context) {
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source = null;
+        FileChannel destination = null;
+        String currentDBPath1 = "//data//" + getPackageName() + "//databases//POD.db";
+        String currentDBPath = getDbPath(context, "POD.db");
+        String backupDBPath = Utils.getDirLocPDF(context) + "/pod_backup.db";
+        File currentDB = new File(currentDBPath);
+        File backupDB = new File(backupDBPath);
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(context, "Your Database is Exported !!", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Utils.showToast(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void importDB(Context context) {
+        String dir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File sd = new File(dir);
+        File data = Environment.getDataDirectory();
+        FileChannel source = null;
+        FileChannel destination = null;
+        String currentDBPath = getDbPath(context, "POD.db");
+        String backupDBPath = Utils.getDirLocPDF(context) + "/pod_backup.db";
+        File currentDB = new File(currentDBPath);
+        File backupDB = new File(backupDBPath);
+
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(context, "Your Database is Imported !!", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Utils.showToast(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public String getDbPath(Context context, String YourDbName) {
+        return context.getDatabasePath(YourDbName).getAbsolutePath();
     }
 }

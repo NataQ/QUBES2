@@ -196,7 +196,7 @@ public class SplashScreenActivity extends BaseActivity {
             }
 
             public void onFinish() {
-                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);//LoginActivity
+                Intent intent = new Intent(getApplicationContext(), PDFTest.class);//LoginActivity
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

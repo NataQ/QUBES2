@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="25dp">
 
@@ -13,11 +13,11 @@
         android:id="@+id/imageView6"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/ic_background_up_login"
         app:layout_constraintBottom_toTopOf="@+id/guideline70"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/ic_background_up_login" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewLogo"
@@ -92,19 +92,19 @@
         app:layout_constraintTop_toTopOf="@+id/guideline">
 
         <com.google.android.material.button.MaterialButton
-            style="@style/Widget.MaterialComponents.Button"
             android:id="@+id/btnSave"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/llPassword"
             android:layout_marginTop="20dp"
-            android:text="Log In"
             android:fontFamily="@font/montserrat"
+            android:padding="12dp"
+            android:text="Log In"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:padding="12dp"
-            app:cornerRadius="8dp"
-            app:backgroundTint="@color/new_blue" />
+            app:backgroundTint="@color/new_blue"
+            app:cornerRadius="8dp" />
 
         <LinearLayout
             android:id="@+id/llUsername"
@@ -128,11 +128,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="83317071"
-                android:fontFamily="@font/montserrat_regular"
                 android:background="@color/space_transparent"
+                android:fontFamily="@font/montserrat_regular"
                 android:hint="@string/userNumber"
                 android:inputType="textPersonName"
+                android:text="83317071"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -159,11 +159,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="123456"
-                android:fontFamily="@font/montserrat_regular"
                 android:background="@color/space_transparent"
+                android:fontFamily="@font/montserrat_regular"
                 android:hint="@string/password"
                 android:inputType="textPassword"
+                android:text="123456"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -177,16 +177,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:layout_alignParentBottom="true"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Are you Supervisor?"
                 android:fontFamily="@font/montserrat_regular"
+                android:text="Are you Supervisor?"
                 android:textColor="@color/black" />
 
             <TextView
@@ -194,8 +194,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Log In"
                 android:fontFamily="@font/montserrat_regular"
+                android:text="Log In"
                 android:textColor="@color/new_blue"
                 android:textStyle="bold" />
 
@@ -206,8 +206,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/llUsername"
-            android:fontFamily="@font/montserrat_medium"
             android:layout_marginTop="12dp"
+            android:fontFamily="@font/montserrat_medium"
             android:text="Password"
             android:textColor="@color/black" />
 
@@ -215,8 +215,8 @@
             android:id="@+id/txtUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User Name"
             android:fontFamily="@font/montserrat_medium"
+            android:text="User Name"
             android:textColor="@color/black" />
     </RelativeLayout>
 
@@ -224,9 +224,9 @@
         android:id="@+id/ipChanger"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="9dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="9dp"
         android:text="@string/setting"
         android:textColor="@color/blue4"
         android:textSize="@dimen/superSmallFont"
@@ -249,13 +249,13 @@
 
     <TextView
         style="@style/TextAppearance.MaterialComponents.Headline4"
+        android:id="@+id/txtQubes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/app_name"
-        android:textStyle="bold"
         android:textColor="@color/white"
-
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline72"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="1.0"
