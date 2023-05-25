@@ -800,7 +800,7 @@ public class BaseActivity extends AppCompatActivity {
                                 }
 
                                 Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                                Intent intent = new Intent(getApplicationContext(),NewMainActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), NewMainActivity.class);
                                 startActivity(intent);
 //                                fragment = new OrderPlanFragment(); //ubah ke activity dulu
 //                                setContent(fragment);
@@ -1169,7 +1169,7 @@ public class BaseActivity extends AppCompatActivity {
                             db.updateVisitPlan(outletResponse);
 
                             Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                            Intent intent = new Intent(getApplicationContext(),NewMainActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), NewMainActivity.class);
                             startActivity(intent);
 
 //                            fragment = new RetailOutletFragment(); pindah halaman ke retail outlet??
@@ -1561,7 +1561,7 @@ public class BaseActivity extends AppCompatActivity {
             destination.close();
             Toast.makeText(context, "Your Database is Exported !!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            Utils.showToast(e.getMessage());
+            setToast(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1585,7 +1585,7 @@ public class BaseActivity extends AppCompatActivity {
             destination.close();
             Toast.makeText(context, "Your Database is Imported !!", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
-            Utils.showToast(e.getMessage());
+            setToast(e.getMessage());
             e.printStackTrace();
         }
     }

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,15 +27,20 @@ import java.util.HashMap;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
+import id.co.qualitas.qubes.utils.OverLkPdfUtils;
+import id.co.qualitas.qubes.utils.UnloadingPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class PDFTest extends BaseActivity {
 
-    private LashPdfUtils pdfUtils;
+    private LashPdfUtils pdfLashUtils;
+    private UnloadingPdfUtils pdfUnloadingUtils;
+    private OverLkPdfUtils pdfLkUtils;
     private File pdfFile;
     private Boolean success = false;
     private PDFView pdfView;
     private TextView txtPath;
+    private Button btnLash, btnUnloading, btnLK;
     //EXPORT N IMPORT
     private static final int PERMISSION_STORAGE_END = 222;
     private static final int PERMISSION_READ_STORAGE_CODE = 2000;
@@ -49,20 +55,36 @@ public class PDFTest extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_pdf);
+
         pdfView = findViewById(R.id.pdfView);
         txtPath = findViewById(R.id.path);
-        pdfUtils = LashPdfUtils.getInstance(PDFTest.this);
+        btnLash = findViewById(R.id.btnLash);
+        btnLK = findViewById(R.id.btnLK);
+        btnUnloading = findViewById(R.id.btnUnloading);
 
-        new AsyncTaskGeneratePDF().execute();
+        pdfLashUtils = LashPdfUtils.getInstance(PDFTest.this);
+        pdfUnloadingUtils = UnloadingPdfUtils.getInstance(PDFTest.this);
+        pdfLkUtils = OverLkPdfUtils.getInstance(PDFTest.this);
 
-        txtPath.setOnClickListener(v -> {
+        btnLash.setOnClickListener(v -> {
 //            if (checkPermission()) {
-                new AsyncTaskGeneratePDF().execute();
+            PARAM = 1;
+            new AsyncTaskGeneratePDF().execute();
 //                exportDB(getApplicationContext());
 //            } else {
 //                setToast(getString(R.string.pleaseEnablePermission));
 //                requestPermission();
 //            }
+        });
+
+        btnUnloading.setOnClickListener(v -> {
+            PARAM = 2;
+            new AsyncTaskGeneratePDF().execute();
+        });
+
+        btnLK.setOnClickListener(v -> {
+            PARAM = 3;
+            new AsyncTaskGeneratePDF().execute();
         });
     }
 
@@ -75,12 +97,16 @@ public class PDFTest extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lash.pdf");
-//                if (pdfFile.getParentFile().exists()) {
-                success = pdfUtils.createPDF(pdfFile);
-//                } else {
-//                    setToast(pdfFile.getAbsolutePath() + " doesn't exists");
-//                }
+                if (PARAM == 1) {
+                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lash.pdf");
+                    success = pdfLashUtils.createPDF(pdfFile);
+                } else if (PARAM == 2) {
+                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/unloading.pdf");
+                    success = pdfUnloadingUtils.createPDF(pdfFile);
+                } else {
+                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lk.pdf");
+                    success = pdfLkUtils.createPDF(pdfFile);
+                }
                 return success;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -92,7 +118,7 @@ public class PDFTest extends BaseActivity {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result == null) {
-                Utils.showToast("generate pdf failed, please try again");
+                setToast("generate pdf failed, please try again");
             } else {
                 if (result) {
                     loadPdfViewer(pdfView, pdfFile);

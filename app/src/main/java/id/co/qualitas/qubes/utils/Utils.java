@@ -101,7 +101,8 @@ public class Utils {
         toaster = Toast.makeText(context, null, Toast.LENGTH_LONG);
     }
 
-    public static void showToast(String message) {//spy gbs di spam
+    public static void showToast(Context context, String message) {//spy gbs di spam
+        toaster = Toast.makeText(context, null, Toast.LENGTH_LONG);
         toaster.setText(message);
         toaster.show();
     }

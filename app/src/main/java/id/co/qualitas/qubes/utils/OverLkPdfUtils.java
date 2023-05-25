@@ -1,12 +1,9 @@
 package id.co.qualitas.qubes.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -16,9 +13,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.Barcode39;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -35,34 +30,16 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 
-public class LashPdfUtils {
-    Font calibriRegularWhite, calibriRegular, bigCalibriBold, bigCalibri, calibriBold, arialRegular, bigArialBold, arialBold, myriadproRegular;
-
+public class OverLkPdfUtils {
+    Font calibriRegularWhite, calibriBoldUnderline, calibriRegular, bigCalibriBold, bigCalibri, calibriBold, arialRegular, bigArialBold, arialBold, myriadproRegular;
     int SIZE_FONT_NORMAL = 5;
-    int SIZE_FONT_BIG = 10;
-    int MAX_COLUMN_TABLE = 15;
-    int MAX_WIDTH_NO = 4;
-    int MAX_WIDTH_CUSTOMER = 7;
-    int MAX_WIDTH_OUTLET = 8;
-    int MAX_WIDTH_TGL = 6;
-    int MAX_WIDTH_NO_TAGIHAN = 6;
-    int MAX_WIDTH_JMLH = 6;
-    int MAX_WIDTH_NO_FAKTUR = 7;
-    int MAX_WIDTH_NILAI = 7;
-    int MAX_WIDTH_TUNAI = 7;
-    int MAX_WIDTH_GIRO = 7;
-    int MAX_WIDTH_TF = 7;
-    int MAX_WIDTH_RETUR = 7;
-    int MAX_WIDTH_LAIN = 7;
-    int MAX_WIDTH_SALDO_PIUTANG = 8;
-    int MAX_WIDTH_KET = 6;
+    int SIZE_FONT_BIG = 8;
+    int MAX_COLUMN_TABLE = 18;
 
     String volumeUnit = null, weightUnit = null;
     BigDecimal totalVolume = BigDecimal.ZERO, totalWeight = BigDecimal.ZERO;
@@ -70,13 +47,13 @@ public class LashPdfUtils {
 
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
-    private static LashPdfUtils instance;
+    private static OverLkPdfUtils instance;
     private Context context;
     private static final String TAG = "LashPdfUtils";
 
-    public static LashPdfUtils getInstance(Context context) {
+    public static OverLkPdfUtils getInstance(Context context) {
         if (instance == null) {
-            instance = new LashPdfUtils(context);
+            instance = new OverLkPdfUtils(context);
         }
         return instance;
     }
@@ -131,7 +108,7 @@ public class LashPdfUtils {
         return baseFont;
     }
 
-    public LashPdfUtils(Context context) {//DeliverySummaryActivityEra
+    public OverLkPdfUtils(Context context) {//DeliverySummaryActivityEra
         this.context = context;
     }
 
@@ -157,10 +134,14 @@ public class LashPdfUtils {
         arialRegular = new Font(loadArial(), SIZE_FONT_NORMAL);
         myriadproRegular = new Font(loadMyriad(), SIZE_FONT_NORMAL);
         bigCalibriBold = new Font(loadCalibriBold(), SIZE_FONT_BIG);
+        bigCalibriBold.setStyle(Font.BOLD);
         bigCalibri = new Font(loadCalibri(), SIZE_FONT_BIG);
         bigArialBold = new Font(loadArialBold(), SIZE_FONT_BIG);
         calibriBold = new Font(loadCalibriBold(), SIZE_FONT_NORMAL);//Font.BOLD
         arialBold = new Font(loadArialBold(), SIZE_FONT_NORMAL);//Font.BOLD
+
+        calibriBoldUnderline = new Font(loadCalibriBold(), SIZE_FONT_BIG);
+        calibriBoldUnderline.setStyle(Font.UNDERLINE | Font.BOLD);
     }
 
     public void autoEnter(PdfPTable table, PdfPCell cell, int banyak) {
@@ -177,9 +158,13 @@ public class LashPdfUtils {
         table.setWidthPercentage(100);
         PdfPCell cell;
 
-        cell = new PdfPCell(new Phrase("PT. ASIASEJAHTERA PERDANA PHARMACEUTICAL", bigCalibri));
+        cell = new PdfPCell(new Phrase("USULAN PENGIRIMAN DENGAN KONDIIS OVER LK/MULTI BON/OVER TOP", calibriBoldUnderline));
         cell.setBorder(Rectangle.NO_BORDER);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         table.addCell(cell);
+
+        autoEnter(table,cell,2);
 
         return table;
     }
@@ -188,78 +173,37 @@ public class LashPdfUtils {
         PdfPCell cell;
         Phrase text;
 
-        PdfPTable mainTable = new PdfPTable(4);
+        PdfPTable mainTable = new PdfPTable(MAX_COLUMN_TABLE);
         mainTable.setWidthPercentage(100);
-        mainTable.setWidths(new int[]{15, 35, 15, 35});
-//
-//        PdfPTable leftTable = new PdfPTable(3);
-//        leftTable.setWidthPercentage(100);
-//        leftTable.setWidths(new int[]{28, 2, 70});
 
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        cell.setColspan(2);
+        text = new Phrase("ASPP : BOTABEK", bigCalibriBold);
+        cell.setColspan(15);
+        cell.addElement(text);
+        mainTable.addCell(cell);
+
+        cell = new PdfPCell();
+        text = new Phrase("TGL : " + Helper.getTodayDate(Constants.DATE_FORMAT_4), bigCalibriBold);
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setColspan(3);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell.addElement(text);
+        mainTable.addCell(cell);
+
+        cell = new PdfPCell();
+        cell.setBorder(Rectangle.NO_BORDER);
+        text = new Phrase("DEPO : TANGERANG", bigCalibriBold);
+        cell.setColspan(15);
+        cell.addElement(text);
+        mainTable.addCell(cell);
+
+        cell = new PdfPCell();
         text = new Phrase("", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase("EOD", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        text = new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_2), bigCalibri);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase("KANTOR / DEPO", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "DKI", bigCalibri);//BD01
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase("NO.LASH", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "515920230113", bigCalibri);//BD01
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase("NAMA SALES", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "CHRIS (PT. AHEB)", bigCalibri);//SES G.PUSAT PALEM
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase("TANGGAL", bigCalibri);
-        cell.addElement(text);
-        mainTable.addCell(cell);
-
-        cell = new PdfPCell();
-        cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_1), bigCalibri);//SES G.PUSAT PALEM
+        cell.setColspan(3);
+        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -271,48 +215,14 @@ public class LashPdfUtils {
         Phrase text;
         PdfPTable table = new PdfPTable(MAX_COLUMN_TABLE);
         table.setWidthPercentage(100);
-        table.setWidths(new int[]{MAX_WIDTH_NO, MAX_WIDTH_CUSTOMER, MAX_WIDTH_OUTLET,
-                MAX_WIDTH_TGL, MAX_WIDTH_NO_TAGIHAN, MAX_WIDTH_JMLH,
-                MAX_WIDTH_NO_FAKTUR, MAX_WIDTH_NILAI, MAX_WIDTH_TUNAI,
-                MAX_WIDTH_GIRO, MAX_WIDTH_TF, MAX_WIDTH_RETUR,
-                MAX_WIDTH_LAIN, MAX_WIDTH_SALDO_PIUTANG, MAX_WIDTH_KET});
+//        table.setWidths(new int[]{MAX_WIDTH_NO, MAX_WIDTH_CUSTOMER, MAX_WIDTH_OUTLET,
+//                MAX_WIDTH_TGL, MAX_WIDTH_NO_TAGIHAN, MAX_WIDTH_JMLH,
+//                MAX_WIDTH_NO_FAKTUR, MAX_WIDTH_NILAI, MAX_WIDTH_TUNAI,
+//                MAX_WIDTH_GIRO, MAX_WIDTH_TF, MAX_WIDTH_RETUR,
+//                MAX_WIDTH_LAIN, MAX_WIDTH_SALDO_PIUTANG, MAX_WIDTH_KET});
 
         //ttd
-        cell = new PdfPCell(new Phrase("Serah Terima Faktur", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(9);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Penyelesaian Laporan", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(4);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Disediakan Oleh", calibriRegular));
+        cell = new PdfPCell(new Phrase("DSM/SPV", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -321,7 +231,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Diterima Oleh", calibriRegular));
+        cell = new PdfPCell(new Phrase("DALTA SPV", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -330,57 +240,170 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Dibuat Oleh", calibriRegular));
+        cell = new PdfPCell(new Phrase("RM", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("DALTA MGR", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("DIR of GT DP", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("COO", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(3);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("PRESDIR", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        //line
+
+        for (int i = 0; i < 3; i++) {
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(2);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(2);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("", calibriRegular));
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            if (i == 2) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setPadding(5);
+            table.addCell(cell);
+        }
+
+        cell = new PdfPCell(new Phrase("TT & NAMA JELAS :", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(3);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("TT & NAMA JELAS :", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(3);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("TT & NAMA JELAS :", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(3);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("TT & NAMA JELAS :", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(2);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
         cell.setPadding(5);
         table.addCell(cell);
 
         cell = new PdfPCell(new Phrase("", calibriRegular));
         cell.setUseAscender(true);
+        cell.setColspan(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Diterima Oleh", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(4);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Diketahui Oleh", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        //enter 1
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
+        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
         cell.setPadding(5);
         table.addCell(cell);
 
@@ -393,166 +416,115 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("", calibriRegular));//space middle
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(5);
-        table.addCell(cell);
-
         cell = new PdfPCell(new Phrase("", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
         cell.setPadding(5);
         table.addCell(cell);
 
-        //enter 2
+        for (int i = 0; i < 3; i++) {
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("SUSANTO W.", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("", calibriRegular));
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("MARTHA", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("ANJAS", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("YUSUS", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(2);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("NOVIANDY", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(2);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("HENKY BENYAMIN", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            if (i == 2) {
+                cell = new PdfPCell(new Phrase("ENDI DJOJONEGORO", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            } else {
+                cell = new PdfPCell(new Phrase("", calibriRegular));
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            }
+            cell.setColspan(3);
+            cell.setUseAscender(true);
+            cell.setPadding(5);
+            table.addCell(cell);
+        }
+
+        autoEnter(table, cell, 1);
+
+        cell = new PdfPCell(new Phrase("NOTE: \nOVER LK 15.000.000-50.000.000 (RM & DALTA MGR & DIR of GT DP)\n" +
+                "OVER LK 50.000.000-100.000.000 (RM & DALTA MGR & DIR of GT DP & COO)\n" +
+                "OVER LK 100.000.000 UP (RM & DALTA MGR & DIR of GT DP & COO & PRESDIR)", calibriRegular));
         cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
+        cell.setColspan(10);
+        cell.setBorder(Rectangle.BOX);
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));//space middle
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        //name
-
-        cell = new PdfPCell(new Phrase("ADM", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));//space middle
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("ADM", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("KASIR", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("DSM", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT);
-        cell.setPadding(5);
-        table.addCell(cell);
-
+        autoEnter(table, cell, 3);
 
         return table;
     }
@@ -563,50 +535,59 @@ public class LashPdfUtils {
         Phrase text;
         PdfPTable table = new PdfPTable(MAX_COLUMN_TABLE);
         table.setWidthPercentage(100);
-        table.setWidths(new int[]{MAX_WIDTH_NO, MAX_WIDTH_CUSTOMER, MAX_WIDTH_OUTLET,
-                MAX_WIDTH_TGL, MAX_WIDTH_NO_TAGIHAN, MAX_WIDTH_JMLH,
-                MAX_WIDTH_NO_FAKTUR, MAX_WIDTH_NILAI, MAX_WIDTH_TUNAI,
-                MAX_WIDTH_GIRO, MAX_WIDTH_TF, MAX_WIDTH_RETUR,
-                MAX_WIDTH_LAIN, MAX_WIDTH_SALDO_PIUTANG, MAX_WIDTH_KET});
+//        table.setWidths(new int[]{MAX_WIDTH_NO, MAX_WIDTH_CUSTOMER, MAX_WIDTH_OUTLET,
+//                MAX_WIDTH_TGL, MAX_WIDTH_NO_TAGIHAN, MAX_WIDTH_JMLH,
+//                MAX_WIDTH_NO_FAKTUR, MAX_WIDTH_NILAI, MAX_WIDTH_TUNAI,
+//                MAX_WIDTH_GIRO, MAX_WIDTH_TF, MAX_WIDTH_RETUR,
+//                MAX_WIDTH_LAIN, MAX_WIDTH_SALDO_PIUTANG, MAX_WIDTH_KET});
 
         autoEnter(table, new PdfPCell(), 1);
 
-        cell = new PdfPCell(new Phrase("LAPORAN AKTIVITAS SALES - REPRESENTATIVE HARIAN", bigCalibriBold));
+        cell = new PdfPCell(new Phrase("NAMA SR", calibriRegular));
         cell.setBorder(Rectangle.BOX);
-        cell.setColspan(MAX_COLUMN_TABLE);
+        cell.setRowspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("No.", calibriBold));
+        cell = new PdfPCell(new Phrase("NO. CUST", calibriRegular));
         cell.setUseAscender(true);
-        cell.setRowspan(2);
+        cell.setRowspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBorder(Rectangle.BOX);
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("No. Cust", calibriBold));
+        cell = new PdfPCell(new Phrase("NAMA TOKO", calibriRegular));
         cell.setUseAscender(true);
-        cell.setRowspan(2);
+        cell.setRowspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBorder(Rectangle.BOX);
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Nama Outlet", calibriBold));
+        cell = new PdfPCell(new Phrase("ALAMAT", calibriRegular));
         cell.setUseAscender(true);
-        cell.setRowspan(2);
+        cell.setRowspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setBorder(Rectangle.BOX);
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Faktur Tagihan", calibriBold));
+        cell = new PdfPCell(new Phrase("LK", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(3);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("CATATAN ADMINISTRASI", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -615,16 +596,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Penjualan", calibriBold));
-        cell.setUseAscender(true);
-        cell.setColspan(2);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Pembayaran", calibriBold));
+        cell = new PdfPCell(new Phrase("POSISI PIUTANG SAAT INI", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(5);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -633,7 +605,25 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Saldo Piutang", calibriBold));
+        cell = new PdfPCell(new Phrase("USULAN DSM/RM", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(5);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("RATA2/BLN", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setColspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("PEMBAYARAN", calibriRegular));
         cell.setUseAscender(true);
         cell.setRowspan(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -642,7 +632,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Ket.", calibriBold));
+        cell = new PdfPCell(new Phrase("TGL. FAKTUR", calibriRegular));
         cell.setUseAscender(true);
         cell.setRowspan(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -651,7 +641,88 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Tgl", calibriBold));
+        cell = new PdfPCell(new Phrase("PRODUK (KRT)", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("TGL JTH TEMPO", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("NILAI PIUTANG (RUPIAH)", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("BG / TGL JT BG", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("TGL KIRIM", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("JML BRG (CRT)", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("NILAI RP", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("KONDISI (NOTA/BG)", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("OVER LK (RP)", calibriRegular));
+        cell.setUseAscender(true);
+        cell.setRowspan(2);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("QTY", calibriRegular));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -659,71 +730,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("No.", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Jumlah", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("No. Faktur", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Nilai", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Tunai", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Giro/Cheque", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Transfer", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Retur", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("Lain2", calibriBold));
+        cell = new PdfPCell(new Phrase("RP", calibriRegular));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -733,16 +740,14 @@ public class LashPdfUtils {
 
         //detail
 
-        double totalJumlah = 0.0, totalNilai = 0.0, totalTunai = 0.0, totalGiro = 0.0, totalTf = 0.0, totalRetur = 0.0, totalLain = 0.0, totalSaldo = 0.0;
         for (int i = 0; i < 6; i++) {
-            totalJumlah = totalJumlah + (i + 3);
-            totalNilai = totalNilai + (72000 + i + 1);
-            totalTunai = totalTunai + (0);
-            totalGiro = totalGiro + (0);
-            totalTf = totalTf + (0);
-            totalRetur = totalRetur + (0);
-            totalLain = totalLain + (0);
-            totalSaldo = totalSaldo + (72000 + i + 1);
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.BOX);
+            cell.setPadding(5);
+            table.addCell(cell);
 
             cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
@@ -752,7 +757,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("20002000" + String.valueOf(i + 1), calibriRegular));//no cust
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -760,7 +765,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("karel" + String.valueOf(i + 1), calibriRegular));//name outlet
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -768,7 +773,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(Helper.getTodayDate(Constants.DATE_FORMAT_1) + String.valueOf(i + 1), calibriRegular));//tgl
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -776,7 +781,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("000" + String.valueOf(i + 1), calibriRegular));//no tagihan
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -784,15 +789,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format((i + 3)), calibriRegular));//jumlah
-            cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            cell.setBorder(Rectangle.BOX);
-            cell.setPadding(5);
-            table.addCell(cell);
-
-            cell = new PdfPCell(new Phrase("105159000002" + String.valueOf(i + 2), calibriRegular));//no faktur
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -800,63 +797,87 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format((72000 + i + 1)), calibriRegular));//nilai
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//tunai
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//giro
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//tf
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//retur
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//lain2
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(72000 + i + 1), calibriRegular));//saldo piutang
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("", calibriRegular));//ket
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.BOX);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.BOX);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
+            cell.setUseAscender(true);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setBorder(Rectangle.BOX);
+            cell.setPadding(5);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -864,113 +885,6 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
         }
-
-        //total
-
-        cell = new PdfPCell(new Phrase("TOTAL", calibriBold));
-        cell.setUseAscender(true);
-        cell.setColspan(3);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("TAGIHAN", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalJumlah), calibriRegular));//total jumlah
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("PENJ", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalNilai), calibriRegular));//total nilai
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalTunai), calibriRegular));//tunai
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalGiro), calibriRegular));//giro
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalTf), calibriRegular));//tf
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalRetur), calibriRegular));//retur
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalLain), calibriRegular));//lain2
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase(format.format(totalSaldo), calibriRegular));//saldo piutang
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
-        cell = new PdfPCell(new Phrase("", calibriRegular));//ket
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
 
         autoEnter(table, cell, 3);
 
