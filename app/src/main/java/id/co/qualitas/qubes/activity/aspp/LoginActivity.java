@@ -1,12 +1,16 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -17,10 +21,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
@@ -118,9 +126,28 @@ public class LoginActivity extends BaseActivity {
 
         if (Helper.getItemParam(Constants.REGIISTERID) == null) {
             try {
-                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-                Helper.setItemParam(Constants.REGIISTERID, refreshedToken);
-                registerID = refreshedToken;
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w("TAG", "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
+
+                                // Get new FCM registration token
+                                String refreshedToken = task.getResult();
+//                                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                                Helper.setItemParam(Constants.REGIISTERID, refreshedToken);
+                                registerID = refreshedToken;
+
+                                // Log and toast
+//                                String msg = getString(R.string.msg_token_fmt, token);
+//                                Log.d(TAG, msg);
+//                                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getApplication(), getString(R.string.getTokenError), Toast.LENGTH_LONG).show();
