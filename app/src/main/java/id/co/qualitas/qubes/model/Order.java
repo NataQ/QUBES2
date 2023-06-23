@@ -8,14 +8,51 @@ public class Order {
     private String txtOrderCode;
     private String txtPriceBefore;
     private String txtPriceNett;
+    private String status;
+    private String date;
+    private String soNo;
+    private String outlet;
 
-    public Order(String txtOrderName, String txtOrderCode, String txtPriceBefore, String txtPriceNett) {
-        this.txtOrderName = txtOrderName;
+    public Order(String txtOrderCode, String txtPriceNett, String outlet, String soNo, String status, String date) {
         this.txtOrderCode = txtOrderCode;
-        this.txtPriceBefore = txtPriceBefore;
         this.txtPriceNett = txtPriceNett;
+        this.soNo = soNo;
+        this.status = status;
+        this.date = date;
+        this.outlet = outlet;
     }
 
+    public String getOutlet() {
+        return outlet;
+    }
+
+    public void setOutlet(String outlet) {
+        this.outlet = outlet;
+    }
+
+    public String getSoNo() {
+        return soNo;
+    }
+
+    public void setSoNo(String soNo) {
+        this.soNo = soNo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public String getTxtOrderName() {
         return txtOrderName;

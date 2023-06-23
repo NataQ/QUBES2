@@ -16,6 +16,8 @@ import com.google.android.material.tabs.TabLayout;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.adapter.NewTabFragmentAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.fragment.aspp.DashboardFragment;
+import id.co.qualitas.qubes.fragment.aspp.PromotionFragment;
 import id.co.qualitas.qubes.helper.Helper;
 
 public class NewHomeFragment extends BaseFragment {
@@ -43,16 +45,18 @@ public class NewHomeFragment extends BaseFragment {
 
         //Set up the view pager and fragments
         adapter = new NewTabFragmentAdapter(getChildFragmentManager(), mTabs.getTabCount(), "home");
-        adapter.addFragment(new CalendarFragment(), "Calendar");
-        adapter.addFragment(new TargetFragment(), "Target");
+//        adapter.addFragment(new CalendarFragment(), "Calendar");
+        adapter.addFragment(new DashboardFragment(), "Dashboard");
+//        adapter.addFragment(new TargetFragment(), "Target");
+//        adapter.addFragment(new PromotionFragment(), "Promotion");
         adapter.addFragment(new PromotionFragment(), "Promotion");
 
         mViewPager.setAdapter(adapter);
         mTabs.setupWithViewPager(mViewPager);
 
         mTabs.getTabAt(0).setIcon(R.drawable.ic_calender);
-        mTabs.getTabAt(1).setIcon(R.drawable.ic_target);
-        mTabs.getTabAt(2).setIcon(R.drawable.ic_promotion);
+//        mTabs.getTabAt(1).setIcon(R.drawable.ic_target);
+        mTabs.getTabAt(1).setIcon(R.drawable.ic_promotion);
         mTabs.setTabTextColors(ContextCompat.getColor(getContext(), R.color.white), ContextCompat.getColor(getContext(), R.color.white));
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
@@ -85,6 +89,7 @@ public class NewHomeFragment extends BaseFragment {
                 FrameLayout.LayoutParams indicatorParams = (FrameLayout.LayoutParams) mIndicator.getLayoutParams();
                 indicatorParams.width = indicatorWidth;
                 mIndicator.setLayoutParams(indicatorParams);
+//                return null;
             }
         });
 

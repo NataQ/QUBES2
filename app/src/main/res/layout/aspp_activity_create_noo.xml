@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/new_blue"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:id="@+id/txtTitle"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:fontFamily="@font/montserrat_extra_bold"
+            android:gravity="center"
+            android:text="New Outlet Opening"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="Save"
+            android:textAllCaps="true"
+            android:textColor="@color/new_blue"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="8dp" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/layoutCorner"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_top_corner_white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:text="Detail Toko" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp"
+                        android:text="Upload Foto KTP / NPWP" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="12dp"
+                        app:cardElevation="8dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_margin="5dp"
+                                android:src="@drawable/ic_add_photo" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Code" />
+
+                        <TextView
+                            android:id="@+id/txtCode"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:gravity="end"
+                            android:padding="5dp"
+                            android:text="200020001"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Nama Toko" />
+
+                        <EditText
+                            android:id="@+id/edtNamaToko"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Alamat" />
+
+                        <EditText
+                            android:id="@+id/edtAddress"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Desa Kelurahan" />
+
+                        <EditText
+                            android:id="@+id/txtKelurahan"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Kecamatan" />
+
+                        <EditText
+                            android:id="@+id/txtKecamatan"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Kota Kabupaten" />
+
+                        <EditText
+                            android:id="@+id/txtKota"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Provinsi" />
+
+                        <EditText
+                            android:id="@+id/txtProvinsi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Handphone / TLP" />
+
+                        <EditText
+                            android:id="@+id/txtPhone"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Nama NPWP" />
+
+                        <EditText
+                            android:id="@+id/edtNamaNpwp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Alamat NPWP" />
+
+                        <EditText
+                            android:id="@+id/edtAlamatNpwp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="No. NPWP" />
+
+                        <EditText
+                            android:id="@+id/edtNoNpwp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Status NPWP" />
+
+                        <TextView
+                            android:id="@+id/spnStatusNpwp"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_2"
+                            android:completionThreshold="1"
+                            android:hint="Search.."
+                            android:padding="8dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:text="Detail Pemilik" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp"
+                        android:text="Upload Foto Toko" />
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="12dp"
+                        app:cardElevation="8dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="5dp">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_margin="5dp"
+                                android:src="@drawable/ic_add_photo" />
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Nama Pemilik" />
+
+                        <EditText
+                            android:id="@+id/edtNamaPemilik"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="NIK" />
+
+                        <EditText
+                            android:id="@+id/txtNIK"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Status Toko" />
+
+                        <TextView
+                            android:id="@+id/spnStatusToko"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_2"
+                            android:completionThreshold="1"
+                            android:hint="Search.."
+                            android:padding="8dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Lokasi" />
+
+                        <EditText
+                            android:id="@+id/txtLokasi"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Jenis Usaha" />
+
+                        <EditText
+                            android:id="@+id/txtJenisUsaha"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Lama Usaha" />
+
+                        <EditText
+                            android:id="@+id/txtLamaUsaha"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Suku" />
+
+                        <TextView
+                            android:id="@+id/spnSuku"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_2"
+                            android:completionThreshold="1"
+                            android:hint="Search.."
+                            android:padding="8dp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Type Toko Outlet" />
+
+                        <EditText
+                            android:id="@+id/txtTypeToko"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:drawableEnd="@drawable/ic_search"
+                            android:drawableTint="@color/darkGray"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Price List Type" />
+
+                        <EditText
+                            android:id="@+id/txtPriceListType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:drawableEnd="@drawable/ic_search"
+                            android:drawableTint="@color/darkGray"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Credit Limit" />
+
+                        <EditText
+                            android:id="@+id/txtCreditLimit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox_disable"
+                            android:enabled="false"
+                            android:text="2,000,000"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Route" />
+
+                        <EditText
+                            android:id="@+id/txtRoute"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox_disable"
+                            android:enabled="false"
+                            android:text="P3H4"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Week" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray">
+
+                            <LinearLayout
+                                android:id="@+id/ll1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/layoutCheck1"
+                                    android:layout_width="@dimen/size_check_box"
+                                    android:layout_height="@dimen/size_check_box"
+                                    android:layout_gravity="center"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@drawable/bg_check"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/imgChecked1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_checked"
+                                        android:visibility="invisible" />
+
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="W1"
+                                    android:textColor="@color/darkGray" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/layoutCheck2"
+                                    android:layout_width="@dimen/size_check_box"
+                                    android:layout_height="@dimen/size_check_box"
+                                    android:layout_gravity="center"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@drawable/bg_check"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/imgChecked2"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_checked"
+                                        android:visibility="invisible" />
+
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="W2"
+                                    android:textColor="@color/darkGray" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/layoutCheck3"
+                                    android:layout_width="@dimen/size_check_box"
+                                    android:layout_height="@dimen/size_check_box"
+                                    android:layout_gravity="center"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@drawable/bg_check"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/imgChecked3"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_checked"
+                                        android:visibility="invisible" />
+
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="W3"
+                                    android:textColor="@color/darkGray" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/layoutCheck4"
+                                    android:layout_width="@dimen/size_check_box"
+                                    android:layout_height="@dimen/size_check_box"
+                                    android:layout_gravity="center"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@drawable/bg_check"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/imgChecked4"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_checked"
+                                        android:visibility="invisible" />
+
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="W4"
+                                    android:textColor="@color/darkGray" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Day" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+
+                            android:orientation="vertical"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray">
+
+                            <LinearLayout
+                                android:id="@+id/llAllDay"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/layoutCheckAllDay"
+                                    android:layout_width="@dimen/size_check_box"
+                                    android:layout_height="@dimen/size_check_box"
+                                    android:layout_gravity="center"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@drawable/bg_check"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/imgCheckedAllDay"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:src="@drawable/ic_checked"
+                                        android:visibility="invisible" />
+
+                                </RelativeLayout>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="All Day"
+                                    android:textColor="@color/darkGray" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                                <LinearLayout
+                                    android:id="@+id/llMonday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".4"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckMonday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedMonday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Monday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/llThursday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".6"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckThursday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedThursday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Thursday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                                <LinearLayout
+                                    android:id="@+id/llTuesday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".4"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckTuesday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedTuesday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Tuesday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/llFriday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".6"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckFriday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedFriday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Friday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:padding="5dp">
+
+                                <LinearLayout
+                                    android:id="@+id/llWednesday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".4"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckWednesday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedWednesday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Wednesday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/llSaturday"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight=".6"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <RelativeLayout
+                                        android:id="@+id/layoutCheckSaturday"
+                                        android:layout_width="@dimen/size_check_box"
+                                        android:layout_height="@dimen/size_check_box"
+                                        android:layout_gravity="center"
+                                        android:layout_marginEnd="10dp"
+                                        android:background="@drawable/bg_check"
+                                        android:gravity="center">
+
+                                        <ImageView
+                                            android:id="@+id/imgCheckedSaturday"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:src="@drawable/ic_checked"
+                                            android:visibility="invisible" />
+
+                                    </RelativeLayout>
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Saturday"
+                                        android:textColor="@color/darkGray" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

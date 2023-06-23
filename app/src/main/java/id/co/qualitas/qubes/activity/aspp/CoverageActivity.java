@@ -1,23 +1,37 @@
-package id.co.qualitas.qubes.activity;
+package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
@@ -26,7 +40,6 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
-import org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay2;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
@@ -34,11 +47,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.model.Customer;
 
-public class OsmActivity extends AppCompatActivity {
+public class CoverageActivity extends AppCompatActivity {
     private MapView mMapView;
-    private IMapController mapController;
-    private static final String TAG = "OsmActivity";
+    //    private IMapController mapController;
+    private static final String TAG = "CoverageActivity";
     private static final int PERMISSION_REQUEST_CODE = 1;
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
@@ -63,14 +77,13 @@ public class OsmActivity extends AppCompatActivity {
 
         mMapView = findViewById(R.id.mapView);
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
-        mMapView.setBuiltInZoomControls(true);
+        mMapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
         mMapView.setMultiTouchControls(true);
-        mapController = mMapView.getController();
-        mapController.setZoom(18);
+        mMapView.getController().setZoom(15.0);
 
         //icon here aja
         mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getApplicationContext()), mMapView);
-        mLocationOverlay.enableMyLocation();
+//        mLocationOverlay.enableMyLocation();
         mMapView.getOverlays().add(mLocationOverlay);
 
         //icon compass
@@ -84,15 +97,24 @@ public class OsmActivity extends AppCompatActivity {
 //        mMapView.getOverlays().add(this.mRotationGestureOverlay);
 
         //your items
-        List<GeoPoint> geoPoints = new ArrayList<>();
-        geoPoints.add(new GeoPoint(-6.088578550359071, 106.69715529826526));
-        geoPoints.add(new GeoPoint(-6.089667657056153, 106.69914254522651));
-        geoPoints.add(new GeoPoint(-6.087210800359574, 106.69752915396195));
-        geoPoints.add(new GeoPoint(-6.089007607038804, 106.69676394516692));
-        geoPoints.add(new GeoPoint(-6.089640154498307, 106.69651502050023));
-        geoPoints.add(new GeoPoint(-6.0899335116841, 106.69844187205418));
+        List<Customer> custList = new ArrayList<>();
+        custList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, -6.090263984566263, 106.74593288657607));
+        custList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, -6.09047339393416, 106.74535959301855));
+        custList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, -6.09102018270127, 106.74661148098058));
+        custList.add(new Customer("CHGI", "Cluster Harmony, Golf Island", "WP6W+7JR, Pantai Indah Kapuk St, Kamal Muara, Penjaringan, North Jakarta City, Jakarta 14460", false, -6.089065696336256, 106.74676357552187));
+        custList.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, -6.09032214182743, 106.74191982249332));
+        custList.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, -6.088542162422348, 106.74239952686823));
 
-        ArrayList<OverlayItem> items = setOverLayItems(geoPoints);
+
+//        List<GeoPoint> geoPoints = new ArrayList<>();
+//        geoPoints.add(new GeoPoint(-6.088578550359071, 106.69715529826526));
+//        geoPoints.add(new GeoPoint(-6.089667657056153, 106.69914254522651));
+//        geoPoints.add(new GeoPoint(-6.087210800359574, 106.69752915396195));
+//        geoPoints.add(new GeoPoint(-6.089007607038804, 106.69676394516692));
+//        geoPoints.add(new GeoPoint(-6.089640154498307, 106.69651502050023));
+//        geoPoints.add(new GeoPoint(-6.0899335116841, 106.69844187205418));
+
+        ArrayList<OverlayItem> items = setOverLayItems(custList);
 
         //the overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
@@ -118,18 +140,67 @@ public class OsmActivity extends AppCompatActivity {
         });
 
         mMapView.getOverlays().add(mOverlay);
+        mMapView.getController().setCenter(computeCentroid(custList));
 
 //        GeoPoint startPoint = new GeoPoint(-6.088578550359071, 106.69715529826526);
 //        mapController.setCenter(startPoint);
     }
 
-    private ArrayList<OverlayItem> setOverLayItems(List<GeoPoint> geoPoints) {
-        Drawable marker = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_red);
+    private Bitmap getMarkerBitmapFromView(Customer cust) {
+        //HERE YOU CAN ADD YOUR CUSTOM VIEW
+        View customMarkerView = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
+
+        //IN THIS EXAMPLE WE ARE TAKING TEXTVIEW BUT YOU CAN ALSO TAKE ANY KIND OF VIEW LIKE IMAGEVIEW, BUTTON ETC.
+        TextView txt_name = customMarkerView.findViewById(R.id.txt_name);
+        TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
+        ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
+
+        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
+//        txt_add.setText(cust.getAddress());
+        if (cust.isRoute()) {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.marker_blue));
+        } else {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.marker_red));
+        }
+
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null) drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
+    }
+
+    private GeoPoint computeCentroid(List<Customer> points) {
+        double latitude = 0;
+        double longitude = 0;
+        int n = points.size();
+
+        for (Customer point : points) {
+            latitude += point.getLatitude();
+            longitude += point.getLongtitude();
+        }
+
+        return new GeoPoint(latitude / n, longitude / n);
+    }
+
+    private ArrayList<OverlayItem> setOverLayItems(List<Customer> customers) {
+        Drawable markerRed = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_red);
+        Drawable markerBlue = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_blue);
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
 
-        for (GeoPoint geoPo : geoPoints) {
-            OverlayItem ov = new OverlayItem("Home", "Description", geoPo);
-            ov.setMarker(marker);
+        for (Customer cust : customers) {
+            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongtitude()));
+//            if (cust.isRoute()) {
+//
+//            } else {
+//                ov.setMarker(markerRed);
+//            }
+            ov.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(cust)));
             items.add(ov);
         }
         return items;

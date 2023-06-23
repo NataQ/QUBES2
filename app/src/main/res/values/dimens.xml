@@ -30,6 +30,11 @@
     <dimen name="marginFilterPromotion">4sp</dimen>
     <dimen name="input_label_vertical_spacing">8dp</dimen>
     <dimen name="input_label_horizontal_spacing">4dp</dimen>
+    <dimen name="icon_home_size">100dp</dimen>
+    <dimen name="minWidthDialog">300dp</dimen>
+    <dimen name="button_height">55dp</dimen>
+    <dimen name="size_check_box">30dp</dimen>
+    <dimen name="widthType">100dp</dimen>
 
 
 </resources>

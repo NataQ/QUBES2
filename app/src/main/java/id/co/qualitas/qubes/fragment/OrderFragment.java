@@ -1032,6 +1032,7 @@ public class OrderFragment extends BaseFragment implements SearchView.OnQueryTex
                                         @Override
                                         public void run() {
                                             scroll.fullScroll(ScrollView.FOCUS_DOWN);
+//                                            return null;
                                         }
                                     });
                                 }

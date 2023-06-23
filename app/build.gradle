@@ -75,4 +75,5 @@ dependencies {
     implementation "com.github.mhiew:android-pdf-viewer:3.2.0-beta.1"
     implementation 'org.osmdroid:osmdroid-android:6.1.13'
     implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:3.3.0'
+    implementation "androidx.work:work-runtime:2.8.1"
 }

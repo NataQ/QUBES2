@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="25dp">
 
@@ -13,11 +13,11 @@
         android:id="@+id/imageView6"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/ic_background_up_login"
         app:layout_constraintBottom_toTopOf="@+id/guideline70"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/ic_background_up_login" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewLogo"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.65" />
+        app:layout_constraintGuide_percent="0.85" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline10"
@@ -91,28 +91,19 @@
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline">
 
-        <com.google.android.material.button.MaterialButton
-            style="@style/Widget.MaterialComponents.Button"
-            android:id="@+id/btnSave"
+        <TextView
+            android:id="@+id/txtKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="24dp"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:padding="12dp"
-            app:cornerRadius="8dp"
-            app:backgroundTint="@color/new_blue" />
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Key"
+            android:textColor="@color/black" />
 
         <LinearLayout
-            android:id="@+id/llIpAddress"
+            android:id="@+id/llKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txtUsername"
+            android:layout_below="@+id/txtKey"
             android:layout_marginTop="8dp"
             android:background="@drawable/rectangle_edittext"
             android:gravity="center_vertical"
@@ -123,42 +114,145 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                app:tint="@color/new_pink"
-                android:src="@drawable/ic_settings_black_24dp" />
+                android:src="@drawable/ic_password" />
 
             <EditText
-                android:id="@+id/edtIP"
+                android:id="@+id/edtKey"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="@font/montserrat_regular"
                 android:background="@color/space_transparent"
-                android:hint="@string/ipAddress"
-                android:inputType="textPersonName"
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Key"
+                android:inputType="number"
+                android:text="21878"
                 android:textColor="@color/black" />
 
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtResultKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/llKey"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:text="Result Key"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:id="@+id/llResultKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtResultKey"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangle_edittext"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_password" />
+
+            <EditText
+                android:id="@+id/edtPassword"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/space_transparent"
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="Result Key"
+                android:inputType="text"
+                android:text="123456"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ipAddress"
+            android:layout_below="@+id/llResultKey"
+            android:layout_marginTop="12dp"
             android:fontFamily="@font/montserrat_medium"
+            android:text="@string/ipAddress"
             android:textColor="@color/black" />
+
+        <LinearLayout
+            android:id="@+id/llIpAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtUsername"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rectangle_edittext_disable"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_settings_black_24dp"
+                app:tint="@color/new_pink" />
+
+            <EditText
+                android:id="@+id/edtIP"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/space_transparent"
+                android:fontFamily="@font/montserrat_regular"
+                android:hint="@string/ipAddress"
+                android:inputType="textPersonName"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="24dp"
+            android:padding="12dp"
+            android:text="@string/save"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            app:backgroundTint="@color/new_blue"
+            app:cornerRadius="8dp" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txtRestoreDB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:text="Restore DB"
+        android:textColor="@color/blue4"
+        android:textSize="@dimen/superSmallFont"
+        app:layout_constraintBottom_toTopOf="@+id/guideline10"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/appVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="9dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Version"
         android:textColor="@color/blue4"
         android:textSize="@dimen/superSmallFont"
         app:layout_constraintBottom_toTopOf="@+id/guideline10"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline69"
@@ -180,8 +274,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:text="@string/setting"
-        android:textStyle="bold"
         android:textColor="@color/white"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/guideline72"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="1.0"

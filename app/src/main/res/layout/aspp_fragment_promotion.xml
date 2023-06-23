@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_top_corner_white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="12dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_margin="10dp"-->
+        <!--            android:orientation="horizontal">-->
+
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:background="@drawable/editbox"-->
+        <!--                android:gravity="center_vertical"-->
+        <!--                android:orientation="horizontal"-->
+        <!--                android:padding="10dp">-->
+
+        <!--                <ImageView-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:src="@drawable/ic_search" />-->
+
+        <!--                <EditText-->
+        <!--                    android:id="@+id/edtSearch"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_marginStart="10dp"-->
+        <!--                    android:background="@color/space_transparent"-->
+        <!--                    android:hint="Search do no..."-->
+        <!--                    android:imeOptions="actionDone"-->
+        <!--                    android:maxLines="1"-->
+        <!--                    android:singleLine="true"-->
+        <!--                    android:textColor="@color/black"-->
+        <!--                    android:textSize="@dimen/smallFont" />-->
+
+        <!--            </LinearLayout>-->
+        <!--            -->
+        <!--        </LinearLayout>-->
+
+        <FrameLayout
+            android:id="@+id/f1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/tap_to_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:contentDescription="@string/refresh"
+                    android:src="@drawable/refresh_grey_192x192" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tap_to_refresh"
+                    android:textSize="17sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtNoData"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="No Promotion"
+                android:textSize="@dimen/smallFont"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

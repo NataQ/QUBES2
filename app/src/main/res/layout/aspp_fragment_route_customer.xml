@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/new_blue"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        style="@style/TextAppearance.MaterialComponents.Headline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/montserrat_extra_bold"
+        android:gravity="center"
+        android:text="@string/routeCustomer"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/layoutCorner"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_top_corner_white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/editbox"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/grey" />
+
+                <EditText
+                    android:id="@+id/edtSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@color/space_transparent"
+                    android:hint="Search customer..."
+                    android:imeOptions="actionDone"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/smallFont" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgCoverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tint="@color/new_pink"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_coverage" />
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/f1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/tap_to_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:contentDescription="@string/refresh"
+                    android:src="@drawable/refresh_grey_192x192" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tap_to_refresh"
+                    android:textSize="17sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtNoData"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="No Data"
+                android:textSize="@dimen/smallFont"
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

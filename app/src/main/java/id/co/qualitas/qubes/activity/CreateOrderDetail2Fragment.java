@@ -1289,6 +1289,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                                         @Override
                                         public void run() {
                                             scroll.fullScroll(ScrollView.FOCUS_DOWN);
+//                                            return null;
                                         }
                                     });
                                 }

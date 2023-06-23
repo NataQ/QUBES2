@@ -241,6 +241,7 @@ public class SoftKeyboard implements View.OnFocusChangeListener
                 if(started.get())
                     mHandler.obtainMessage(CLEAR_FOCUS).sendToTarget();
             }
+//            return null;
         }
 
         public void keyboardOpened()

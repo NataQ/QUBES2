@@ -41,6 +41,27 @@ public class Return {
 
     private String category;
 
+    public Return(String idReturn, String expiredDate) {
+        this.idReturn = idReturn;
+        this.expiredDate = expiredDate;
+    }
+
+    public BigDecimal getQty() {
+        return qty;
+    }
+
+    public void setQty(BigDecimal qty) {
+        this.qty = qty;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -130,11 +151,6 @@ public class Return {
     }
 
     public Return() {
-    }
-
-    public Return(String idMat,String materialName) {
-        this.idMaterial = idMat;
-        this.materialName = materialName;
     }
 
     public String getError() {

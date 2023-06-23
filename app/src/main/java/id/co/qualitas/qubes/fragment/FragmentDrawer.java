@@ -145,6 +145,7 @@ public class FragmentDrawer extends Fragment {
             @Override
             public void run() {
                 mDrawerToggle.syncState();
+//                return null;
             }
         });
     }

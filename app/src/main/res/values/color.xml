@@ -24,6 +24,7 @@
     <color name="greyBox">#c2c2c2</color>
     <color name="off_white">#FFFFFF</color>
     <color name="off_grey">#eeeeee</color>
+    <color name="gray">#747474</color>
 
 
     <color name="blue3">#3333FF</color>
@@ -32,6 +33,7 @@
     <color name="blue6">#BBDEFB</color>
     <color name="blue7">#2196F3</color>
     <color name="blue8">#67B8FA</color>
+    <color name="blue9">#F0F3FF</color>
     <color name="grey2">#BDBDBD</color>
     <color name="grey3">#616161</color>
     <color name="red1">#EF9A9A</color>
@@ -56,4 +58,17 @@
     <color name="new_pink">#F26CA7</color>
 
     <color name="caldroid_gray">#CCC</color>
+    <color name="yellow_krang">#FFD300</color>
+    <color name="red_krang">#E21B4D</color>
+    <color name="col1">#fca656</color>
+    <color name="col2">#d1cd58</color>
+    <color name="col3">#f7577f</color>
+    <color name="col4">#7891eb</color>
+    <color name="col5">#70db87</color>
+    <color name="white_smoke">#F5F5F5</color>
+    <color name="yellow2">#FFFBE8</color>
+    <color name="yellow3">#FFDD86</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="gray1">#EDEDED</color>
+    <color name="secondary_text">#757575</color>
 </resources>

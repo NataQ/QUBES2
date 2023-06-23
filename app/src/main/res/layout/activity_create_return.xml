@@ -327,7 +327,7 @@
 <!--                    android:layout_margin="5dp"-->
 <!--                    android:padding="3dp"-->
 <!--                    app:backgroundTint="@color/new_blue"-->
-<!--                    app:fabSize="mini"-->
+<!--                    app:fabSize="normal"-->
 <!--                    app:srcCompat="@drawable/ic_plus"-->
 <!--                    app:tint="@color/white"/>-->
 

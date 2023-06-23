@@ -93,11 +93,11 @@ public class Constants {
     //    public static String URL = "http://14.102.154.108:8080/";
 //    public static String URL = "http://mobi.binasanprima.com:8080/";
 //    public static String URL = "http://52.187.124.235:9191/";
-    public static String URL = "http://192.168.1.20:9191/";
+    public static String URL = "http://192.168.1.8:9191/";
 //    public static String URL = "http://172.16.1.11:9191/";
 //    public static String IP = "mobi.binasanprima.com:8080";
 //    public static String IP = "52.187.124.235:9191";
-    public static String IP = "192.168.1.20:9191";
+    public static String IP = "192.168.1.8:9191";
 //    public static String IP = "172.16.1.11:9191";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
@@ -473,4 +473,5 @@ public class Constants {
     public static final String DATE_FORMAT_2 = "yyyy-MM-dd HH:mm:ss";//2023-01-14 10:25:48
     public static final String DATE_FORMAT_3 = "yyyy-MM-dd";
     public static final String DATE_FORMAT_4 = "dd-MMM-yy";
+    public static final String DATE_FORMAT_5 = "E, dd MMMM yyyy";
 }

@@ -6,29 +6,50 @@ package id.co.qualitas.qubes.model;
 public class Material {
     private String idMaterial;
     private String materialCode;
+    private String materialQty;
     private int qty;
     private String desc;
     private String batch;
     private byte[] attachment;
     private String DeliveryNumber;
     private String klasifikasi;
+    private String price;
 
     public Material() {
     }
 
-    public Material(String materialCode, int qty, String desc, String batch, byte[] attachment,String klasifikasi) {
+    public Material(String klasifikasi, String materialCode, int qty, String price) {
         this.materialCode = materialCode;
         this.qty = qty;
-        this.desc = desc;
-        this.batch = batch;
-        this.attachment = attachment;
         this.klasifikasi = klasifikasi;
+        this.price = price;
     }
 
-    public Material(String materialCode, String desc, String klasifikasi) {
+    public Material(String materialCode, int qty) {
         this.materialCode = materialCode;
-        this.desc = desc;
-        this.klasifikasi = klasifikasi;
+        this.qty = qty;
+    }
+
+    public Material(String idMaterial, String materialCode, String materialQty) {
+        this.idMaterial = idMaterial;
+        this.materialCode = materialCode;
+        this.materialQty = materialQty;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getMaterialQty() {
+        return materialQty;
+    }
+
+    public void setMaterialQty(String materialQty) {
+        this.materialQty = materialQty;
     }
 
     public String getDeliveryNumber() {

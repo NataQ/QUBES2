@@ -1110,6 +1110,7 @@ public class AccountFragment extends BaseFragment {
             progress.dismiss();
             Toast.makeText(getActivity(), MSG_SYNC_ALL, Toast.LENGTH_LONG).show();
 //            dismissAct();
+//            return null;
         }
     }
 

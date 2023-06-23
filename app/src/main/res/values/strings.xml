@@ -645,4 +645,25 @@
     <string name="pleaseEnablePermission">Please enable all permission</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
 
+
+    <string name="channelId">123</string>
+    <string name="string_startthread">Start Thread</string>
+    <string name="string_stopthread">Stop thread</string>
+    <string name="string_startservice">Start Service</string>
+    <string name="string_stopservice">Stop Service</string>
+    <string name="service_demo_tag">ServiceDemo</string>
+    <string name="string_bind">Bind Service</string>
+    <string name="string_unbind">Unbind Service</string>
+    <string name="string_getrandom_number">Get random number</string>
+    <string name="refresh">Refresh</string>
+    <string name="tap_to_refresh">Tap or swipe down to refresh</string>
+    <string name="routeCustomer">Route Customer</string>
+    <string name="activity">Activity</string>
+    <string name="stockRequest">Stock Request</string>
+    <string name="invoiceVerification">Invoice Verification</string>
+    <string name="stockRequestDetail">Stock Request Detail</string>
+    <string name="coverage">Coverage</string>
+    <string name="dailySalesman">Daily Salesman</string>
+    \
+
 </resources>

@@ -1,10 +1,16 @@
 package id.co.qualitas.qubes.utils;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
@@ -53,6 +59,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -89,16 +96,75 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.SplashScreenActivity;
 import id.co.qualitas.qubes.constants.Constants;
 
 public class Utils {
     private static final Gson gson = new Gson();
     private static Toast toaster;
     private static final int REQUEST_CHECK_SETTINGS = 0x1;
+    public static final int NOTIFICATION_ID = 22;
+    private static final String CHANNEL_ID = "notify";
+    private static final String CHANNEL_NAME = "workmanager-reminder";
 
     @SuppressLint("ShowToast")
     public static void init(Context context) {
         toaster = Toast.makeText(context, null, Toast.LENGTH_LONG);
+    }
+
+    public static void sendNotification(Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel1 = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+            channel1.enableVibration(true);
+            channel1.enableLights(true);
+            channel1.setLightColor(R.color.colorPrimary);
+            channel1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+
+            notificationManager.createNotificationChannel(channel1);
+        }
+
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                .setContentTitle("WorkManager Sample")
+//                .setContentText("WorkManager Started")
+//                .setAutoCancel(true)
+//                .setSmallIcon(R.drawable.ic_qubes_new);
+
+//        notificationManager.notify(1, builder.build());
+
+//        Intent intent = new Intent(this, LocationUpdatesService.class);
+//        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);//bwt kasih tau stop service
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+//        } else {
+//            servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        }
+
+        // The PendingIntent to launch activity.
+        PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
+                new Intent(context, SplashScreenActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .addAction(R.drawable.ic_qubes_new, "lauch activity", activityPendingIntent)
+//                .addAction(R.drawable.ic_cancel, getString(R.string.remove_location_updates), servicePendingIntent)
+                .setContentTitle("WorkManager Sample")
+                .setContentText("WorkManager Started")
+//                .setContentTitle(UtilsLocation.getLocationTitle(this))
+                .setSound(null)
+                .setOngoing(true)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setSmallIcon(R.drawable.ic_qubes_new)
+//                .setTicker(text)
+                .setNotificationSilent()
+                .setWhen(System.currentTimeMillis());
+
+        // Set the Channel ID for Android O.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId(CHANNEL_ID); // Channel ID
+        }
+
+        notificationManager.notify(1, builder.build());
     }
 
     public static void showToast(Context context, String message) {//spy gbs di spam
@@ -306,6 +372,7 @@ public class Utils {
                 } finally {
 
                 }
+//                return null;
             }
         };
         t.start();

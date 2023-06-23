@@ -20,10 +20,10 @@
             style="@style/TextAppearance.MaterialComponents.Headline4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
             android:layout_centerInParent="true"
-            android:textStyle="bold"
-            android:textColor="@color/white" />
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
 <!--        <ImageView-->
 <!--            android:id="@+id/imgSearchHome"-->
@@ -53,6 +53,7 @@
             app:tabTextAppearance="@style/tab_text"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:background="@color/new_blue"
             app:tabBackground="@color/new_blue"
             app:tabIconTint="@color/white"
             app:tabGravity="fill"

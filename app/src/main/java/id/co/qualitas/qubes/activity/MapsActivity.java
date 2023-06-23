@@ -47,7 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps2);
+        setContentView(R.layout.aspp_fragment_coverage);
 
         imgDirect = findViewById(R.id.imgDirect);
         mMapView = findViewById(R.id.map);

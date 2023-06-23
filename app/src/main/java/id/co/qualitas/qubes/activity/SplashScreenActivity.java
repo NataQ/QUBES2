@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -196,7 +197,7 @@ public class SplashScreenActivity extends BaseActivity {
             }
 
             public void onFinish() {
-                Intent intent = new Intent(getApplicationContext(), PDFTest.class);//LoginActivity
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);//LoginActivity
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

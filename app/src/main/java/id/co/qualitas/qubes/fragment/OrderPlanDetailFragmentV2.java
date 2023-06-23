@@ -665,6 +665,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
                 @Override
                 public void run() {
                     getData();
+//                    return null;
                 }
             });
 

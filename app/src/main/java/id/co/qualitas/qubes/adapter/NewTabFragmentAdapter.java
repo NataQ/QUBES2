@@ -22,34 +22,6 @@ public class NewTabFragmentAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int i) {
         return fragmentList.get(i);
-//        if (from.equals("home")) {
-//            switch (i) {
-//                case 0:
-//                    CalendarFragment calendarFragment = new CalendarFragment();
-//                    return calendarFragment;
-//                case 1:
-//                    TargetFragment targetFragment = new TargetFragment();
-//                    return targetFragment;
-//                case 2:
-//                    PromotionFragment promotionFragment = new PromotionFragment();
-//                    return promotionFragment;
-//                default:
-//                    CalendarFragment calFragment = new CalendarFragment();
-//                    return calFragment;
-//            }
-//        } else {
-//            switch (i) {
-//                case 0:
-//                    CustomerTargetFragment customerTargetFragment = new CustomerTargetFragment();
-//                    return customerTargetFragment;
-//                case 1:
-//                    ObjectTargetFragmentv2 objectTargetFragmentv2 = new ObjectTargetFragmentv2();
-//                    return objectTargetFragmentv2;
-//                default:
-//                    CustomerTargetFragment ctFragment = new CustomerTargetFragment();
-//                    return ctFragment;
-//            }
-//        }
     }
 
     @Override

@@ -110,7 +110,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_activity_login);
+        setContentView(R.layout.activity_login);
 
         init();
         initialize();
@@ -665,6 +665,7 @@ public class LoginActivity extends BaseActivity {
                             runOnUiThread(new Runnable(){
                                 public void run() {
                                     Toast.makeText(getApplicationContext(), "Init Server Date Error",Toast.LENGTH_LONG).show();
+//                                    return null;
                                 }
                             });
                         }

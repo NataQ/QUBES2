@@ -278,7 +278,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 
     private MessageResponse msg;
 
-    private View dialogview;
+    public View dialogview;
     private LayoutInflater inflater;
 
     @Nullable
@@ -616,9 +616,9 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                                 }
                             }
 
-                            if(Helper.getItemParam(Constants.FROM_SALES_ORDER) != null){
+                            if (Helper.getItemParam(Constants.FROM_SALES_ORDER) != null) {
                                 ((NewMainActivity) getActivity()).changePage(4);
-                            }else{
+                            } else {
                                 ((NewMainActivity) getActivity()).changePage(11);
                             }
 
@@ -796,7 +796,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 alertDialog.show();
                 break;
             case DIALOG_EDIT_ITEM:
-                Toast.makeText(getContext(),"DIALOG EDIT ITEM", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG EDIT ITEM", Toast.LENGTH_SHORT).show();
 //                initDialog(R.layout.custom_dialog_edit_item);
 //
 //                btnSave = alertDialog.findViewById(R.id.btnSave);
@@ -818,7 +818,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 //                alertDialog.show();
                 break;
             case DIALOG_FEEDBACK:
-                Toast.makeText(getContext(),"DIALOG FEEDBACK", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG FEEDBACK", Toast.LENGTH_SHORT).show();
 //                initDialog(R.layout.custom_dialog_feedback);
 //
 //                btnYes = alertDialog.findViewById(R.id.btnYes);
@@ -899,7 +899,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 //                alertDialog.show();
                 break;
             case DIALOG_ADD_RETURN:
-                Toast.makeText(getContext(),"DIALOG ADD RETURN", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG ADD RETURN", Toast.LENGTH_SHORT).show();
 //                initDialog(R.layout.custom_d"ialog_add_return);
 //
 //                btnCancel = alertDialog.findViewById(R.id.btnCancel);
@@ -922,7 +922,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 //                alertDialog.show();"
                 break;
             case DIALOG_ADD_RETURN_SALES:
-                Toast.makeText(getContext(),"DIALOG ADD RETURN SALES", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG ADD RETURN SALES", Toast.LENGTH_SHORT).show();
 //                initDialog(R.layout.custom_dialog_add_return_sales);
 //                alertDialog.show();
                 break;
@@ -974,10 +974,10 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 
                 break;
             case DIALOG_CREATE_NEW_ORDER_PLAN:
-                Toast.makeText(getContext(),"DIALOG CREATE NEW ORDER PLAN", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG CREATE NEW ORDER PLAN", Toast.LENGTH_SHORT).show();
                 break;
             case DIALOG_COLLECT_PAYMENT:
-                Toast.makeText(getContext(),"DIALOG COLLECT PAYMENT", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG COLLECT PAYMENT", Toast.LENGTH_SHORT).show();
                 break;
 
             case DIALOG_REASON_PAUSE:
@@ -1060,13 +1060,13 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 alertDialog.show();
                 break;
             case DIALOG_ROUNDING_CHOICE:
-                Toast.makeText(getContext(),"DIALOG ROUNDING CHOICE", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG ROUNDING CHOICE", Toast.LENGTH_SHORT).show();
                 break;
             case DIALOG_ROUNDING:
-                Toast.makeText(getContext(),"DIALOG ROUNDING", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG ROUNDING", Toast.LENGTH_SHORT).show();
                 break;
             case DIALOG_OFFSET:
-                Toast.makeText(getContext(),"DIALOG OFFSET", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "DIALOG OFFSET", Toast.LENGTH_SHORT).show();
                 break;
             case DIALOG_SPECIMEN:
                 initDialog(R.layout.custom_dialog_spesimen);
@@ -1293,7 +1293,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                                 }
                             }
                         }
-                    }else{
+                    } else {
                         outletLists = new ArrayList<>();
                     }
                 }
@@ -1317,7 +1317,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(outletLists.size() != 0) {
+                        if (outletLists.size() != 0) {
                             if (outletLists.get(0).getPosClicked() != null) {
                                 int posClicked = outletLists.get(0).getPosClicked();
                                 if (String.valueOf(Helper.getItemParam(Constants.PARAM_FOR_DIALOG)).equals(Constants.SELECTED_CUSTOMER_ORDER_PLAN)) {
@@ -1337,7 +1337,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                             } else {
                                 Toast.makeText(getContext(), "Please choose one outlet", Toast.LENGTH_SHORT).show();
                             }
-                        }else{
+                        } else {
                             Toast.makeText(getContext(), "Please choose one outlet", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -1470,7 +1470,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         }
     }
 
-    private void initDialog(int resource) {
+    public void initDialog(int resource) {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
@@ -3201,5 +3201,20 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
             // write your logic here
             return format.format(value); // e.g. append a dollar-sign
         }
+    }
+
+    public void hideKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    public void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 }

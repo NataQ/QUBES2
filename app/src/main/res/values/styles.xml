@@ -2,13 +2,14 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!--        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
-<!--        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>-->
+        <!--        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>-->
         <item name="android:statusBarColor" tools:targetApi="l">@color/new_blue</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="colorPrimary">@color/new_blue</item>
         <item name="colorPrimaryVariant">@color/blue4</item>
         <item name="colorOnPrimary">@color/blue5</item>
         <!-- Secondary brand color. -->
+        <item name="android:textSize">@dimen/smallFont</item>
         <item name="colorSecondary">@color/blue3</item>
         <item name="colorSecondaryVariant">@color/blue3</item>
         <item name="colorOnSecondary">@color/blue4</item>
@@ -20,11 +21,31 @@
         <item name="android:windowSharedElementExitTransition">@transition/changebounds</item>
     </style>
 
+    <style name="SheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <!--<item name="android:windowCloseOnTouchOutside">false</item>-->
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.3</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
     <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/smallFont</item>
+    </style>
+
+    <style name="BottomNavigationView" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/smallFont</item>
+    </style>
+
+    <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/smallFont</item>
     </style>
 
     <style name="fab" parent="Widget.MaterialComponents.FloatingActionButton">
@@ -225,6 +246,28 @@
 
     <style name="CustomTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:textSize">@dimen/superSmallFont</item>
+    </style>
+
+    <!--    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">-->
+    <!--        <item name="colorAccent">@color/new_blue</item>-->
+    <!--    </style>-->
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/new_blue</item>           <!-- Header Background -->
+        <item name="android:colorAccent">@color/new_blue</item>
+        <item name="android:textColor">@color/new_blue</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:buttonBarNeutralButtonStyle">@style/DialogButtonStyled</item>
+        <item name="android:colorControlActivated">#4971AC</item>        <!--selected day-->
+        <!--        <item name="android:textColorPrimary">#89B5F6</item> &lt;!&ndash;days of the month&ndash;&gt;-->
+        <!--        <item name="android:textColorSecondary">#0E3E85</item>    &lt;!&ndash;days of the week&ndash;&gt;-->
+    </style>
+
+    <!-- Date picker ok/cancel button styles    -->
+    <style name="DialogButtonStyled" parent="Theme.MaterialComponents.Light">
+        <item name="android:textColor">@color/new_blue</item>
+        <item name="android:background">@color/space_transparent</item>
     </style>
 
 </resources>

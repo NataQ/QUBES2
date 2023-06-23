@@ -1028,6 +1028,7 @@ public class TouchImageView extends ImageView {
                 //
                 setState(State.NONE);
             }
+//            return null;
         }
 
         /**
@@ -1178,7 +1179,7 @@ public class TouchImageView extends ImageView {
 
             if (scroller.isFinished()) {
                 scroller = null;
-                return;
+//                return null;
             }
 
             if (scroller.computeScrollOffset()) {
@@ -1193,6 +1194,7 @@ public class TouchImageView extends ImageView {
                 setImageMatrix(matrix);
                 compatPostOnAnimation(this);
             }
+//            return null;
         }
     }
 

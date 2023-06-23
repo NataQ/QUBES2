@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
@@ -36,7 +37,8 @@ public class SettingActivity extends AppCompatActivity {
         Button btnSave = (Button) findViewById(R.id.btnSave);
         appVersion = findViewById(R.id.appVersion);
 
-        appVersion.setText(Constants.APP_VERSION);
+//        appVersion.setText(Constants.APP_VERSION);
+        appVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
 
         if(Helper.getItemParam(Constants.URL) != null){
             String urltemp = Helper.getItemParam(Constants.URL).toString();

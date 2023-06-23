@@ -3,10 +3,19 @@ package id.co.qualitas.qubes.model;
 public class Promotion {
     private String promotionName;
     private String promotionDecs;
+    private String promotionPeriode;
 
-    public Promotion(String promotionName, String promotionDecs) {
+    public Promotion(String promotionName, String promotionPeriode) {
         this.promotionName = promotionName;
-        this.promotionDecs = promotionDecs;
+        this.promotionPeriode = promotionPeriode;
+    }
+
+    public String getPromotionPeriode() {
+        return promotionPeriode;
+    }
+
+    public void setPromotionPeriode(String promotionPeriode) {
+        this.promotionPeriode = promotionPeriode;
     }
 
     public String getPromotionName() {

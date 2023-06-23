@@ -50,9 +50,9 @@ public class NewVisitHomeFragment extends BaseFragment {
             }
         });
 
-        adapter = new NewTabFragmentAdapter(getActivity().getSupportFragmentManager(), tabLayout.getTabCount(),"visit");
+        adapter = new NewTabFragmentAdapter(getActivity().getSupportFragmentManager(), tabLayout.getTabCount(), "visit");
         adapter.addFragment(new RetailOutletFragment(), "Visit");
-//        adapter.addFragment(new RetailOutletFragment(), "New Outlet Opening");
+        adapter.addFragment(new RetailOutletFragment(), "New Outlet Opening");
         mViewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabTextColors(ContextCompat.getColor(getContext(), R.color.caldroid_gray), ContextCompat.getColor(getContext(), R.color.new_blue));

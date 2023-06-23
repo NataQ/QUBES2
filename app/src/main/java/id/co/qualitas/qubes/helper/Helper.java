@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -137,7 +138,8 @@ public class Helper extends BaseFragment {
             flag = 1;
 
             String token = (String) Helper.getItemParam(Constants.TOKEN);
-            String bearerToken = Constants.BEARER.concat(token);
+//            String bearerToken = Constants.BEARER.concat(token);
+            String bearerToken = Constants.BEARER.concat("3e7bcbc2-fb8e-47a0-8270-671796ebc1ce");
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders requestHeaders = new HttpHeaders();
@@ -184,6 +186,7 @@ public class Helper extends BaseFragment {
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
         } catch (Exception e) {
+            Log.e("worker", e.getMessage());
             if (e.getMessage().equals("401 Unauthorized")) {
 
             }
@@ -522,6 +525,10 @@ public class Helper extends BaseFragment {
         return input.split(";")[pos];
     }
 
+    public static Date getTodayDate() {
+        final Calendar cal = Calendar.getInstance();
+        return cal.getTime();
+    }
     public static String getTodayDate(String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 format, Locale.getDefault());

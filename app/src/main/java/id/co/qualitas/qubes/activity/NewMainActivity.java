@@ -8,15 +8,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -31,20 +28,21 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.fragment.AccountFragment;
 import id.co.qualitas.qubes.fragment.ChangePasswordFragment;
 import id.co.qualitas.qubes.fragment.CreditInfo2Fragment;
 import id.co.qualitas.qubes.fragment.NewHomeFragment;
-import id.co.qualitas.qubes.fragment.NewVisitHomeFragment;
 import id.co.qualitas.qubes.fragment.Order2Fragment;
 import id.co.qualitas.qubes.fragment.OrderPlanDetailFragmentV2;
-import id.co.qualitas.qubes.fragment.OrderPlanFragment;
 import id.co.qualitas.qubes.fragment.OrderPlanSummaryFragmentV2;
 import id.co.qualitas.qubes.fragment.Profile2Fragment;
 import id.co.qualitas.qubes.fragment.StoreCheckFragment;
-import id.co.qualitas.qubes.fragment.SummaryFragment;
 import id.co.qualitas.qubes.fragment.TargetDetailFragment;
 import id.co.qualitas.qubes.fragment.Timer2Fragment;
+import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
+import id.co.qualitas.qubes.fragment.aspp.ActivityFragment;
+import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
+import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
+import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.session.SessionManager;
 
@@ -77,17 +75,19 @@ public class NewMainActivity extends BaseActivity {
                         setContent(fragment);
                     }
                     return true;
-                case R.id.navigation_order_plan:
+                case R.id.navigation_route_customer:
                     if (!currentpage.equals("2")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                        fragment = new OrderPlanFragment();
+//                        fragment = new OrderPlanFragment();
+                        fragment = new RouteCustomerFragment();
                         setContent(fragment);
                     }
                     return true;
-                case R.id.navigation_visit:
+                case R.id.navigation_activity:
                     if (!currentpage.equals("3")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                        fragment = new NewVisitHomeFragment();
+//                        fragment = new NewVisitHomeFragment();
+                        fragment = new ActivityFragment();
                         setContent(fragment);
                     }
                     return true;
@@ -120,79 +120,79 @@ public class NewMainActivity extends BaseActivity {
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
-                    || checkSelfPermission(permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED
-                    || checkSelfPermission(permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED
-                    || checkSelfPermission(permissionsRequired[3]) != PackageManager.PERMISSION_GRANTED) {
-                if (shouldShowRequestPermissionRationale(permissionsRequired[0])
-                        || shouldShowRequestPermissionRationale(permissionsRequired[1])
-                        || shouldShowRequestPermissionRationale(permissionsRequired[2])
-                        || shouldShowRequestPermissionRationale(permissionsRequired[3])) {
-                    //Show Information about why you need the permission
-                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
-                    builder.setTitle(R.string.need_multiple_permissions);
-                    builder.setCancelable(false);
-                    builder.setMessage(R.string.need_gallery_and_location_permission);
-                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
-                            }
-                        }
-                    });
-                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
-                            finish();
-                        }
-                    });
-                    builder.show();
-                } else if (permissionStatus.getBoolean(permissionsRequired[0], false)) {
-                    //Previously Permission Request was cancelled with 'Dont Ask Again',
-                    // Redirect to Settings after showing Information about why you need the permission
-                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
-                    builder.setTitle(R.string.need_multiple_permissions);
-                    builder.setCancelable(false);
-                    builder.setMessage(R.string.need_gallery_and_location_permission);
-                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            sentToSettings = true;
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-                            Toast.makeText(getBaseContext(), R.string.go_to_permisson_to_grant_gallery_and_location, Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
-                            finish();
-                        }
-                    });
-                    builder.show();
-                } else {
-                    //just request the permission
-                    requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
-                }
-
-                SharedPreferences.Editor editor = permissionStatus.edit();
-                editor.putBoolean(permissionsRequired[0], true);
-                editor.commit();
-            } else {
-                //You already have the permission, just go ahead.
-                proceedAfterPermission();
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            if (checkSelfPermission(permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
+//                    || checkSelfPermission(permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED
+//                    || checkSelfPermission(permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED
+//                    || checkSelfPermission(permissionsRequired[3]) != PackageManager.PERMISSION_GRANTED) {
+//                if (shouldShowRequestPermissionRationale(permissionsRequired[0])
+//                        || shouldShowRequestPermissionRationale(permissionsRequired[1])
+//                        || shouldShowRequestPermissionRationale(permissionsRequired[2])
+//                        || shouldShowRequestPermissionRationale(permissionsRequired[3])) {
+//                    //Show Information about why you need the permission
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
+//                    builder.setTitle(R.string.need_multiple_permissions);
+//                    builder.setCancelable(false);
+//                    builder.setMessage(R.string.need_gallery_and_location_permission);
+//                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+//                            }
+//                        }
+//                    });
+//                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
+//                            finish();
+//                        }
+//                    });
+//                    builder.show();
+//                } else if (permissionStatus.getBoolean(permissionsRequired[0], false)) {
+//                    //Previously Permission Request was cancelled with 'Dont Ask Again',
+//                    // Redirect to Settings after showing Information about why you need the permission
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
+//                    builder.setTitle(R.string.need_multiple_permissions);
+//                    builder.setCancelable(false);
+//                    builder.setMessage(R.string.need_gallery_and_location_permission);
+//                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                            sentToSettings = true;
+//                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+//                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+//                            intent.setData(uri);
+//                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
+//                            Toast.makeText(getBaseContext(), R.string.go_to_permisson_to_grant_gallery_and_location, Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+//                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
+//                            finish();
+//                        }
+//                    });
+//                    builder.show();
+//                } else {
+//                    //just request the permission
+//                    requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
+//                }
+//
+//                SharedPreferences.Editor editor = permissionStatus.edit();
+//                editor.putBoolean(permissionsRequired[0], true);
+//                editor.commit();
+//            } else {
+//                //You already have the permission, just go ahead.
+//                proceedAfterPermission();
+//            }
+//        }
     }
 
     @Override
@@ -323,9 +323,10 @@ public class NewMainActivity extends BaseActivity {
                 if (!currentpage.equals("2")) {
 //                    if (getMenu(124) || getMenu(127)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                    fragment = new OrderPlanFragment();
+//                    fragment = new OrderPlanFragment();
+                    fragment = new RouteCustomerFragment();
                     setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_order_plan);
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_route_customer);
 //                    } else {
 //                        setToast("You don't have access to this menu");
 //                    }
@@ -335,9 +336,10 @@ public class NewMainActivity extends BaseActivity {
                 if (!currentpage.equals("3")) {
 //                    if (getMenu(88) || getMenu(92)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                    fragment = new NewVisitHomeFragment();
+//                    fragment = new NewVisitHomeFragment();
+                    fragment = new ActivityFragment();
                     setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_visit);
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
 //                    }
                 }
                 break;
@@ -476,6 +478,13 @@ public class NewMainActivity extends BaseActivity {
                     setContent(fragment);
                 }
                 break;
+            case 23:
+                if (!currentpage.equals("23")) {
+                    Helper.setItemParam(Constants.CURRENTPAGE, "23");
+                    fragment = new CoverageFragment();
+                    setContent(fragment);
+                }
+                break;
         }
     }
 
@@ -513,6 +522,7 @@ public class NewMainActivity extends BaseActivity {
             @Override
             public void run() {
                 doubleBackToExitPressedOnce = false;
+//                return null;
             }
         }, 2000);
     }

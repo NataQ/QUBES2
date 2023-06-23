@@ -28,6 +28,7 @@ public class CounterService  extends Service {
         public void run() {
             DisplayLoggingInfo();
             handler.postDelayed(this, 1000); // 1 seconds
+//            return null;
         }
     };
 

@@ -53,6 +53,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -113,6 +114,7 @@ public class BaseActivity extends AppCompatActivity {
     protected FragmentTransaction ft;
     protected FragmentManager fm;
     protected GPSTracker gpsTracker;
+    protected RecyclerView recyclerView;
     protected int PARAM_DIALOG_ALERT = 0;
     protected static String PARAM_STATUS_OUTLET = Constants.UNCHECKED_IN;
     protected ArrayList<User> attendances = new ArrayList<>();
@@ -1592,5 +1594,20 @@ public class BaseActivity extends AppCompatActivity {
 
     public String getDbPath(Context context, String YourDbName) {
         return context.getDatabasePath(YourDbName).getAbsolutePath();
+    }
+
+    public void hideKeyboard() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+    }
+
+    public void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 }

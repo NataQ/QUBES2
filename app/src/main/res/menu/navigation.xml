@@ -6,14 +6,14 @@
         android:title="@string/home" />
 
     <item
-        android:id="@+id/navigation_order_plan"
+        android:id="@+id/navigation_route_customer"
         android:icon="@drawable/ic_order_plan_selector"
-        android:title="@string/orderPlan" />
+        android:title="@string/routeCustomer" />
 
     <item
-        android:id="@+id/navigation_visit"
+        android:id="@+id/navigation_activity"
         android:icon="@drawable/ic_visit_selector"
-        android:title="@string/visit" />
+        android:title="@string/activity" />
 
     <item
         android:id="@+id/navigation_summary"

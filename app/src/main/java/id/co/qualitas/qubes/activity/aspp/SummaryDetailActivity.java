@@ -1,0 +1,79 @@
+package id.co.qualitas.qubes.activity.aspp;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.github.gcacace.signaturepad.views.SignaturePad;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.InvoiceVerificationAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SummaryDetailAdapter;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.DatabaseHelper;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.User;
+
+public class SummaryDetailActivity extends BaseActivity {
+    private SummaryDetailAdapter mAdapter;
+    private List<Material> mList;
+    private ImageView imgBack;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.aspp_activity_summary_detail);
+
+        init();
+        initialize();
+        initData();
+
+        mAdapter = new SummaryDetailAdapter(this, mList, header -> {
+        });
+
+        recyclerView.setAdapter(mAdapter);
+
+        imgBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
+    }
+
+    private void initData() {
+        mList = new ArrayList<>();
+        mList.add(new Material("11 - KTD R", "11008 - KRATINGDAENG LUAR PULAU - MT", 1, "1,000"));
+        mList.add(new Material("11 - KTD R", "11007 - KRATINGDAENG - MT", 1, "2,000"));
+        mList.add(new Material("11 - KTD R", "11006 - KRATINGDAENG - LAIN-LAIN", 1, "3,000"));
+        mList.add(new Material("11 - KTD R", "11005 - KRATINGDAENG LUAR PULAU", 1, "4,000"));
+    }
+
+    private void initialize() {
+        db = new DatabaseHelper(this);
+        user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+
+        imgBack = findViewById(R.id.imgBack);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+}

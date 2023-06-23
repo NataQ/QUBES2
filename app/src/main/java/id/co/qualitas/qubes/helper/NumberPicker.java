@@ -95,7 +95,8 @@ public class NumberPicker extends RelativeLayout {
 				decrement();
 				repeatUpdateHandler.postDelayed( new RepetetiveUpdater(), REPEAT_DELAY );
 			}
-		}
+//            return null;
+        }
 	}
 	
 	public NumberPicker( Context context, AttributeSet attributeSet ) {
