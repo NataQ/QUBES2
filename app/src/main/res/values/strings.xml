@@ -666,5 +666,6 @@
     <string name="dailySalesman">Daily Salesman</string>
     <string name="default_notification_channel_id">broadcast</string>
     <string name="default_notification_channel_name">broadcast name</string>
+    <string name="location_updated">Location Updated: %1$s</string>
 
 </resources>

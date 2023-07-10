@@ -5,35 +5,54 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+
 import androidx.core.app.NotificationCompat;
+
+import android.os.Bundle;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Map;
+
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.GCMResponse;
 
 /**
  * NOTE: There can only be one service in each app that receives FCM messages. If multiple
  * are declared in the Manifest then the first one will be chosen.
- *
+ * <p>
  * In order to make this Java sample functional, you must remove the following from the Kotlin messaging
  * service in the AndroidManifest.xml:
- *
+ * <p>
  * <intent-filter>
- *   <action android:name="com.google.firebase.MESSAGING_EVENT" />
+ * <action android:name="com.google.firebase.MESSAGING_EVENT" />
  * </intent-filter>
  */
 
 public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
+    private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
+    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
+    public static final String ACTION_TRACKING = PACKAGE_NAME + ".broadcast";
+
+    //https://stackoverflow.com/questions/41383238/firebase-notifications-when-app-is-closed
 
     /**
      * Called when message is received.
@@ -43,46 +62,48 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     // [START receive_message]
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // [START_EXCLUDE]
-        // There are two types of messages data messages and notification messages. Data messages
-        // are handled
-        // here in onMessageReceived whether the app is in the foreground or background. Data
-        // messages are the type
-        // traditionally used with GCM. Notification messages are only received here in
-        // onMessageReceived when the app
-        // is in the foreground. When the app is in the background an automatically generated
-        // notification is displayed.
-        // When the user taps on the notification they are returned to the app. Messages
-        // containing both notification
-        // and data payloads are treated as notification messages. The Firebase console always
-        // sends notification
-        // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-        // [END_EXCLUDE]
-
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Map map = remoteMessage.getData();
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use WorkManager.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
+            if (map != null) {
+                Bundle data = new Bundle();
+                for (Map.Entry<String, String> entry : remoteMessage.getData().entrySet()) {
+                    data.putString(entry.getKey(), entry.getValue());
+                }
+
+                GCMResponse gcmResponse = new GCMResponse();
+                gcmResponse.setDesc(!Helper.isEmpty(data.get("body")) ? data.get("body").toString() : null);
+                gcmResponse.setContentTitle(!Helper.isEmpty(data.get("title")) ? data.get("title").toString() : null);
+                gcmResponse.setImageUrl(!Helper.isEmpty(data.get("imageUrl")) ? data.get("imageUrl").toString() : null);
+                sendNotification(gcmResponse);
+
+                if (!Helper.isEmpty(gcmResponse.getDesc())) {
+                    Intent intent = new Intent(ACTION_BROADCAST);
+                    intent.putExtra(ACTION_TRACKING, gcmResponse.getDesc());
+                    this.sendBroadcast(intent);
+                }
             }
-
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            String notificationBody = remoteMessage.getNotification().getBody();
-            if (remoteMessage.getNotification().getBody() != null) {
-                sendNotification(notificationBody);
+            RemoteMessage.Notification notif = remoteMessage.getNotification();
+
+            if (notif != null) {
+                GCMResponse gcmResponse = new GCMResponse();
+                gcmResponse.setDesc(!Helper.isEmpty(notif.getBody()) ? notif.getBody() : null);
+                gcmResponse.setContentTitle(!Helper.isEmpty(notif.getTitle()) ? notif.getTitle() : null);
+                gcmResponse.setImageUrl(!Helper.isEmpty(notif.getImageUrl()) ? notif.getImageUrl().toString() : null);
+                sendNotification(gcmResponse);
+
+                if (!Helper.isEmpty(gcmResponse.getDesc())) {
+                    Intent intent = new Intent(ACTION_BROADCAST);
+                    intent.putExtra(ACTION_TRACKING, gcmResponse.getDesc());
+                    this.sendBroadcast(intent);
+                }
             }
         }
 
@@ -93,6 +114,7 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
 
 
     // [START on_new_token]
+
     /**
      * There are two scenarios when onNewToken is called:
      * 1) When a new token is generated on initial app startup
@@ -118,8 +140,7 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
      */
     private void scheduleJob() {
         // [START dispatch_job]
-        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(MyWorker.class)
-                .build();
+        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(MyWorker.class).build();
         WorkManager.getInstance(this).beginWith(work).enqueue();
         // [END dispatch_job]
     }
@@ -133,7 +154,7 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
 
     /**
      * Persist token to third-party servers.
-     *
+     * <p>
      * Modify this method to associate the user's FCM registration token with any
      * server-side account maintained by your application.
      *
@@ -146,9 +167,9 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     /**
      * Create and show a simple notification containing the received FCM message.
      *
-     * @param messageBody FCM message body received.
+     * @param response FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(GCMResponse response) {
         Intent intent = new Intent(this, SplashScreenActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -159,23 +180,45 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_qubes_new)
-                        .setContentTitle("FCM TEST")
-                        .setContentText(messageBody)
+                        .setContentTitle(response.getContentTitle())
+                        .setContentText(response.getDesc())
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (response.getImageUrl() != null) {
+            Bitmap bitmap = getBitmapfromUrl(String.valueOf(response.getImageUrl()));
+            notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
+                    .bigPicture(bitmap)
+                    .bigLargeIcon(null)
+            ).setLargeIcon(bitmap);
+        }
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
                     "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    public Bitmap getBitmapfromUrl(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+
+        } catch (Exception e) {
+            Log.e("awesome", "Error in getting notification image: " + e.getLocalizedMessage());
+            return null;
+        }
     }
 }

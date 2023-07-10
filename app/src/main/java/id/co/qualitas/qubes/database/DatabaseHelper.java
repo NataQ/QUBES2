@@ -6301,7 +6301,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(KEY_ID_FCM, "1");
-        values.put(KEY_DESCRIPTION, gcmResponse.getMessage());
+        values.put(KEY_DESCRIPTION, gcmResponse.getDesc());
         values.put(KEY_USERNAME, gcmResponse.getUsername());
 
         db.insert(TABLE_FCM, null, values);
@@ -6317,7 +6317,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                fcm.setMessage(cursor.getString(0));
+                fcm.setDesc(cursor.getString(0));
                 fcm.setUsername(cursor.getString(1));
             } while (cursor.moveToNext());
         }

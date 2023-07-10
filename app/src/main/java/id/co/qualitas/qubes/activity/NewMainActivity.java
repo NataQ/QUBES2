@@ -2,15 +2,22 @@ package id.co.qualitas.qubes.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +28,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -31,7 +39,9 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.ChangePasswordFragment;
 import id.co.qualitas.qubes.fragment.CreditInfo2Fragment;
 import id.co.qualitas.qubes.fragment.NewHomeFragment;
+import id.co.qualitas.qubes.fragment.NewVisitHomeFragment;
 import id.co.qualitas.qubes.fragment.Order2Fragment;
+import id.co.qualitas.qubes.fragment.OrderFragment;
 import id.co.qualitas.qubes.fragment.OrderPlanDetailFragmentV2;
 import id.co.qualitas.qubes.fragment.OrderPlanSummaryFragmentV2;
 import id.co.qualitas.qubes.fragment.Profile2Fragment;
@@ -44,6 +54,8 @@ import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.services.LocationUpdatesService;
+import id.co.qualitas.qubes.services.MyFirebaseMessagingService2;
 import id.co.qualitas.qubes.session.SessionManager;
 
 public class NewMainActivity extends BaseActivity {
@@ -57,6 +69,11 @@ public class NewMainActivity extends BaseActivity {
     private static final int PERMISSION_CALLBACK_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private boolean sentToSettings = false;
+    // Tracks the bound state of the service.
+    private boolean mBound = false;
+    // The BroadcastReceiver used to listen from broadcasts from the service.
+    private MyReceiver myReceiver;
+    private static LocationUpdatesService mServiceFusedLocation = null;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -80,6 +97,7 @@ public class NewMainActivity extends BaseActivity {
                         Helper.setItemParam(Constants.CURRENTPAGE, "2");
 //                        fragment = new OrderPlanFragment();
                         fragment = new RouteCustomerFragment();
+//                        fragment = new NewVisitHomeFragment();
                         setContent(fragment);
                     }
                     return true;
@@ -117,6 +135,7 @@ public class NewMainActivity extends BaseActivity {
         setContentView(R.layout.new_activity_main);
         initialize();
         setSession();
+        myReceiver = new MyReceiver();
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
 
@@ -492,6 +511,7 @@ public class NewMainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         init();
+        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
         setPage();
     }
 
@@ -565,5 +585,68 @@ public class NewMainActivity extends BaseActivity {
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        if (!checkPermissions(false)) {
+//            requestPermissions(false);
+//        }
+//
+//        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+//
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+        //enhancement tracking
+        bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private class MyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
+            if (actionTracking.equals("start_tracking")) {
+                mServiceFusedLocation.requestLocationUpdates();
+            } else if (actionTracking.equals("stop_tracking")) {
+                mServiceFusedLocation.removeLocationUpdates();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        //enhancement tracking
+        if (mBound) {
+            // Unbind from the service. This signals to the service that this activity is no longer
+            // in the foreground, and the service can respond by promoting itself to a foreground
+            // service.
+            unbindService(mServiceConnection);
+            mBound = false;
+        }
+        super.onStop();
+    }
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+            mServiceFusedLocation = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceFusedLocation = null;
+            mBound = false;
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        //enhancement tracking
+        unregisterReceiver(myReceiver);
+        super.onPause();
     }
 }

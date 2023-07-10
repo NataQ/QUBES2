@@ -1,5 +1,10 @@
 package id.co.qualitas.qubes.helper;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -534,5 +539,15 @@ public class Helper extends BaseFragment {
                 format, Locale.getDefault());
         Date date = new Date();
         return dateFormat.format(date);
+    }
+
+    public static boolean isGPSOn(Context context) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return lm != null && lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public static void turnOnGPS(Activity activity) {
+        Intent gpsOptionsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        activity.startActivity(gpsOptionsIntent);
     }
 }

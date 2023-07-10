@@ -15,6 +15,7 @@ public class ToPrice implements Serializable {
     private String id;
     private String item_nr;
     private String table_name;
+    private String client;
     private Boolean one_time_discount;
     private int step;
     private BigDecimal disc_value;
@@ -24,6 +25,77 @@ public class ToPrice implements Serializable {
     private String discValueString;
 
     private String id_cond_type;
+    private Boolean enabled;
+    private Boolean deleted;
+    private String createdBy;
+    private String createdDate;
+    private String updatedBy;
+    private String updatedDate;
+    private String currency;
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(String updatedDate) {
+        this.updatedDate = updatedDate;
+    }
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
 
     public String getId_cond_type() {
         return id_cond_type;

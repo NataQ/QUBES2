@@ -38,7 +38,7 @@ import com.dantsu.escposprinter.EscPosPrinter;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
 import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -378,7 +378,7 @@ public class LoginActivity extends BaseActivity {
 
         if (Helper.getItemParam(Constants.REGIISTERID) == null) {
             try {
-                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                String refreshedToken = FirebaseMessaging.getInstance().getToken().toString();
                 Helper.setItemParam(Constants.REGIISTERID, refreshedToken);
                 registerID = refreshedToken;
             } catch (Exception e) {
@@ -681,7 +681,7 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     Helper.setItemParam(Constants.CURDATE, offlineData.getDatetimeNow());
-                    Intent intent = new Intent(LoginActivity.this, NewMainActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, MainActivityDrawer.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }

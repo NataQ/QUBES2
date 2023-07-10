@@ -21,12 +21,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,14 +63,21 @@ public class SplashScreenActivity extends BaseActivity {
 
     private User attendance = new User();
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "FCM can't post notifications without POST_NOTIFICATIONS permission", Toast.LENGTH_LONG).show();
-                }
-            });
+    ActivityResultLauncher<String[]> mPermissionResultLauncher;
+    private boolean isLocationPermissionGranted = false;
+    private boolean isReadPermissionGranted = false;
+    //    private boolean isWritePermissionGranted = false;
+    private boolean isCameraPermissionGranted = false;
+    private boolean isNotificationPermissionGranted = false;
+
+//    private final ActivityResultLauncher<String> requestPermissionLauncher =
+//            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+//                if (isGranted) {
+//                    Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(this, "FCM can't post notifications without POST_NOTIFICATIONS permission", Toast.LENGTH_LONG).show();
+//                }
+//            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +102,43 @@ public class SplashScreenActivity extends BaseActivity {
             }
         }
 
-        askNotificationPermission();
+        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+            @Override
+            public void onActivityResult(Map<String, Boolean> result) {
+                if (result.get(Manifest.permission.CAMERA) != null) {
+                    isCameraPermissionGranted = result.get(Manifest.permission.CAMERA);
+                }
 
-        ImageViewAnimatedChange(getApplicationContext(), image, ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_ilustrasi2));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (result.get(Manifest.permission.READ_MEDIA_IMAGES) != null) {
+                        isReadPermissionGranted = result.get(Manifest.permission.READ_MEDIA_IMAGES);
+                    }
+                } else {
+                    if (result.get(Manifest.permission.READ_EXTERNAL_STORAGE) != null) {
+                        isReadPermissionGranted = result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    }
+                }
+
+                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
+                    isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                }
+
+                if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
+                    isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
+                }
+
+                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+                    if (!Helper.isGPSOn(SplashScreenActivity.this)) {
+                        setToast("Please turn on GPS");
+                        Helper.turnOnGPS(SplashScreenActivity.this);
+                    } else {
+                        setData();
+                    }
+                } else {
+                    setToast("Please allow all permissions");
+                }
+            }
+        });
 
 //        Button start = findViewById(R.id.start);
 //        start.setOnClickListener(new View.OnClickListener() {
@@ -104,17 +149,64 @@ public class SplashScreenActivity extends BaseActivity {
 //        });
     }
 
-    private void askNotificationPermission() {
-        // This is only necessary for API Level > 33 (TIRAMISU)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ImageViewAnimatedChange(getApplicationContext(), image, ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_ilustrasi2));
+    }
+
+    private void requestPermission() {
+        isCameraPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+//        isReadPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-                    PackageManager.PERMISSION_GRANTED) {
-                // FCM SDK (and your app) can post notifications.
+            isReadPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            isReadPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
+        isLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            isNotificationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            isNotificationPermissionGranted = true;
+        }
+
+        List<String> permissionRequest = new ArrayList<>();
+        if (!isCameraPermissionGranted) permissionRequest.add(Manifest.permission.CAMERA);
+        if (!isReadPermissionGranted) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionRequest.add(Manifest.permission.READ_MEDIA_IMAGES);
             } else {
-                // Directly ask for the permission
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                permissionRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         }
+        if (!isLocationPermissionGranted)
+            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (!isNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionRequest.add(Manifest.permission.POST_NOTIFICATIONS);
+        }
+        if (!permissionRequest.isEmpty()) {
+            mPermissionResultLauncher.launch(permissionRequest.toArray(new String[0]));
+        }
+
+        if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+            if (!Helper.isGPSOn(SplashScreenActivity.this)) {
+                setToast("Please turn on GPS");
+                Helper.turnOnGPS(SplashScreenActivity.this);
+            } else {
+                setData();
+            }
+        }
+
+//        // This is only necessary for API Level > 33 (TIRAMISU)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+//                    PackageManager.PERMISSION_GRANTED) {
+//                // FCM SDK (and your app) can post notifications.
+//            } else {
+//                // Directly ask for the permission
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+//            }
+//        }
     }
 
     public void ImageViewAnimatedChange(Context c, final ImageView v, final Drawable new_image) {
@@ -166,7 +258,8 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         llText.setVisibility(View.VISIBLE);
-                        setData();
+                        requestPermission();
+//                        setData();
                     }
                 });
             }
@@ -174,43 +267,20 @@ public class SplashScreenActivity extends BaseActivity {
     }
 
     private void setData() {
-        try {
-            packageInfo = SplashScreenActivity.this.getPackageManager().getPackageInfo(SplashScreenActivity.this.getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        // Assume thisActivity is the current activity
-        int permissionCheck = ContextCompat.checkSelfPermission(SplashScreenActivity.this,
-                Manifest.permission.READ_EXTERNAL_STORAGE);
-
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(SplashScreenActivity.this,
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SplashScreenActivity.this,
-                    Manifest.permission.READ_CONTACTS)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(SplashScreenActivity.this,
-                        new String[]{Manifest.permission.READ_CONTACTS},
-                        MY_PERMISSIONS_REQUEST_READ_STORAGE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
+//        try {
+//            packageInfo = SplashScreenActivity.this.getPackageManager().getPackageInfo(SplashScreenActivity.this.getPackageName(), 0);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        int permissionCheck = ContextCompat.checkSelfPermission(SplashScreenActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+//
+//        if (ContextCompat.checkSelfPermission(SplashScreenActivity.this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(SplashScreenActivity.this, Manifest.permission.READ_CONTACTS)) {
+//            } else {
+//                ActivityCompat.requestPermissions(SplashScreenActivity.this, new String[]{Manifest.permission.READ_CONTACTS}, MY_PERMISSIONS_REQUEST_READ_STORAGE);
+//            }
+//        }
 
         if (loginResponse != null) {
             Helper.setItemParam(Constants.LOGIN, loginResponse);
@@ -270,23 +340,15 @@ public class SplashScreenActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_READ_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

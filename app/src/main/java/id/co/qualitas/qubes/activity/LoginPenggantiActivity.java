@@ -17,7 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Date;
 
@@ -104,7 +104,7 @@ public class LoginPenggantiActivity extends BaseActivity {
 
         if (Helper.getItemParam(Constants.REGIISTERID) == null) {
             try {
-                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                String refreshedToken = FirebaseMessaging.getInstance().getToken().toString();
                 Helper.setItemParam(Constants.REGIISTERID, refreshedToken);
                 registerID = refreshedToken;
             } catch (Exception e) {

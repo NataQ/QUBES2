@@ -23,13 +23,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -51,12 +49,14 @@ import id.co.qualitas.qubes.model.Customer;
 
 public class CoverageActivity extends AppCompatActivity {
     private MapView mMapView;
-    //    private IMapController mapController;
+    private IMapController mapController;
     private static final String TAG = "CoverageActivity";
     private static final int PERMISSION_REQUEST_CODE = 1;
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;
     private RotationGestureOverlay mRotationGestureOverlay;
+    private BoundingBox boundingBox;
+    private List<GeoPoint> geoPointList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,14 +105,7 @@ public class CoverageActivity extends AppCompatActivity {
         custList.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, -6.09032214182743, 106.74191982249332));
         custList.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, -6.088542162422348, 106.74239952686823));
 
-
-//        List<GeoPoint> geoPoints = new ArrayList<>();
-//        geoPoints.add(new GeoPoint(-6.088578550359071, 106.69715529826526));
-//        geoPoints.add(new GeoPoint(-6.089667657056153, 106.69914254522651));
-//        geoPoints.add(new GeoPoint(-6.087210800359574, 106.69752915396195));
-//        geoPoints.add(new GeoPoint(-6.089007607038804, 106.69676394516692));
-//        geoPoints.add(new GeoPoint(-6.089640154498307, 106.69651502050023));
-//        geoPoints.add(new GeoPoint(-6.0899335116841, 106.69844187205418));
+//        zoomToBounds(custList);
 
         ArrayList<OverlayItem> items = setOverLayItems(custList);
 
@@ -142,9 +135,12 @@ public class CoverageActivity extends AppCompatActivity {
         mMapView.getOverlays().add(mOverlay);
         mMapView.getController().setCenter(computeCentroid(custList));
 
-//        GeoPoint startPoint = new GeoPoint(-6.088578550359071, 106.69715529826526);
-//        mapController.setCenter(startPoint);
+//        boundingBox = new BoundingBox();
+//        boundingBox.fromGeoPointsSafe(geoPointList);
+//        mMapView.zoomToBoundingBox(boundingBox, true);
+
     }
+
 
     private Bitmap getMarkerBitmapFromView(Customer cust) {
         //HERE YOU CAN ADD YOUR CUSTOM VIEW
@@ -193,6 +189,8 @@ public class CoverageActivity extends AppCompatActivity {
         Drawable markerBlue = ContextCompat.getDrawable(getApplicationContext(), R.drawable.marker_blue);
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
 
+        geoPointList = new ArrayList<>();
+
         for (Customer cust : customers) {
             OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongtitude()));
 //            if (cust.isRoute()) {
@@ -202,6 +200,8 @@ public class CoverageActivity extends AppCompatActivity {
 //            }
             ov.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(cust)));
             items.add(ov);
+
+            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongtitude()));
         }
         return items;
     }

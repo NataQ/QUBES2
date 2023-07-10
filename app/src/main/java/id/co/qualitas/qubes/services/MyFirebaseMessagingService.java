@@ -61,7 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             data.putString(entry.getKey(), entry.getValue());
         }
         GCMResponse gcmResponse = new GCMResponse();
-        gcmResponse.setMessage(data.getString("body"));
+        gcmResponse.setDesc(data.getString("body"));
         gcmResponse.setContentTitle(data.getString("title"));
         gcmResponse.setUsername(data.getString("username"));
 //        if (session.isLoggedIn()) {
@@ -125,10 +125,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.logo_qubes)
                         .setContentTitle("QUBES")
-                        .setContentText(gcmResponse.getMessage())
+                        .setContentText(gcmResponse.getDesc())
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
-                        .setTicker(gcmResponse.getMessage())//tulisan yang ada di paling atas (yang jalan)
+                        .setTicker(gcmResponse.getDesc())//tulisan yang ada di paling atas (yang jalan)
                         .setContentIntent(pendingIntent);
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

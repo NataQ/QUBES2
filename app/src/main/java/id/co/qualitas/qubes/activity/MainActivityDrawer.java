@@ -211,10 +211,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
                     btnCancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
-
                             alertDialog.dismiss();
-
                         }
                     });
 
@@ -865,7 +862,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
 
         db = new DatabaseHelper(getApplicationContext());
         GCMResponse gcm = db.getGCM();
-        if (gcm.getMessage() != null) {
+        if (gcm.getDesc() != null) {
             String username = null;
             String[] parts = gcm.getUsername().split("[|]");
             username = parts[0];
@@ -912,7 +909,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
 //            if (orderFragment != null && orderFragment.isVisible()) {
 //                orderFragment.back();
 //            } else {
-                super.onBackPressed();
+            super.onBackPressed();
 //            }
         }
     }
@@ -1373,8 +1370,8 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
 
 
                         if (msg.getResult() != null) {
-                            if(msg.getResult().getListIdOrderFailed() != null){
-                                for(String idOrderFailed : msg.getResult().getListIdOrderFailed()){
+                            if (msg.getResult().getListIdOrderFailed() != null) {
+                                for (String idOrderFailed : msg.getResult().getListIdOrderFailed()) {
                                     String idFailed = Helper.splitIdFailed(idOrderFailed, 0);
                                     //TODO: update idFailed di table to dengan splitIdFailed pos 1
                                 }
