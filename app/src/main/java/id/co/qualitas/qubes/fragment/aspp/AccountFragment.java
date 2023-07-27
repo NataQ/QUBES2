@@ -58,7 +58,6 @@ import id.co.qualitas.qubes.session.SessionManager;
 
 public class AccountFragment extends BaseFragment {
     private CardView llUploadDB, llSync, llLog, llChangePassword;
-    private Button btnLogout;
     private Intent intent;
     private int PARAM_VISIT = 0;
     private static final String SYNC_SUCCESS = "Sync succeed";
@@ -261,53 +260,10 @@ public class AccountFragment extends BaseFragment {
             }
         });
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                View dialogView;
-                final Dialog alertDialog = new Dialog(getContext());
-                dialogView = inflater.inflate(R.layout.custom_dialog_alert_delete, null);
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setContentView(dialogView);
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
-                Button btnSave = alertDialog.findViewById(R.id.btnSave);
-                TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
-
-                txtDialog.setText(getResources().getString(R.string.textDialogLogout));
-                btnSave.setText(getResources().getString(R.string.yes));
-                btnCancel.setText(getResources().getString(R.string.no));
-
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
-
-                btnSave.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        PARAM = 12;
-//                        new RequestUrl().execute();
-//                        progress.show();
-                        Intent intent = new Intent(getActivity(), LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        alertDialog.dismiss();
-                    }
-                });
-
-                alertDialog.show();
-            }
-        });
-
         return rootView;
     }
 
     private void initialize() {
-        btnLogout = rootView.findViewById(R.id.btnLogout);
         llUploadDB = rootView.findViewById(R.id.llUploadDB);
         llSync = rootView.findViewById(R.id.llSync);
         llLog = rootView.findViewById(R.id.llLog);

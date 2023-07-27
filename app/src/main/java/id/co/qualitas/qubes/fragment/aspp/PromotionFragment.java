@@ -22,7 +22,6 @@ import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
 
 public class PromotionFragment extends BaseFragment {
-
     private PromotionAdapter mAdapter;
     private List<Promotion> promotionList;
 
@@ -64,21 +63,5 @@ public class PromotionFragment extends BaseFragment {
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         recyclerView.setHasFixedSize(true);
-
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
-            }
-        });
     }
 }

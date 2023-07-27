@@ -1,28 +1,39 @@
 package id.co.qualitas.qubes.services;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -30,7 +41,9 @@ import java.net.URL;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
+import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.GCMResponse;
 
@@ -51,6 +64,13 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     public static final String ACTION_TRACKING = PACKAGE_NAME + ".broadcast";
+
+    private static LocationUpdatesService mServiceFusedLocation = null;
+    private boolean mBound = false;
+    Intent serviceIntent;
+
+//    public BackgroundLocationService gpsService;
+//    public boolean mTracking = false;
 
     //https://stackoverflow.com/questions/41383238/firebase-notifications-when-app-is-closed
 
@@ -77,40 +97,51 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
                 GCMResponse gcmResponse = new GCMResponse();
                 gcmResponse.setDesc(!Helper.isEmpty(data.get("body")) ? data.get("body").toString() : null);
                 gcmResponse.setContentTitle(!Helper.isEmpty(data.get("title")) ? data.get("title").toString() : null);
+                gcmResponse.setType(!Helper.isEmpty(data.get("type")) ? data.get("type").toString() : null);
                 gcmResponse.setImageUrl(!Helper.isEmpty(data.get("imageUrl")) ? data.get("imageUrl").toString() : null);
-                sendNotification(gcmResponse);
+//                sendNotification(gcmResponse);
+                if (!Helper.isEmpty(gcmResponse.getType()) && gcmResponse.getType().equals("tracking")) {
+//                    Intent intent = new Intent(ACTION_BROADCAST);
+//                    intent.putExtra(ACTION_TRACKING, gcmResponse.getDesc());
+//                    this.sendBroadcast(intent);
+//                    Helper.setItemParam(Constants.FCM, gcmResponse);
+//                    scheduleJob();
 
-                if (!Helper.isEmpty(gcmResponse.getDesc())) {
-                    Intent intent = new Intent(ACTION_BROADCAST);
-                    intent.putExtra(ACTION_TRACKING, gcmResponse.getDesc());
-                    this.sendBroadcast(intent);
+                    if (remoteMessage.getPriority() == RemoteMessage.PRIORITY_HIGH) {
+                        if (gcmResponse.getDesc().equals("start_tracking")) {
+//                        mServiceFusedLocation.requestLocationUpdates();
+                            if (!foregroundServiceRunning()) {
+                                serviceIntent = new Intent(this, LocationForegroundService.class);
+                                startForegroundService(serviceIntent);
+                            }
+//                            mServiceFusedLocation.startForegroundService();
+                        } else if (gcmResponse.getDesc().equals("stop_tracking")) {
+//                            mServiceFusedLocation.removeLocationUpdates();
+                            if (foregroundServiceRunning()) {
+                                serviceIntent = new Intent(this, LocationForegroundService.class);
+                                serviceIntent.setAction("stop");
+                                startForegroundService(serviceIntent);
+                            }
+//                        stopTracking();
+                        }
+                    }
+                } else {
+                    sendNotification(gcmResponse);
                 }
             }
         }
-
-        // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            RemoteMessage.Notification notif = remoteMessage.getNotification();
-
-            if (notif != null) {
-                GCMResponse gcmResponse = new GCMResponse();
-                gcmResponse.setDesc(!Helper.isEmpty(notif.getBody()) ? notif.getBody() : null);
-                gcmResponse.setContentTitle(!Helper.isEmpty(notif.getTitle()) ? notif.getTitle() : null);
-                gcmResponse.setImageUrl(!Helper.isEmpty(notif.getImageUrl()) ? notif.getImageUrl().toString() : null);
-                sendNotification(gcmResponse);
-
-                if (!Helper.isEmpty(gcmResponse.getDesc())) {
-                    Intent intent = new Intent(ACTION_BROADCAST);
-                    intent.putExtra(ACTION_TRACKING, gcmResponse.getDesc());
-                    this.sendBroadcast(intent);
-                }
-            }
-        }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
+
+    public boolean foregroundServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (LocationForegroundService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     // [START on_new_token]
@@ -172,8 +203,7 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     private void sendNotification(GCMResponse response) {
         Intent intent = new Intent(this, SplashScreenActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_IMMUTABLE);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -221,4 +251,82 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
             return null;
         }
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+//        bindService(new Intent(MyFirebaseMessagingService2.this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+            mServiceFusedLocation = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceFusedLocation = null;
+            mBound = false;
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        Log.e(TAG,"FCM : on destroy");
+//        Toast.makeText(this, "Service destroy", Toast.LENGTH_LONG).show();
+//        if (mBound) {
+//            // Unbind from the service. This signals to the service that this activity is no longer
+//            // in the foreground, and the service can respond by promoting itself to a foreground
+//            // service.
+//            unbindService(mServiceConnection);
+//            mBound = false;
+//        }
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+//        Log.e(TAG,"FCM : on unbind");
+//        Toast.makeText(this, "Service Unbind", Toast.LENGTH_LONG).show();
+//        if (mBound) {
+//            // Unbind from the service. This signals to the service that this activity is no longer
+//            // in the foreground, and the service can respond by promoting itself to a foreground
+//            // service.
+//            unbindService(mServiceConnection);
+//            mBound = false;
+//        }
+        return super.onUnbind(intent);
+    }
+
+    //new
+//    private ServiceConnection serviceConnection = new ServiceConnection() {
+//        public void onServiceConnected(ComponentName className, IBinder service) {
+//            String name = className.getClassName();
+//            if (name.endsWith("BackgroundLocationService")) {
+//                gpsService = ((BackgroundLocationService.LocationServiceBinder) service).getService();
+//            }
+//        }
+//
+//        public void onServiceDisconnected(ComponentName className) {
+//            if (className.getClassName().equals("BackgroundLocationService")) {
+//                gpsService = null;
+//            }
+//        }
+//    };
+//
+//
+//    public void startTracking() {
+//        //check for permission
+//        gpsService.startTracking();
+//        mTracking = true;
+//    }
+//
+//    public void stopTracking() {
+//        mTracking = false;
+//        gpsService.stopTracking();
+//    }
 }

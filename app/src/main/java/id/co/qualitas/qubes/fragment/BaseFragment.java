@@ -681,7 +681,6 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 btnCheckIn = alertDialog.findViewById(R.id.btnCheckIn);
 
                 btnCheckIn.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View v) {
                         OutletResponse outletResponse = new OutletResponse();
@@ -3216,5 +3215,9 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     public void showKeyboard() {
         InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    protected void setToast(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 }

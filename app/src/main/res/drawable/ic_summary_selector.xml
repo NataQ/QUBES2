@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/ic_summary_gray"
+    <item android:drawable="@drawable/ic_summary_black"
         android:state_selected="false"/>
-    <item android:drawable="@drawable/ic_summary_blue"
+    <item android:drawable="@drawable/ic_summary_blue_aspp"
         android:state_selected="true"/>
-    <item android:drawable="@drawable/ic_summary_gray"/>
+    <item android:drawable="@drawable/ic_summary_black"/>
 </selector>

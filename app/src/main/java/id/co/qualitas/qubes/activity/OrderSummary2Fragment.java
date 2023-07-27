@@ -143,7 +143,7 @@ public class OrderSummary2Fragment extends BaseFragment implements Spinner.OnIte
                         header.setRequest_disc(false);
                     }
 
-                    if (!Helper.isEmpty(edtTxtDescRequest)) {
+                    if (!Helper.isEmptyEditText(edtTxtDescRequest)) {
                         header.setDescriptionDisc(edtTxtDescRequest.getText().toString().trim());
                     } else {
                         header.setDescriptionDisc(null);
@@ -589,7 +589,7 @@ public class OrderSummary2Fragment extends BaseFragment implements Spinner.OnIte
                         header.setRequest_disc(false);
                     }
 
-                    if (!Helper.isEmpty(edtTxtDescRequest)) {
+                    if (!Helper.isEmptyEditText(edtTxtDescRequest)) {
                         header.setDescriptionDisc(edtTxtDescRequest.getText().toString().trim());
                     } else {
                         header.setDescriptionDisc(null);

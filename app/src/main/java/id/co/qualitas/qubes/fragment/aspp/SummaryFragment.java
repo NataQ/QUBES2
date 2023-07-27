@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
 import id.co.qualitas.qubes.adapter.aspp.OrderAdapter;
@@ -53,6 +55,16 @@ public class SummaryFragment extends BaseFragment {
             startActivity(intent);
         });
         recyclerView.setAdapter(mAdapter);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+                    ((NewMainActivity) getActivity()).changePage(1);
+                }
+            }
+        });
 
         return rootView;
     }

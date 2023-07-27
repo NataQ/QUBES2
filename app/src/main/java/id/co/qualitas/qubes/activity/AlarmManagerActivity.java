@@ -83,32 +83,4 @@ public class AlarmManagerActivity extends BaseActivity {
         });
 
     }
-
-    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                String url = "http://192.168.1.8:9191/api/v1/doubleLogin/syncData";
-                User user = new User();
-                user.setUsername("mobile");
-                return (Boolean) Helper.postWebserviceWithBody(url, Boolean.class, user);//post
-            } catch (Exception ex) {
-                if (ex.getMessage() != null) {
-                    Log.e(Constants.LOGIN_ACTIVITY, ex.getMessage());
-                }
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean logins) {
-            setToast(logins ? "true" : "false");
-        }
-    }
 }

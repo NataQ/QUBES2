@@ -4,82 +4,135 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/new_blue"
+    android:background="@color/blue5_aspp"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/txtTitle"
-        style="@style/TextAppearance.MaterialComponents.Headline5"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/montserrat_extra_bold"
-        android:gravity="center"
-        android:text="@string/summary"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:layout_margin="20dp"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="@dimen/corner_fragment">
 
-    <View
-        android:id="@+id/layoutCorner"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@drawable/bg_top_corner_white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="14dp">
-
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/f1"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <LinearLayout
-                android:id="@+id/tap_to_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                tools:ignore="UseCompoundDrawables">
-
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:contentDescription="@string/refresh"
-                    android:src="@drawable/refresh_grey_192x192" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/tap_to_refresh"
-                    android:textSize="17sp" />
-            </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="14dp">
 
             <TextView
-                android:id="@+id/txtNoData"
+                style="@style/TextAppearance.AppCompat.Title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/summary"
+                android:textColor="@color/black_aspp"
+                android:textStyle="bold"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:text="No Data"
-                android:textSize="@dimen/smallFont"
-                android:visibility="gone" />
+                android:orientation="horizontal">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/edit_text_search"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_search_aspp" />
+
+                    <EditText
+                        android:id="@+id/edtSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:background="@color/space_transparent"
+                        android:hint="Search"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/black_aspp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llFilter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imgFilter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_filter_aspp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/black_aspp"
+                        android:text="Filter"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/f1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false" />
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_weight="1">
 
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/tap_to_refresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    tools:ignore="UseCompoundDrawables">
 
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:contentDescription="@string/refresh"
+                        android:src="@drawable/refresh_grey_192x192" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tap_to_refresh" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtNoData"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="No Data"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

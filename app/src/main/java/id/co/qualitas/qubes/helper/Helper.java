@@ -14,8 +14,6 @@ import android.util.Base64OutputStream;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -42,7 +40,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -92,13 +89,25 @@ public class Helper extends BaseFragment {
     }
 
 
-    public static boolean isEmpty(Object obj) {
+    public static boolean isEmptyEditText(Object obj) {
         boolean bool = false;
         if (obj instanceof EditText) {
             if (TextUtils.isEmpty(((EditText) obj).getText()))
                 bool = true;
         }
         return bool;
+    }
+
+    public static boolean isEmpty(Object obj) {
+        if (obj != null)
+            return false;
+        return true;
+    }
+
+    public static boolean isNullOrEmpty(String str) {
+        if (str != null && !str.isEmpty())
+            return false;
+        return true;
     }
 
     public static Calendar todayDate() {

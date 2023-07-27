@@ -33,9 +33,16 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.Map;
+
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.LiveTracking;
+import id.co.qualitas.qubes.model.MessageResponse;
+import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.utils.UtilsLocation;
 
 public class LocationUpdatesService extends Service {
@@ -58,7 +65,7 @@ public class LocationUpdatesService extends Service {
 
 //    public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
 
-//    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
+    //    public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
     private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
 
@@ -112,6 +119,7 @@ public class LocationUpdatesService extends Service {
      */
     private Location mLocation;
     private LiveTracking liveTracking;
+    private Boolean result = false;
 
     public LocationUpdatesService() {
     }
@@ -158,8 +166,8 @@ public class LocationUpdatesService extends Service {
             removeLocationUpdates();
             stopSelf();
         }
-        // Tells the system to not try to recreate the service after it has been killed.
-        return START_NOT_STICKY;
+        // Tells the system to not try to recreate the service after it has been killed.=> START_NOT_STICKY
+        return START_STICKY;
     }
 
     @Override
@@ -220,12 +228,40 @@ public class LocationUpdatesService extends Service {
         Log.i(TAG, "Requesting location updates");
         UtilsLocation.setRequestingLocationUpdates(this, true);
         startService(new Intent(this, LocationUpdatesService.class));
+//        HandlerThread handlerThread = new HandlerThread("tracking");
+//        handlerThread.start();
         try {
-            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+//            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, mServiceHandler.getLooper());
         } catch (SecurityException unlikely) {
             UtilsLocation.setRequestingLocationUpdates(this, false);
             Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
         }
+    }
+
+    public void startForegroundService() {
+        Log.i(TAG, "Requesting location updates");
+        UtilsLocation.setRequestingLocationUpdates(this, true);
+//        startService(new Intent(this, LocationUpdatesService.class));
+////        HandlerThread handlerThread = new HandlerThread("tracking");
+////        handlerThread.start();
+        try {
+//            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, mServiceHandler.getLooper());
+        } catch (SecurityException unlikely) {
+            UtilsLocation.setRequestingLocationUpdates(this, false);
+            Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
+        }
+
+//        if (!mChangingConfiguration && UtilsLocation.requestingLocationUpdates(this)) {
+            Log.i(TAG, "Starting foreground service");
+            //try comment
+            startForeground(NOTIFICATION_ID, getNotification());
+//            try comment
+//        }
+        Log.i(TAG, "Starting foreground service");
+        //try comment
+
     }
 
     /*
@@ -237,11 +273,15 @@ public class LocationUpdatesService extends Service {
         try {
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             UtilsLocation.setRequestingLocationUpdates(this, false);
+            stopForeground(true);
             stopSelf();
         } catch (SecurityException unlikely) {
             UtilsLocation.setRequestingLocationUpdates(this, true);
             Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
         }
+
+//        stopForeground(true);
+        mChangingConfiguration = false;
     }
 
     /*
@@ -250,38 +290,17 @@ public class LocationUpdatesService extends Service {
     private Notification getNotification() {
 //        Intent intent = new Intent(this, LocationUpdatesService.class);
 
+        Intent notificationIntent = new Intent(this, LocationUpdatesService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         CharSequence text = UtilsLocation.getLocationText(mLocation);
-
-        // Extra to help us figure out if we arrived in onStartCommand via the notification or not.
-//        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);//bwt kasih tau stop service
-
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-//                .setSound(null)
-//                .setOngoing(true)
-//                .setPriority(Notification.PRIORITY_HIGH)
-//                .setSmallIcon(R.drawable.ic_qubes_new)
-//                .setNotificationSilent()
-//                .setWhen(System.currentTimeMillis());
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_qubes_new)
                         .setSound(null)
+                        .setContentIntent(pendingIntent)
                         .setOngoing(true);
-
-//        NotificationManager notificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Since android Oreo notification channel is needed.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-//                    "Channel human readable title",
-//                    NotificationManager.IMPORTANCE_HIGH);
-//            notificationManager.createNotificationChannel(channel);
-//        }
-
-//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-
         return notificationBuilder.build();
     }
 
@@ -325,10 +344,35 @@ public class LocationUpdatesService extends Service {
                 @Override
                 public void run() {
                     liveTracking = new LiveTracking(location.getLatitude(), location.getLongitude());
-
+                    setSession();
+                    final String url = Constants.URL.concat(Constants.API_SYNC_DATA);
+                    User user = new User();
+                    user.setUsername("mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    try {
+                        result = (Boolean) Helper.postWebserviceWithBody(url, Boolean.class, user);//post
+                    } catch (Exception e) {
+                        result = false;
+                    }
+//                    try {
+//                        MessageResponse result = (MessageResponse) Helper.postWebserviceWithBody(url, MessageResponse.class, liveTracking);
+//                    } catch (Exception e) {
+//                    }
                 }
             }).start();
+        }
+    }
 
+    public void setSession() {
+        SessionManager session = new SessionManager(this);
+        if (session.isUrlEmpty()) {
+            Map<String, String> urlSession = session.getUrl();
+            Constants.IP = urlSession.get(Constants.KEY_URL);
+            Constants.URL = Constants.IP;
+            Helper.setItemParam(Constants.URL, Constants.URL);
+        } else {
+            Constants.IP = Constants.URL;
+            Constants.URL = Constants.IP;
+            Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }
 

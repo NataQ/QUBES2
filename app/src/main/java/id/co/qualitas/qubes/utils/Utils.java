@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.utils;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -11,82 +10,40 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,7 +54,6 @@ import java.util.concurrent.TimeUnit;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
-import id.co.qualitas.qubes.constants.Constants;
 
 public class Utils {
     private static final Gson gson = new Gson();
@@ -111,7 +67,6 @@ public class Utils {
     public static void init(Context context) {
         toaster = Toast.makeText(context, null, Toast.LENGTH_LONG);
     }
-
     public static void sendNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 

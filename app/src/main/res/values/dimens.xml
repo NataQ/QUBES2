@@ -37,4 +37,12 @@
     <dimen name="widthType">100dp</dimen>
 
 
+    <dimen name="icon_home_bg">50dp</dimen>
+    <dimen name="icon_customer">55dp</dimen>
+    <dimen name="corner_home">10dp</dimen>
+    <dimen name="corner_fragment">10dp</dimen>
+    <dimen name="icon_point">25dp</dimen>
+    <dimen name="padding_inner">14dp</dimen>
+
+
 </resources>

@@ -19,11 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -45,9 +43,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.model.Customer;
 
-public class CoverageActivity extends AppCompatActivity {
+public class CoverageActivity extends BaseActivity {
     private MapView mMapView;
     private IMapController mapController;
     private static final String TAG = "CoverageActivity";
@@ -73,7 +72,7 @@ public class CoverageActivity extends AppCompatActivity {
         //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
 
         //inflate and create the mMapView
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.aspp_fragment_coverage);
 
         mMapView = findViewById(R.id.mapView);
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -178,7 +177,7 @@ public class CoverageActivity extends AppCompatActivity {
 
         for (Customer point : points) {
             latitude += point.getLatitude();
-            longitude += point.getLongtitude();
+            longitude += point.getLongitude();
         }
 
         return new GeoPoint(latitude / n, longitude / n);
@@ -192,7 +191,7 @@ public class CoverageActivity extends AppCompatActivity {
         geoPointList = new ArrayList<>();
 
         for (Customer cust : customers) {
-            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongtitude()));
+            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
 //            if (cust.isRoute()) {
 //
 //            } else {
@@ -201,7 +200,7 @@ public class CoverageActivity extends AppCompatActivity {
             ov.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(cust)));
             items.add(ov);
 
-            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongtitude()));
+            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongitude()));
         }
         return items;
     }

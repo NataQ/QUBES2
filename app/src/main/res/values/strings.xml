@@ -667,5 +667,6 @@
     <string name="default_notification_channel_id">broadcast</string>
     <string name="default_notification_channel_name">broadcast name</string>
     <string name="location_updated">Location Updated: %1$s</string>
+    <string name="directions">Directions</string>
 
 </resources>

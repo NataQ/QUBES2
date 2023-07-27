@@ -1,6 +1,10 @@
 package id.co.qualitas.qubes.constants;
 
 public class Constants {
+
+    public static final double ZOOM_LEVEL = 13.0;
+    public static final String FCM = "fcm";
+    private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
     public static final String HTTP_HEADER_CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -75,7 +79,7 @@ public class Constants {
     public static final String SUMMARY_TYPE = "summary_type";
     public static final CharSequence PERCENT = "%";
     public static final String ERROR_LOG = "log_error";
-    public static final String ACCESS_POINT ="äccess_point";
+    public static final String ACCESS_POINT = "äccess_point";
     public static final String SO_HEADER_SELECTED = "SO_HEADER_SELECTED";
     public static final String KEEP_BACK = "keep_back";
     public static final String SUMMARY_ITEM_FILTER = "summary_item_filter";
@@ -90,15 +94,22 @@ public class Constants {
     public static final String INFO_KIKI = "info kiki";
     public static final String CURRENTPAGE = "current page";
     public static final String FROM_SALES_ORDER = "from sales order";
+    public static final String ROUTE_CUSTOMER_HEADER = "route customer header";
+    public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
+    public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
+    public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
+    public static final int SUCCESS_RESULT = 0;
+    public static final int FAILURE_RESULT = 1;
+
     //    public static String URL = "http://14.102.154.108:8080/";
 //    public static String URL = "http://mobi.binasanprima.com:8080/";
 //    public static String URL = "http://52.187.124.235:9191/";
-    public static String URL = "http://192.168.1.8:9191/";
-//    public static String URL = "http://172.16.1.11:9191/";
+    public static String URL = "http://192.168.1.10:9191";
+    //    public static String URL = "http://172.16.1.11:9191/";
 //    public static String IP = "mobi.binasanprima.com:8080";
 //    public static String IP = "52.187.124.235:9191";
-    public static String IP = "192.168.1.8:9191";
-//    public static String IP = "172.16.1.11:9191";
+    public static String IP = "192.168.1.9:9191";
+    //    public static String IP = "172.16.1.11:9191";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -126,46 +137,46 @@ public class Constants {
     public static final String errorUom = "Ada material yang tidak memiliki uom";
 
     public static final String API_OAUTH_TOKEN = "/oauth/token";
-    public static final String API_GET_DETAIL_USER = "api/v1/employee/employeeDetail/";
-    public static final String API_GET_REPLACEMENT_CHECK = "api/v1/employee/getReplacementCheck/";
-    public static final String API_GET_DETAIL_MATERIAL = "api/v1/homeQubes/getMaterialDetail";
-    public static final String API_HOME_GET_LIST_OUTLET = "api/v1/homeQubes/getListOutlet";
-    public static final String API_ORDER_PLAN_GET_DETAIL = "api/v1/orderPlan/getOrderPlan";
-    public static final String API_UPDATE_STATUS_OUTLET_ORDER_PLAN = "api/v1/orderPlan/updateStatusOrderPlan/";
-    public static final String API_ORDER_PLAN_CREATE = "api/v1/orderPlan/inputOrderPlan/";
-    public static final String API_VISIT_GET_LIST_OUTLET = "api/v1/visitQubes/getVisitMenu";
-    public static final String API_VISIT_GET_CREDIT_INFO = "api/v1/visitQubes/getCreditInfo";
-    public static final String API_VISIT_GET_PROMOTION = "api/v1/visitQubes/getPromotion";
-    public static final String API_VISIT_GET_MATERIAL_STORE_CHECK = "api/v1/visitQubes/getSelectedStoreCheck";
-    public static final String API_VISIT_SAVE_MATERIAL_STORE_CHECK = "api/v1/visitQubes/createStoreCheck";
-    public static final String API_VISIT_SAVE_RETURN = "api/v1/order/saveReturn";
-    public static final String API_VISIT_PAUSE = "api/v1/visitQubes/pause";
-    public static final String API_VISIT_CONTINUE = "api/v1/visitQubes/continue";
-    public static final String API_VISIT_FINISH = "api/v1/visitQubes/finish";
-    public static final String API_VISIT_CHECK_IN = "api/v1/visitQubes/checkin";
-    public static final String API_PROFILE_CHANGE_PASSWORD = "api/v1/user/changePassword";
+    public static final String API_GET_DETAIL_USER = "//api/v1/employee/employeeDetail/";
+    public static final String API_GET_REPLACEMENT_CHECK = "//api/v1/employee/getReplacementCheck/";
+    public static final String API_GET_DETAIL_MATERIAL = "//api/v1/homeQubes/getMaterialDetail";
+    public static final String API_HOME_GET_LIST_OUTLET = "//api/v1/homeQubes/getListOutlet";
+    public static final String API_ORDER_PLAN_GET_DETAIL = "//api/v1/orderPlan/getOrderPlan";
+    public static final String API_UPDATE_STATUS_OUTLET_ORDER_PLAN = "//api/v1/orderPlan/updateStatusOrderPlan/";
+    public static final String API_ORDER_PLAN_CREATE = "//api/v1/orderPlan/inputOrderPlan/";
+    public static final String API_VISIT_GET_LIST_OUTLET = "//api/v1/visitQubes/getVisitMenu";
+    public static final String API_VISIT_GET_CREDIT_INFO = "//api/v1/visitQubes/getCreditInfo";
+    public static final String API_VISIT_GET_PROMOTION = "//api/v1/visitQubes/getPromotion";
+    public static final String API_VISIT_GET_MATERIAL_STORE_CHECK = "//api/v1/visitQubes/getSelectedStoreCheck";
+    public static final String API_VISIT_SAVE_MATERIAL_STORE_CHECK = "//api/v1/visitQubes/createStoreCheck";
+    public static final String API_VISIT_SAVE_RETURN = "//api/v1/order/saveReturn";
+    public static final String API_VISIT_PAUSE = "//api/v1/visitQubes/pause";
+    public static final String API_VISIT_CONTINUE = "//api/v1/visitQubes/continue";
+    public static final String API_VISIT_FINISH = "//api/v1/visitQubes/finish";
+    public static final String API_VISIT_CHECK_IN = "//api/v1/visitQubes/checkin";
+    public static final String API_PROFILE_CHANGE_PASSWORD = "//api/v1/user/changePassword";
     //    public static final String API_GET_SALES_TARGET_DAILY = "api/v1/target/target_harian";
 //    public static final String API_GET_SALES_TARGET_MONTHLY = "api/v1/target/target_bulanan";
     //new
-    public static final String API_GET_SALES_TARGET_DAILY = "api/v1/target/targetByMatClass";
-    public static final String API_GET_SALES_TARGET_MONTHLY = "api/v1/target/targetByMatClassMonthly";
+    public static final String API_GET_SALES_TARGET_DAILY = "//api/v1/target/targetByMatClass";
+    public static final String API_GET_SALES_TARGET_MONTHLY = "//api/v1/target/targetByMatClassMonthly";
 
-    public static final String API_GET_CUST_TARGET_DAILY = "api/v1/target/targetByOutlet";
-    public static final String API_GET_CUST_TARGET_MONTHLY = "api/v1/target/targetByOutletMonthly";
-    public static final String API_GET_OBJECT_TARGET_DAILY = "api/v1/target/callTargetDaily";
-    public static final String API_GET_CALL_TARGET_MONTHLY = "api/v1/target/CallMonthly";
-    public static final String API_GET_EC_TARGET_DAILY = "api/v1/target/EC";
-    public static final String API_GET_EC_TARGET_MONTHLY = "api/v1/target/ECMonthly";
-    public static final String API_GET_EA_TARGET = "api/v1/target/EA";
-    public static final String API_GET_TARGET_SUMMARY = "api/v1/target/targetSummary";
-    public static final String API_UPDATE_ORDER_PLAN = "api/v1/orderPlan/updateOrderPlan";
-    public static final String API_UPDATE_STORE_CHECK = "api/v1/visitQubes/updateStoreCheck";
-    public static final String API_GET_ORDER_PLAN_HEADER = "api/v1/orderPlan/getOrderPlanHeader";
-    public static final String API_GET_ORDER_PLAN_DETAIL = "api/v1/orderPlan/orderPlanDetail";
-    public static final String API_GET_CHECK_IN_TIME = "api/v1/visitQubes/getCheckInTime";
-    public static final String API_UPDATE_ORDER_PLAN_DETAIL = "api/v1/orderPlan/updateOrderPlanDetail";
-    public static final String API_DELETE_ORDER_PLAN_HEADER = "api/v1/orderPlan/deleteOrderPlanHeader";
-    public static final String API_CREATE_VISIT_PLAN = "api/v1/visitQubes/createVisitPlan";
+    public static final String API_GET_CUST_TARGET_DAILY = "//api/v1/target/targetByOutlet";
+    public static final String API_GET_CUST_TARGET_MONTHLY = "//api/v1/target/targetByOutletMonthly";
+    public static final String API_GET_OBJECT_TARGET_DAILY = "//api/v1/target/callTargetDaily";
+    public static final String API_GET_CALL_TARGET_MONTHLY = "//api/v1/target/CallMonthly";
+    public static final String API_GET_EC_TARGET_DAILY = "//api/v1/target/EC";
+    public static final String API_GET_EC_TARGET_MONTHLY = "//api/v1/target/ECMonthly";
+    public static final String API_GET_EA_TARGET = "//api/v1/target/EA";
+    public static final String API_GET_TARGET_SUMMARY = "//api/v1/target/targetSummary";
+    public static final String API_UPDATE_ORDER_PLAN = "//api/v1/orderPlan/updateOrderPlan";
+    public static final String API_UPDATE_STORE_CHECK = "//api/v1/visitQubes/updateStoreCheck";
+    public static final String API_GET_ORDER_PLAN_HEADER = "//api/v1/orderPlan/getOrderPlanHeader";
+    public static final String API_GET_ORDER_PLAN_DETAIL = "//api/v1/orderPlan/orderPlanDetail";
+    public static final String API_GET_CHECK_IN_TIME = "//api/v1/visitQubes/getCheckInTime";
+    public static final String API_UPDATE_ORDER_PLAN_DETAIL = "//api/v1/orderPlan/updateOrderPlanDetail";
+    public static final String API_DELETE_ORDER_PLAN_HEADER = "//api/v1/orderPlan/deleteOrderPlanHeader";
+    public static final String API_CREATE_VISIT_PLAN = "//api/v1/visitQubes/createVisitPlan";
 
     //get detail user
     public static final String USER_DETAIL = "userDetail";
@@ -204,7 +215,7 @@ public class Constants {
     public static final String DATE_TYPE_12 = "dd-MM-yyyy";
     public static final String DATE_TYPE_15 = "dd/MM/yyyy";
     public static final String DATE_TYPE_14 = "yyyy-MM-dd mm:ss";
-    public static final String DATE_TYPE_16= "yyyy/MM/dd HH:mm:ss";
+    public static final String DATE_TYPE_16 = "yyyy/MM/dd HH:mm:ss";
     public static final String DATE_TYPE_17 = "EEE dd MMMM yyyy";
     public static final String FLAG_DELETE = "del";
 
@@ -217,11 +228,11 @@ public class Constants {
     public static final String CHECK_OUT_REQUEST = "checkOutReq";
 
     public static final String VISIT_ORDER_HEADER = "visit order header";
-    public static final String API_GET_ORDER_DETAIL = "api/v1/order/getOrderDetail";
-    public static final String API_GET_ORDER_DETAIL_NEW = "api/v1/order/getNewOrderDetail2";
-    public static final String API_GET_SALES_AND_KLASIFIKASI = "api/v1/order/getSalesAndKlasifikasi";
+    public static final String API_GET_ORDER_DETAIL = "//api/v1/order/getOrderDetail";
+    public static final String API_GET_ORDER_DETAIL_NEW = "//api/v1/order/getNewOrderDetail2";
+    public static final String API_GET_SALES_AND_KLASIFIKASI = "//api/v1/order/getSalesAndKlasifikasi";
 
-    public static final String API_SAVE_ORDER_VISIT = "api/v1/order/saveOrder";
+    public static final String API_SAVE_ORDER_VISIT = "//api/v1/order/saveOrder";
     public static final String ID_MATERIAL = "idMaterial";
     public static final String DROP_DOWN_KLASIFIKASI = "drop down klasifikasi";
     public static final String ID_EMPLOYEE = "idEmployee";
@@ -246,7 +257,7 @@ public class Constants {
 
     public static final String POSITION_JENIS_JUAL = "position jenis jual";
 
-    public static final String API_SALES_ORDER_HISTORY = "api/v1/summary/getSummary";
+    public static final String API_SALES_ORDER_HISTORY = "//api/v1/summary/getSummary";
 
     public static final String SIZE_VISIT_ORDER_DETAIL = "size visit order detail";
 
@@ -275,21 +286,21 @@ public class Constants {
     public static final String GET_DETAIL_ORDER_PLAN = "get detail order plan";
 
     public static final String ID_OUTLET = "idOutlet";
-    public static final String API_GET_OBJECT_TARGET_MONTHLY = "api/v1/target/targetByObject";
+    public static final String API_GET_OBJECT_TARGET_MONTHLY = "//api/v1/target/targetByObject";
 
-    public static final String API_VISIT_GET_RETURN = "api/v1/order/getListReturn";
+    public static final String API_VISIT_GET_RETURN = "//api/v1/order/getListReturn";
 
-    public static final String API_VISIT_DELETE_RETURN = "api/v1/order/deleteVisit";
-    public static final String API_GET_LIST_SPINNER = "api/v1/target/getSpinner";
+    public static final String API_VISIT_DELETE_RETURN = "//api/v1/order/deleteVisit";
+    public static final String API_GET_LIST_SPINNER = "//api/v1/target/getSpinner";
     public static final String RETURN_DETAIL_CHOOSE = "returnChoosed";
     public static final String BOOLEAN_STORE_CHECK = "boolean store check";
-    public static final String API_DELETE_NEW_VISIT = "api/v1/visitQubes/deleteNewVisit";
+    public static final String API_DELETE_NEW_VISIT = "//api/v1/visitQubes/deleteNewVisit";
 
     //new
-    public static final String API_GET_ORDER_DETAIL_2 = "api/v1/order/getOrderDetail2";
+    public static final String API_GET_ORDER_DETAIL_2 = "//api/v1/order/getOrderDetail2";
     public static final String PRICE_REQ = "priceReq";
 
-    public static final String API_VISIT_GET_LIST_UOM_RETURN = "api/v1/order/getListUomReturn";
+    public static final String API_VISIT_GET_LIST_UOM_RETURN = "//api/v1/order/getListUomReturn";
     public static final String RETURN_DETAIL = "return detail";
     public static final String ORDER_PLAN_SIZE = "orderplansize";
 
@@ -299,8 +310,8 @@ public class Constants {
     public static final String DONE_VIEW_STORE_CHECK = "done view store check";
     public static final String NOTYET_VIEW_STORE_CHECK = "notyet view store check";
 
-    public static final String API_GET_LIST_TO_HEADER = "api/v1/order/getListToHeaderByOutletSalesman";
-    public static final String API_GET_LIST_TO_DETAIL_ID = "api/v1/order/getListToDetailId";
+    public static final String API_GET_LIST_TO_HEADER = "//api/v1/order/getListToHeaderByOutletSalesman";
+    public static final String API_GET_LIST_TO_DETAIL_ID = "//api/v1/order/getListToDetailId";
     public static final String ORDER_HEADER_SELECTED = "order header selected";
 
     public static final String ID_TO = "idTo";
@@ -322,8 +333,8 @@ public class Constants {
     public static final String TYPE_CALL = "C";
     public static final String TYPE_EC = "EC";
     public static final String TYPE_EA = "EA";
-    public static final String API_GET_OFFLINE_DATA = "api/v1/visitQubes/getOfflineData";
-    public static final String API_GET_OFFLINE_DATA_SQLITE = "api/v1/employee/getOfflineLoginSqlite";
+    public static final String API_GET_OFFLINE_DATA = "//api/v1/visitQubes/getOfflineData";
+    public static final String API_GET_OFFLINE_DATA_SQLITE = "//api/v1/employee/getOfflineLoginSqlite";
 
     public static final String TRUE = "true";
     public static final String FALSE = "false";
@@ -331,10 +342,10 @@ public class Constants {
     public static final String ORDER_CANVAS_TYPE = "C";
     public static final String ORDER_TAKING_TYPE = "T";
     public static final String TYPE_1 = "type1";
-    public static final String TYPE_2= "type2";
+    public static final String TYPE_2 = "type2";
 
-    public static final String API_GET_PRICING = "api/v1/order/getPriceMel";
-    public static final String API_GET_ORDER_PLAN_PRICING = "api/v1/orderPlan/getBasePriceMel";
+    public static final String API_GET_PRICING = "//api/v1/order/getPriceMel";
+    public static final String API_GET_ORDER_PLAN_PRICING = "//api/v1/orderPlan/getBasePriceMel";
     public static final String MATERIAL_DETAIL = "materialDetail";
     public static final String MATERIAL_ORDER_PLAN_DETAIL = "materialOrderPlanDetail";
     public static final String PRICE_DETAIL = "priceDetail";
@@ -342,8 +353,8 @@ public class Constants {
     public static final String ALL_ONE_TIME_DISCOUNT_DETAIL = "allOneTimeDiscountDetail";
     public static final String SUCCESS_ORDER_SO = "SUCCESS";
 
-    public static final String API_GET_LIST_PROMOTION = "api/v1/promotion/getListPromotion";
-    public static final String API_GET_LIST_FREE_GOODS_PROMOTION = "api/v1/promotion/getListFreegoodsPromotion";
+    public static final String API_GET_LIST_PROMOTION = "//api/v1/promotion/getListPromotion";
+    public static final String API_GET_LIST_FREE_GOODS_PROMOTION = "//api/v1/promotion/getListFreegoodsPromotion";
 
     public static final String QTY1_CHANGED = "qty1 changed";
     public static final String UOM1_SELECTED = "uom1 selected";
@@ -352,7 +363,7 @@ public class Constants {
     public static final String JENIS_JUAL_SELECTED = "jenis jual selected";
     public static final String REQUEST_PRICE = "request price";
 
-    public static final String API_GET_OFFLINE_LOGIN = "api/v1/employee/getOfflineLogin";
+    public static final String API_GET_OFFLINE_LOGIN = "//api/v1/employee/getOfflineLogin";
 
     public static final String LIST_ALL_TO_PRICE = "listToPrice";
 
@@ -368,9 +379,9 @@ public class Constants {
     public static final String IS_RETURN = "isReturn";
     public static final String LIST_OP_DELETE = "listOpDelete";
 
-    public static final String API_SYNC_SAVE_ORDER_PLAN = "api/v1/offline/saveOrderPlan";
-    public static final String API_SYNC_UPDATE_ORDER_PLAN = "api/v1/offline/updateOrderPlan";
-    public static final String API_SYNC_DELETE_ORDER_PLAN = "api/v1/offline/deleteOrderPlan";
+    public static final String API_SYNC_SAVE_ORDER_PLAN = "//api/v1/offline/saveOrderPlan";
+    public static final String API_SYNC_UPDATE_ORDER_PLAN = "//api/v1/offline/updateOrderPlan";
+    public static final String API_SYNC_DELETE_ORDER_PLAN = "//api/v1/offline/deleteOrderPlan";
 
     public static final String STATUS_OP_FOR_UPDATE = "U";
     public static final String STATUS_OP_FOR_SYNC = "A";
@@ -388,10 +399,10 @@ public class Constants {
     public static final String COND_RETURN_GOOD = "Good ReturnOrder";
     public static final String COND_RETURN_BAD = "ReturnOrder";
 
-    public static final String API_SYNC_OFFLINE = "api/v1/offline/syncOffline";
+    public static final String API_SYNC_OFFLINE = "//api/v1/offline/syncOffline";
     public static final String LIST_DELETE_NEW_VISIT = "list delete new visit";
 
-    public static final String API_CHECK_BRB = "api/v1/order/checkBrb";
+    public static final String API_CHECK_BRB = "//api/v1/order/checkBrb";
 
     public static final String SYNCED = "SYNCED";
     public static final String NOT_SYNCED = "NOT SYNCED";
@@ -405,7 +416,7 @@ public class Constants {
     public static final String TARGET_ITEM_DETAIL = "target item detail";
 
 
-    public static final String API_GET_FREE_GOODS = "api/v1/order/getFreeGoods";
+    public static final String API_GET_FREE_GOODS = "//api/v1/order/getFreeGoods";
     public static final String DISKON = "Diskon";
 
     public static final String COMA = ",";
@@ -419,23 +430,23 @@ public class Constants {
     public static final String ACTIVE_MENU = "activeMenu";
 
     public static final String PROMOTION_ITEM_FILTER = "promotionFilter";
-    public static final String PROMOTION_TYPE1= "discount";
-    public static final String PROMOTION_TYPE2= "freeGoods";
+    public static final String PROMOTION_TYPE1 = "discount";
+    public static final String PROMOTION_TYPE2 = "freeGoods";
 
 
-    public static final String API_GET_LAST_ORDER = "api/v1/offline/lastOrder";
+    public static final String API_GET_LAST_ORDER = "//api/v1/offline/lastOrder";
     public static final String ID_PLANT_SALESMAN = "idPlant";
 
-    public static final String API_GET_DAILY_TARGET_BY_OUTLET = "api/v1/target/getMelsTargetDailyByOutlet";
-    public static final String API_GET_MONTH_TARGET_BY_OUTLET = "api/v1/target/getMelsTargetMonthlyByOutlet";
-    public static final String API_GET_DAILY_TARGET_BY_KLASIFIKASI = "api/v1/target/getMelsTargetDailyByKlasifikasi";
-    public static final String API_GET_MONTH_TARGET_BY_KLASIFIKASI = "api/v1/target/getMelsTargetMonthlyByKlasifikasi";
-    public static final String API_GET_TARGET_CALL = "api/v1/target/getMelsTargetCall";
-    public static final String API_GET_TARGET_EA = "api/v1/target/getMelsTargetEa";
-    public static final String API_GET_TARGET_EC = "api/v1/target/getMelsTargetEc";
-    public static final String API_GET_TARGET_FOR_ORDER_PLAN = "/api/v1/target/getMelsTargetOrderPlan";
-    public static final String API_GET_TARGET_FOR_SUMMARY_DAILY = "api/v1/target/getMelsSummaryDaily";
-    public static final String API_GET_TARGET_FOR_SUMMARY_MONTHLY = "api/v1/target/getMelsSummaryMonthly";
+    public static final String API_GET_DAILY_TARGET_BY_OUTLET = "//api/v1/target/getMelsTargetDailyByOutlet";
+    public static final String API_GET_MONTH_TARGET_BY_OUTLET = "//api/v1/target/getMelsTargetMonthlyByOutlet";
+    public static final String API_GET_DAILY_TARGET_BY_KLASIFIKASI = "//api/v1/target/getMelsTargetDailyByKlasifikasi";
+    public static final String API_GET_MONTH_TARGET_BY_KLASIFIKASI = "//api/v1/target/getMelsTargetMonthlyByKlasifikasi";
+    public static final String API_GET_TARGET_CALL = "//api/v1/target/getMelsTargetCall";
+    public static final String API_GET_TARGET_EA = "//api/v1/target/getMelsTargetEa";
+    public static final String API_GET_TARGET_EC = "//api/v1/target/getMelsTargetEc";
+    public static final String API_GET_TARGET_FOR_ORDER_PLAN = "///api/v1/target/getMelsTargetOrderPlan";
+    public static final String API_GET_TARGET_FOR_SUMMARY_DAILY = "//api/v1/target/getMelsSummaryDaily";
+    public static final String API_GET_TARGET_FOR_SUMMARY_MONTHLY = "//api/v1/target/getMelsSummaryMonthly";
 
     public static final String ID_VP_MOBILE = "VPM";
     public static final String ID_SC_MOBILE = "CM";
@@ -446,21 +457,22 @@ public class Constants {
 
     public static final String REGIISTERID = "register id";
 
-    public static final String API_CHECKING_USER = "api/v1/doubleLogin/checkLogin";
+    public static final String API_CHECKING_USER = "/api/v1/doubleLogin/checkLogin";
     public static final String API_UPDATE_REGIS = "/api/v1/doubleLogin/updateRegis";
-    public static final String API_LOGOUT = "api/v1/doubleLogin/logout";
+    public static final String API_LOGOUT = "/api/v1/doubleLogin/logout";
+    public static final String API_SYNC_DATA = "/api/v1/doubleLogin/syncData";
 
     public static final String ACTIVE_CLASS = "active class";
 
     public static final String LIST_STORE_CHECK = "list store check";
 
-    public static final String API_SYNC_MASTER_DATA = "api/v1/sync/syncMasterData";
-    public static final String API_SYNC_ORDER_PLAN = "api/v1/sync/syncOrderPlan";
-    public static final String API_SYNC_VISIT = "api/v1/sync/syncVisit";
-    public static final String API_SYNC_STORE_CHECK = "api/v1/sync/syncStoreCheck";
-    public static final String API_SYNC_ORDER = "api/v1/sync/syncOrder";
-    public static final String API_SYNC_RETURN = "api/v1/sync/syncReturn";
-    public static final String API_GET_IMAGE = "api/v1/images/getImages";
+    public static final String API_SYNC_MASTER_DATA = "/api/v1/sync/syncMasterData";
+    public static final String API_SYNC_ORDER_PLAN = "/api/v1/sync/syncOrderPlan";
+    public static final String API_SYNC_VISIT = "/api/v1/sync/syncVisit";
+    public static final String API_SYNC_STORE_CHECK = "/api/v1/sync/syncStoreCheck";
+    public static final String API_SYNC_ORDER = "/api/v1/sync/syncOrder";
+    public static final String API_SYNC_RETURN = "/api/v1/sync/syncReturn";
+    public static final String API_GET_IMAGE = "/api/v1/images/getImages";
 
     public static final String PARAM_FOR_DIALOG = "dialog param";
     public static final String SELECTED_CUSTOMER_ORDER_PLAN = "sel cus op";

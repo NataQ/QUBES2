@@ -3,17 +3,18 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!--        <item name="android:textViewStyle">@style/AppTheme.Widget.TextView</item>-->
         <!--        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>-->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/new_blue</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/blue_aspp</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="colorPrimary">@color/new_blue</item>
-        <item name="colorPrimaryVariant">@color/blue4</item>
-        <item name="colorOnPrimary">@color/blue5</item>
+        <item name="colorPrimary">@color/blue_aspp</item>
+        <item name="colorPrimaryVariant">@color/blue_aspp</item>
+        <item name="colorOnPrimary">@color/blue_aspp</item>
         <!-- Secondary brand color. -->
-        <item name="android:textSize">@dimen/smallFont</item>
-        <item name="colorSecondary">@color/blue3</item>
-        <item name="colorSecondaryVariant">@color/blue3</item>
-        <item name="colorOnSecondary">@color/blue4</item>
-        <item name="android:textColorSecondary">@color/darkGray</item>
+        <!--        <item name="android:textSize">@dimen/smallFont</item>-->
+        <item name="colorSecondary">@color/blue4_aspp</item>
+        <item name="colorSecondaryVariant">@color/blue4_aspp</item>
+        <item name="colorOnSecondary">@color/blue3_aspp</item>
+        <item name="android:textColor">@color/black_aspp</item>
+        <item name="android:textColorSecondary">@color/black_aspp</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
         <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
@@ -37,15 +38,15 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/smallFont</item>
+        <!--        <item name="android:textSize">@dimen/smallFont</item>-->
     </style>
 
     <style name="BottomNavigationView" parent="@style/TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">@dimen/smallFont</item>
+        <!--        <item name="android:textSize">@dimen/smallFont</item>-->
     </style>
 
     <style name="BottomNavigationView.Active" parent="@style/TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">@dimen/smallFont</item>
+        <!--        <item name="android:textSize">@dimen/smallFont</item>-->
     </style>
 
     <style name="fab" parent="Widget.MaterialComponents.FloatingActionButton">
@@ -75,9 +76,9 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/new_blue</item>
-        <item name="colorPrimaryDark">@color/new_blue1</item>
-        <item name="colorAccent">@color/new_blue</item>
+        <item name="colorPrimary">@color/blue_aspp</item>
+        <item name="colorPrimaryDark">@color/blue3_aspp</item>
+        <item name="colorAccent">@color/blue_aspp</item>
         <!--<item name="colorAccent">@color/darkCyan</item>-->
     </style>
 
@@ -110,7 +111,7 @@
     </style>
 
     <style name="CaldroidDefaultCustomCalendarViewLayout">
-        <item name="android:background">@color/new_blue</item>
+        <item name="android:background">@color/blue_aspp</item>
     </style>
 
     <style name="CaldroidDefaultCustomMonthName">
@@ -127,7 +128,7 @@
     </style>
 
     <style name="CaldroidDefaultCustomGridView" parent="CaldroidDefaultGridView">
-        <item name="android:background">@color/new_blue</item>
+        <item name="android:background">@color/blue_aspp</item>
     </style>
 
     <style name="CaldroidDefaultCustomCell" parent="CaldroidDefaultCell">
@@ -171,7 +172,7 @@
         <item name="android:paddingBottom">5dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">@font/montserrat</item>
-        <item name="android:background">@color/new_blue</item>
+        <item name="android:background">@color/blue_aspp</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -232,8 +233,8 @@
 
     <style name="SpinnerInputLayoutMaterial" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="android:padding">0dp</item>
-        <item name="color">@color/blue3</item>
-        <item name="colorAccent">@color/blue3</item>
+        <item name="color">@color/blue_aspp</item>
+        <item name="colorAccent">@color/blue_aspp</item>
         <item name="boxCornerRadiusBottomEnd">5dp</item>
         <item name="boxCornerRadiusBottomStart">5dp</item>
         <item name="boxCornerRadiusTopEnd">5dp</item>
@@ -249,13 +250,13 @@
     </style>
 
     <!--    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">-->
-    <!--        <item name="colorAccent">@color/new_blue</item>-->
+    <!--        <item name="colorAccent">@color/blue_aspp</item>-->
     <!--    </style>-->
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">@color/new_blue</item>           <!-- Header Background -->
-        <item name="android:colorAccent">@color/new_blue</item>
-        <item name="android:textColor">@color/new_blue</item>
+        <item name="colorAccent">@color/blue_aspp</item>           <!-- Header Background -->
+        <item name="android:colorAccent">@color/blue_aspp</item>
+        <item name="android:textColor">@color/blue_aspp</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyled</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyled</item>
         <item name="android:buttonBarNeutralButtonStyle">@style/DialogButtonStyled</item>
@@ -266,8 +267,18 @@
 
     <!-- Date picker ok/cancel button styles    -->
     <style name="DialogButtonStyled" parent="Theme.MaterialComponents.Light">
-        <item name="android:textColor">@color/new_blue</item>
+        <item name="android:textColor">@color/blue_aspp</item>
         <item name="android:background">@color/space_transparent</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/GreenButtonThemeOverlay</item>
+    </style>
+
+    <style name="GreenButtonThemeOverlay">
+        <item name="colorPrimary">@color/blue_aspp</item>
+        <item name="colorOnSurface">@color/gray_aspp</item>
+        <item name="cornerRadius">12dp</item>
     </style>
 
 </resources>

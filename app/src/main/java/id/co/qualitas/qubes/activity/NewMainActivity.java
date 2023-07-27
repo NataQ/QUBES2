@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,37 +12,41 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
-import android.location.Location;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.ChangePasswordFragment;
 import id.co.qualitas.qubes.fragment.CreditInfo2Fragment;
-import id.co.qualitas.qubes.fragment.NewHomeFragment;
-import id.co.qualitas.qubes.fragment.NewVisitHomeFragment;
+import id.co.qualitas.qubes.fragment.aspp.DirectionFragment;
+import id.co.qualitas.qubes.fragment.aspp.HomeFragment;
 import id.co.qualitas.qubes.fragment.Order2Fragment;
-import id.co.qualitas.qubes.fragment.OrderFragment;
 import id.co.qualitas.qubes.fragment.OrderPlanDetailFragmentV2;
 import id.co.qualitas.qubes.fragment.OrderPlanSummaryFragmentV2;
 import id.co.qualitas.qubes.fragment.Profile2Fragment;
@@ -68,12 +73,13 @@ public class NewMainActivity extends BaseActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static final int PERMISSION_CALLBACK_CONSTANT = 100;
     private static final int REQUEST_PERMISSION_SETTING = 101;
+    private ImageView imgLogOut;
     private boolean sentToSettings = false;
     // Tracks the bound state of the service.
-    private boolean mBound = false;
-    // The BroadcastReceiver used to listen from broadcasts from the service.
-    private MyReceiver myReceiver;
-    private static LocationUpdatesService mServiceFusedLocation = null;
+//    private boolean mBound = false;
+//    // The BroadcastReceiver used to listen from broadcasts from the service.
+//    private MyReceiver myReceiver;
+//    private static LocationUpdatesService mServiceFusedLocation = null;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,7 +94,7 @@ public class NewMainActivity extends BaseActivity {
                 case R.id.navigation_home:
                     if (!currentpage.equals("1")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                        fragment = new NewHomeFragment();
+                        fragment = new HomeFragment();
                         setContent(fragment);
                     }
                     return true;
@@ -135,83 +141,50 @@ public class NewMainActivity extends BaseActivity {
         setContentView(R.layout.new_activity_main);
         initialize();
         setSession();
-        myReceiver = new MyReceiver();
+//        myReceiver = new MyReceiver();
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            if (checkSelfPermission(permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
-//                    || checkSelfPermission(permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED
-//                    || checkSelfPermission(permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED
-//                    || checkSelfPermission(permissionsRequired[3]) != PackageManager.PERMISSION_GRANTED) {
-//                if (shouldShowRequestPermissionRationale(permissionsRequired[0])
-//                        || shouldShowRequestPermissionRationale(permissionsRequired[1])
-//                        || shouldShowRequestPermissionRationale(permissionsRequired[2])
-//                        || shouldShowRequestPermissionRationale(permissionsRequired[3])) {
-//                    //Show Information about why you need the permission
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
-//                    builder.setTitle(R.string.need_multiple_permissions);
-//                    builder.setCancelable(false);
-//                    builder.setMessage(R.string.need_gallery_and_location_permission);
-//                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                                requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
-//                            }
-//                        }
-//                    });
-//                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
-//                            finish();
-//                        }
-//                    });
-//                    builder.show();
-//                } else if (permissionStatus.getBoolean(permissionsRequired[0], false)) {
-//                    //Previously Permission Request was cancelled with 'Dont Ask Again',
-//                    // Redirect to Settings after showing Information about why you need the permission
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
-//                    builder.setTitle(R.string.need_multiple_permissions);
-//                    builder.setCancelable(false);
-//                    builder.setMessage(R.string.need_gallery_and_location_permission);
-//                    builder.setPositiveButton(R.string.grant, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                            sentToSettings = true;
-//                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-//                            intent.setData(uri);
-//                            startActivityForResult(intent, REQUEST_PERMISSION_SETTING);
-//                            Toast.makeText(getBaseContext(), R.string.go_to_permisson_to_grant_gallery_and_location, Toast.LENGTH_LONG).show();
-//                        }
-//                    });
-//                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.cancel();
-//                            Toast.makeText(getBaseContext(), R.string.unable_to_get_permission, Toast.LENGTH_LONG).show();
-//                            finish();
-//                        }
-//                    });
-//                    builder.show();
-//                } else {
-//                    //just request the permission
-//                    requestPermissions(permissionsRequired, PERMISSION_CALLBACK_CONSTANT);
-//                }
-//
-//                SharedPreferences.Editor editor = permissionStatus.edit();
-//                editor.putBoolean(permissionsRequired[0], true);
-//                editor.commit();
-//            } else {
-//                //You already have the permission, just go ahead.
-//                proceedAfterPermission();
-//            }
-//        }
+        imgLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LayoutInflater inflater = LayoutInflater.from(NewMainActivity.this);
+                final Dialog alertDialog = new Dialog(NewMainActivity.this);
+                View dialogView = inflater.inflate(R.layout.custom_dialog_alert_delete, null);
+                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                alertDialog.setContentView(dialogView);
+                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
+                Button btnSave = alertDialog.findViewById(R.id.btnSave);
+                TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
+
+                txtDialog.setText(getResources().getString(R.string.textDialogLogout));
+                btnSave.setText(getResources().getString(R.string.yes));
+                btnCancel.setText(getResources().getString(R.string.no));
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                btnSave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//                        PARAM = 12;
+//                        new RequestUrl().execute();
+//                        progress.show();
+                        Intent intent = new Intent(NewMainActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        alertDialog.dismiss();
+                    }
+                });
+
+                alertDialog.show();
+            }
+        });
     }
 
     @Override
@@ -310,6 +283,7 @@ public class NewMainActivity extends BaseActivity {
     }
 
     private void initialize() {
+        imgLogOut = findViewById(R.id.imgLogOut);
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentManager = getSupportFragmentManager();
@@ -333,7 +307,7 @@ public class NewMainActivity extends BaseActivity {
             case 1:
                 if (!currentpage.equals("1")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                    fragment = new NewHomeFragment();
+                    fragment = new HomeFragment();
                     setContent(fragment);
                     bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                 }
@@ -504,6 +478,13 @@ public class NewMainActivity extends BaseActivity {
                     setContent(fragment);
                 }
                 break;
+            case 24:
+                if (!currentpage.equals("24")) {
+                    Helper.setItemParam(Constants.CURRENTPAGE, "24");
+                    fragment = new DirectionFragment();
+                    setContent(fragment);
+                }
+                break;
         }
     }
 
@@ -511,7 +492,7 @@ public class NewMainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         init();
-        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
+//        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
         setPage();
     }
 
@@ -527,8 +508,7 @@ public class NewMainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
+    public void backPress() {
         if (doubleBackToExitPressedOnce) {
             Helper.removeItemParam(Constants.CURRENTPAGE);
             finish();
@@ -599,54 +579,54 @@ public class NewMainActivity extends BaseActivity {
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         //enhancement tracking
-        bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+//        bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private class MyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
-            if (actionTracking.equals("start_tracking")) {
-                mServiceFusedLocation.requestLocationUpdates();
-            } else if (actionTracking.equals("stop_tracking")) {
-                mServiceFusedLocation.removeLocationUpdates();
-            }
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        //enhancement tracking
-        if (mBound) {
-            // Unbind from the service. This signals to the service that this activity is no longer
-            // in the foreground, and the service can respond by promoting itself to a foreground
-            // service.
-            unbindService(mServiceConnection);
-            mBound = false;
-        }
-        super.onStop();
-    }
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-            mServiceFusedLocation = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceFusedLocation = null;
-            mBound = false;
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        //enhancement tracking
-        unregisterReceiver(myReceiver);
-        super.onPause();
-    }
+//    private class MyReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
+//            if (actionTracking.equals("start_tracking")) {
+//                mServiceFusedLocation.requestLocationUpdates();
+//            } else if (actionTracking.equals("stop_tracking")) {
+//                mServiceFusedLocation.removeLocationUpdates();
+//            }
+//        }
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        //enhancement tracking
+//        if (mBound) {
+//            // Unbind from the service. This signals to the service that this activity is no longer
+//            // in the foreground, and the service can respond by promoting itself to a foreground
+//            // service.
+//            unbindService(mServiceConnection);
+//            mBound = false;
+//        }
+//        super.onStop();
+//    }
+//
+//    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+//            mServiceFusedLocation = binder.getService();
+//            mBound = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mServiceFusedLocation = null;
+//            mBound = false;
+//        }
+//    };
+//
+//    @Override
+//    protected void onPause() {
+//        //enhancement tracking
+//        unregisterReceiver(myReceiver);
+//        super.onPause();
+//    }
 }

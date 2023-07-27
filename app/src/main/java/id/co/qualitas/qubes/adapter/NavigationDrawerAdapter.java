@@ -84,7 +84,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 //                }
                 break;
             case 4:
-                holder.icon.setImageResource(R.drawable.ic_visit_selector);
+                holder.icon.setImageResource(R.drawable.ic_activity_selector);
 //                if (current.isShowNotify()) {
 //                    holder.icon.setImageResource(R.drawable.visithover);
 //                } else {

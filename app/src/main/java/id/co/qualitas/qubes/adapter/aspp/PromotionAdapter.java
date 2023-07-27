@@ -108,7 +108,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
     public void onBindViewHolder(Holder holder, int position) {
         Promotion promotion = promotionFilteredList.get(position);
         holder.txtTitle.setText(promotion.getPromotionName());
-        holder.txtPeriode.setText("Periode : " + promotion.getPromotionPeriode());
+        holder.txtPeriode.setText(promotion.getPromotionPeriode());
     }
 
     @Override

@@ -9,12 +9,14 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.util.Map;
 import java.util.Random;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class NotiWorker extends Worker {
@@ -56,7 +58,8 @@ public class NotiWorker extends Worker {
 //            new Thread(new Runnable() {
 //                @Override
 //                public void run() {
-            url = "http://192.168.1.8:9191/api/v1/doubleLogin/syncData";
+            setSession();
+        url = Constants.URL + Constants.API_SYNC_DATA;
         User user = new User();
         user.setUsername("mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
         try {
@@ -76,6 +79,20 @@ public class NotiWorker extends Worker {
 
 //        startRandomNumberGenerator();
 //        return Result.success();
+    }
+
+    public void setSession() {
+        SessionManager session = new SessionManager(getApplicationContext());
+        if (session.isUrlEmpty()) {
+            Map<String, String> urlSession = session.getUrl();
+            Constants.IP = urlSession.get(Constants.KEY_URL);
+            Constants.URL = Constants.IP;
+            Helper.setItemParam(Constants.URL, Constants.URL);
+        } else {
+            Constants.IP = Constants.URL;
+            Constants.URL = Constants.IP;
+            Helper.setItemParam(Constants.URL, Constants.URL);
+        }
     }
 
     @Override

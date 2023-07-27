@@ -7,12 +7,12 @@
 
     <item
         android:id="@+id/navigation_route_customer"
-        android:icon="@drawable/ic_order_plan_selector"
+        android:icon="@drawable/ic_route_customer_selector"
         android:title="@string/routeCustomer" />
 
     <item
         android:id="@+id/navigation_activity"
-        android:icon="@drawable/ic_visit_selector"
+        android:icon="@drawable/ic_activity_selector"
         android:title="@string/activity" />
 
     <item

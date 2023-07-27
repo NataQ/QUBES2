@@ -476,7 +476,7 @@ public class OrderSummaryFragmentN extends BaseFragment implements Spinner.OnIte
                         header.setRequest_disc(false);
                     }
 
-                    if (!Helper.isEmpty(edtTxtDescRequest)) {
+                    if (!Helper.isEmptyEditText(edtTxtDescRequest)) {
                         header.setDescriptionDisc(edtTxtDescRequest.getText().toString().trim());
                     } else {
                         header.setDescriptionDisc(null);

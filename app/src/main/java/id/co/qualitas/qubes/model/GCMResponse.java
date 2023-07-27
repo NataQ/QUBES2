@@ -12,6 +12,7 @@ public class GCMResponse implements Parcelable {
     private String desc;
     private String contentTitle;
     private String username;
+    private String type;
     private String imageUrl;
 
     public GCMResponse() {
@@ -35,6 +36,14 @@ public class GCMResponse implements Parcelable {
             return new GCMResponse[size];
         }
     };
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getImageUrl() {
         return imageUrl;

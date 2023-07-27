@@ -1,4 +1,4 @@
-package id.co.qualitas.qubes.fragment;
+package id.co.qualitas.qubes.fragment.aspp;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -14,24 +15,25 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.adapter.NewTabFragmentAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.fragment.aspp.DashboardFragment;
-import id.co.qualitas.qubes.fragment.aspp.PromotionFragment;
+import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 
-public class NewHomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment {
     TabLayout mTabs;
     View mIndicator;
     ViewPager mViewPager;
 
     NewTabFragmentAdapter adapter;
     private int indicatorWidth;
+    public boolean doubleBackToExitPressedOnce = false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.new_fragment_home, container, false);
+        rootView = inflater.inflate(R.layout.aspp_fragment_home, container, false);
         //Assign view reference
         mTabs = rootView.findViewById(R.id.tab);
         mIndicator = rootView.findViewById(R.id.indicator);
@@ -54,9 +56,9 @@ public class NewHomeFragment extends BaseFragment {
         mViewPager.setAdapter(adapter);
         mTabs.setupWithViewPager(mViewPager);
 
-        mTabs.getTabAt(0).setIcon(R.drawable.ic_calender);
-//        mTabs.getTabAt(1).setIcon(R.drawable.ic_target);
-        mTabs.getTabAt(1).setIcon(R.drawable.ic_promotion);
+//        mTabs.getTabAt(0).setIcon(R.drawable.ic_calender);
+////        mTabs.getTabAt(1).setIcon(R.drawable.ic_target);
+//        mTabs.getTabAt(1).setIcon(R.drawable.ic_promotion);
         mTabs.setTabTextColors(ContextCompat.getColor(getContext(), R.color.white), ContextCompat.getColor(getContext(), R.color.white));
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
@@ -116,6 +118,17 @@ public class NewHomeFragment extends BaseFragment {
             public void onPageScrollStateChanged(int i) {
             }
         });
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+                    ((NewMainActivity) getActivity()).backPress();
+                }
+            }
+        });
+
         return rootView;
     }
 

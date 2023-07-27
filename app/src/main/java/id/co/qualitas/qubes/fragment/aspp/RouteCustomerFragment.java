@@ -1,8 +1,10 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -11,17 +13,23 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
@@ -32,21 +40,22 @@ import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.NewMainActivity;
-import id.co.qualitas.qubes.activity.aspp.CoverageActivity;
-import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class RouteCustomerFragment extends BaseFragment {
+    private static final int LOCATION_PERMISSION_REQUEST = 7;
     private RouteCustomerAdapter mAdapter;
     private List<RouteCustomer> mList;
     private ArrayAdapter<String> spn1Adapter, spn2Adapter;
-    private ImageView imgCoverage;
+    private Button btnCoverage;
     private EditText edtSearch;
 
     @Override
@@ -69,10 +78,10 @@ public class RouteCustomerFragment extends BaseFragment {
         mAdapter = new RouteCustomerAdapter(this, mList);
         recyclerView.setAdapter(mAdapter);
 
-        imgCoverage.setOnClickListener(v -> {
-//            ((NewMainActivity) getActivity()).changePage(23);
-            Intent intent = new Intent(getActivity(), CoverageActivity.class);
-            startActivity(intent);
+        btnCoverage.setOnClickListener(v -> {
+            ((NewMainActivity) getActivity()).changePage(23);
+//            Intent intent = new Intent(getActivity(), CoverageActivity.class);
+//            startActivity(intent);
         });
 
         edtSearch.addTextChangedListener(new TextWatcher() {
@@ -94,23 +103,26 @@ public class RouteCustomerFragment extends BaseFragment {
             }
         });
 
-        rootView.setFocusableInTouchMode(true);
-        rootView.requestFocus();
-
-        this.rootView.setOnKeyListener(new View.OnKeyListener() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(1);
-                        return true;
-                    }
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+                    ((NewMainActivity) getActivity()).changePage(1);
                 }
-                return false;
             }
         });
 
         return rootView;
+    }
+
+    public void moveDirection(RouteCustomer headerCustomer) {
+        if (Utils.isGPSOn(getContext())) {
+            Helper.setItemParam(Constants.ROUTE_CUSTOMER_HEADER, headerCustomer);
+            ((NewMainActivity) getActivity()).changePage(24);
+        } else {
+            Utils.turnOnGPS(getActivity());
+        }
     }
 
     private void initData() {
@@ -125,7 +137,7 @@ public class RouteCustomerFragment extends BaseFragment {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         edtSearch = rootView.findViewById(R.id.edtSearch);
-        imgCoverage = rootView.findViewById(R.id.imgCoverage);
+        btnCoverage = rootView.findViewById(R.id.btnCoverage);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
@@ -135,23 +147,21 @@ public class RouteCustomerFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         Helper.setItemParam(Constants.CURRENTPAGE, "2");
 
-        try {
-            if (getView() != null) {
-                getView().setFocusableInTouchMode(true);
-            }
-        } catch (NullPointerException ignored) {
-        }
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
-            }
-        });
+//        try {
+//            if (getView() != null) {
+//                getView().setFocusableInTouchMode(true);
+//            }
+//        } catch (NullPointerException ignored) {
+//        }
+//        getView().requestFocus();
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
+//            }
+//        });
     }
 
     public void openDialogDirections(RouteCustomer detail) {

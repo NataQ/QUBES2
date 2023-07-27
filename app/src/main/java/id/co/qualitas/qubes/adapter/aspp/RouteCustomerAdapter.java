@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.adapter.aspp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -84,14 +85,15 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtAddress, txtStore;
-        ImageView imgDirections;
+        TextView txtAddress, txtStore, txtRoute;
+        Button btnDirection;
 
         public Holder(View itemView) {
             super(itemView);
             txtStore = itemView.findViewById(R.id.txtStore);
             txtAddress = itemView.findViewById(R.id.txtAddress);
-            imgDirections = itemView.findViewById(R.id.imgDirections);
+            txtRoute = itemView.findViewById(R.id.txtRoute);
+            btnDirection = itemView.findViewById(R.id.btnDirection);
 //            itemView.setOnClickListener(this);
         }
 
@@ -112,9 +114,10 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
         RouteCustomer detail = dataFilteredList.get(position);
         holder.txtStore.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer() + " (" + detail.getMileage() + ")");
         holder.txtAddress.setText(detail.getAddressCustomer());
-        holder.imgDirections.setOnClickListener(v -> {
-            mContext.openDialogDirections(detail);
-            Toast.makeText(mContext.getContext(), "DIREC", Toast.LENGTH_SHORT).show();
+        holder.txtRoute.setText("P1H1-P3H1");
+        holder.btnDirection.setOnClickListener(v -> {
+            mContext.moveDirection(detail);
+//            mContext.openDialogDirections(detail);
         });
     }
 

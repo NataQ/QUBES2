@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ import id.co.qualitas.qubes.helper.Helper;
 
 public class LoginActivity extends BaseActivity {
     private Button login;
-    private TextView ipChanger, txtQubes, txtQubesVersion;
+    private TextView txtSettings, txtVersion;
     private String registerID;
     boolean showPassword = false;
     private ImageView imgShowPassword;
@@ -49,14 +50,16 @@ public class LoginActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.aspp_activity_login);
 
         init();
         initialize();
 
-        txtQubesVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
+        txtVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
 
-        ipChanger.setOnClickListener(new View.OnClickListener() {
+        txtSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialogSetting();
@@ -117,10 +120,9 @@ public class LoginActivity extends BaseActivity {
 
     private void initialize() {
         imgShowPassword = findViewById(R.id.imgShowPassword);
-        txtQubesVersion = findViewById(R.id.txtQubesVersion);
-        txtQubes = findViewById(R.id.txtQubes);
-        login = findViewById(R.id.btnSave);
-        ipChanger = findViewById(R.id.ipChanger);
+        txtVersion = findViewById(R.id.txtVersion);
+        login = findViewById(R.id.btnLogIn);
+        txtSettings = findViewById(R.id.txtSettings);
         db = new DatabaseHelper(getApplicationContext());
 
         if (Helper.getItemParam(Constants.REGIISTERID) == null) {
@@ -175,9 +177,9 @@ public class LoginActivity extends BaseActivity {
         btnSave.setText(getResources().getString(R.string.yes));
         btnCancel.setText(getResources().getString(R.string.no));
 
-        txtDialog.setText(getResources().getString(R.string.alertExit));
-        btnSave.setText("Ya");
-        btnCancel.setText("Tidak");
+//        txtDialog.setText(getResources().getString(R.string.alertExit));
+//        btnLogIn.setText("Ya");
+//        btnCancel.setText("Tidak");
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -2,24 +2,22 @@ package id.co.qualitas.qubes.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.osmdroid.util.GeoPoint;
-
 public class Customer {
     private String idCustomer;
     private String nameCustomer;
     private String address;
     private boolean route;
     private double latitude;
-    private double longtitude;
+    private double longitude;
     private LatLng position;
 
-    public Customer(String idCustomer, String nameCustomer, String address, boolean route, double latitude, double longtitude) {
+    public Customer(String idCustomer, String nameCustomer, String address, boolean route, double latitude, double longitude) {
         this.idCustomer = idCustomer;
         this.nameCustomer = nameCustomer;
         this.address = address;
         this.route = route;
         this.latitude = latitude;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
     }
 
     public Customer(String idCustomer, String nameCustomer, String address, boolean route, LatLng position) {
@@ -38,12 +36,12 @@ public class Customer {
         this.latitude = latitude;
     }
 
-    public double getLongtitude() {
-        return longtitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLongtitude(double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public String getIdCustomer() {

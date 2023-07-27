@@ -6,40 +6,55 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     app:ignore="NamespaceTypo"
-    card_view:cardCornerRadius="4dp">
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_bg_do"
+        android:background="@drawable/selector_bg_route"
+        android:clickable="true"
+        android:gravity="center"
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/refresh"
-            android:src="@drawable/ic_store_aspp"
-            app:tint="@color/new_pink" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="@dimen/icon_customer"
+                android:layout_height="@dimen/icon_customer"
+                android:background="@color/orange2_aspp"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_customer_orange" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txtStore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Title"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/orange_aspp" />
 
             <TextView
                 android:id="@+id/txtAddress"
@@ -47,17 +62,28 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text=""
-                android:textColor="@color/black" />
+                android:textColor="@color/black_aspp" />
+
+            <TextView
+                android:id="@+id/txtRoute"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Title"
+                android:textColor="@color/gray_aspp"/>
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imgDirections"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDirection"
+            style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            app:tint="@color/new_pink"
-            android:src="@drawable/ic_directions" />
+            android:layout_marginStart="8dp"
+            android:padding="8dp"
+            android:text="Direction"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            card_view:icon="@drawable/ic_map" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

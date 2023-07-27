@@ -6,13 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="8dp"
-    card_view:cardCornerRadius="4dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:ignore="NamespaceTypo"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_bg_do"
+        android:background="@drawable/selector_bg_route"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -29,6 +32,7 @@
                 android:padding="5dp">
 
                 <TextView
+
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
@@ -188,8 +192,8 @@
                         android:text="Detail"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
-                        app:backgroundTint="@color/new_blue"
-                        app:cornerRadius="8dp" />
+                        card_view:backgroundTint="@color/new_blue"
+                        card_view:cornerRadius="8dp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -206,8 +210,8 @@
                         android:text="Print"
                         android:textAllCaps="true"
                         android:textColor="@color/white"
-                        app:backgroundTint="@color/col1"
-                        app:cornerRadius="8dp" />
+                        card_view:backgroundTint="@color/col1"
+                        card_view:cornerRadius="8dp" />
                 </LinearLayout>
 
             </LinearLayout>

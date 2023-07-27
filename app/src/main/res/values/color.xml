@@ -70,5 +70,27 @@
     <color name="yellow3">#FFDD86</color>
     <color name="silver">#C0C0C0</color>
     <color name="gray1">#EDEDED</color>
-    <color name="secondary_text">#757575</color>
+
+    <color name="light_gray">#D3D3D3</color>
+    <color name="blue1">#CBE4FF</color>
+
+    <!-- new color design -->
+    <color name="blue_aspp">#5E81F4</color>
+    <color name="blue1_aspp">#DFE6FD</color>
+    <color name="blue2_aspp">#C9D5FB</color>
+    <color name="blue3_aspp">#4E6CCB</color>
+    <color name="blue4_aspp">#2F417A</color>
+    <color name="blue5_aspp">#F5F8FF</color>
+    <color name="black_aspp">#0A0A0A</color>
+    <color name="gray_aspp">#9E9E9E</color>
+    <color name="gray2_aspp">#C2C2C2</color>
+    <color name="gray3_aspp">#EDEDED</color>
+    <color name="gray4_aspp">#E7E4E4</color>
+    <color name="gray5_aspp">#757575</color>
+    <color name="gray6_aspp">#EAEAEA</color>
+    <color name="gray7_aspp">#FAFAFA</color>
+    <color name="orange_aspp">#FA4907</color>
+    <color name="orange2_aspp">#FFF0EB</color>
+    <color name="orange3_aspp">#FFF9F6</color>
+
 </resources>
