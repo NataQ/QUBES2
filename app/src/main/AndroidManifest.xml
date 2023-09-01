@@ -91,6 +91,12 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
         <activity
+            android:name=".activity.aspp.UnloadingActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.aspp.StockRequestHeaderActivity"
             android:exported="true"
             android:label="@string/app_name"

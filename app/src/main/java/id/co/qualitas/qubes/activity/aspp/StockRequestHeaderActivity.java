@@ -22,7 +22,7 @@ import id.co.qualitas.qubes.model.User;
 public class StockRequestHeaderActivity extends BaseActivity {
     private StockRequestHeaderAdapter mAdapter;
     private List<StockRequest> mList;
-    private MovableFloatingActionButton btnAdd;
+    private Button btnAdd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +44,14 @@ public class StockRequestHeaderActivity extends BaseActivity {
             Intent intent = new Intent(this, StockRequestAddActivity.class);
             startActivity(intent);
         });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(StockRequestHeaderActivity.this);
+        });
+
+        imgBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
     }
 
     private void initData() {
@@ -57,6 +65,8 @@ public class StockRequestHeaderActivity extends BaseActivity {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        imgBack = findViewById(R.id.imgBack);
+        imgLogOut = findViewById(R.id.imgLogOut);
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

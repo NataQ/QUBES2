@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_back_aspp"/>
+                    android:src="@drawable/ic_back_aspp" />
 
                 <TextView
                     style="@style/TextAppearance.AppCompat.Title"
@@ -97,7 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Title"
-                        android:textColor="@color/orange_aspp"
+                        android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -105,15 +105,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text=""
-                        android:textColor="@color/black_aspp" />
+                        android:text="address"
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtRoute"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:textColor="@color/gray_aspp"/>
+                        android:text="route"
+                        android:textColor="@color/gray_aspp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -125,71 +126,83 @@
                 android:layout_marginBottom="20dp"
                 android:background="@color/gray4_aspp" />
 
-            <androidx.cardview.widget.CardView
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+                android:layout_marginTop="20dp">
 
-                <RelativeLayout
+                <org.osmdroid.views.MapView
+                    android:id="@+id/mapView"
                     android:layout_width="match_parent"
+                    android:layout_height="500dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="300dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <RelativeLayout
-                        android:id="@+id/rlIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center">
-
-                        <ImageView
-                            android:id="@+id/imgStartingPoint"
-                            android:layout_width="@dimen/icon_point"
-                            android:layout_height="@dimen/icon_point"
-                            android:layout_centerHorizontal="true"
-                            android:src="@drawable/ic_starting_point" />
-
-                        <ImageView
-                            android:id="@+id/imgDot"
-                            android:layout_width="wrap_content"
-                            android:layout_height="20dp"
-                            android:layout_below="@+id/imgStartingPoint"
-                            android:layout_centerHorizontal="true"
-                            android:src="@drawable/ic_dot" />
-
-                        <ImageView
-                            android:id="@+id/imgEndPoint"
-                            android:layout_width="@dimen/icon_point"
-                            android:layout_height="@dimen/icon_point"
-                            android:layout_below="@+id/imgDot"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/ic_end_point" />
-
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_centerVertical="true"
-                        android:background="@color/gray4_aspp" />
+                    android:layout_margin="1dp"
+                    app:cardCornerRadius="0dp"
+                    app:cardElevation="1dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:layout_toStartOf="@+id/rlIconCurrent"
-                        android:layout_toEndOf="@+id/rlIcon"
-                        android:gravity="center"
                         android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/icon_point">
+                            android:layout_height="wrap_content"
+                            android:padding="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Select" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnMaps"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Maps"
+                                android:textAllCaps="false"
+                                android:textColor="@color/black_aspp"
+                                app:cornerRadius="5dp"
+                                app:strokeColor="@color/blue_aspp"
+                                card_view:icon="@drawable/ic_google_maps"
+                                card_view:iconTint="@null" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:background="@color/gray4_aspp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <ImageView
+                                android:id="@+id/imgStartingPoint"
+                                android:layout_width="@dimen/icon_point"
+                                android:layout_height="@dimen/icon_point"
+                                android:src="@drawable/ic_starting_point" />
 
                             <AutoCompleteTextView
                                 android:id="@+id/edtStartPoint"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_weight="1"
                                 android:background="@color/space_transparent"
                                 android:completionThreshold="1"
                                 android:hint="Choose starting point"
@@ -198,20 +211,41 @@
                                 android:singleLine="true"
                                 android:textColor="@color/black_aspp" />
 
+                            <ImageView
+                                android:id="@+id/imgCurrentStartingPoint"
+                                android:layout_width="@dimen/icon_point"
+                                android:layout_height="@dimen/icon_point"
+                                android:layout_centerHorizontal="true"
+                                android:src="@drawable/ic_current_location_blue" />
+
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="20dp" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginStart="2dp"
+                            android:layout_marginBottom="2dp"
+                            android:background="@color/gray4_aspp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/icon_point">
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="8dp">
+
+                            <ImageView
+                                android:id="@+id/imgEndPoint"
+                                android:layout_width="@dimen/icon_point"
+                                android:layout_height="@dimen/icon_point"
+                                android:src="@drawable/ic_end_point" />
 
                             <AutoCompleteTextView
                                 android:id="@+id/edtEndPoint"
-                                android:layout_width="match_parent"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_weight="1"
                                 android:background="@color/space_transparent"
                                 android:completionThreshold="1"
                                 android:hint="Choose end point"
@@ -220,78 +254,160 @@
                                 android:singleLine="true"
                                 android:textColor="@color/black_aspp" />
 
+                            <ImageView
+                                android:id="@+id/imgCurrentEndPoint"
+                                android:layout_width="@dimen/icon_point"
+                                android:layout_height="@dimen/icon_point"
+                                android:src="@drawable/ic_current_location_red" />
+
                         </LinearLayout>
+
 
                     </LinearLayout>
 
-                    <RelativeLayout
-                        android:id="@+id/rlIconCurrent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:gravity="center">
+                    <!--                <RelativeLayout-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:orientation="horizontal">-->
 
-                        <ImageView
-                            android:id="@+id/imgCurrentStartingPoint"
-                            android:layout_width="@dimen/icon_point"
-                            android:layout_height="@dimen/icon_point"
-                            android:layout_centerHorizontal="true"
-                            android:src="@drawable/ic_marker_green" />
+                    <!--                    <RelativeLayout-->
+                    <!--                        android:id="@+id/rlIcon"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:gravity="center">-->
 
-                        <ImageView
-                            android:id="@+id/imgDotCurrent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="20dp"
-                            android:layout_below="@+id/imgCurrentStartingPoint"
-                            android:layout_centerHorizontal="true" />
+                    <!--                        <TextView-->
+                    <!--                            android:id="@+id/txtSelect"-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:text="Select"/>-->
 
-                        <ImageView
-                            android:id="@+id/imgCurrentEndPoint"
-                            android:layout_width="@dimen/icon_point"
-                            android:layout_height="@dimen/icon_point"
-                            android:layout_below="@+id/imgDotCurrent"
-                            android:layout_centerInParent="true"
-                            android:src="@drawable/ic_marker_red" />
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgDot1"-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="20dp"-->
+                    <!--                            android:layout_below="@+id/txtSelect"-->
+                    <!--                            android:layout_centerHorizontal="true"-->
+                    <!--                            android:src="@drawable/ic_dot" />-->
 
-                    </RelativeLayout>
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgStartingPoint"-->
+                    <!--                            android:layout_width="@dimen/icon_point"-->
+                    <!--                            android:layout_height="@dimen/icon_point"-->
+                    <!--                            android:layout_below="@+id/imgDot1"-->
+                    <!--                            android:layout_centerHorizontal="true"-->
+                    <!--                            android:src="@drawable/ic_starting_point" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSearch"
-                style="@style/ButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="10dp"
-                android:padding="8dp"
-                android:text="Search"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:visibility="gone"
-                card_view:icon="@drawable/ic_search_aspp" />
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgDot"-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="20dp"-->
+                    <!--                            android:visibility="invisible"-->
+                    <!--                            android:layout_below="@+id/imgStartingPoint"-->
+                    <!--                            android:layout_centerHorizontal="true"-->
+                    <!--                            android:src="@drawable/ic_dot" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDirection"
-                style="@style/ButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="10dp"
-                android:padding="8dp"
-                android:text="Direction"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                card_view:icon="@drawable/ic_map" />
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgEndPoint"-->
+                    <!--                            android:layout_width="@dimen/icon_point"-->
+                    <!--                            android:layout_height="@dimen/icon_point"-->
+                    <!--                            android:layout_below="@+id/imgDot"-->
+                    <!--                            android:layout_centerInParent="true"-->
+                    <!--                            android:src="@drawable/ic_end_point" />-->
 
-            <org.osmdroid.views.MapView
-                android:id="@+id/mapView"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:focusable="true" />
+                    <!--                    </RelativeLayout>-->
 
+                    <!--                    <View-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="1dp"-->
+                    <!--                        android:layout_centerVertical="true"-->
+                    <!--                        android:background="@color/gray4_aspp" />-->
+
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_marginStart="8dp"-->
+                    <!--                        android:layout_toStartOf="@+id/rlIconCurrent"-->
+                    <!--                        android:layout_toEndOf="@+id/rlIcon"-->
+                    <!--                        android:gravity="center"-->
+                    <!--                        android:orientation="vertical">-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="@dimen/icon_point">-->
+
+                    <!--                            <AutoCompleteTextView-->
+                    <!--                                android:id="@+id/edtStartPoint"-->
+                    <!--                                android:layout_width="match_parent"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:background="@color/space_transparent"-->
+                    <!--                                android:completionThreshold="1"-->
+                    <!--                                android:hint="Choose starting point"-->
+                    <!--                                android:imeOptions="actionDone"-->
+                    <!--                                android:maxLines="1"-->
+                    <!--                                android:singleLine="true"-->
+                    <!--                                android:textColor="@color/black_aspp" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="20dp" />-->
+
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="@dimen/icon_point">-->
+
+                    <!--                            <AutoCompleteTextView-->
+                    <!--                                android:id="@+id/edtEndPoint"-->
+                    <!--                                android:layout_width="match_parent"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:background="@color/space_transparent"-->
+                    <!--                                android:completionThreshold="1"-->
+                    <!--                                android:hint="Choose end point"-->
+                    <!--                                android:imeOptions="actionDone"-->
+                    <!--                                android:maxLines="1"-->
+                    <!--                                android:singleLine="true"-->
+                    <!--                                android:textColor="@color/black_aspp" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                    </LinearLayout>-->
+
+                    <!--                    <RelativeLayout-->
+                    <!--                        android:id="@+id/rlIconCurrent"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_alignParentEnd="true"-->
+                    <!--                        android:gravity="center">-->
+
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgCurrentStartingPoint"-->
+                    <!--                            android:layout_width="@dimen/icon_point"-->
+                    <!--                            android:layout_height="@dimen/icon_point"-->
+                    <!--                            android:layout_centerHorizontal="true"-->
+                    <!--                            android:src="@drawable/ic_current_location_blue" />-->
+
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgDotCurrent"-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="20dp"-->
+                    <!--                            android:layout_below="@+id/imgCurrentStartingPoint"-->
+                    <!--                            android:layout_centerHorizontal="true" />-->
+
+                    <!--                        <ImageView-->
+                    <!--                            android:id="@+id/imgCurrentEndPoint"-->
+                    <!--                            android:layout_width="@dimen/icon_point"-->
+                    <!--                            android:layout_height="@dimen/icon_point"-->
+                    <!--                            android:layout_below="@+id/imgDotCurrent"-->
+                    <!--                            android:layout_centerInParent="true"-->
+                    <!--                            android:src="@drawable/ic_current_location_red" />-->
+
+                    <!--                    </RelativeLayout>-->
+                    <!--                </RelativeLayout>-->
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

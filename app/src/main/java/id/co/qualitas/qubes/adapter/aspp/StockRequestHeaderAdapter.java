@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.StockRequest;
 
 public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequestHeaderAdapter.Holder> implements Filterable {
@@ -78,17 +80,18 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTanggal, txtNoDoc, txtKirim, txtStatus;
-        View viewStatus;
+        TextView txtTanggal, txtNoDoc, txtTglKirim, txtStatus, txtSuratJalan;
+        LinearLayout llStatus;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            llStatus = itemView.findViewById(R.id.llStatus);
             txtTanggal = itemView.findViewById(R.id.txtTanggal);
             txtNoDoc = itemView.findViewById(R.id.txtNoDoc);
-            txtKirim = itemView.findViewById(R.id.txtKirim);
+            txtTglKirim = itemView.findViewById(R.id.txtTglKirim);
             txtStatus = itemView.findViewById(R.id.txtStatus);
-            viewStatus = itemView.findViewById(R.id.viewStatus);
+            txtSuratJalan = itemView.findViewById(R.id.txtSuratJalan);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -110,21 +113,31 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
         StockRequest detail = mFilteredList.get(position);
         holder.txtNoDoc.setText(detail.getNoDoc());
         holder.txtTanggal.setText(detail.getTanggal());
-        holder.txtKirim.setText(detail.getKirim());
+        holder.txtTglKirim.setText(detail.getKirim());
         holder.txtStatus.setText(detail.getStatus());
-        switch (detail.getStatus().toLowerCase()) {
-            case "approve":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));
-                break;
-            case "pending":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow_krang));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.yellow_krang));
-                break;
-            case "rejected":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red_krang));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.red_krang));
-                break;
+
+        if (!Helper.isEmpty(detail.getStatus())) {
+            if (detail.getStatus().toLowerCase().contains("approve")) {
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.green2_aspp));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
+            } else if (detail.getStatus().toLowerCase().contains("pending")) {
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.yellow2_aspp));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.yellow_aspp));
+            } else if (detail.getStatus().toLowerCase().contains("rejected")) {
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.red2_aspp));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red_aspp));
+            } else {
+                holder.llStatus.setVisibility(View.GONE);
+                holder.llStatus.setBackground(null);
+                holder.txtStatus.setText("-");
+            }
+        } else {
+            holder.llStatus.setVisibility(View.GONE);
+            holder.llStatus.setBackground(null);
+            holder.txtStatus.setText("-");
         }
     }
 

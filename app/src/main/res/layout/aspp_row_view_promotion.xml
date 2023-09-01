@@ -20,8 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Title"
-            android:textColor="@color/black_aspp"
-            android:textStyle="bold" />
+            android:textColor="@color/orange_aspp" />
 
         <TextView
             android:id="@+id/txtDesc"
@@ -29,12 +28,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-            android:textColor="@color/gray5_aspp" />
+            android:textColor="@color/black_aspp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginTop="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -44,25 +42,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/ic_clock"
-                card_view:tint="@color/gray_aspp" />
+                card_view:tint="@color/gray8_aspp" />
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:text="Periode :"
+                android:textColor="@color/gray8_aspp" />
+
+            <TextView
+                android:id="@+id/txtPeriode"
+                style="@style/TextAppearance.AppCompat.Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Periode:"
-                android:textColor="@color/gray_aspp" />
+                android:text="01 January 2023"
+                android:textColor="@color/gray8_aspp" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtPeriode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="01 January 2023"
-            android:textColor="@color/black_aspp"
-            android:textStyle="bold" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,14 +50,16 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.utils.Utils;
+import okhttp3.Route;
 
 public class RouteCustomerFragment extends BaseFragment {
     private static final int LOCATION_PERMISSION_REQUEST = 7;
     private RouteCustomerAdapter mAdapter;
-    private List<RouteCustomer> mList;
-    private ArrayAdapter<String> spn1Adapter, spn2Adapter;
+    private List<RouteCustomer> mList, mListFiltered;
+    private ArrayAdapter<String> spn1Adapter, spn2Adapter, spnRouteCustAdapter;
     private Button btnCoverage;
     private EditText edtSearch;
+    private Spinner spinnerRouteCustomer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,9 +77,6 @@ public class RouteCustomerFragment extends BaseFragment {
         initFragment();
         initialize();
         initData();
-
-        mAdapter = new RouteCustomerAdapter(this, mList);
-        recyclerView.setAdapter(mAdapter);
 
         btnCoverage.setOnClickListener(v -> {
             ((NewMainActivity) getActivity()).changePage(23);
@@ -127,21 +127,66 @@ public class RouteCustomerFragment extends BaseFragment {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new RouteCustomer("0EM44", "ECA", "JL. RAYA HALIM NO.8 SAMPING TK. MELLY KEBUN PALA KP. MAKASSAR", "5.41 KM", -6.090263984566263, 106.74593288657607));
-        mList.add(new RouteCustomer("0DP90", "BAGUS CAR WASH (CAHAYA MADURA)", "JL. SQUADRON 26 HALIM PERDANAKUSUMA KEBON PALA MAKASSAR", "5.80 KM", -6.09047339393416, 106.74535959301855));
-        mList.add(new RouteCustomer("0GT55", "TOKO LOLITA (PAK YUSUF)", "JL. MESJID AL MUNIR NO. 7 DEPAN PUSKESMAS MAKASSAR 0", "5.91 KM", -6.089065696336256, 106.74676357552187));
+        mList.add(new RouteCustomer("0EM44", "ECA", "JL. RAYA HALIM NO.8 SAMPING TK. MELLY KEBUN PALA KP. MAKASSAR", "5.41 KM", -6.090263984566263, 106.74593288657607, true));
+        mList.add(new RouteCustomer("0DP90", "BAGUS CAR WASH (CAHAYA MADURA)", "JL. SQUADRON 26 HALIM PERDANAKUSUMA KEBON PALA MAKASSAR", "5.80 KM", -6.09047339393416, 106.74535959301855, false));
+        mList.add(new RouteCustomer("0GT55", "TOKO LOLITA (PAK YUSUF)", "JL. MESJID AL MUNIR NO. 7 DEPAN PUSKESMAS MAKASSAR 0", "5.91 KM", -6.089065696336256, 106.74676357552187, true));
     }
 
     private void initialize() {
         db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        spinnerRouteCustomer = rootView.findViewById(R.id.spinnerRouteCustomer);
         edtSearch = rootView.findViewById(R.id.edtSearch);
         btnCoverage = rootView.findViewById(R.id.btnCoverage);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         recyclerView.setHasFixedSize(true);
+
+        List<String> listSpinner = new ArrayList<>();
+        listSpinner.add("All");
+        listSpinner.add("Route");
+
+        spnRouteCustAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, listSpinner);
+        spnRouteCustAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerRouteCustomer.setAdapter(spnRouteCustAdapter);
+        spinnerRouteCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                edtSearch.setText(null);
+                if (position == 0) {
+                    filterData(true);
+                } else {
+                    filterData(false);
+                }
+                setDataFilter();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void filterData(boolean all) {
+        mListFiltered = new ArrayList<>();
+
+        if (all) {
+            mListFiltered.addAll(mList);
+        } else {
+            for (RouteCustomer routeCustomer : mList) {
+                if (routeCustomer.isRoute()) {
+                    mListFiltered.add(routeCustomer);
+                }
+            }
+        }
+    }
+
+    private void setDataFilter() {
+        mAdapter = new RouteCustomerAdapter(this, mListFiltered);
+        recyclerView.setAdapter(mAdapter);
     }
 
     @Override

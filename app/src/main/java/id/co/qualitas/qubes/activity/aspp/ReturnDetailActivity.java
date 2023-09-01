@@ -44,10 +44,10 @@ public class ReturnDetailActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Material("11 - KTD R", "11008 - KRATINGDAENG LUAR PULAU - MT", 1, "1,000"));
-        mList.add(new Material("11 - KTD R", "11007 - KRATINGDAENG - MT", 1, "2,000"));
-        mList.add(new Material("11 - KTD R", "11006 - KRATINGDAENG - LAIN-LAIN", 1, "3,000"));
-        mList.add(new Material("11 - KTD R", "11005 - KRATINGDAENG LUAR PULAU", 1, "4,000"));
+        mList.add(new Material("11 - KTD R", "11008 - KRATINGDAENG LUAR PULAU - MT", 1, "1,000", "BTL"));
+        mList.add(new Material("11 - KTD R", "11007 - KRATINGDAENG - MT", 1, "2,000", "BTL"));
+        mList.add(new Material("11 - KTD R", "11006 - KRATINGDAENG - LAIN-LAIN", 1, "3,000", "BTL"));
+        mList.add(new Material("11 - KTD R", "11005 - KRATINGDAENG LUAR PULAU", 1, "4,000", "BTL"));
     }
 
     private void initialize() {

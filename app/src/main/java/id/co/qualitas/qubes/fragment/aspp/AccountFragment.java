@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,9 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.LoginActivity;
 import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
+import id.co.qualitas.qubes.adapter.aspp.LogAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SummaryAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.CalendarUtils;
@@ -84,6 +89,7 @@ public class AccountFragment extends BaseFragment {
     private ArrayList<VisitOrderRequest> listSaveOrder = new ArrayList<>();
     private ArrayList<VisitOrderRequest> listTempPendingOrder = new ArrayList<>();
     private ArrayList<ToPrice> listTempPendingToPrice = new ArrayList<>();
+    private LogAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,7 +130,8 @@ public class AccountFragment extends BaseFragment {
         llChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(7);
+//                ((NewMainActivity) getActivity()).changePage(7);
+                openDialogChangePassword();
             }
         });
 
@@ -147,7 +154,7 @@ public class AccountFragment extends BaseFragment {
 
                 LinearLayout linSyncAll = alertDialog.findViewById(R.id.linearSyncAll);
                 LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
-                LinearLayout linSyncOrderPlan = alertDialog.findViewById(R.id.linearOrderPlan);
+                LinearLayout linearCollection = alertDialog.findViewById(R.id.linearCollection);
                 LinearLayout linSyncVisit = alertDialog.findViewById(R.id.linearVisit);
                 LinearLayout linSyncStoreCheck = alertDialog.findViewById(R.id.linearStoreCheck);
                 LinearLayout linSyncOrder = alertDialog.findViewById(R.id.linearOrder);
@@ -171,7 +178,7 @@ public class AccountFragment extends BaseFragment {
                     }
                 });
 
-                linSyncOrderPlan.setOnClickListener(new View.OnClickListener() {
+                linearCollection.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         PARAM = 7;
@@ -233,23 +240,35 @@ public class AccountFragment extends BaseFragment {
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 View dialogview;
                 final Dialog alertDialog = new Dialog(getActivity());
-                dialogview = inflater.inflate(R.layout.custom_dialog_feedback, null);
+                dialogview = inflater.inflate(R.layout.custom_dialog_log, null);
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setContentView(dialogview);
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                TextView txtLastSync = alertDialog.findViewById(R.id.txtLastSync);
+                RecyclerView recyclerView = alertDialog.findViewById(R.id.recyclerView);
                 TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
-                Button btnHide = alertDialog.findViewById(R.id.btnHide);
+                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
 
-                LastLog lLog = (LastLog) Helper.getItemParam(Constants.ERROR_LOG);
-                txtDialog.setText("Empty");
-                if (lLog != null) {
-                    txtLastSync.setText(Helper.validateResponseEmpty(lLog.getLastSync()));
-                    txtDialog.setText(Helper.validateResponseEmpty(lLog.getLastMsg()));
-                }
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                recyclerView.setHasFixedSize(true);
 
-                btnHide.setOnClickListener(new View.OnClickListener() {
+                List<LastLog> mList = new ArrayList<>();
+                mList.add(new LastLog());
+                mList.add(new LastLog());
+                mList.add(new LastLog());
+
+                mAdapter = new LogAdapter(AccountFragment.this, mList, header -> {
+                });
+                recyclerView.setAdapter(mAdapter);
+
+//                LastLog lLog = (LastLog) Helper.getItemParam(Constants.ERROR_LOG);
+//                txtDialog.setText("Empty");
+//                if (lLog != null) {
+//                    txtLastSync.setText(Helper.validateResponseEmpty(lLog.getLastSync()));
+//                    txtDialog.setText(Helper.validateResponseEmpty(lLog.getLastMsg()));
+//                }
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         alertDialog.dismiss();
@@ -261,6 +280,44 @@ public class AccountFragment extends BaseFragment {
         });
 
         return rootView;
+    }
+
+    private void openDialogChangePassword() {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        LayoutInflater inflater = LayoutInflater.from(getActivity());
+        View dialogview;
+        final Dialog alertDialog = new Dialog(getActivity());
+        dialogview = inflater.inflate(R.layout.aspp_dialog_change_password, null);
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.setContentView(dialogview);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.getWindow().setLayout((6 * width) / 7, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        alertDialog.setCanceledOnTouchOutside(false);
+
+
+        Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
+        Button btnSave = alertDialog.findViewById(R.id.btnSave);
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void initialize() {

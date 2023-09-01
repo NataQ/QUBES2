@@ -71,10 +71,10 @@ public class SummaryFragment extends BaseFragment {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Order("ORDER000001", "1,000,000", "0WJ42 - SARI SARI (TK)", "SO0000001", "Draft", "1 June 2023"));
-        mList.add(new Order("ORDER000002", "2,000,000", "0WJ42 - SARI SARI (TK)", "SO0000002", "Draft", "2 June 2023"));
-        mList.add(new Order("ORDER000003", "3,000,000", "0WJ42 - SARI SARI (TK)", "SO0000003", "Draft", "3 June 2023"));
-        mList.add(new Order("ORDER000004", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000004", "Draft", "4 June 2023"));
+        mList.add(new Order("ORDER000001", "1,000,000", "0WJ42 - SARI SARI (TK)", "SO0000001", "approve", "1 June 2023"));
+        mList.add(new Order("ORDER000002", "2,000,000", "0WJ42 - SARI SARI (TK)", "-", "reject", "2 June 2023"));
+        mList.add(new Order("ORDER000003", "3,000,000", "0WJ42 - SARI SARI (TK)", "SO0000003", "pending", "3 June 2023"));
+        mList.add(new Order("ORDER000004", "4,000,000", "0WJ42 - SARI SARI (TK)", "-", "sync success", "4 June 2023"));
     }
 
     private void initialize() {

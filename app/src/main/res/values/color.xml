@@ -81,6 +81,10 @@
     <color name="blue3_aspp">#4E6CCB</color>
     <color name="blue4_aspp">#2F417A</color>
     <color name="blue5_aspp">#F5F8FF</color>
+    <color name="blue6_aspp">#001D7B</color>
+    <color name="blue7_aspp">#EAEFFF</color>
+    <color name="blue8_aspp">#EAF1FF</color>
+    <color name="blue9_aspp">#2264E5</color>
     <color name="black_aspp">#0A0A0A</color>
     <color name="gray_aspp">#9E9E9E</color>
     <color name="gray2_aspp">#C2C2C2</color>
@@ -89,8 +93,24 @@
     <color name="gray5_aspp">#757575</color>
     <color name="gray6_aspp">#EAEAEA</color>
     <color name="gray7_aspp">#FAFAFA</color>
+    <color name="gray8_aspp">#464F60</color>
+    <color name="gray9_aspp">#E9EDF5</color>
+    <color name="gray10_aspp">#868FA0</color>
+    <color name="gray11_aspp">#464F60B2</color>
     <color name="orange_aspp">#FA4907</color>
     <color name="orange2_aspp">#FFF0EB</color>
     <color name="orange3_aspp">#FFF9F6</color>
+    <color name="orange4_aspp">#FFE3DD</color>
+    <color name="orange5_aspp">#FFF4F0</color>
+    <color name="green_aspp">#14804A</color>
+    <color name="green2_aspp">#E5FFF2</color>
+    <color name="green3_aspp">#E1FCEF</color>
+    <color name="yellow_aspp">#F5BF00</color>
+    <color name="yellow2_aspp">#FFFAE8</color>
+    <color name="yellow3_aspp">#FFFCE5</color>
+    <color name="white_aspp">#FFFCFB</color>
+    <color name="white2_aspp">#E2E2E2</color>
+    <color name="red_aspp">#FFEEF2</color>
+    <color name="red2_aspp">#D12953</color>
 
 </resources>

@@ -56,7 +56,7 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     private void addNew() {
-        Material detail = new Material("", "", "");
+        Material detail = new Material("", "", "","");
         mList.add(detail);
 
         new CountDownTimer(1000, 1000) {

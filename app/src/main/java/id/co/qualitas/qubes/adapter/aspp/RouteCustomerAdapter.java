@@ -6,10 +6,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -17,8 +16,6 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
-import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
-import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.RouteCustomer;
 
 public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdapter.Holder> implements Filterable {
@@ -85,13 +82,14 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtAddress, txtStore, txtRoute;
+        TextView txtAddress, txtStore, txtRoute, txtLabelRoute;
         Button btnDirection;
 
         public Holder(View itemView) {
             super(itemView);
             txtStore = itemView.findViewById(R.id.txtStore);
             txtAddress = itemView.findViewById(R.id.txtAddress);
+            txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
             txtRoute = itemView.findViewById(R.id.txtRoute);
             btnDirection = itemView.findViewById(R.id.btnDirection);
 //            itemView.setOnClickListener(this);
@@ -115,6 +113,16 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
         holder.txtStore.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer() + " (" + detail.getMileage() + ")");
         holder.txtAddress.setText(detail.getAddressCustomer());
         holder.txtRoute.setText("P1H1-P3H1");
+        if (detail.isRoute()) {
+            holder.txtLabelRoute.setText("Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getContext(), R.drawable.bg_label_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.green_aspp));
+        } else {
+            holder.txtLabelRoute.setText("Non Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getContext(), R.drawable.bg_label_non_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.red2_aspp));
+        }
+
         holder.btnDirection.setOnClickListener(v -> {
             mContext.moveDirection(detail);
 //            mContext.openDialogDirections(detail);

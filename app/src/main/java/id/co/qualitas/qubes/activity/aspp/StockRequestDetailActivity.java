@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,7 +29,7 @@ import id.co.qualitas.qubes.model.User;
 public class StockRequestDetailActivity extends BaseActivity {
     private StockRequestDetailAdapter mAdapter;
     private List<Material> mList;
-    private Button btnVerification;
+    private Button btnVerification, btnUnloading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,10 +48,23 @@ public class StockRequestDetailActivity extends BaseActivity {
         btnVerification.setOnClickListener(v -> {
             openDialogSignature();
         });
+
+        btnUnloading.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), UnloadingActivity.class);
+            startActivity(intent);
+        });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(StockRequestDetailActivity.this);
+        });
+
+        imgBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
     }
 
     private void openDialogSignature() {
-        Dialog  dialog = new Dialog(this);
+        Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_signature);
@@ -102,15 +116,18 @@ public class StockRequestDetailActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1"));
-        mList.add(new Material("11030", "Redbull", "1"));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1"));
+        mList.add(new Material("11001", "Kratingdaeng", "1", "BTL"));
+        mList.add(new Material("11030", "Redbull", "1", "BTL"));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1", "BTL"));
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        imgBack = findViewById(R.id.imgBack);
+        imgLogOut = findViewById(R.id.imgLogOut);
+        btnUnloading = findViewById(R.id.btnUnloading);
         btnVerification = findViewById(R.id.btnVerification);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

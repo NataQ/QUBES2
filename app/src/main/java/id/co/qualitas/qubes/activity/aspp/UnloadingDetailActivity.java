@@ -103,9 +103,9 @@ public class UnloadingDetailActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1"));
-        mList.add(new Material("11030", "Redbull", "1"));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1"));
+        mList.add(new Material("11001", "Kratingdaeng", "1","BTL"));
+        mList.add(new Material("11030", "Redbull", "1","BTL"));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1","BTL"));
     }
 
     private void initialize() {

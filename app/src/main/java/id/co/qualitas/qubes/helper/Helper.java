@@ -27,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -115,6 +116,24 @@ public class Helper extends BaseFragment {
         return c;
     }
 
+    public static String getJsonFromAssets(Context context, String fileName) {
+        String jsonString;
+        try {
+            InputStream is = context.getAssets().open(fileName);
+
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            jsonString = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return jsonString;
+    }
 
     public static Object getWebservice(String url, Class<?> responseType) {
         int flag = 0;
@@ -142,6 +161,42 @@ public class Helper extends BaseFragment {
         }
 //        }
         return response.getBody();
+    }
+
+    public static void postWebserviceWithBodyWOReturn(String url, Class<?> responseType, Object body) {
+        //kalo post, kita kasih class k back end
+        int flag = 0;
+        ResponseEntity<?> responseEntity = null;
+        while (flag == 0) {
+            flag = 1;
+
+            String token = (String) Helper.getItemParam(Constants.TOKEN);
+//            String bearerToken = Constants.BEARER.concat(token);
+            String bearerToken = Constants.BEARER.concat("3e7bcbc2-fb8e-47a0-8270-671796ebc1ce");
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+            requestHeaders.set("Authorization", bearerToken);
+            HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
+            List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+            MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+            converter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+            messageConverters.add(converter);
+            restTemplate.setMessageConverters(messageConverters);
+//            restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+
+            try {
+                responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
+            } catch (Exception e) {
+                Helper.removeItemParam(Constants.ERROR_LOG);
+                if(e.getMessage() != null){
+                    Helper.setItemParam(Constants.ERROR_LOG, e.getMessage());
+                }
+                if (e.getMessage().equals("401 Unauthorized"))
+                    flag = 0;
+            }
+        }
     }
 
     public static Object postWebserviceWithBody(String url, Class<?> responseType, Object body) {

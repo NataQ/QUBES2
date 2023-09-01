@@ -61,7 +61,7 @@ public class LocationForegroundService extends Service {
     private Runnable runHandler;
 
     private static final String TAG = LocationForegroundService.class.getSimpleName();
-    static final long UPDATE_INTERVAL_IN_MILLISECONDS = 1000;
+    static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;//1000 => 1s
 
     /*
      * The fastest rate for active location updates. Updates will never be more frequent
@@ -77,17 +77,18 @@ public class LocationForegroundService extends Service {
                 removeLocationUpdates(intent);
             }
         } else {
-//            setLocation();
-//            startForegroundService();
-            handler = new Handler();
-            runHandler = new Runnable() {
-                @Override
-                public void run() {
-                    getCurrentLocation();
-                    handler.postDelayed(this, 10000);
-                }
-            };
-            handler.postDelayed(runHandler, 10000);
+            setLocation();
+            startForegroundService();
+//            handler = new Handler();
+//            runHandler = new Runnable() {
+//                @Override
+//                public void run() {
+//                    getCurrentLocation();
+//                    handler.postDelayed(this, 10000);
+//                }
+//            };
+//            handler.postDelayed(runHandler, 10000);
+
 //            new Thread(
 //                    new Runnable() {
 //                        @Override
@@ -103,26 +104,24 @@ public class LocationForegroundService extends Service {
 //                        }
 //                    }
 //            ).start();
-            startForeground(NOTIFICATION_ID, getNotification());
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void getCurrentLocation() {
+        /* kalau pakai gps tracker, app nya closed/foreground gak jalan
         GPSTracker gpsTracker = new GPSTracker(getApplicationContext());
         if (gpsTracker.canGetLocation()) {
             Log.e("Service", "Lat : " + String.valueOf(gpsTracker.getLatitude()) + "Long : " + String.valueOf(gpsTracker.getLongitude()));
         } else {
-        }
-
+        }*/
+//        mFusedLocationClient.getLastLocation().
     }
 
     public void startForegroundService() {
         Log.i(TAG, "Requesting location updates");
         UtilsLocation.setRequestingLocationUpdates(this, true);
-//        startService(new Intent(this, LocationUpdatesService.class));
-////        HandlerThread handlerThread = new HandlerThread("tracking");
-////        handlerThread.start();
+
         try {
 //            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, mServiceHandler.getLooper());
@@ -131,13 +130,7 @@ public class LocationForegroundService extends Service {
             Log.e(TAG, "Lost location permission. Could not request updates. " + unlikely);
         }
 
-//        if (!mChangingConfiguration && UtilsLocation.requestingLocationUpdates(this)) {
-        //try comment
         startForeground(NOTIFICATION_ID, getNotification());
-//            try comment
-//        }
-        //try comment
-
     }
 
     /*
@@ -145,16 +138,13 @@ public class LocationForegroundService extends Service {
      * {@link SecurityException}.
      */
     public void removeLocationUpdates(Intent intent) {
-//        Log.i(TAG, "Removing location updates");
-//        try {
-//            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-//            UtilsLocation.setRequestingLocationUpdates(this, false);
-////            stopForeground(true);
-////            stopSelf();
-//        } catch (SecurityException unlikely) {
-//            UtilsLocation.setRequestingLocationUpdates(this, true);
-//            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
-//        }
+        try {
+            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+            UtilsLocation.setRequestingLocationUpdates(this, false);
+        } catch (SecurityException unlikely) {
+            UtilsLocation.setRequestingLocationUpdates(this, true);
+            Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
+        }
 
         stopForeground(true);
         stopSelf();
@@ -172,8 +162,27 @@ public class LocationForegroundService extends Service {
             }
         };
 
-        createLocationRequest();
-        getLastLocation();
+        mLocationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(UPDATE_INTERVAL_IN_MILLISECONDS)
+                .setMaxUpdateDelayMillis(UPDATE_INTERVAL_IN_MILLISECONDS)
+                .build();
+
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnCompleteListener(new OnCompleteListener<Location>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Location> task) {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                mLocation = task.getResult();
+                            } else {
+                                Log.e(TAG, "Failed to get location.");
+                            }
+                        }
+                    });
+        } catch (SecurityException unlikely) {
+            Log.e(TAG, "Lost location permission." + unlikely);
+        }
 
         HandlerThread handlerThread = new HandlerThread(TAG);
         handlerThread.start();
@@ -189,25 +198,6 @@ public class LocationForegroundService extends Service {
 
             // Set the Notification Channel for the Notification Manager.
             mNotificationManager.createNotificationChannel(mChannel);
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private void getLastLocation() {
-        try {
-            mFusedLocationClient.getLastLocation()
-                    .addOnCompleteListener(new OnCompleteListener<Location>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                mLocation = task.getResult();
-                            } else {
-                                Log.e(TAG, "Failed to get location.");
-                            }
-                        }
-                    });
-        } catch (SecurityException unlikely) {
-            Log.e(TAG, "Lost location permission." + unlikely);
         }
     }
 
@@ -232,19 +222,17 @@ public class LocationForegroundService extends Service {
                 @Override
                 public void run() {
                     liveTracking = new LiveTracking(location.getLatitude(), location.getLongitude());
+
+                    Log.e("Service", "Lat:" + String.valueOf(location.getLatitude()) + " Long : " + String.valueOf(location.getLongitude()));
                     setSession();
                     final String url = Constants.URL.concat(Constants.API_SYNC_DATA);
                     User user = new User();
                     user.setUsername("mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     try {
-                        result = (Boolean) Helper.postWebserviceWithBody(url, Boolean.class, user);//post
+                        Helper.postWebserviceWithBodyWOReturn(url, Boolean.class, user);//post
                     } catch (Exception e) {
                         result = false;
                     }
-//                    try {
-//                        MessageResponse result = (MessageResponse) Helper.postWebserviceWithBody(url, MessageResponse.class, liveTracking);
-//                    } catch (Exception e) {
-//                    }
                 }
             }).start();
         }
@@ -268,13 +256,14 @@ public class LocationForegroundService extends Service {
      * Sets the location request parameters.
      */
     private void createLocationRequest() {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-//        mLocationRequest.setInterval(30000);
-        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-//        mLocationRequest.setFastestInterval(30000/2);
-//        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS / 2);
-        mLocationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
+//        mLocationRequest = LocationRequest.create();
+//        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+////        mLocationRequest.setInterval(30000);
+//        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+////        mLocationRequest.setFastestInterval(30000/2);
+////        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS / 2);
+//        mLocationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
+
 
     }
 
@@ -314,6 +303,6 @@ public class LocationForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runHandler);
+//        mServiceHandler.removeCallbacksAndMessages(null);
     }
 }

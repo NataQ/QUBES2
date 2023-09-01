@@ -6,11 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="8dp"
     app:ignore="NamespaceTypo"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="0dp">
+    card_view:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,17 +31,18 @@
                 android:padding="5dp">
 
                 <TextView
-
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Order No." />
+                    android:text="Order No."
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:id="@+id/txtOrderNo"
@@ -50,8 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="0WJ42100010001"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
@@ -65,13 +64,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Date" />
+                    android:text="Order Date"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:id="@+id/txtDate"
@@ -79,8 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="1 June 2023"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
@@ -94,22 +94,23 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Outlet" />
+                    android:text="Invoice No."
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
-                    android:id="@+id/txtOutlet"
+                    android:id="@+id/txtInvoiceNo"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
-                    android:text="0WJ42 - SARI SARI (TK)"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:text="1050A60GR82000001"
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
@@ -123,13 +124,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Omzet" />
+                    android:text="Omzet"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:id="@+id/txtOmzet"
@@ -137,8 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="1,400,000"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
@@ -152,69 +154,48 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="SO No." />
+                    android:text="Outlet"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
-                    android:id="@+id/txtSoNo"
+                    android:id="@+id/txtOutlet"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
-                    android:text="1050A60GR82000001"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:text="0WJ42 - SARI SARI (TK)"
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_status"
+            android:backgroundTint="@color/green2_aspp"
+            android:minWidth="100dp">
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/button_height"
-                        android:text="Detail"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        card_view:backgroundTint="@color/new_blue"
-                        card_view:cornerRadius="8dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnPrint"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/button_height"
-                        android:text="Print"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        card_view:backgroundTint="@color/col1"
-                        card_view:cornerRadius="8dp" />
-                </LinearLayout>
-
-            </LinearLayout>
+                android:padding="5dp"
+                android:text="Approve"
+                android:textAlignment="center"
+                android:textColor="@color/green_aspp" />
 
         </LinearLayout>
     </LinearLayout>

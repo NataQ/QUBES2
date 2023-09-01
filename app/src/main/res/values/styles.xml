@@ -281,4 +281,26 @@
         <item name="cornerRadius">12dp</item>
     </style>
 
+    <style name="ButtonCoverage" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ButtonCoverageColor</item>
+    </style>
+
+    <style name="ButtonCoverageColor">
+        <item name="colorPrimary">@color/blue6_aspp</item>
+        <item name="colorOnSurface">@color/gray_aspp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+    <style name="ButtonEndVisit" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ButtonEndVisitThemeOverlay</item>
+    </style>
+
+    <style name="ButtonEndVisitThemeOverlay">
+        <item name="colorPrimary">@color/blue6_aspp</item>
+        <item name="colorOnSurface">@color/gray_aspp</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+
+
 </resources>

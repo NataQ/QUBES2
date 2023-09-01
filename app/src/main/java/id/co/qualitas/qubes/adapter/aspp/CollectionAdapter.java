@@ -83,13 +83,16 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Ho
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtInvoiceNo, txtDate, txtAmount, txtPaid;
+        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtNett = itemView.findViewById(R.id.txtNett);
+            txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
+            txtDueDate = itemView.findViewById(R.id.txtDueDate);
             txtInvoiceNo = itemView.findViewById(R.id.txtInvoiceNo);
-            txtDate = itemView.findViewById(R.id.txtDate);
+            txtCustomer = itemView.findViewById(R.id.txtCustomer);
             txtAmount = itemView.findViewById(R.id.txtAmount);
             txtPaid = itemView.findViewById(R.id.txtPaid);
             this.onAdapterListener = onAdapterListener;
@@ -112,9 +115,12 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Ho
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtDate.setText(detail.getDate());
+        holder.txtCustomer.setText(detail.getCustomerID() + " - " + detail.getCustomerName());
+        holder.txtInvoiceDate.setText(detail.getDate());
+        holder.txtDueDate.setText(detail.getDate());
         holder.txtInvoiceNo.setText(detail.getInvoiceNo());
         holder.txtAmount.setText(format.format(detail.getAmount()));
+        holder.txtNett.setText(format.format(detail.getPaid()));
         holder.txtPaid.setText(format.format(detail.getPaid()));
     }
 

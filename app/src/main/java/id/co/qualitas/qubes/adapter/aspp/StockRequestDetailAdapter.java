@@ -77,16 +77,15 @@ public class StockRequestDetailAdapter extends RecyclerView.Adapter<StockRequest
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtId, txtName, txtQty1, txtQty2, txtQty3;
+        TextView txtNo, txtProduct, txtQty, txtUom;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtId = itemView.findViewById(R.id.txtId);
-            txtName = itemView.findViewById(R.id.txtName);
-            txtQty1 = itemView.findViewById(R.id.txtQty1);
-            txtQty2 = itemView.findViewById(R.id.txtQty2);
-            txtQty3 = itemView.findViewById(R.id.txtQty3);
+            txtNo = itemView.findViewById(R.id.txtNo);
+            txtProduct = itemView.findViewById(R.id.txtProduct);
+            txtQty = itemView.findViewById(R.id.txtQty);
+            txtUom = itemView.findViewById(R.id.txtUom);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -106,11 +105,10 @@ public class StockRequestDetailAdapter extends RecyclerView.Adapter<StockRequest
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.txtName.setText(detail.getMaterialCode());
-        holder.txtId.setText(detail.getIdMaterial());
-        holder.txtQty1.setText(detail.getMaterialQty());
-        holder.txtQty2.setText(detail.getMaterialQty());
-        holder.txtQty3.setText(detail.getMaterialQty());
+        holder.txtProduct.setText(detail.getMaterialCode());
+        holder.txtNo.setText(String.valueOf(position + 1) + ".");
+        holder.txtQty.setText(detail.getMaterialQty());
+        holder.txtUom.setText(detail.getUom());
     }
 
     @Override

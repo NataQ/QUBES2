@@ -7,30 +7,27 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="4dp">
+    app:ignore="NamespaceTypo"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_bg_do"
+        android:background="@drawable/selector_bg_route"
         android:orientation="horizontal">
-
-        <View
-            android:id="@+id/viewStatus"
-            android:layout_width="5dp"
-            android:layout_height="match_parent"
-            android:background="@color/yellow_krang" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -38,7 +35,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Tanggal" />
+                    android:text="Tanggal"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -52,14 +50,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="5 June 2023"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -67,13 +65,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="No. Document" />
+                    android:text="No. Document"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:id="@+id/txtNoDoc"
@@ -81,14 +81,14 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="2023050401000010001"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -96,28 +96,30 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Kirim" />
+                    android:text="Tanggal Kirim"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
-                    android:id="@+id/txtKirim"
+                    android:id="@+id/txtTglKirim"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
                     android:text="5 June 2023"
-                    android:textColor="@color/darkGray"
-                    android:textStyle="bold" />
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -125,24 +127,47 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
-                    android:text="Status" />
+                    android:text="No. Surat Jalan"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
-                    android:id="@+id/txtStatus"
+                    android:id="@+id/txtSuratJalan"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
-                    android:text="Pending"
-                    android:textColor="@color/yellow_krang"
-                    android:textStyle="bold" />
+                    android:text="20230808"
+                    android:textColor="@color/black_aspp" />
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_status"
+            android:backgroundTint="@color/green2_aspp"
+            android:minWidth="100dp">
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="Approve"
+                android:textAlignment="center"
+                android:textColor="@color/green_aspp" />
 
         </LinearLayout>
     </LinearLayout>

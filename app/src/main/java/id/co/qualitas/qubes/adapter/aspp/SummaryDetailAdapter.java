@@ -6,9 +6,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -27,6 +30,8 @@ public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdap
     private LayoutInflater mInflater;
     private SummaryDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
+    private SummaryDetailExtraAdapter mAdapter;
+    private boolean isExpand = false;
 
     public SummaryDetailAdapter(SummaryDetailActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -82,17 +87,33 @@ public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdap
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtGroupName, txtMaterial, txtQty1, txtQty2, txtQty3, txtPrice;
+        TextView txtProduct, txtQty, txtPrice, txtUom, txtNo;
+        TextView txtDiscountQty, txtDiscountValue, txtDiscountKelipatan, txtTotalDiscount;
+        LinearLayout llDiscount, llDiscountQty, llDiscountValue, llDiscountKelipatan;
+        RecyclerView rvExtra;
+        ImageView imgView;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtGroupName = itemView.findViewById(R.id.txtGroupName);
-            txtMaterial = itemView.findViewById(R.id.txtMaterial);
+            txtNo = itemView.findViewById(R.id.txtNo);
+            imgView = itemView.findViewById(R.id.imgView);
+            llDiscountQty = itemView.findViewById(R.id.llDiscountQty);
+            llDiscountValue = itemView.findViewById(R.id.llDiscountValue);
+            llDiscountKelipatan = itemView.findViewById(R.id.llDiscountKelipatan);
+            txtUom = itemView.findViewById(R.id.txtUom);
+            txtTotalDiscount = itemView.findViewById(R.id.txtTotalDiscount);
+            txtProduct = itemView.findViewById(R.id.txtProduct);
             txtPrice = itemView.findViewById(R.id.txtPrice);
-            txtQty3 = itemView.findViewById(R.id.txtQty3);
-            txtQty1 = itemView.findViewById(R.id.txtQty1);
-            txtQty2 = itemView.findViewById(R.id.txtQty2);
+            txtQty = itemView.findViewById(R.id.txtQty);
+            llDiscount = itemView.findViewById(R.id.llDiscount);
+            txtDiscountQty = itemView.findViewById(R.id.txtDiscountQty);
+            txtDiscountValue = itemView.findViewById(R.id.txtDiscountValue);
+            txtDiscountKelipatan = itemView.findViewById(R.id.txtDiscountKelipatan);
+            rvExtra = itemView.findViewById(R.id.rvExtra);
+            rvExtra.setLayoutManager(new LinearLayoutManager(mContext));
+            rvExtra.setHasFixedSize(true);
+
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -112,12 +133,27 @@ public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdap
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.txtGroupName.setText(detail.getKlasifikasi());
-        holder.txtMaterial.setText(detail.getMaterialCode());
-        holder.txtQty1.setText(String.valueOf(detail.getQty()));
-        holder.txtQty2.setText(String.valueOf(detail.getQty()));
-        holder.txtQty3.setText(String.valueOf(detail.getQty()));
+        holder.txtNo.setText(String.valueOf(position + 1));
+        holder.txtProduct.setText(detail.getMaterialCode());
+        holder.txtQty.setText(String.valueOf(detail.getQty()));
+        holder.txtUom.setText(detail.getUom());
         holder.txtPrice.setText(detail.getPrice());
+
+        holder.imgView.setOnClickListener(v -> {
+            if (!isExpand) {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
+                holder.llDiscount.setVisibility(View.VISIBLE);
+                isExpand = true;
+            } else {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
+                holder.llDiscount.setVisibility(View.GONE);
+                isExpand = false;
+            }
+        });
+
+        mAdapter = new SummaryDetailExtraAdapter(position, mContext, detail.getExtraItem(), header -> {
+        });
+        holder.rvExtra.setAdapter(mAdapter);
 
     }
 

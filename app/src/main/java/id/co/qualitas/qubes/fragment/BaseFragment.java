@@ -357,7 +357,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 
                 LinearLayout linSyncAll = alertDialog.findViewById(R.id.linearSyncAll);
                 LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
-                LinearLayout linSyncOrderPlan = alertDialog.findViewById(R.id.linearOrderPlan);
+                LinearLayout linearCollection = alertDialog.findViewById(R.id.linearCollection);
                 LinearLayout linSyncVisit = alertDialog.findViewById(R.id.linearVisit);
                 LinearLayout linSyncStoreCheck = alertDialog.findViewById(R.id.linearStoreCheck);
                 LinearLayout linSyncOrder = alertDialog.findViewById(R.id.linearOrder);
@@ -383,7 +383,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     }
                 });
 
-                linSyncOrderPlan.setOnClickListener(new View.OnClickListener() {
+                linearCollection.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         PARAM_MENU_SYNC = 2;

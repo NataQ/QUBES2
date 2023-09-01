@@ -157,45 +157,4 @@ public class LoginActivity extends BaseActivity {
             registerID = Helper.getItemParam(Constants.REGIISTERID).toString();
         }
     }
-
-    @Override
-    public void onBackPressed() {
-        // do nothing.
-        LayoutInflater inflater = LayoutInflater.from(LoginActivity.this);
-        View dialogview;
-        final Dialog alertDialog = new Dialog(LoginActivity.this);
-        dialogview = inflater.inflate(R.layout.custom_dialog_alert_delete, null);
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(dialogview);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
-        Button btnSave = alertDialog.findViewById(R.id.btnSave);
-        TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
-
-        txtDialog.setText(getResources().getString(R.string.textDialogLogout));
-        btnSave.setText(getResources().getString(R.string.yes));
-        btnCancel.setText(getResources().getString(R.string.no));
-
-//        txtDialog.setText(getResources().getString(R.string.alertExit));
-//        btnLogIn.setText("Ya");
-//        btnCancel.setText("Tidak");
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-                finish();
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
 }

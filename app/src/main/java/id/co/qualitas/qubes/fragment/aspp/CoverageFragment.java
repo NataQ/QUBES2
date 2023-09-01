@@ -9,6 +9,9 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,8 +27,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -56,10 +57,10 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.User;
 
-public class CoverageFragment extends BaseFragment {
+public class CoverageFragment extends BaseFragment implements LocationListener {
     private MapView mMapView;
     private ImageView imgBack;
-    private Button btnZoom;
+    private Button btnZoom, btCenterMap;
     private IMapController mapController;
     private static final String TAG = "CoverageActivity";
     private static final int PERMISSION_REQUEST_CODE = 1;
@@ -69,6 +70,8 @@ public class CoverageFragment extends BaseFragment {
     private BoundingBox boundingBox;
     private List<GeoPoint> geoPointList;
     private List<Customer> custList;
+    private LocationManager lm;
+    private Location currentLocation = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +85,19 @@ public class CoverageFragment extends BaseFragment {
         getActivity().setTitle(getString(R.string.coverage));
         Context ctx = getContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
 
         init();
         initFragment();
@@ -116,12 +132,21 @@ public class CoverageFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+    }
+
     private void setMap() {
         mapController = mMapView.getController();
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
         mMapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
         mMapView.setMultiTouchControls(true);
         mapController.setZoom(Constants.ZOOM_LEVEL);
+
+//        mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(context), mMapView);
+//        mMapView.getOverlays().add(mLocationOverlay);
+//        mLocationOverlay.enableMyLocation();
 
         //icon compass
         mCompassOverlay = new CompassOverlay(getContext(), new InternalCompassOrientationProvider(getContext()), mMapView);
@@ -166,6 +191,16 @@ public class CoverageFragment extends BaseFragment {
 
         mMapView.getOverlays().add(mOverlay);
         mapController.setCenter(computeCentroid(custList));
+
+        btCenterMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentLocation != null) {
+                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    mMapView.getController().animateTo(myPosition);
+                }
+            }
+        });
 
 //        double minLat = Integer.MAX_VALUE;
 //        double maxLat = Integer.MIN_VALUE;
@@ -215,6 +250,7 @@ public class CoverageFragment extends BaseFragment {
         db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         imgBack = rootView.findViewById(R.id.imgBack);
+        btCenterMap = rootView.findViewById(R.id.btCenterMap);
         btnZoom = rootView.findViewById(R.id.btnZoom);
         mMapView = rootView.findViewById(R.id.mapView);
     }
@@ -231,7 +267,7 @@ public class CoverageFragment extends BaseFragment {
         txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
 //        txt_add.setText(cust.getAddress());
         if (cust.isRoute()) {
-            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_green));
+            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_blue));
         } else {
             imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_red));
         }

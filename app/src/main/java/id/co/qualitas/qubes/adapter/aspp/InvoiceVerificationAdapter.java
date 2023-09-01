@@ -7,6 +7,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -84,13 +85,17 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtInvoiceNo, txtCustName, txtAmount, txtPaid;
+        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett, txtLabelRoute;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
+            txtNett = itemView.findViewById(R.id.txtNett);
+            txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
+            txtDueDate = itemView.findViewById(R.id.txtDueDate);
             txtInvoiceNo = itemView.findViewById(R.id.txtInvoiceNo);
-            txtCustName = itemView.findViewById(R.id.txtCustName);
+            txtCustomer = itemView.findViewById(R.id.txtCustomer);
             txtAmount = itemView.findViewById(R.id.txtAmount);
             txtPaid = itemView.findViewById(R.id.txtPaid);
             this.onAdapterListener = onAdapterListener;
@@ -113,10 +118,23 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtCustName.setText(detail.getCustomerID() + " - " + detail.getCustomerName());
+        holder.txtCustomer.setText(detail.getCustomerID() + " - " + detail.getCustomerName());
+        holder.txtInvoiceDate.setText(detail.getDate());
+        holder.txtDueDate.setText(detail.getDate());
         holder.txtInvoiceNo.setText(detail.getInvoiceNo());
         holder.txtAmount.setText(format.format(detail.getAmount()));
+        holder.txtNett.setText(format.format(detail.getPaid()));
         holder.txtPaid.setText(format.format(detail.getPaid()));
+
+        if (detail.isRoute()) {
+            holder.txtLabelRoute.setText("Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
+        } else {
+            holder.txtLabelRoute.setText("Non Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_non_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red2_aspp));
+        }
     }
 
     private void setFormatSeparator() {

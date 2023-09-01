@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -39,7 +40,7 @@ import id.co.qualitas.qubes.services.NotiWorker;
 
 public class ActivityFragment extends BaseFragment {
     private static final String TAG = NewMainActivity.class.getSimpleName();
-    private LinearLayout llStockRequest, llInvoice, llVisit, llCollection, llEndVisit, llUnloading;
+    private CardView llStockRequest, llInvoice, llVisit, llCollection;
     WorkManager workManager;
     private WorkRequest workRequest;
 
@@ -61,10 +62,10 @@ public class ActivityFragment extends BaseFragment {
 
         workManager = WorkManager.getInstance(getActivity());
 
-        llEndVisit.setOnClickListener(v -> {
-            workManager.cancelAllWork();
-            openDialogEndVisit();
-        });
+//        llEndVisit.setOnClickListener(v -> {
+//            workManager.cancelAllWork();
+//            openDialogEndVisit();
+//        });
 
         llStockRequest.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), StockRequestHeaderActivity.class);
@@ -77,8 +78,8 @@ public class ActivityFragment extends BaseFragment {
         });
 
         llVisit.setOnClickListener(v -> {
-            workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
-            workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+//            workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+//            workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
             openDialogStartVisit();
         });
 
@@ -87,10 +88,10 @@ public class ActivityFragment extends BaseFragment {
             startActivity(intent);
         });
 
-        llUnloading.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), UnloadingHeaderActivity.class);
-            startActivity(intent);
-        });
+//        llUnloading.setOnClickListener(v -> {
+//            Intent intent = new Intent(getActivity(), UnloadingHeaderActivity.class);
+//            startActivity(intent);
+//        });
 
         return rootView;
     }
@@ -136,8 +137,8 @@ public class ActivityFragment extends BaseFragment {
         db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
-        llUnloading = rootView.findViewById(R.id.llUnloading);
-        llEndVisit = rootView.findViewById(R.id.llEndVisit);
+//        llUnloading = rootView.findViewById(R.id.llUnloading);
+//        llEndVisit = rootView.findViewById(R.id.llEndVisit);
         llStockRequest = rootView.findViewById(R.id.llStockRequest);
         llInvoice = rootView.findViewById(R.id.llInvoice);
         llVisit = rootView.findViewById(R.id.llVisit);

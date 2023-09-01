@@ -147,7 +147,7 @@ public class AccountFragment extends BaseFragment {
 
                 LinearLayout linSyncAll = alertDialog.findViewById(R.id.linearSyncAll);
                 LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
-                LinearLayout linSyncOrderPlan = alertDialog.findViewById(R.id.linearOrderPlan);
+                LinearLayout linearCollection = alertDialog.findViewById(R.id.linearCollection);
                 LinearLayout linSyncVisit = alertDialog.findViewById(R.id.linearVisit);
                 LinearLayout linSyncStoreCheck = alertDialog.findViewById(R.id.linearStoreCheck);
                 LinearLayout linSyncOrder = alertDialog.findViewById(R.id.linearOrder);
@@ -171,7 +171,7 @@ public class AccountFragment extends BaseFragment {
                     }
                 });
 
-                linSyncOrderPlan.setOnClickListener(new View.OnClickListener() {
+                linearCollection.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         PARAM = 7;
@@ -233,28 +233,28 @@ public class AccountFragment extends BaseFragment {
                 LayoutInflater inflater = LayoutInflater.from(getActivity());
                 View dialogview;
                 final Dialog alertDialog = new Dialog(getActivity());
-                dialogview = inflater.inflate(R.layout.custom_dialog_feedback, null);
+                dialogview = inflater.inflate(R.layout.custom_dialog_log, null);
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setContentView(dialogview);
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-                TextView txtLastSync = alertDialog.findViewById(R.id.txtLastSync);
-                TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
-                Button btnHide = alertDialog.findViewById(R.id.btnHide);
-
-                LastLog lLog = (LastLog) Helper.getItemParam(Constants.ERROR_LOG);
-                txtDialog.setText("Empty");
-                if (lLog != null) {
-                    txtLastSync.setText(Helper.validateResponseEmpty(lLog.getLastSync()));
-                    txtDialog.setText(Helper.validateResponseEmpty(lLog.getLastMsg()));
-                }
-
-                btnHide.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        alertDialog.dismiss();
-                    }
-                });
+//                TextView txtLastSync = alertDialog.findViewById(R.id.txtLastSync);
+//                TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
+//                Button btnHide = alertDialog.findViewById(R.id.btnHide);
+//
+//                LastLog lLog = (LastLog) Helper.getItemParam(Constants.ERROR_LOG);
+//                txtDialog.setText("Empty");
+//                if (lLog != null) {
+//                    txtLastSync.setText(Helper.validateResponseEmpty(lLog.getLastSync()));
+//                    txtDialog.setText(Helper.validateResponseEmpty(lLog.getLastMsg()));
+//                }
+//
+//                btnHide.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        alertDialog.dismiss();
+//                    }
+//                });
 
                 alertDialog.show();
             }

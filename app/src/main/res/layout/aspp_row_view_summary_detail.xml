@@ -14,165 +14,88 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
+        <TextView
+            android:id="@+id/txtNo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".5"
+            android:text="1"
+            android:textColor="@color/black_aspp" />
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="9.5"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Group" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
-
-                <TextView
-                    android:id="@+id/txtGroupName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Product" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
-
-                <TextView
-                    android:id="@+id/txtMaterial"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Quantity" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight="6"
                     android:orientation="vertical">
 
-                    <LinearLayout
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:text="Product"
+                        android:textColor="@color/gray8_aspp" />
 
-                        <TextView
-                            android:id="@+id/txtQty1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="BTL" />
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/txtProduct"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
+                        android:text="Kratingdaeng"
+                        android:textColor="@color/black_aspp" />
+                </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/txtQty2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="SLOP" />
-                    </LinearLayout>
-
-                    <LinearLayout
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:text="QTY"
+                        android:textColor="@color/gray8_aspp" />
 
-                        <TextView
-                            android:id="@+id/txtQty3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/txtQty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:textColor="@color/black_aspp" />
+                </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="BTL" />
-                    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:orientation="vertical">
 
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="UOM"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <TextView
+                        android:id="@+id/txtUom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="BTL"
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -180,46 +103,220 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="5dp">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Price" />
+                    android:layout_weight="1"
+                    android:text="Price"
+                    android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    android:id="@+id/txtPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="2,000,000"
+                    android:textColor="@color/black_aspp" />
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:src="@drawable/ic_drop_down"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue8_aspp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/txtPrice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:padding="8dp"
+                        android:text="Total Discount"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalDiscount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="19,500"
+                        android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/imgViewPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
+                        android:id="@+id/imgView"
+                        android:layout_width="@dimen/icon_drop"
+                        android:layout_height="@dimen/icon_drop"
                         android:layout_marginStart="5dp"
-                        android:src="@drawable/ic_info" />
+                        android:src="@drawable/ic_drop_down_aspp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llDiscount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/llDiscountQty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Qty"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <TextView
+                            android:id="@+id/txtDiscountQty"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="15,500"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llDiscountValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Value"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <TextView
+                            android:id="@+id/txtDiscountValue"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="2,000"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/llDiscountKelipatan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Kelipatan"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <TextView
+                            android:id="@+id/txtDiscountKelipatan"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="2,000"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total"
+                    android:textColor="@color/gray8_aspp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtTotal"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="2,000,000"
+                    android:textColor="@color/black_aspp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_drop_down"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvExtra"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
         </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

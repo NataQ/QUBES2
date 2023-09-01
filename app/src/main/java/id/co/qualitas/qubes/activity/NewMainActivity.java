@@ -150,26 +150,21 @@ public class NewMainActivity extends BaseActivity {
             public void onClick(View view) {
                 LayoutInflater inflater = LayoutInflater.from(NewMainActivity.this);
                 final Dialog alertDialog = new Dialog(NewMainActivity.this);
-                View dialogView = inflater.inflate(R.layout.custom_dialog_alert_delete, null);
+                View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
                 alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 alertDialog.setContentView(dialogView);
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
-                Button btnSave = alertDialog.findViewById(R.id.btnSave);
-                TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
+                Button btnNo = alertDialog.findViewById(R.id.btnNo);
+                Button btnYes = alertDialog.findViewById(R.id.btnYes);
 
-                txtDialog.setText(getResources().getString(R.string.textDialogLogout));
-                btnSave.setText(getResources().getString(R.string.yes));
-                btnCancel.setText(getResources().getString(R.string.no));
-
-                btnCancel.setOnClickListener(new View.OnClickListener() {
+                btnNo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         alertDialog.dismiss();
                     }
                 });
 
-                btnSave.setOnClickListener(new View.OnClickListener() {
+                btnYes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 //                        PARAM = 12;

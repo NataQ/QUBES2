@@ -9,6 +9,7 @@ public class Invoice {
     private String date;
     private String route;
     private boolean isChecked;
+    private boolean isRoute;
 
     public Invoice(String invoiceNo, String customerName, String customerID, float amount, float paid, String date, String route) {
         this.invoiceNo = invoiceNo;
@@ -18,15 +19,25 @@ public class Invoice {
         this.paid = paid;
         this.date = date;
         this.route = route;
+
     }
 
-    public Invoice(String invoiceNo, String customerName, String customerID, float amount, float paid, String date) {
+    public Invoice(String invoiceNo, String customerName, String customerID, float amount, float paid, String date, boolean isRoute) {
         this.invoiceNo = invoiceNo;
         this.customerName = customerName;
         this.customerID = customerID;
         this.amount = amount;
         this.paid = paid;
         this.date = date;
+        this.isRoute = isRoute;
+    }
+
+    public boolean isRoute() {
+        return isRoute;
+    }
+
+    public void setRoute(boolean route) {
+        isRoute = route;
     }
 
     public boolean isChecked() {

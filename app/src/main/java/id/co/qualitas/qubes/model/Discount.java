@@ -4,13 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-/**
- * Created by Wiliam on 6/13/2017.
- */
+import java.util.List;
 
 public class Discount implements Serializable {
-
     private String discountName;
     private String prodName;
     private String prodId;
@@ -89,6 +85,20 @@ public class Discount implements Serializable {
 
     private String product;
 
+    //discount aspp
+    private String kodeLangganan;
+    private String tipeOutlet;
+    private String NoOrder;
+    private String tglOrder;
+    private List<Discount> barang;
+    private String kodeBarang;
+    private List<Discount> diskon; //discQty, discValue, discKelipatan
+    private String discQty;
+    private String discValue;
+    private String discKelipatan;
+    private List<Discount> extra;//kodeBarang, qty, diskon
+    private String qty;
+
     public Discount(String name, String cond_type,
                     String idCustomer, String customer,
                     String material, String idMaterial,
@@ -130,6 +140,102 @@ public class Discount implements Serializable {
 
         this.idMaterialGroup3 = idMaterialGroup3;
         this.materialGroup3 = materialGroup3;
+    }
+
+    public String getKodeLangganan() {
+        return kodeLangganan;
+    }
+
+    public void setKodeLangganan(String kodeLangganan) {
+        this.kodeLangganan = kodeLangganan;
+    }
+
+    public String getTipeOutlet() {
+        return tipeOutlet;
+    }
+
+    public void setTipeOutlet(String tipeOutlet) {
+        this.tipeOutlet = tipeOutlet;
+    }
+
+    public String getNoOrder() {
+        return NoOrder;
+    }
+
+    public void setNoOrder(String noOrder) {
+        NoOrder = noOrder;
+    }
+
+    public String getTglOrder() {
+        return tglOrder;
+    }
+
+    public void setTglOrder(String tglOrder) {
+        this.tglOrder = tglOrder;
+    }
+
+    public List<Discount> getBarang() {
+        return barang;
+    }
+
+    public void setBarang(List<Discount> barang) {
+        this.barang = barang;
+    }
+
+    public String getKodeBarang() {
+        return kodeBarang;
+    }
+
+    public void setKodeBarang(String kodeBarang) {
+        this.kodeBarang = kodeBarang;
+    }
+
+    public List<Discount> getDiskon() {
+        return diskon;
+    }
+
+    public void setDiskon(List<Discount> diskon) {
+        this.diskon = diskon;
+    }
+
+    public String getDiscQty() {
+        return discQty;
+    }
+
+    public void setDiscQty(String discQty) {
+        this.discQty = discQty;
+    }
+
+    public String getDiscValue() {
+        return discValue;
+    }
+
+    public void setDiscValue(String discValue) {
+        this.discValue = discValue;
+    }
+
+    public String getDiscKelipatan() {
+        return discKelipatan;
+    }
+
+    public void setDiscKelipatan(String discKelipatan) {
+        this.discKelipatan = discKelipatan;
+    }
+
+    public List<Discount> getExtra() {
+        return extra;
+    }
+
+    public void setExtra(List<Discount> extra) {
+        this.extra = extra;
+    }
+
+    public String getQty() {
+        return qty;
+    }
+
+    public void setQty(String qty) {
+        this.qty = qty;
     }
 
     public String getProduct() {

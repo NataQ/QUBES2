@@ -11,8 +11,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_margin="12dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".4"
-                android:text="Outlet" />
+                android:text="Invoice Date" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -61,11 +61,11 @@
                 android:text="@string/colon" />
 
             <TextView
-                android:id="@+id/txtOutlet"
+                android:id="@+id/txtInvoiceDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".6"
-                android:text="OBC44 - YANTO (TK)"
+                android:text="01 January 2023"
                 android:textColor="@color/darkGray" />
 
         </LinearLayout>
@@ -80,7 +80,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".4"
-                android:text="Date" />
+                android:text="Due Date" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -89,11 +89,67 @@
                 android:text="@string/colon" />
 
             <TextView
-                android:id="@+id/txtDate"
+                android:id="@+id/txtDueDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".6"
-                android:text="1 June 2023"
+                android:text="01 January 2023"
+                android:textColor="@color/darkGray" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".4"
+                android:text="Nett" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/colon" />
+
+            <TextView
+                android:id="@+id/txtNett"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".6"
+                android:text="Rp 1,000,000"
+                android:textColor="@color/darkGray" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".4"
+                android:text="Customer" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/colon" />
+
+            <TextView
+                android:id="@+id/txtCustomer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".6"
+                android:text="Bagus Customer"
                 android:textColor="@color/darkGray" />
 
         </LinearLayout>
@@ -121,7 +177,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".6"
-                android:text="1,000,000"
+                android:text="Rp 1,000,000"
                 android:textColor="@color/darkGray" />
 
         </LinearLayout>

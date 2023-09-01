@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,6 +36,7 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -75,6 +77,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.LoginActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.database.SecondDatabaseHelper;
@@ -129,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
     protected Button btnSave, btnCancel, btnCheckIn, btnYes, btnNo, btnReset, btnBack;
     protected AutoCompleteTextView edtMaterialName, edtMaterialCode;
     public CheckInOutRequest checkInRequest, checkOutRequest, pauseRequest;
-    protected ImageView imgBack;
+    protected ImageView imgBack, imgLogOut;
     protected TextView txtEmpty, txtDialog;
     protected EditText edtKlasifikasi, edtTxtComment;
     private ArrayList<String> listMaterialName, listMaterialCode;
@@ -188,6 +192,34 @@ public class BaseActivity extends AppCompatActivity {
         return currentDateTime;
     }
 
+    public void logOut(Activity activity){
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        final Dialog alertDialog = new Dialog(activity);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
+        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        alertDialog.setContentView(dialogView);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Button btnNo = alertDialog.findViewById(R.id.btnNo);
+        Button btnYes = alertDialog.findViewById(R.id.btnYes);
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
+    }
     public void snackBar(View rootView, int message) {
         Snackbar snack = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
         View view = snack.getView();

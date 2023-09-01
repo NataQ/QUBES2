@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -42,8 +41,6 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
@@ -84,7 +81,7 @@ public class DirectionFragment extends BaseFragment {
     private AutoCompleteTextView edtStartPoint, edtEndPoint;
     private ImageView imgCurrentStartingPoint, imgCurrentEndPoint, imgBack;
     private TextView txtStore, txtAddress, txtRoute;
-    private Button btnDirection;
+    private Button btnMaps;
     private AutoCompleteRouteAdapter startPointAdapter, endPointAdapter;
     private Customer startPointCustomer, currLocation, endPointCustomer;
 
@@ -140,7 +137,7 @@ public class DirectionFragment extends BaseFragment {
             }
         });
 
-        btnDirection.setOnClickListener(v -> {
+        btnMaps.setOnClickListener(v -> {
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW,
                         Uri.parse("http://maps.google.com/maps?saddr=" + startPointCustomer.getLatitude() + "," + startPointCustomer.getLongitude()
@@ -285,7 +282,7 @@ public class DirectionFragment extends BaseFragment {
         db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         mMapView = rootView.findViewById(R.id.mapView);
-        btnDirection = rootView.findViewById(R.id.btnDirection);
+        btnMaps = rootView.findViewById(R.id.btnMaps);
         edtStartPoint = rootView.findViewById(R.id.edtStartPoint);
         edtEndPoint = rootView.findViewById(R.id.edtEndPoint);
         txtStore = rootView.findViewById(R.id.txtStore);
@@ -323,7 +320,7 @@ public class DirectionFragment extends BaseFragment {
         txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
 //        txt_add.setText(cust.getAddress());
         if (start) {
-            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_green));
+            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_blue));
         } else {
             imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_red));
         }

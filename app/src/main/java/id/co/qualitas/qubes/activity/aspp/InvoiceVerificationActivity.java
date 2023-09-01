@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -32,6 +33,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private List<Invoice> mList;
     private MovableFloatingActionButton btnAdd;
     private Button btnSubmit;
+    private TextView txtDate, txtTotalInvoice, txtTotalAmount;
+    private int totalInvoice = 0;
+    private float totalAmount = 0.0F;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,12 +52,19 @@ public class InvoiceVerificationActivity extends BaseActivity {
         recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, InvoiceVerificationAddActivity.class);
-            startActivity(intent);
+            setToast("Refresh");
         });
 
         btnSubmit.setOnClickListener(v -> {
             openDialogSignature();
+        });
+
+        imgBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(InvoiceVerificationActivity.this);
         });
     }
 
@@ -110,16 +121,30 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Invoice("DKA495486", "TOKO SIDIK HALIM", "0GV43", 884736, 0, "1 June 2023"));
-        mList.add(new Invoice("DKA496933", "TOKO SIDIK HALIM", "0GV43", 39294, 0, "2 June 2023"));
-        mList.add(new Invoice("DKA492540", "SARI SARI (TK)", "0WJ42", 14024448, 0, "3 June 2023"));
-        mList.add(new Invoice("DKA402541", "TOKO SIDIK HALIM", "0WJ42", 9363600, 0, "4 June 2023"));
+        mList.add(new Invoice("DKA495486", "TOKO SIDIK HALIM", "0GV43", 884736, 0, "1 June 2023", true));
+        mList.add(new Invoice("DKA496933", "TOKO SIDIK HALIM", "0GV43", 39294, 0, "2 June 2023", false));
+        mList.add(new Invoice("DKA492540", "SARI SARI (TK)", "0WJ42", 14024448, 0, "3 June 2023", true));
+        mList.add(new Invoice("DKA402541", "TOKO SIDIK HALIM", "0WJ42", 9363600, 0, "4 June 2023", false));
+
+        for (Invoice inv : mList) {
+            totalInvoice = totalInvoice + 1;
+            totalAmount = totalAmount + inv.getAmount();
+        }
+
+        txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
+        txtTotalAmount.setText(Helper.toRupiahFormat(String.valueOf(totalAmount)));
+        txtTotalInvoice.setText(String.valueOf(totalInvoice));
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        txtDate = findViewById(R.id.txtDate);
+        txtTotalInvoice = findViewById(R.id.txtTotalInvoice);
+        txtTotalAmount = findViewById(R.id.txtTotalAmount);
+        imgBack = findViewById(R.id.imgBack);
+        imgLogOut = findViewById(R.id.imgLogOut);
         btnSubmit = findViewById(R.id.btnSubmit);
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
