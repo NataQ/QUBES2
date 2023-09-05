@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.adapter.NewTabFragmentAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -49,7 +49,7 @@ public class HomeFragment extends BaseFragment {
         adapter = new NewTabFragmentAdapter(getChildFragmentManager(), mTabs.getTabCount(), "home");
 //        adapter.addFragment(new CalendarFragment(), "Calendar");
         adapter.addFragment(new DashboardFragment(), "Dashboard");
-//        adapter.addFragment(new TargetFragment(), "Target");
+        adapter.addFragment(new TargetFragment(), "Target");
 //        adapter.addFragment(new PromotionFragment(), "Promotion");
         adapter.addFragment(new PromotionFragment(), "Promotion");
 

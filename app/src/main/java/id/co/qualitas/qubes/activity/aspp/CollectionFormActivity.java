@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,26 +29,43 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.CollectionCashAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CollectionChequeAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CollectionGiroAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
+import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.CollectionCheque;
+import id.co.qualitas.qubes.model.CollectionGiro;
+import id.co.qualitas.qubes.model.CollectionTransfer;
+import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 
 public class CollectionFormActivity extends BaseActivity {
     private ImageView imgBack;
-    private Button btnSubmit;
-    private TextView spnBankTransfer, spnFromBankGiro, spnBankNameGiro, spnBankCheque,
-            txtDueDate, txtDateGiro, txtTanggalCheque, txtDateTransfer;
-    private LinearLayout buttonCashSelect, buttonCash;
-    private LinearLayout buttonTransferSelect, buttonTransfer;
-    private LinearLayout buttonCheqSelect, buttonCheq;
-    private LinearLayout buttonGiroSelect, buttonGiro;
-    private LinearLayout llCash, llTransfer, llGiro, llCheque;
-    private RelativeLayout rlCash, rlTransfer, rlGiro, rlCheque;
-    Date todayDate;
-    String chooseDateString, todayString;
-    Calendar todayCalendar;
+    private Button btnSubmit, btnAddTransfer, btnAddGiro, btnAddCheque;
+    private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain;
+    private TextView txtPaymentCash, txtLeftCash, txtAmount;
+    private TextView txtPaymentLain, txtLeftLain;
+    private TextView txtInvNo, txtDate;
+    private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain;
+    private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain;
+    private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain;
+    private List<CollectionTransfer> mListTransfer;
+    private List<CollectionGiro> mListGiro;
+    private List<CollectionCheque> mListCheque;
+    private List<Material> mListCash, mListLain;
+    private Invoice collectionHeader;
+    private CollectionCashAdapter mAdapterCash;
+    private CollectionTransferAdapter mAdapterTransfer;
+    private CollectionGiroAdapter mAdapterGiro;
+    private CollectionChequeAdapter mAdapterCheque;
+    private CollectionLainAdapter mAdapterLain;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,441 +75,310 @@ public class CollectionFormActivity extends BaseActivity {
         init();
         initialize();
         initData();
-        setSpinner();
-        setDateDialog();
+        setCashView();
+        setTransferView();
+        setGiroView();
+        setChequeView();
+        setLainView();
+
+        btnSubmit.setOnClickListener(v -> {
+            onBackPressed();
+        });
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
 
-        rlCash.setOnClickListener(v -> {
+        imgLogOut.setOnClickListener(v -> {
+            logOut(CollectionFormActivity.this);
+        });
+
+        buttonCash.setOnClickListener(v -> {
             setSelectView(1);
         });
 
-        rlTransfer.setOnClickListener(v -> {
+        buttonTransfer.setOnClickListener(v -> {
             setSelectView(2);
         });
 
-        rlGiro.setOnClickListener(v -> {
+        buttonGiro.setOnClickListener(v -> {
             setSelectView(3);
         });
 
-        rlCheque.setOnClickListener(v -> {
+        buttonCheq.setOnClickListener(v -> {
             setSelectView(4);
         });
+
+        buttonLain.setOnClickListener(v -> {
+            setSelectView(5);
+        });
     }
 
-    private void setDateDialog() {
-        todayDate = Helper.getTodayDate();
-        todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
+    private void setCashView() {
+        mListCash = new ArrayList<>();
+        mListCash.addAll(initDataMaterial());
 
-        txtDateTransfer.setText(todayString);
-        txtTanggalCheque.setText(todayString);
-        txtDueDate.setText(todayString);
-        txtDateGiro.setText(todayString);
+        mAdapterCash = new CollectionCashAdapter(this, mListCash, header -> {
 
-        txtDateTransfer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard();
-                todayCalendar = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(todayDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
-
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
-
-                        chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        txtDateTransfer.setText(chooseDateString);
-                        txtDateTransfer.setError(null);
-                    }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(CollectionFormActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                dialog.show();
-            }
         });
+        recyclerViewCash.setAdapter(mAdapterCash);
+    }
 
-        txtTanggalCheque.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard();
-                todayCalendar = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(todayDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
+    private void setTransferView() {
+        mAdapterTransfer = new CollectionTransferAdapter(this, mListTransfer, header -> {
 
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
-
-                        chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        txtTanggalCheque.setText(chooseDateString);
-                        txtTanggalCheque.setError(null);
-                    }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(CollectionFormActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                dialog.show();
-            }
         });
+        recyclerViewTransfer.setAdapter(mAdapterTransfer);
 
-        txtDueDate.setOnClickListener(new View.OnClickListener() {
+        btnAddTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                hideKeyboard();
-                todayCalendar = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(todayDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
+                CollectionTransfer detail = new CollectionTransfer(null, null, null, initDataMaterial());
+                mListTransfer.add(detail);
 
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
+                new CountDownTimer(1000, 1000) {
 
-                        chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        txtDueDate.setText(chooseDateString);
-                        txtDateTransfer.setError(null);
+                    public void onTick(long millisUntilFinished) {
+                        progress.show();
+                        mAdapterTransfer.notifyDataSetChanged();
                     }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(CollectionFormActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                dialog.show();
-            }
-        });
 
-        txtDateGiro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard();
-                todayCalendar = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(todayDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
-
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
-
-                        chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        txtDateGiro.setText(chooseDateString);
-                        txtDateGiro.setError(null);
+                    public void onFinish() {
+                        progress.dismiss();
+                        recyclerViewTransfer.smoothScrollToPosition(recyclerViewTransfer.getAdapter().getItemCount() - 1);
                     }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(CollectionFormActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                dialog.show();
+                }.start();
             }
         });
     }
 
-    private void setSpinner() {
-        spnBankTransfer.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
+    private void setGiroView() {
+        mAdapterGiro = new CollectionGiroAdapter(this, mListGiro, header -> {
 
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("Y001 - BANK BCA");
-            groupList.add("Y002 - BANK MANDIRI");
-            groupList.add("Y003 - BANK MANDIRI SYARIAH");
-            groupList.add("Y004 - BANK BNI");
-            groupList.add("Y005 - BANK BNI SYARIAH");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
-                spnBankTransfer.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
         });
+        recyclerViewGiro.setAdapter(mAdapterGiro);
 
-        spnFromBankGiro.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
+        btnAddGiro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CollectionGiro detail = new CollectionGiro(null, null, null, null, null, null, null, null, null, initDataMaterial());
+                mListGiro.add(detail);
 
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
+                new CountDownTimer(1000, 1000) {
 
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+                    public void onTick(long millisUntilFinished) {
+                        progress.show();
+                        mAdapterGiro.notifyDataSetChanged();
+                    }
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("Y001 - BANK BCA");
-            groupList.add("Y002 - BANK MANDIRI");
-            groupList.add("Y003 - BANK MANDIRI SYARIAH");
-            groupList.add("Y004 - BANK BNI");
-            groupList.add("Y005 - BANK BNI SYARIAH");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
-                spnFromBankGiro.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+                    public void onFinish() {
+                        progress.dismiss();
+                        recyclerViewGiro.smoothScrollToPosition(recyclerViewGiro.getAdapter().getItemCount() - 1);
+                    }
+                }.start();
+            }
         });
+    }
 
-        spnBankCheque.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
+    private void setChequeView() {
+        mAdapterCheque = new CollectionChequeAdapter(this, mListCheque, header -> {
 
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("Y001 - BANK BCA");
-            groupList.add("Y002 - BANK MANDIRI");
-            groupList.add("Y003 - BANK MANDIRI SYARIAH");
-            groupList.add("Y004 - BANK BNI");
-            groupList.add("Y005 - BANK BNI SYARIAH");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
-                spnBankCheque.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
         });
+        recyclerViewCheque.setAdapter(mAdapterCheque);
 
-        spnBankNameGiro.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
+        btnAddCheque.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CollectionCheque detail = new CollectionCheque(null, null, null, null, null, null, null, null, null, initDataMaterial());
+                mListCheque.add(detail);
 
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
+                new CountDownTimer(1000, 1000) {
 
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+                    public void onTick(long millisUntilFinished) {
+                        progress.show();
+                        mAdapterCheque.notifyDataSetChanged();
+                    }
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("BCA GATSU 0012345678");
-            groupList.add("BCA DAAN MOGOT 987654332");
-            groupList.add("BCA BOGOR 567893322");
-            groupList.add("BCA MEDAN 1234565432");
-            groupList.add("BCA PLUIT 7654345678");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
-                spnBankNameGiro.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+                    public void onFinish() {
+                        progress.dismiss();
+                        recyclerViewCheque.smoothScrollToPosition(recyclerViewCheque.getAdapter().getItemCount() - 1);
+                    }
+                }.start();
+            }
         });
+    }
+
+    private void setLainView() {
+        mListLain = new ArrayList<>();
+        mListLain.addAll(initDataMaterial());
+
+        mAdapterLain = new CollectionLainAdapter(this, mListLain, header -> {
+
+        });
+        recyclerViewLain.setAdapter(mAdapterLain);
+    }
+
+    private List<Material> initDataMaterial() {
+        List<Material> mList = new ArrayList<>();
+        mList.add(new Material("11001", "Kratingdaeng", "1", "BTL"));
+        mList.add(new Material("11030", "Redbull", "1", "BTL"));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1", "BTL"));
+        return mList;
+    }
+
+    private void initData() {
+        mListTransfer = new ArrayList<>();
+        mListGiro = new ArrayList<>();
+        mListCheque = new ArrayList<>();
     }
 
     private void setSelectView(int posTab) {
         switch (posTab) {
             case 1:
-                buttonCashSelect.setVisibility(View.VISIBLE);
-                buttonCash.setVisibility(View.GONE);
-                buttonTransferSelect.setVisibility(View.GONE);
-                buttonTransfer.setVisibility(View.VISIBLE);
-                buttonCheqSelect.setVisibility(View.GONE);
-                buttonCheq.setVisibility(View.VISIBLE);
-                buttonGiroSelect.setVisibility(View.GONE);
-                buttonGiro.setVisibility(View.VISIBLE);
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.VISIBLE);
                 llTransfer.setVisibility(View.GONE);
-                llCheque.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
                 break;
             case 2:
-                buttonCashSelect.setVisibility(View.GONE);
-                buttonCash.setVisibility(View.VISIBLE);
-                buttonTransferSelect.setVisibility(View.VISIBLE);
-                buttonTransfer.setVisibility(View.GONE);
-                buttonCheqSelect.setVisibility(View.GONE);
-                buttonCheq.setVisibility(View.VISIBLE);
-                buttonGiroSelect.setVisibility(View.GONE);
-                buttonGiro.setVisibility(View.VISIBLE);
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.VISIBLE);
-                llCheque.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
                 break;
             case 3:
-                buttonCashSelect.setVisibility(View.GONE);
-                buttonCash.setVisibility(View.VISIBLE);
-                buttonTransferSelect.setVisibility(View.GONE);
-                buttonTransfer.setVisibility(View.VISIBLE);
-                buttonCheqSelect.setVisibility(View.VISIBLE);
-                buttonCheq.setVisibility(View.GONE);
-                buttonGiroSelect.setVisibility(View.GONE);
-                buttonGiro.setVisibility(View.VISIBLE);
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
-                llCheque.setVisibility(View.VISIBLE);
-                llGiro.setVisibility(View.GONE);
+                llGiro.setVisibility(View.VISIBLE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
                 break;
             case 4:
-                buttonCashSelect.setVisibility(View.GONE);
-                buttonCash.setVisibility(View.VISIBLE);
-                buttonTransferSelect.setVisibility(View.GONE);
-                buttonTransfer.setVisibility(View.VISIBLE);
-                buttonCheqSelect.setVisibility(View.GONE);
-                buttonCheq.setVisibility(View.VISIBLE);
-                buttonGiroSelect.setVisibility(View.VISIBLE);
-                buttonGiro.setVisibility(View.GONE);
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.VISIBLE);
+                llLain.setVisibility(View.GONE);
+                break;
+            case 5:
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+
+                llCash.setVisibility(View.GONE);
+                llTransfer.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
-                llGiro.setVisibility(View.VISIBLE);
+                llLain.setVisibility(View.VISIBLE);
                 break;
         }
-    }
-
-    private void initData() {
-
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        collectionHeader = (Invoice) Helper.getItemParam(Constants.COLLECTION_HEADER);
 
-        spnBankTransfer = findViewById(R.id.spnBankTransfer);
-        spnFromBankGiro = findViewById(R.id.spnFromBankGiro);
-        spnBankCheque = findViewById(R.id.spnBankCheque);
-        spnBankNameGiro = findViewById(R.id.spnBankNameGiro);
-        txtDueDate = findViewById(R.id.txtDueDate);
-        txtTanggalCheque = findViewById(R.id.txtTanggalCheque);
-        txtDateTransfer = findViewById(R.id.txtDateTransfer);
-        txtDateGiro = findViewById(R.id.txtDateGiro);
+        recyclerViewCash = findViewById(R.id.recyclerViewCash);
+        recyclerViewCash.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewCash.setHasFixedSize(true);
+        recyclerViewTransfer = findViewById(R.id.recyclerViewTransfer);
+        recyclerViewTransfer.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewTransfer.setHasFixedSize(true);
+        recyclerViewGiro = findViewById(R.id.recyclerViewGiro);
+        recyclerViewGiro.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewGiro.setHasFixedSize(true);
+        recyclerViewCheque = findViewById(R.id.recyclerViewCheque);
+        recyclerViewCheque.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewCheque.setHasFixedSize(true);
+        recyclerViewLain = findViewById(R.id.recyclerViewLain);
+        recyclerViewLain.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLain.setHasFixedSize(true);
+        imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
+        txtInvNo = findViewById(R.id.txtInvNo);
+        txtAmount = findViewById(R.id.txtAmount);
+        txtDate = findViewById(R.id.txtDate);
+        txtCash = findViewById(R.id.txtCash);
+        txtTransfer = findViewById(R.id.txtTransfer);
+        txtGiro = findViewById(R.id.txtGiro);
+        txtCheq = findViewById(R.id.txtCheq);
+        txtLain = findViewById(R.id.txtLain);
+        txtPaymentCash = findViewById(R.id.txtPaymentCash);
+        txtLeftCash = findViewById(R.id.txtLeftCash);
+        btnAddTransfer = findViewById(R.id.btnAddTransfer);
+        btnAddGiro = findViewById(R.id.btnAddGiro);
+        btnAddCheque = findViewById(R.id.btnAddCheque);
+        txtPaymentLain = findViewById(R.id.txtPaymentLain);
+        txtLeftLain = findViewById(R.id.txtLeftLain);
         buttonCash = findViewById(R.id.buttonCash);
-        buttonCashSelect = findViewById(R.id.buttonCashSelect);
-        buttonTransferSelect = findViewById(R.id.buttonTransferSelect);
         buttonTransfer = findViewById(R.id.buttonTransfer);
-        buttonCheqSelect = findViewById(R.id.buttonCheqSelect);
         buttonCheq = findViewById(R.id.buttonCheq);
-        buttonGiroSelect = findViewById(R.id.buttonGiroSelect);
         buttonGiro = findViewById(R.id.buttonGiro);
-        rlCash = findViewById(R.id.rlCash);
+        buttonLain = findViewById(R.id.buttonLain);
+        llLain = findViewById(R.id.llLain);
         llCash = findViewById(R.id.llCash);
         llTransfer = findViewById(R.id.llTransfer);
-        rlTransfer = findViewById(R.id.rlTransfer);
         llGiro = findViewById(R.id.llGiro);
-        rlGiro = findViewById(R.id.rlGiro);
         llCheque = findViewById(R.id.llCheque);
-        rlCheque = findViewById(R.id.rlCheque);
-        buttonGiro = findViewById(R.id.buttonGiro);
         btnSubmit = findViewById(R.id.btnSubmit);
     }
 

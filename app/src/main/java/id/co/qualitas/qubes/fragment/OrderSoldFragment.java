@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;

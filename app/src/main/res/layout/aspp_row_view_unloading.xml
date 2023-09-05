@@ -22,6 +22,7 @@
         android:id="@+id/txtProduct"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
         android:layout_weight=".4"
         android:text="Product"
         android:textColor="@color/gray8_aspp" />
@@ -30,8 +31,8 @@
         android:id="@+id/txtQty"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
         android:layout_weight=".2"
         android:text="Qty"
         android:textColor="@color/gray8_aspp" />

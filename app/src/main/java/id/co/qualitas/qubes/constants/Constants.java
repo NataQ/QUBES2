@@ -4,6 +4,7 @@ public class Constants {
 
     public static final double ZOOM_LEVEL = 13.0;
     public static final String FCM = "fcm";
+    public static final String COLLECTION_HEADER = "collection header";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";

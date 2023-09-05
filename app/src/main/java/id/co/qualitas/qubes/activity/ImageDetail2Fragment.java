@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;

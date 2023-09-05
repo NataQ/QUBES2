@@ -1,10 +1,8 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -25,12 +23,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.button.MaterialButton;
@@ -40,17 +33,15 @@ import java.util.List;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.utils.Utils;
-import okhttp3.Route;
 
 public class RouteCustomerFragment extends BaseFragment {
     private static final int LOCATION_PERMISSION_REQUEST = 7;

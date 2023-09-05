@@ -189,7 +189,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="Route Plan"
+                            android:text="Asset"
                             android:textColor="@color/black_aspp" />
 
                         <TextView
@@ -202,12 +202,48 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtRoutePlan"
+                            android:id="@+id/txtAsset"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="23"
+                            android:textColor="@color/orange_aspp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Route"
+                            android:textColor="@color/black_aspp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:gravity="center"
+                            android:text=":"
+                            android:textColor="@color/black_aspp" />
+
+                        <TextView
+                            android:id="@+id/txtAssetRoute"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="237"
                             android:textColor="@color/orange_aspp"
                             android:textStyle="bold" />
 
@@ -238,12 +274,12 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtNonRute"
+                            android:id="@+id/txtAssetNonRute"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="237"
+                            android:text="260"
                             android:textColor="@color/orange_aspp"
                             android:textStyle="bold" />
 
@@ -345,7 +381,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="Effective Call Global"
+                            android:text="Active Transaction"
                             android:textColor="@color/black_aspp" />
 
                         <TextView
@@ -358,7 +394,7 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtECG"
+                            android:id="@+id/txtAT"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -425,41 +461,6 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Call (Visit)"
-                            android:textColor="@color/black_aspp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:gravity="center"
-                            android:text=":"
-                            android:textColor="@color/black_aspp" />
-
-                        <TextView
-                            android:id="@+id/txtCallVisit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="0"
-                            android:textColor="@color/orange_aspp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -664,7 +665,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="Target"
+                            android:text="Total Invoice Amount"
                             android:textColor="@color/black_aspp" />
 
                         <TextView
@@ -677,7 +678,7 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtTarget"
+                            android:id="@+id/txtTotalInvoiceAmount"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -700,7 +701,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="Target MTD"
+                            android:text="Total Payment Amount"
                             android:textColor="@color/black_aspp" />
 
                         <TextView
@@ -713,7 +714,7 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtTargetMTD"
+                            android:id="@+id/txtPaymentAmount"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -736,7 +737,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="Penjualan"
+                            android:text="Outstanding Amount"
                             android:textColor="@color/black_aspp" />
 
                         <TextView
@@ -749,43 +750,7 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtPenjualan"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="0"
-                            android:textColor="@color/orange_aspp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Penjualan"
-                            android:textColor="@color/black_aspp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:gravity="center"
-                            android:text=":"
-                            android:textColor="@color/black_aspp" />
-
-                        <TextView
-                            android:id="@+id/txtPenjualan2"
+                            android:id="@+id/txtOutstandingAmount"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

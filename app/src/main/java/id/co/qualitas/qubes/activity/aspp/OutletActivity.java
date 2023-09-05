@@ -1,10 +1,6 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.core.content.ContextCompat;
@@ -14,14 +10,9 @@ import com.google.android.material.tabs.TabLayout;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.adapter.NewTabFragmentAdapter;
-import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.fragment.BaseFragment;
-import id.co.qualitas.qubes.fragment.RetailOutletFragment;
 import id.co.qualitas.qubes.fragment.aspp.OutletNooFragment;
 import id.co.qualitas.qubes.fragment.aspp.OutletVisitFragment;
-import id.co.qualitas.qubes.helper.Helper;
 
 public class OutletActivity extends BaseActivity {
     NewTabFragmentAdapter adapter;

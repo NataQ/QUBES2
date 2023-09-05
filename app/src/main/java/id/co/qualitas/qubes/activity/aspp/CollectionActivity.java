@@ -37,6 +37,7 @@ public class CollectionActivity extends BaseActivity {
         initData();
 
         mAdapter = new CollectionAdapter(this, mList, header -> {
+            Helper.setItemParam(Constants.COLLECTION_HEADER,header);
             Intent intent = new Intent(this, CollectionFormActivity.class);
             startActivity(intent);
         });

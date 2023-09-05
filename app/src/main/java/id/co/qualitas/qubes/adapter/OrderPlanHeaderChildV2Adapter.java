@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.OrderPlanFragment;
 import id.co.qualitas.qubes.helper.Helper;

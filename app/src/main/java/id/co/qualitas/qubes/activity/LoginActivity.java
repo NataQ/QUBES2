@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.database.SecondDatabaseHelper;

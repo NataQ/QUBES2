@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.RupiahTextView;

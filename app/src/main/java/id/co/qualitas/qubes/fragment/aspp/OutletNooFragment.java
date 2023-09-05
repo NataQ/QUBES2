@@ -1,9 +1,6 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,7 +12,6 @@ import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -25,7 +21,6 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CreateNooActivity;
 import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
-import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.OutletNooAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;

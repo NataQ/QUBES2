@@ -86,7 +86,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.adapter.AddNewOutletListAdapter;
 import id.co.qualitas.qubes.adapter.ShowPriceAdapter;
 import id.co.qualitas.qubes.constants.Constants;

@@ -6,8 +6,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -17,16 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
-import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
-import id.co.qualitas.qubes.adapter.aspp.OrderAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SummaryAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
 

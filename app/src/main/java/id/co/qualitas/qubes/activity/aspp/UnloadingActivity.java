@@ -1,12 +1,18 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +20,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
@@ -43,6 +53,12 @@ public class UnloadingActivity extends BaseActivity {
     private File pdfFile;
     private Boolean success = false;
 
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private final static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +87,8 @@ public class UnloadingActivity extends BaseActivity {
     }
 
     public void openDialogUnloading() {
-        LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-        final Dialog alertDialog = new Dialog(getApplicationContext());
+        LayoutInflater inflater = LayoutInflater.from(UnloadingActivity.this);
+        final Dialog alertDialog = new Dialog(UnloadingActivity.this);
         View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         alertDialog.setContentView(dialogView);
@@ -96,8 +112,13 @@ public class UnloadingActivity extends BaseActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AsyncTaskGeneratePDF().execute();
                 alertDialog.dismiss();
+                if (checkPermission()) {
+                    new AsyncTaskGeneratePDF().execute();
+                } else {
+                    setToast(getString(R.string.pleaseEnablePermission));
+                    requestPermission();
+                }
             }
         });
 
@@ -158,7 +179,81 @@ public class UnloadingActivity extends BaseActivity {
     }
 
     @Override
-    public void onResume() {
+    protected void onResume() {
         super.onResume();
+    }
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean check =
+                    Environment.isExternalStorageManager();
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            return check;
+        } else {
+            if (
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private void requestPermission() {
+        //  if(!Environment.isExternalStorageManager()){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", new Object[]{getApplicationContext().getPackageName()})));
+                    startActivityForResult(intent, 2296);
+                } catch (Exception e) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, 2296);
+                }
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            //below android 11
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    private void requestPermission11() {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2296) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+                } else {
+                    setToast("Allow permission for storage access!");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    new AsyncTaskGeneratePDF().execute();
+                } else {
+                    setToast(getString(R.string.pleaseEnablePermission));
+                }
+                break;
+        }
     }
 }

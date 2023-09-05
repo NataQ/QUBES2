@@ -2,9 +2,6 @@ package id.co.qualitas.qubes.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by GRACE on 31/08/2015.
- */
 public class RetailOutlets {
     private String namaOutlet;
     private String ownerOutlet;

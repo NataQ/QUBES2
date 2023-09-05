@@ -1,15 +1,11 @@
-package id.co.qualitas.qubes.activity;
+package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,7 +14,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -28,7 +23,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,7 +34,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.LoginActivity;
+import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.activity.CreateOrder2Fragment;
+import id.co.qualitas.qubes.activity.CreateOrderDetail2Fragment;
+import id.co.qualitas.qubes.activity.CreateReturn2Fragment;
+import id.co.qualitas.qubes.activity.ImageDetail2Fragment;
+import id.co.qualitas.qubes.activity.OrderSummary2Fragment;
+import id.co.qualitas.qubes.activity.OrderSummaryDetail2Fragment;
+import id.co.qualitas.qubes.activity.Return2Fragment;
+import id.co.qualitas.qubes.activity.ReturnDetail2Fragment;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.ChangePasswordFragment;
 import id.co.qualitas.qubes.fragment.CreditInfo2Fragment;
@@ -59,8 +61,6 @@ import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.services.LocationUpdatesService;
-import id.co.qualitas.qubes.services.MyFirebaseMessagingService2;
 import id.co.qualitas.qubes.session.SessionManager;
 
 public class NewMainActivity extends BaseActivity {

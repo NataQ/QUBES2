@@ -16,27 +16,20 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
-import java.util.concurrent.TimeUnit;
-
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.AlarmManagerActivity;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
 import id.co.qualitas.qubes.activity.aspp.InvoiceVerificationActivity;
 import id.co.qualitas.qubes.activity.aspp.OutletActivity;
 import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
-import id.co.qualitas.qubes.activity.aspp.UnloadingHeaderActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.services.NotiWorker;
 
 public class ActivityFragment extends BaseFragment {
     private static final String TAG = NewMainActivity.class.getSimpleName();

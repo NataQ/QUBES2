@@ -1,17 +1,10 @@
 package id.co.qualitas.qubes.activity.aspp;
 
-import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,7 +26,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.activity.SettingActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;

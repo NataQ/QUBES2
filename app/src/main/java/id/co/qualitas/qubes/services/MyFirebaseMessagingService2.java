@@ -1,7 +1,5 @@
 package id.co.qualitas.qubes.services;
 
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-
 import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,40 +8,31 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import java.io.Console;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
-import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.GCMResponse;
 

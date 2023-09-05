@@ -254,8 +254,10 @@
     <!--    </style>-->
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/blue_aspp</item>
         <item name="colorAccent">@color/blue_aspp</item>           <!-- Header Background -->
-        <item name="android:colorAccent">@color/blue_aspp</item>
         <item name="android:textColor">@color/blue_aspp</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyled</item>
         <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyled</item>

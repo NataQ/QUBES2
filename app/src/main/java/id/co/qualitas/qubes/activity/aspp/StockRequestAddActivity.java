@@ -1,22 +1,14 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.text.SimpleDateFormat;
@@ -27,12 +19,10 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.NewMainActivity;
 import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 

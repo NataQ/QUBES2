@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
 import id.co.qualitas.qubes.adapter.CustomerTargetAdapter;
 import id.co.qualitas.qubes.adapter.SalesTargetAdapter;
 import id.co.qualitas.qubes.constants.Constants;
