@@ -113,5 +113,6 @@
     <color name="white2_aspp">#E2E2E2</color>
     <color name="red_aspp">#FFEEF2</color>
     <color name="red2_aspp">#D12953</color>
+    <color name="red3_aspp">#FFF0F7</color>
 
 </resources>

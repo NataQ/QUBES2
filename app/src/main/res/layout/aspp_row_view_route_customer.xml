@@ -20,10 +20,10 @@
             android:id="@+id/txtLabelRoute"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:minWidth="100dp"
             android:background="@drawable/bg_label_non_route"
+            android:minWidth="100dp"
             android:padding="6dp"
+            android:textAlignment="center"
             android:textColor="@color/red2_aspp" />
 
         <LinearLayout
@@ -33,27 +33,19 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+            <LinearLayout
+                android:layout_width="@dimen/icon_customer"
+                android:layout_height="@dimen/icon_customer"
                 android:layout_marginEnd="8dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="0dp">
+                android:background="@drawable/bg_route_cust"
+                android:gravity="center">
 
-                <LinearLayout
-                    android:layout_width="@dimen/icon_customer"
-                    android:layout_height="@dimen/icon_customer"
-                    android:background="@color/orange2_aspp"
-                    android:gravity="center">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_customer_orange" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_customer_orange" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"

@@ -3,6 +3,12 @@ package id.co.qualitas.qubes.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -12,8 +18,16 @@ import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -50,8 +64,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.User;
 
 public class Helper extends BaseFragment {
@@ -613,5 +629,62 @@ public class Helper extends BaseFragment {
     public static void turnOnGPS(Activity activity) {
         Intent gpsOptionsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         activity.startActivity(gpsOptionsIntent);
+    }
+
+    public static GeoPoint computeCentroid(List<Customer> points) {
+        double latitude = 0;
+        double longitude = 0;
+        int n = points.size();
+
+        for (Customer point : points) {
+            latitude += point.getLatitude();
+            longitude += point.getLongitude();
+        }
+
+        return new GeoPoint(latitude / n, longitude / n);
+    }
+
+    public static ArrayList<OverlayItem> setOverLayItems(List<Customer> customers, Activity activity) {
+        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+
+        List<GeoPoint> geoPointList = new ArrayList<>();
+
+        for (Customer cust : customers) {
+            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+            ov.setMarker(new BitmapDrawable(activity.getResources(), getMarkerBitmapFromView(cust, activity)));
+            items.add(ov);
+
+            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+        }
+        return items;
+    }
+
+    public static Bitmap getMarkerBitmapFromView(Customer cust, Activity activity) {
+        //HERE YOU CAN ADD YOUR CUSTOM VIEW
+        View customMarkerView = ((LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
+
+        //IN THIS EXAMPLE WE ARE TAKING TEXTVIEW BUT YOU CAN ALSO TAKE ANY KIND OF VIEW LIKE IMAGEVIEW, BUTTON ETC.
+        TextView txt_name = customMarkerView.findViewById(R.id.txt_name);
+        TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
+        ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
+
+        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
+//        txt_add.setText(cust.getAddress());
+        if (cust.isRoute()) {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_marker_blue));
+        } else {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_marker_red));
+        }
+
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null) drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 }

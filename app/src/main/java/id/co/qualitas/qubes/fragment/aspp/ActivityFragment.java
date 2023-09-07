@@ -25,6 +25,7 @@ import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
 import id.co.qualitas.qubes.activity.aspp.InvoiceVerificationActivity;
 import id.co.qualitas.qubes.activity.aspp.OutletActivity;
 import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
+import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -73,7 +74,8 @@ public class ActivityFragment extends BaseFragment {
         llVisit.setOnClickListener(v -> {
 //            workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
 //            workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
-            openDialogStartVisit();
+            Intent intent = new Intent(getActivity(), VisitActivity.class);
+            startActivity(intent);
         });
 
         llCollection.setOnClickListener(v -> {
@@ -89,42 +91,6 @@ public class ActivityFragment extends BaseFragment {
         return rootView;
     }
 
-    private void openDialogEndVisit() {
-        Dialog dialog = new Dialog(getActivity());
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.aspp_dialog_end_visit);
-        Button btnEnd = dialog.findViewById(R.id.btnEnd);
-
-        btnEnd.setOnClickListener(v -> {
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
-    private void openDialogStartVisit() {
-        Dialog dialog = new Dialog(getActivity());
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.aspp_dialog_start_visit);
-        Button btnStart = dialog.findViewById(R.id.btnStart);
-        ImageView imgBerangkat = dialog.findViewById(R.id.imgBerangkat);
-        LinearLayout llImgBerangkat = dialog.findViewById(R.id.llImgBerangkat);
-
-        llImgBerangkat.setOnClickListener(v -> {
-//            Intent camera = new Intent(this, Camera3PLActivity.class);//3
-//            startActivityForResult(camera, Constants.REQUEST_CAMERA_CODE);
-        });
-
-        btnStart.setOnClickListener(v -> {
-            dialog.dismiss();
-            Intent intent = new Intent(getActivity(), OutletActivity.class);
-            startActivity(intent);
-        });
-
-        dialog.show();
-    }
 
     private void initialize() {
         db = new DatabaseHelper(getContext());

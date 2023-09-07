@@ -15,19 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.OutletListActivity;
-import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
-import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.model.Customer;
 
-public class OutletListAdapter extends RecyclerView.Adapter<OutletListAdapter.Holder> implements Filterable {
+public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Holder> implements Filterable {
     private List<Customer> mList;
     private List<Customer> mFilteredList;
     private LayoutInflater mInflater;
-    private OutletListActivity mContext;
+    private VisitActivity mContext;
     private OnAdapterListener onAdapterListener;
 
-    public OutletListAdapter(OutletListActivity mContext, List<Customer> mList, OnAdapterListener onAdapterListener) {
+    public VisitListAdapter(VisitActivity mContext, List<Customer> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -81,19 +79,18 @@ public class OutletListAdapter extends RecyclerView.Adapter<OutletListAdapter.Ho
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtOutlet, txtAddress, txtRoute, txtNo;
-        ImageView imgStatus;
-        View viewRoute;
+        TextView txtOutlet, txtAddress, txtLabelRoute, txtNo;
+        ImageView imgStatus, imgStatus2;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
             txtOutlet = itemView.findViewById(R.id.txtOutlet);
             imgStatus = itemView.findViewById(R.id.imgStatus);
+            imgStatus2 = itemView.findViewById(R.id.imgStatus2);
             txtAddress = itemView.findViewById(R.id.txtAddress);
-            txtRoute = itemView.findViewById(R.id.txtRoute);
+            txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
             txtNo = itemView.findViewById(R.id.txtNo);
-            viewRoute = itemView.findViewById(R.id.viewRoute);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -106,7 +103,7 @@ public class OutletListAdapter extends RecyclerView.Adapter<OutletListAdapter.Ho
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_outlet, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_visit, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
@@ -116,20 +113,21 @@ public class OutletListAdapter extends RecyclerView.Adapter<OutletListAdapter.Ho
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
         holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
-        holder.txtRoute.setText(detail.isRoute() ? "Route" : "Non Route");
 
         if (position == 1) {
-            holder.imgStatus.setVisibility(View.VISIBLE);
+            holder.imgStatus2.setVisibility(View.VISIBLE);
         } else {
-            holder.imgStatus.setVisibility(View.GONE);
+            holder.imgStatus2.setVisibility(View.GONE);
         }
 
         if (detail.isRoute()) {
-            holder.viewRoute.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red_krang));
-            holder.txtRoute.setTextColor(ContextCompat.getColor(mContext, R.color.red_krang));
+            holder.txtLabelRoute.setText("Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
         } else {
-            holder.viewRoute.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green));
-            holder.txtRoute.setTextColor(ContextCompat.getColor(mContext, R.color.green));
+            holder.txtLabelRoute.setText("Non Route");
+            holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_non_route));
+            holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red2_aspp));
         }
     }
 

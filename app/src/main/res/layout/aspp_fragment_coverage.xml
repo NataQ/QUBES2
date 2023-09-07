@@ -69,19 +69,6 @@
                     android:clickable="true"
                     android:focusable="true" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btCenterMap"
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:padding="8dp"
-                    android:text="Zoom"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    app:icon="@drawable/ic_search_aspp" />
-
             </RelativeLayout>
 
 

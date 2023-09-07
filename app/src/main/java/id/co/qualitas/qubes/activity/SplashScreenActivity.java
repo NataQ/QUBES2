@@ -106,49 +106,41 @@ public class SplashScreenActivity extends BaseActivity {
             }
         }
 
-        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
-            @Override
-            public void onActivityResult(Map<String, Boolean> result) {
-                if (result.get(Manifest.permission.CAMERA) != null) {
-                    isCameraPermissionGranted = result.get(Manifest.permission.CAMERA);
-                }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (result.get(Manifest.permission.READ_MEDIA_IMAGES) != null) {
-                        isReadPermissionGranted = result.get(Manifest.permission.READ_MEDIA_IMAGES);
-                    }
-                } else {
-                    if (result.get(Manifest.permission.READ_EXTERNAL_STORAGE) != null) {
-                        isReadPermissionGranted = result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    }
-                }
-
-                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
-                    isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
-                }
-
-                if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
-                    isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
-                }
-
-                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
-                    if (!Helper.isGPSOn(SplashScreenActivity.this)) {
-                        setToast("Please turn on GPS");
-                        Helper.turnOnGPS(SplashScreenActivity.this);
-                    } else {
-                        setData();
-                    }
-                } else {
-                    setToast("Please allow all permissions");
-                }
-            }
-        });
-
-//        Button start = findViewById(R.id.start);
-//        start.setOnClickListener(new View.OnClickListener() {
+//        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
 //            @Override
-//            public void onClick(View view) {
-//                ImageViewAnimatedChange(getApplicationContext(), image, ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_ilustrasi2));
+//            public void onActivityResult(Map<String, Boolean> result) {
+//                if (result.get(Manifest.permission.CAMERA) != null) {
+//                    isCameraPermissionGranted = result.get(Manifest.permission.CAMERA);
+//                }
+//
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    if (result.get(Manifest.permission.READ_MEDIA_IMAGES) != null) {
+//                        isReadPermissionGranted = result.get(Manifest.permission.READ_MEDIA_IMAGES);
+//                    }
+//                } else {
+//                    if (result.get(Manifest.permission.READ_EXTERNAL_STORAGE) != null) {
+//                        isReadPermissionGranted = result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
+//                    }
+//                }
+//
+//                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
+//                    isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+//                }
+//
+//                if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
+//                    isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
+//                }
+//
+//                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+//                    if (!Helper.isGPSOn(SplashScreenActivity.this)) {
+//                        setToast("Please turn on GPS");
+//                        Helper.turnOnGPS(SplashScreenActivity.this);
+//                    } else {
+//                        setData();
+//                    }
+//                } else {
+//                    setToast("Please allow all permissions");
+//                }
 //            }
 //        });
     }
@@ -262,8 +254,8 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         llText.setVisibility(View.VISIBLE);
-                        requestPermission();
-//                        setData();
+//                        requestPermission();
+                        setData();
                     }
                 });
             }

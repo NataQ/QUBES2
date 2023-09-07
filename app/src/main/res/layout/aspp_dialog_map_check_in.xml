@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -21,66 +20,31 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time Visit"
+            android:text="Check In"
             android:textAllCaps="false"
             android:textColor="@color/black_aspp" />
 
-        <View
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/gray9_aspp" />
+            android:layout_height="300dp"
+            android:layout_marginTop="12dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="KM Awal"
-            android:textColor="@color/black_aspp" />
-
-        <EditText
-            android:id="@+id/txtKmAwal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/editbox"
-            android:inputType="numberDecimal"
-            android:padding="5dp"
-            android:text="0"
-            android:textColor="@color/gray8_aspp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Berangkat"
-            android:textColor="@color/black_aspp" />
-
-        <LinearLayout
-            android:id="@+id/llImgBerangkat"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="100dp"
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_add_image"
-            android:gravity="center"
-            android:orientation="vertical">
+            <org.osmdroid.views.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true" />
 
             <ImageView
-                android:id="@+id/imgAdd"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/ic_add_photo"
-                android:backgroundTint="@color/blue_aspp" />
-
-            <ImageView
-                android:id="@+id/imgBerangkat"
+                android:id="@+id/btCenterMap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </LinearLayout>
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_current_loc_aspp" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,12 +54,12 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
+                android:id="@+id/btnNo"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:text="@string/cancel"
+                android:text="@string/no"
                 android:textAllCaps="false"
                 android:textColor="@color/gray8_aspp"
                 app:cornerRadius="5dp"
@@ -103,11 +67,11 @@
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStart"
+                android:id="@+id/btnCheckIn"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start"
+                android:text="Check In"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/blue_aspp"

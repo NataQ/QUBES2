@@ -163,7 +163,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
 
 //        zoomToBounds(custList);
 
-        ArrayList<OverlayItem> items = setOverLayItems(custList);
+        ArrayList<OverlayItem> items = Helper.setOverLayItems(custList, getActivity());
 
         //the overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
@@ -189,17 +189,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         });
 
         mMapView.getOverlays().add(mOverlay);
-        mapController.setCenter(computeCentroid(custList));
-
-        btCenterMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentLocation != null) {
-                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    mMapView.getController().animateTo(myPosition);
-                }
-            }
-        });
+        mapController.setCenter(Helper.computeCentroid(custList));
 
 //        double minLat = Integer.MAX_VALUE;
 //        double maxLat = Integer.MIN_VALUE;
@@ -240,7 +230,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
             Log.d(TAG, String.format("North %f, south %f, west %f, east %f", north, south, west, east));
             BoundingBox boundingBox = new BoundingBox(north, west, south, east);
             mMapView.zoomToBoundingBox(boundingBox, false);
-            mapController.setCenter(computeCentroid(custList));
+            mapController.setCenter(Helper.computeCentroid(custList));
             mMapView.invalidate();
         }
     }
@@ -252,68 +242,6 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         btCenterMap = rootView.findViewById(R.id.btCenterMap);
         btnZoom = rootView.findViewById(R.id.btnZoom);
         mMapView = rootView.findViewById(R.id.mapView);
-    }
-
-    private Bitmap getMarkerBitmapFromView(Customer cust) {
-        //HERE YOU CAN ADD YOUR CUSTOM VIEW
-        View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
-
-        //IN THIS EXAMPLE WE ARE TAKING TEXTVIEW BUT YOU CAN ALSO TAKE ANY KIND OF VIEW LIKE IMAGEVIEW, BUTTON ETC.
-        TextView txt_name = customMarkerView.findViewById(R.id.txt_name);
-        TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
-        ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
-
-        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
-//        txt_add.setText(cust.getAddress());
-        if (cust.isRoute()) {
-            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_blue));
-        } else {
-            imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_red));
-        }
-
-        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
-        customMarkerView.buildDrawingCache();
-        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(returnedBitmap);
-        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
-        Drawable drawable = customMarkerView.getBackground();
-        if (drawable != null) drawable.draw(canvas);
-        customMarkerView.draw(canvas);
-        return returnedBitmap;
-    }
-
-    private GeoPoint computeCentroid(List<Customer> points) {
-        double latitude = 0;
-        double longitude = 0;
-        int n = points.size();
-
-        for (Customer point : points) {
-            latitude += point.getLatitude();
-            longitude += point.getLongitude();
-        }
-
-        return new GeoPoint(latitude / n, longitude / n);
-    }
-
-    private ArrayList<OverlayItem> setOverLayItems(List<Customer> customers) {
-        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
-
-        geoPointList = new ArrayList<>();
-
-        for (Customer cust : customers) {
-            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
-//            if (cust.isRoute()) {
-//
-//            } else {
-//                ov.setMarker(markerRed);
-//            }
-            ov.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(cust)));
-            items.add(ov);
-
-            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongitude()));
-        }
-        return items;
     }
 
     public void onResume() {

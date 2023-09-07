@@ -4,11 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-/**
- * Created by Wiliam on 4/12/2017.
- */
-
-public class Reason implements Serializable{
+public class Reason implements Serializable {
     @SerializedName("id")
     private String id;
 
@@ -17,6 +13,35 @@ public class Reason implements Serializable{
 
     @SerializedName("type")
     private String type;
+
+    private boolean freeText;
+    private boolean photo;
+
+    public Reason() {
+    }
+
+    public Reason(String id, String desc, boolean freeText, boolean photo) {
+        this.id = id;
+        this.desc = desc;
+        this.freeText = freeText;
+        this.photo = photo;
+    }
+
+    public boolean isFreeText() {
+        return freeText;
+    }
+
+    public void setFreeText(boolean freeText) {
+        this.freeText = freeText;
+    }
+
+    public boolean isPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(boolean photo) {
+        this.photo = photo;
+    }
 
     public String getId() {
         return id;
@@ -40,5 +65,15 @@ public class Reason implements Serializable{
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return (id + " - " + desc);
+        //untuk drop down reason not visit, karena gak pake custom adapter
+//        return "Reason{" +
+//                "id='" + id + '\'' +
+//                ", desc='" + desc + '\'' +
+//                '}';
     }
 }

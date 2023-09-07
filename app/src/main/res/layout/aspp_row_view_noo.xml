@@ -16,13 +16,6 @@
         android:background="@drawable/selector_bg_do"
         android:orientation="horizontal">
 
-        <View
-            android:id="@+id/viewRoute"
-            android:layout_width="5dp"
-            android:layout_height="match_parent"
-            android:background="@color/yellow_krang"
-            android:visibility="gone" />
-
         <TextView
             android:id="@id/txtNo"
             style="@style/TextAppearance.AppCompat.Headline"
@@ -32,6 +25,7 @@
             android:gravity="center"
             android:padding="5dp"
             android:text="1"
+            android:textColor="@color/gray8_aspp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -42,17 +36,11 @@
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/txtRoute"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="" />
-
-            <TextView
                 android:id="@+id/txtOutlet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/black"
+                android:text="Outlet Name"
+                android:textColor="@color/black_aspp"
                 android:textStyle="bold" />
 
             <TextView
@@ -60,8 +48,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text=""
-                android:textColor="@color/black" />
+                android:text="address"
+                android:textColor="@color/gray8_aspp" />
 
         </LinearLayout>
 

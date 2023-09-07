@@ -20,99 +20,49 @@
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Time Visit"
+            android:text="Reason Not Visit"
             android:textAllCaps="false"
             android:textColor="@color/black_aspp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Reason"
+            android:textColor="@color/black_aspp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Pilih reason untuk outlet yang belum di kunjungi"
+            android:textColor="@color/gray8_aspp" />
+
+        <AutoCompleteTextView
+            android:id="@+id/txtReasonAll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_spinner_2"
+            android:completionThreshold="1"
+            android:hint="Search..."
+            android:padding="5dp"
+            android:textColor="@color/gray8_aspp"
+            android:textSize="@dimen/superSmallFont" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
             android:background="@color/gray9_aspp" />
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="KM Akhir"
-            android:textColor="@color/black_aspp" />
-
-        <EditText
-            android:id="@+id/txtKmAkhir"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/editbox"
-            android:padding="5dp"
-            android:text="0"
-            android:textColor="@color/gray8_aspp"
-            android:textSize="@dimen/superSmallFont" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Pulang"
-            android:textColor="@color/black_aspp" />
-
-        <LinearLayout
-            android:id="@+id/llImgPulang"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_add_image"
-            android:gravity="center"
-            android:minHeight="100dp"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/imgAddPulang"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/ic_add_photo"
-                android:backgroundTint="@color/blue_aspp" />
-
-            <ImageView
-                android:id="@+id/imgPulang"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Selesai"
-            android:textColor="@color/black_aspp" />
-
-        <LinearLayout
-            android:id="@+id/llImgSelesai"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_add_image"
-            android:gravity="center"
-            android:minHeight="100dp"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/imgAddSelesai"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="5dp"
-                android:background="@drawable/ic_add_photo"
-                android:backgroundTint="@color/blue_aspp" />
-
-            <ImageView
-                android:id="@+id/imgSelesai"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </LinearLayout>
+            android:clipToPadding="false" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -135,11 +85,11 @@
                 app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEnd"
+                android:id="@+id/btnSave"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="End"
+                android:text="Save"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/blue_aspp"
