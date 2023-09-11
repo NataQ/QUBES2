@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
 import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Holder> implements Filterable {
@@ -32,7 +34,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
     private LayoutInflater mInflater;
     private StoreCheckActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private ArrayAdapter<String> spn1Adapter, spn2Adapter, spn3Adapter;
+    private ArrayAdapter<String> spn1Adapter;
 
     public StoreCheckAdapter(StoreCheckActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -88,73 +90,23 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView spnGroupName, spnProduct;
-        EditText edtTxtQtyStock1, edtTxtQtyStock2, edtTxtQtyStock3;
-        Spinner spinnerUom1, spinnerUom2, spinnerUom3;
+        TextView txtNo, txtProduct;
+        EditText edtQty;
         ImageView imgDelete;
+        Spinner spinnerUom;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            spnGroupName = itemView.findViewById(R.id.spnGroupName);
-            spnProduct = itemView.findViewById(R.id.spnProduct);
-            edtTxtQtyStock1 = itemView.findViewById(R.id.edtTxtQtyStock1);
-            edtTxtQtyStock2 = itemView.findViewById(R.id.edtTxtQtyStock2);
-            edtTxtQtyStock3 = itemView.findViewById(R.id.edtTxtQtyStock3);
-            spinnerUom1 = itemView.findViewById(R.id.spinnerUom1);
-            spinnerUom2 = itemView.findViewById(R.id.spinnerUom2);
-            spinnerUom3 = itemView.findViewById(R.id.spinnerUom3);
+            txtNo = itemView.findViewById(R.id.txtNo);
+            txtProduct = itemView.findViewById(R.id.txtProduct);
+            edtQty = itemView.findViewById(R.id.edtQty);
             imgDelete = itemView.findViewById(R.id.imgDelete);
+            spinnerUom = itemView.findViewById(R.id.spinnerUom);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
 
-            spnGroupName.setOnClickListener(v -> {
-                Dialog alertDialog = new Dialog(mContext);
-
-                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                alertDialog.show();
-
-                EditText editText = alertDialog.findViewById(R.id.edit_text);
-                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-                List<String> groupList = new ArrayList<>();
-                groupList.add("11 - KTD R");
-                groupList.add("12 - REDBULL");
-                groupList.add("13 - KTD PRO");
-                groupList.add("14 - KTD S");
-                groupList.add("31 - VIT");
-
-                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                    spnGroupName.setText(nameItem);
-                    alertDialog.dismiss();
-                });
-
-                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-                listView.setLayoutManager(mManager);
-                listView.setHasFixedSize(true);
-                listView.setNestedScrollingEnabled(false);
-                listView.setAdapter(spinnerAdapter);
-
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        spinnerAdapter.getFilter().filter(s);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-            });
-
-            spnProduct.setOnClickListener(v -> {
+            txtProduct.setOnClickListener(v -> {
                 Dialog alertDialog = new Dialog(mContext);
 
                 alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -172,7 +124,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
                 groupList.add("11001 - KRATINGDAENG");
 
                 FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                    spnProduct.setText(nameItem);
+                    txtProduct.setText(nameItem);
                     alertDialog.dismiss();
                 });
 
@@ -224,15 +176,11 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
 
         spn1Adapter = new ArrayAdapter<>(mContext.getApplicationContext(), R.layout.spinner_item, listSpinner);
         spn1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.spinnerUom1.setAdapter(spn1Adapter);
+        holder.spinnerUom.setAdapter(spn1Adapter);
 
-        spn2Adapter = new ArrayAdapter<>(mContext.getApplicationContext(), R.layout.spinner_item, listSpinner);
-        spn2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.spinnerUom2.setAdapter(spn2Adapter);
-
-        spn3Adapter = new ArrayAdapter<>(mContext.getApplicationContext(), R.layout.spinner_item, listSpinner);
-        spn3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.spinnerUom3.setAdapter(spn3Adapter);
+        holder.txtNo.setText(String.valueOf(position + 1) + ".");
+        holder.txtProduct.setText(Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
+        holder.edtQty.setText(String.valueOf(detail.getQty()));
     }
 
     @Override

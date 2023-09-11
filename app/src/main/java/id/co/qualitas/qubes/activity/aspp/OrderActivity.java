@@ -26,8 +26,7 @@ import id.co.qualitas.qubes.model.User;
 public class OrderActivity extends BaseActivity {
     private OrderAdapter mAdapter;
     private List<Order> mList;
-    private MovableFloatingActionButton btnAdd;
-    private ImageView imgBack;
+    private Button btnAdd;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +38,8 @@ public class OrderActivity extends BaseActivity {
         initData();
 
         mAdapter = new OrderAdapter(this, mList, header -> {
-            Intent intent = new Intent(this, OrderAddActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, OrderAddActivity.class);
+//            startActivity(intent);
         });
         recyclerView.setAdapter(mAdapter);
 
@@ -52,20 +51,26 @@ public class OrderActivity extends BaseActivity {
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(OrderActivity.this);
+        });
     }
 
     private void initData() {
         mList = new ArrayList<>();
         mList.add(new Order("ORDER000001", "1,000,000", "0WJ42 - SARI SARI (TK)", "SO0000001", "Draft", "1 June 2023"));
-        mList.add(new Order("ORDER000002", "2,000,000", "0WJ42 - SARI SARI (TK)", "SO0000002", "Draft", "2 June 2023"));
-        mList.add(new Order("ORDER000003", "3,000,000", "0WJ42 - SARI SARI (TK)", "SO0000003", "Draft", "3 June 2023"));
-        mList.add(new Order("ORDER000004", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000004", "Draft", "4 June 2023"));
+        mList.add(new Order("ORDER000002", "2,000,000", "0WJ42 - SARI SARI (TK)", "SO0000002", "Pending", "2 June 2023"));
+        mList.add(new Order("ORDER000003", "3,000,000", "0WJ42 - SARI SARI (TK)", "SO0000003", "Approve", "3 June 2023"));
+        mList.add(new Order("ORDER000004", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000004", "Reject", "4 June 2023"));
+        mList.add(new Order("ORDER000006", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000005", "Sync Success", "5 June 2023"));
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);

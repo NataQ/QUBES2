@@ -49,5 +49,8 @@
     <dimen name="padding_inner">14dp</dimen>
     <dimen name="icon_drop">20dp</dimen>
 
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_title">16sp</dimen>
+
 
 </resources>

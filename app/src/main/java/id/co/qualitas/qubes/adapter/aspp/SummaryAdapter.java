@@ -17,7 +17,6 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.Holder> implements Filterable {
@@ -140,7 +139,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.Holder> 
                 case "sync success":
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.blue8_aspp));
-                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.blue9_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.aspp_blue9));
                     break;
                 default:
                     holder.llStatus.setVisibility(View.GONE);

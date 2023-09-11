@@ -18,6 +18,7 @@
 
         <TextView
             android:id="@+id/txtLabelRoute"
+            style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_label_non_route"
@@ -56,6 +57,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -66,6 +68,7 @@
 
                         <TextView
                             android:id="@+id/txtStore"
+                            style="@style/TextView_Small"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Title"
@@ -74,6 +77,7 @@
 
                         <TextView
                             android:id="@+id/txtRoute"
+                            style="@style/TextView_Small"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
@@ -90,6 +94,7 @@
                         android:text="Direction"
                         android:textAllCaps="false"
                         android:textColor="@color/blue_aspp"
+                        android:textSize="@dimen/text_small"
                         card_view:cornerRadius="5dp"
                         card_view:icon="@drawable/ic_direction_blue"
                         card_view:iconTint="@null"
@@ -100,6 +105,7 @@
 
                 <TextView
                     android:id="@+id/txtAddress"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"

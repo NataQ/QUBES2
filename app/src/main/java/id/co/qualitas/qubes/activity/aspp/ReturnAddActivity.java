@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -24,9 +25,8 @@ import id.co.qualitas.qubes.model.User;
 public class ReturnAddActivity extends BaseActivity {
     private ReturnAddAdapter mAdapter;
     private List<Material> mList;
-    private MovableFloatingActionButton btnAdd;
-    private Button btnSave;
-    private ImageView imgBack;
+    private Button btnAdd, btnSave;
+    private TextView txtReturnDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,16 +47,20 @@ public class ReturnAddActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-
+            onBackPressed();
         });
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(ReturnAddActivity.this);
+        });
     }
 
     private void addNew() {
-        Material detail = new Material("", "", "","");
+        Material detail = new Material("", "", "", "");
         mList.add(detail);
 
         new CountDownTimer(1000, 1000) {
@@ -75,12 +79,15 @@ public class ReturnAddActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
+        txtReturnDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        txtReturnDate = findViewById(R.id.txtReturnDate);
+        imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);
         btnAdd = findViewById(R.id.btnAdd);
@@ -92,5 +99,10 @@ public class ReturnAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    public void delete(Material detail, int pos) {
+        mList.remove(pos);
+        mAdapter.notifyItemRemoved(pos);
     }
 }

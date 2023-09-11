@@ -1,22 +1,14 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -24,8 +16,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderActivity;
-import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
-import id.co.qualitas.qubes.model.Order;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Order;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> implements Filterable {
@@ -89,21 +80,17 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtOrderNo, txtOmzet, txtSoNo, txtStatus;
-        Button btnDetail, btnPrint, btnDelete;
-        View viewStatus;
+        TextView txtOrderNo, txtOmzet, txtIdMobile, txtStatus;
+        LinearLayout llStatus;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            viewStatus = itemView.findViewById(R.id.viewStatus);
+            llStatus = itemView.findViewById(R.id.llStatus);
             txtOrderNo = itemView.findViewById(R.id.txtOrderNo);
             txtOmzet = itemView.findViewById(R.id.txtOmzet);
-            txtSoNo = itemView.findViewById(R.id.txtSoNo);
+            txtIdMobile = itemView.findViewById(R.id.txtIdMobile);
             txtStatus = itemView.findViewById(R.id.txtStatus);
-            btnDetail = itemView.findViewById(R.id.btnDetail);
-            btnPrint = itemView.findViewById(R.id.btnPrint);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -125,26 +112,46 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
         Order detail = mFilteredList.get(position);
         holder.txtOrderNo.setText(detail.getTxtOrderCode());
         holder.txtOmzet.setText(detail.getTxtPriceNett());
-        holder.txtSoNo.setText(detail.getSoNo());
-        holder.txtStatus.setText(detail.getStatus());
-        switch (detail.getStatus().toLowerCase()) {
-            case "approve":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green));
-                break;
-            case "draft":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow_krang));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.yellow_krang));
-                break;
-            case "rejected":
-                holder.viewStatus.setBackgroundColor(ContextCompat.getColor(mContext, R.color.red_krang));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.red_krang));
-                break;
+        holder.txtIdMobile.setText(String.valueOf(position + 1));
+        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
+
+        if (!Helper.isEmpty(detail.getStatus())) {
+            switch (detail.getStatus().toLowerCase()) {
+                case "approve":
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.green3_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_aspp));
+                    break;
+                case "reject":
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.red_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.red2_aspp));
+                    break;
+                case "pending":
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.yellow3_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.yellow_aspp));
+                    break;
+                case "sync success":
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.blue8_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.aspp_blue9));
+                    break;
+                case "draft":
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.gray12_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.black1_aspp));
+                    break;
+                default:
+                    holder.llStatus.setVisibility(View.GONE);
+                    holder.llStatus.setBackgroundTintList(null);
+                    holder.txtStatus.setText("-");
+            }
+        } else {
+            holder.llStatus.setVisibility(View.GONE);
+            holder.llStatus.setBackgroundTintList(null);
+            holder.txtStatus.setText("-");
         }
-
-        holder.btnDetail.setOnClickListener(v -> {
-
-        });
     }
 
     @Override

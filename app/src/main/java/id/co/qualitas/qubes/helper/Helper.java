@@ -56,6 +56,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -68,6 +69,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 
 public class Helper extends BaseFragment {
@@ -686,5 +688,16 @@ public class Helper extends BaseFragment {
         if (drawable != null) drawable.draw(canvas);
         customMarkerView.draw(canvas);
         return returnedBitmap;
+    }
+
+    public static List<Reason> getDataReason() {
+        List<Reason> reasonList = new ArrayList<>();
+        reasonList.add(new Reason("N1", "Waktu Habis", false, false));
+        reasonList.add(new Reason("N2", "Pindah", true, false));
+        reasonList.add(new Reason("N3", "Banjir", false, true));
+        reasonList.add(new Reason("N4", "Tidak Ketemu", true, true));
+        reasonList.add(new Reason("N5", "Tutup", false, true));
+        reasonList.add(new Reason("N6", "Other", true, false));
+        return reasonList;
     }
 }

@@ -93,6 +93,7 @@ import id.co.qualitas.qubes.model.MessageResponse;
 import id.co.qualitas.qubes.model.OfflineLoginData;
 import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.OutletResponse;
+import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.Return;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
@@ -145,6 +146,7 @@ public class BaseActivity extends AppCompatActivity {
     OutletResponse outletResponse;
     protected ProgressBar progressBar;
     protected ArrayAdapter<String> spinnerAdapter;
+    protected ArrayAdapter<Reason> spinnerReasonAdapter;
     protected LinearLayout linearLayoutList;
     protected VisitOrderHeader visitOrderHeader, orderHeaderDetail;
     private TextView txtImagePathAttachment;
@@ -161,6 +163,9 @@ public class BaseActivity extends AppCompatActivity {
 
     public ArrayAdapter<String> getSpinnerAdapter() {
         return spinnerAdapter;
+    }
+    public ArrayAdapter<Reason> getSpinnerReasonAdapter() {
+        return spinnerReasonAdapter;
     }
 
     final protected static int DIALOG_REASON = 1;
@@ -192,7 +197,7 @@ public class BaseActivity extends AppCompatActivity {
         return currentDateTime;
     }
 
-    public void logOut(Activity activity){
+    public void logOut(Activity activity) {
         LayoutInflater inflater = LayoutInflater.from(activity);
         final Dialog alertDialog = new Dialog(activity);
         View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
@@ -220,6 +225,7 @@ public class BaseActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
     public void snackBar(View rootView, int message) {
         Snackbar snack = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
         View view = snack.getView();
@@ -453,7 +459,6 @@ public class BaseActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
         spinner.setSelection(adapter.getCount());
     }
-
     public void init() {
         progress = new ProgressDialog(this);
         progress.setMessage(Constants.STR_WAIT);
@@ -462,7 +467,6 @@ public class BaseActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
     }
-
     protected void setToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
@@ -1641,6 +1645,40 @@ public class BaseActivity extends AppCompatActivity {
     public void showKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    public void setAutoCompleteAdapter(List<String> items, AutoCompleteTextView spinner) {
+        spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+//                text.setTextSize(7);
+//                text.setTextColor(getResources().getColor(R.color.black));
+                return view;
+            }
+        };
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.addAll(items);
+        spinner.setAdapter(spinnerAdapter);
+    }
+
+    public void setAutoCompleteAdapterReason(List<Reason> items, AutoCompleteTextView spinner) {
+        spinnerReasonAdapter = new ArrayAdapter<Reason>(getApplicationContext(), R.layout.spinner_item) {
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+
+        spinnerReasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerReasonAdapter.addAll(items);
+        spinner.setAdapter(spinnerReasonAdapter);
     }
 
 }

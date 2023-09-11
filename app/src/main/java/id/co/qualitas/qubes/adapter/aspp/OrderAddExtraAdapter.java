@@ -1,17 +1,16 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,23 +29,19 @@ import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
-import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.model.Material;
 
-public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder> implements Filterable {
+public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdapter.Holder> implements Filterable {
     private List<Material> mList;
-    private List<Material> mListExtra = new ArrayList<>();
     private List<Material> mFilteredList;
     private LayoutInflater mInflater;
     private OrderAddActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private OrderAddExtraAdapter mAdapter;
-    private ProgressDialog progress;
     private LayoutInflater inflater;
     private Dialog alertDialog;
     private View dialogview;
 
-    public OrderAddAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public OrderAddExtraAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -100,9 +95,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout llAddExtraItem, llDelete, llDiscount;
+        LinearLayout llDelete, llDiscount;
         LinearLayout llDiscountQty, llDiscountValue, llDiscountKelipatan;
-        RecyclerView rvExtra;
         ImageView imgView;
         AutoCompleteTextView autoCompleteUom;
         TextView txtNo, txtPrice, txtTotalDiscount, txtTotal;
@@ -112,9 +106,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            rvExtra = itemView.findViewById(R.id.rvExtra);
-            rvExtra.setLayoutManager(new LinearLayoutManager(mContext));
-            rvExtra.setHasFixedSize(true);
             txtTotal = itemView.findViewById(R.id.txtTotal);
             txtDiscountKelipatan = itemView.findViewById(R.id.txtDiscountKelipatan);
             llDiscountKelipatan = itemView.findViewById(R.id.llDiscountKelipatan);
@@ -122,7 +113,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             llDiscountValue = itemView.findViewById(R.id.llDiscountValue);
             txtDiscountQty = itemView.findViewById(R.id.txtDiscountQty);
             llDiscountQty = itemView.findViewById(R.id.llDiscountQty);
-            llAddExtraItem = itemView.findViewById(R.id.llAddExtraItem);
             llDelete = itemView.findViewById(R.id.llDelete);
             txtNo = itemView.findViewById(R.id.txtNo);
             edtProduct = itemView.findViewById(R.id.edtProduct);
@@ -144,17 +134,13 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_order_add, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_order_add_extra, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
-
-        mListExtra = detail.getExtraItem();
-
-        setProgress();
 
         List<String> uomList = new ArrayList<>();
         uomList.add("BTL");
@@ -208,13 +194,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         });
 
         mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
-        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, header -> {
-        });
-        holder.rvExtra.setAdapter(mAdapter);
-
-        holder.llAddExtraItem.setOnClickListener(v -> {
-            addNew(holder.rvExtra);
-        });
 
         holder.llDelete.setOnClickListener(v -> {
             inflater = LayoutInflater.from(mContext);
@@ -243,24 +222,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             alertDialog.show();
         });
     }
-    private void addNew(RecyclerView rvExtra) {
-        Material detail = new Material("", "", "", "");
-        mList.add(detail);
-
-        new CountDownTimer(1000, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                progress.show();
-                int sizeList = mList.size();
-                mAdapter.notifyItemInserted(sizeList);
-            }
-
-            public void onFinish() {
-                progress.dismiss();
-                rvExtra.smoothScrollToPosition(rvExtra.getAdapter().getItemCount() - 1);
-            }
-        }.start();
-    }
 
     @Override
     public int getItemCount() {
@@ -269,15 +230,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
-    }
-
-    public void setProgress() {
-        progress = new ProgressDialog(mContext);
-        progress.setMessage(Constants.STR_WAIT);
-        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.setIndeterminate(true);
-        progress.setCancelable(false);
-        progress.setCanceledOnTouchOutside(false);
     }
 
     private void initDialog(int resource) {

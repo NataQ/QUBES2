@@ -16,19 +16,20 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.CustomerInfoActivity;
+import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
+import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
 import id.co.qualitas.qubes.model.Material;
 
 public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<CustomerInfoOutstandingFakturAdapter.Holder> implements Filterable {
     private List<Material> mList;
     private List<Material> mFilteredList;
     private LayoutInflater mInflater;
-    private CustomerInfoActivity mContext;
+    private DailySalesmanActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CustomerInfoOutstandingFakturAdapter(CustomerInfoActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CustomerInfoOutstandingFakturAdapter(DailySalesmanActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -101,7 +102,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_customer_info, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_outstanding_dct, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
@@ -109,7 +110,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtName.setText(detail.getMaterialCode());
+        holder.txtName.setText("\u2022 " + detail.getMaterialCode());
         holder.txtQty.setText(format.format(detail.getQty()));
     }
 

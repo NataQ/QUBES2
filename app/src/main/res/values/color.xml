@@ -12,7 +12,7 @@
     <color name="white">#fcfcfcfc</color>
     <color name="red">#ff0000</color>
     <color name="green">#FF36DF00</color>
-    <color name="black">#000</color>
+    <color name="black">#000000</color>
     <color name="darkBlackCyan">#00272B</color>
     <color name="pureBlue">#008AFA</color>
     <color name="darkBlue">#004969</color>
@@ -25,7 +25,6 @@
     <color name="off_white">#FFFFFF</color>
     <color name="off_grey">#eeeeee</color>
     <color name="gray">#747474</color>
-
 
     <color name="blue3">#3333FF</color>
     <color name="blue4">#6a8fff</color>
@@ -44,7 +43,6 @@
 
     <color name="spinner_base_color">#44000000</color>
     <color name="spinner_hint_text_color">#ffffcc</color>
-
 
     <color name="disable">#d3d3d3</color>
     <color name="transRed">#8CEBDB</color>
@@ -84,9 +82,8 @@
     <color name="blue6_aspp">#001D7B</color>
     <color name="blue7_aspp">#EAEFFF</color>
     <color name="blue8_aspp">#EAF1FF</color>
-    <color name="blue9_aspp">#2264E5</color>
-    <color name="blue10_aspp">#F4F7FF</color>
     <color name="black_aspp">#0A0A0A</color>
+    <color name="black1_aspp">#3D3D3D</color>
     <color name="gray_aspp">#9E9E9E</color>
     <color name="gray2_aspp">#C2C2C2</color>
     <color name="gray3_aspp">#EDEDED</color>
@@ -97,7 +94,7 @@
     <color name="gray8_aspp">#464F60</color>
     <color name="gray9_aspp">#E9EDF5</color>
     <color name="gray10_aspp">#868FA0</color>
-    <color name="gray11_aspp">#464F60B2</color>
+    <color name="gray12_aspp">#E4E4E4</color>
     <color name="orange_aspp">#FA4907</color>
     <color name="orange2_aspp">#FFF0EB</color>
     <color name="orange3_aspp">#FFF9F6</color>
@@ -111,8 +108,9 @@
     <color name="yellow3_aspp">#FFFCE5</color>
     <color name="white_aspp">#FFFCFB</color>
     <color name="white2_aspp">#E2E2E2</color>
+    <color name="white3_aspp">#F4F7FF</color>
     <color name="red_aspp">#FFEEF2</color>
     <color name="red2_aspp">#D12953</color>
     <color name="red3_aspp">#FFF0F7</color>
-
+    <color name="aspp_blue9">#2264E5</color>
 </resources>

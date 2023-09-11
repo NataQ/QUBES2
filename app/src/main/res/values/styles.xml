@@ -303,6 +303,37 @@
         <item name="cornerRadius">12dp</item>
     </style>
 
+    <style name="TextInputLayoutMaterial" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textSize">8sp</item>
+        <item name="android:padding">0dp</item>
+        <item name="color">@color/blue_aspp</item>
+        <item name="colorAccent">@color/blue_aspp</item>
+        <item name="backgroundColor">@color/white</item>
+        <item name="boxCornerRadiusBottomEnd">5dp</item>
+        <item name="boxCornerRadiusBottomStart">5dp</item>
+        <item name="boxCornerRadiusTopEnd">5dp</item>
+        <item name="boxCornerRadiusTopStart">5dp</item>
+        <item name="boxBackgroundColor">@color/space_transparent</item>
+        <item name="hintTextAppearance">@style/CustomTextAppearance</item>
+    </style>
 
+    <style name="TextView_Small" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
+
+    <style name="TextView_Title" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/montserrat_black</item>
+        <item name="android:fontFamily">@font/montserrat_black</item>
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextView_Small_Bold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/montserrat_black</item>
+        <item name="android:fontFamily">@font/montserrat_black</item>
+        <item name="android:textSize">@dimen/text_small</item>
+    </style>
 
 </resources>

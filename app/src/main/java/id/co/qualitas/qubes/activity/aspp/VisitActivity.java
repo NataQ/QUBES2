@@ -322,7 +322,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         btnYes.setOnClickListener(v -> {
             dialog.dismiss();
-            Intent intent = new Intent(this, DailySalesmanActivity.class);
+            Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
             startActivity(intent);
         });
 
@@ -380,12 +380,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         recyclerView.setHasFixedSize(true);
 
         List<Reason> reasonList = new ArrayList<>();
-        reasonList.add(new Reason("N1", "Waktu Habis", false, false));
-        reasonList.add(new Reason("N2", "Pindah", true, false));
-        reasonList.add(new Reason("N3", "Banjir", false, true));
-        reasonList.add(new Reason("N4", "Tidak Ketemu", true, true));
-        reasonList.add(new Reason("N5", "Tutup", false, true));
-        reasonList.add(new Reason("N6", "Other", true, false));
+        reasonList.addAll(Helper.getDataReason());
 
         final ArrayAdapter<Reason> arrayAdapter = new ArrayAdapter<Reason>(VisitActivity.this, android.R.layout.simple_dropdown_item_1line, reasonList);
         txtReasonAll.setAdapter(arrayAdapter);

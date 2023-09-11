@@ -38,15 +38,15 @@ public class CustomerInfoActivity extends BaseActivity {
         initialize();
         setData();
 
-        fakturAdapter = new CustomerInfoOutstandingFakturAdapter(this, fakturList, header -> {
-        });
-
-        rvOutstandingFaktur.setAdapter(fakturAdapter);
-
-        dctOutletAdapter = new CustomerInfoDctOutletAdapter(this, dctOutletList, header -> {
-        });
-
-        rvDctOutlet.setAdapter(dctOutletAdapter);
+//        fakturAdapter = new CustomerInfoOutstandingFakturAdapter(this, fakturList, header -> {
+//        });
+//
+//        rvOutstandingFaktur.setAdapter(fakturAdapter);
+//
+//        dctOutletAdapter = new CustomerInfoDctOutletAdapter(this, dctOutletList, header -> {
+//        });
+//
+//        rvDctOutlet.setAdapter(dctOutletAdapter);
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();

@@ -53,13 +53,12 @@
                 android:background="@drawable/ic_back_aspp" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
+                style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Collection"
-                android:textColor="@color/black_aspp"
-                android:textStyle="bold" />
+                android:textColor="@color/black_aspp" />
 
         </LinearLayout>
 
@@ -87,8 +86,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
-                        android:text="Tanggal"
-                        android:textColor="@color/darkGray" />
+                        android:text="Date"
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtDate"
@@ -113,7 +112,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
                         android:text="Total Invoice"
-                        android:textColor="@color/darkGray" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtTotalInvoice"
@@ -138,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
                         android:text="Total Paid"
-                        android:textColor="@color/darkGray" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtTotalPaid"

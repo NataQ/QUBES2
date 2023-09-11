@@ -414,10 +414,10 @@
 
     <string name="nullData">-</string>
 
-    <string name="pleaseFillUsername">"Please fill the username field"</string>
-    <string name="pleaseChoose">"Please Choose your reason"</string>
-    <string name="pleaseFillSupervisor">"Please fill the supervisor field"</string>
-    <string name="pleaseFillPassword">"Please fill the password field"</string>
+    <string name="pleaseFillUsername">Please fill the username field</string>
+    <string name="pleaseChoose">Please Choose your reason</string>
+    <string name="pleaseFillSupervisor">Please fill the supervisor field</string>
+    <string name="pleaseFillPassword">Please fill the password field</string>
     <string name="pleaseFillOldPass">Please fill old password field</string>
     <string name="pleaseFillNewPass">Please fill new password field</string>
     <string name="pleaseFillConfPass">Please fill conf password field</string>
@@ -613,7 +613,7 @@
     <string name="ID_JJ_ABSOLUTE_CANVAS_ORDER">ZB07</string>
     <string name="clientId">|000</string>
     <string name="getTokenError">Get Token Error</string>
-    <string name="otherLogIn">Orang lain sedang log in dengan akun yang sama. Anda yakin ingin tetap masuk? Jika "ya", maka orang yang sedang log in akan otomatis keluar.</string>
+    <string name="otherLogIn">Orang lain sedang log in dengan akun yang sama. Anda yakin ingin tetap masuk? Jika \"ya\", maka orang yang sedang log in akan otomatis keluar.</string>
     <string name="mtka_mandatory_notice">tolong isi nomor dan tanggal PO</string>
 
     <string name="alertExit">Anda yakin ingin keluar ?</string>
@@ -668,5 +668,6 @@
     <string name="default_notification_channel_name">broadcast name</string>
     <string name="location_updated">Location Updated: %1$s</string>
     <string name="directions">Directions</string>
+<!--    <string name="areYourSureDelete">Are you sure want to delete the item?</string>-->
 
 </resources>

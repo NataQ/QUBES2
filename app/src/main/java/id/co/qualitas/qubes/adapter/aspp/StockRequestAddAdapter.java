@@ -33,7 +33,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
     private LayoutInflater mInflater;
     private StockRequestAddActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private ArrayAdapter<String> spn1Adapter, spn2Adapter, spn3Adapter;
+    private ArrayAdapter<String> spn1Adapter;
 
     public StockRequestAddAdapter(StockRequestAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {

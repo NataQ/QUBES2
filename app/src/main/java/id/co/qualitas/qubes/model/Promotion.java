@@ -5,6 +5,10 @@ public class Promotion {
     private String promotionDecs;
     private String promotionPeriode;
 
+    public Promotion(String promotionName) {
+        this.promotionName = promotionName;
+    }
+
     public Promotion(String promotionName, String promotionPeriode) {
         this.promotionName = promotionName;
         this.promotionPeriode = promotionPeriode;

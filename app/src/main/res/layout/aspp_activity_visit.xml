@@ -273,7 +273,7 @@
                         android:layout_margin="5dp"
                         app:backgroundTint="@color/new_blue"
                         app:fabSize="normal"
-                        app:srcCompat="@drawable/ic_add"
+                        app:srcCompat="@drawable/ic_plus"
                         app:tint="@color/white" />
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -364,7 +364,7 @@
                         android:layout_margin="5dp"
                         app:backgroundTint="@color/new_blue"
                         app:fabSize="normal"
-                        app:srcCompat="@drawable/ic_add"
+                        app:srcCompat="@drawable/ic_plus"
                         app:tint="@color/white" />
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>

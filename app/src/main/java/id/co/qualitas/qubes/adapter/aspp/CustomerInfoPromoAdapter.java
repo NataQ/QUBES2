@@ -17,18 +17,19 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
-import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.Promotion;
 
-public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerInfoDctOutletAdapter.Holder> implements Filterable {
-    private List<Material> mList;
-    private List<Material> mFilteredList;
+public class CustomerInfoPromoAdapter extends RecyclerView.Adapter<CustomerInfoPromoAdapter.Holder> implements Filterable {
+    private List<Promotion> mList;
+    private List<Promotion> mFilteredList;
     private LayoutInflater mInflater;
     private DailySalesmanActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CustomerInfoDctOutletAdapter(DailySalesmanActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CustomerInfoPromoAdapter(DailySalesmanActivity mContext, List<Promotion> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -41,7 +42,7 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Material> mDataSet) {
+    public void setData(List<Promotion> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -56,11 +57,11 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Material> filteredList = new ArrayList<>();
-                    for (Material row : mList) {
+                    List<Promotion> filteredList = new ArrayList<>();
+                    for (Promotion row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getPromotionName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -75,20 +76,19 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Material>) filterResults.values;
+                mFilteredList = (ArrayList<Promotion>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtQty, txtName;
+        TextView txtPromo;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtQty = itemView.findViewById(R.id.txtQty);
-            txtName = itemView.findViewById(R.id.txtName);
+            txtPromo = itemView.findViewById(R.id.txtPromo);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -101,16 +101,15 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_outstanding_dct, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_promo_info, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
-        Material detail = mFilteredList.get(position);
-        holder.txtName.setText("\u2022 " + detail.getMaterialCode());
-        holder.txtQty.setText(format.format(detail.getQty()));
+        Promotion detail = mFilteredList.get(position);
+        holder.txtPromo.setText("\u2022 " + detail.getPromotionName());
     }
 
     private void setFormatSeparator() {
@@ -127,6 +126,6 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(Material String);
+        void onAdapterClick(Promotion String);
     }
 }
