@@ -32,6 +32,7 @@ import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.CollectionCashAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionChequeAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionGiroAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CollectionKreditAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
@@ -49,18 +50,20 @@ import id.co.qualitas.qubes.model.User;
 public class CollectionFormActivity extends BaseActivity {
     private ImageView imgBack;
     private Button btnSubmit, btnAddTransfer, btnAddGiro, btnAddCheque;
-    private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain;
+    private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain, recyclerViewKredit;
     private TextView txtPaymentCash, txtLeftCash, txtAmount;
     private TextView txtPaymentLain, txtLeftLain;
-    private TextView txtInvNo, txtDate;
-    private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain;
-    private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain;
-    private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain;
+    private TextView txtInvNo, txtDate, txtOrderNo;
+    private LinearLayout llOrder, llInvoice;
+    private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain, txtKredit;
+    private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain, buttonKredit;
+    private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain, llKredit;
     private List<CollectionTransfer> mListTransfer;
     private List<CollectionGiro> mListGiro;
     private List<CollectionCheque> mListCheque;
-    private List<Material> mListCash, mListLain;
+    private List<Material> mListCash, mListLain, mListKredit;
     private Invoice collectionHeader;
+    private CollectionKreditAdapter mAdapterKredit;
     private CollectionCashAdapter mAdapterCash;
     private CollectionTransferAdapter mAdapterTransfer;
     private CollectionGiroAdapter mAdapterGiro;
@@ -80,6 +83,7 @@ public class CollectionFormActivity extends BaseActivity {
         setGiroView();
         setChequeView();
         setLainView();
+        setKreditView();
 
         btnSubmit.setOnClickListener(v -> {
             onBackPressed();
@@ -112,6 +116,10 @@ public class CollectionFormActivity extends BaseActivity {
         buttonLain.setOnClickListener(v -> {
             setSelectView(5);
         });
+
+        buttonKredit.setOnClickListener(v -> {
+            setSelectView(6);
+        });
     }
 
     private void setCashView() {
@@ -124,6 +132,16 @@ public class CollectionFormActivity extends BaseActivity {
         recyclerViewCash.setAdapter(mAdapterCash);
     }
 
+    private void setKreditView() {
+        mListKredit = new ArrayList<>();
+        mListKredit.addAll(initDataMaterial());
+
+        mAdapterKredit = new CollectionKreditAdapter(this, mListKredit, header -> {
+
+        });
+        recyclerViewKredit.setAdapter(mAdapterKredit);
+    }
+
     private void setTransferView() {
         mAdapterTransfer = new CollectionTransferAdapter(this, mListTransfer, header -> {
 
@@ -133,7 +151,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionTransfer detail = new CollectionTransfer(null, null, null, initDataMaterial());
+                CollectionTransfer detail = new CollectionTransfer(null, initDataMaterial());
                 mListTransfer.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -161,7 +179,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddGiro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionGiro detail = new CollectionGiro(null, null, null, null, null, null, null, null, null, initDataMaterial());
+                CollectionGiro detail = new CollectionGiro(null, initDataMaterial());
                 mListGiro.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -189,7 +207,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddCheque.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionCheque detail = new CollectionCheque(null, null, null, null, null, null, null, null, null, initDataMaterial());
+                CollectionCheque detail = new CollectionCheque(null,  initDataMaterial());
                 mListCheque.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -220,9 +238,9 @@ public class CollectionFormActivity extends BaseActivity {
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1", "BTL"));
-        mList.add(new Material("11030", "Redbull", "1", "BTL"));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1", "BTL"));
+        mList.add(new Material("11001", "Kratingdaeng", "1,000,000"));
+        mList.add(new Material("11030", "Redbull", "2,000,000"));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000"));
         return mList;
     }
 
@@ -230,6 +248,18 @@ public class CollectionFormActivity extends BaseActivity {
         mListTransfer = new ArrayList<>();
         mListGiro = new ArrayList<>();
         mListCheque = new ArrayList<>();
+
+        int colLFrom = Helper.getItemParam(Constants.COLLECTION_FROM) != null ? (int) Helper.getItemParam(Constants.COLLECTION_FROM) : 0;
+
+        if (colLFrom == 3) {
+            llOrder.setVisibility(View.VISIBLE);
+            llInvoice.setVisibility(View.GONE);
+            buttonKredit.setVisibility(View.VISIBLE);
+        } else {
+            llOrder.setVisibility(View.GONE);
+            llInvoice.setVisibility(View.VISIBLE);
+            buttonKredit.setVisibility(View.GONE);
+        }
     }
 
     private void setSelectView(int posTab) {
@@ -240,18 +270,21 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
 
                 txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
                 txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.VISIBLE);
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.GONE);
                 break;
             case 2:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -259,18 +292,21 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
 
                 txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
                 txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.VISIBLE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.GONE);
                 break;
             case 3:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -278,18 +314,21 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
                 buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
 
                 txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
                 txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.VISIBLE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.GONE);
                 break;
             case 4:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -297,18 +336,21 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
                 buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
 
                 txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.VISIBLE);
                 llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.GONE);
                 break;
             case 5:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -316,18 +358,43 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
                 buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
 
                 txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.VISIBLE);
+                llKredit.setVisibility(View.GONE);
+                break;
+            case 6:
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+
+                llCash.setVisibility(View.GONE);
+                llTransfer.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -340,6 +407,9 @@ public class CollectionFormActivity extends BaseActivity {
         recyclerViewCash = findViewById(R.id.recyclerViewCash);
         recyclerViewCash.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCash.setHasFixedSize(true);
+        recyclerViewKredit = findViewById(R.id.recyclerViewKredit);
+        recyclerViewKredit.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewKredit.setHasFixedSize(true);
         recyclerViewTransfer = findViewById(R.id.recyclerViewTransfer);
         recyclerViewTransfer.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTransfer.setHasFixedSize(true);
@@ -354,6 +424,7 @@ public class CollectionFormActivity extends BaseActivity {
         recyclerViewLain.setHasFixedSize(true);
         imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
+        txtOrderNo = findViewById(R.id.txtOrderNo);
         txtInvNo = findViewById(R.id.txtInvNo);
         txtAmount = findViewById(R.id.txtAmount);
         txtDate = findViewById(R.id.txtDate);
@@ -362,6 +433,7 @@ public class CollectionFormActivity extends BaseActivity {
         txtGiro = findViewById(R.id.txtGiro);
         txtCheq = findViewById(R.id.txtCheq);
         txtLain = findViewById(R.id.txtLain);
+        txtKredit = findViewById(R.id.txtKredit);
         txtPaymentCash = findViewById(R.id.txtPaymentCash);
         txtLeftCash = findViewById(R.id.txtLeftCash);
         btnAddTransfer = findViewById(R.id.btnAddTransfer);
@@ -374,11 +446,15 @@ public class CollectionFormActivity extends BaseActivity {
         buttonCheq = findViewById(R.id.buttonCheq);
         buttonGiro = findViewById(R.id.buttonGiro);
         buttonLain = findViewById(R.id.buttonLain);
+        buttonKredit = findViewById(R.id.buttonKredit);
         llLain = findViewById(R.id.llLain);
+        llKredit = findViewById(R.id.llKredit);
         llCash = findViewById(R.id.llCash);
         llTransfer = findViewById(R.id.llTransfer);
         llGiro = findViewById(R.id.llGiro);
         llCheque = findViewById(R.id.llCheque);
+        llOrder = findViewById(R.id.llOrder);
+        llInvoice = findViewById(R.id.llInvoice);
         btnSubmit = findViewById(R.id.btnSubmit);
     }
 

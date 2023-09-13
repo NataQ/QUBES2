@@ -32,6 +32,7 @@
                 android:visibility="visible">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
@@ -41,11 +42,12 @@
 
                 <TextView
                     android:id="@+id/txtTglTransfer"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
-                    android:padding="5dp"
                     android:background="@drawable/editbox"
+                    android:padding="5dp"
                     android:textColor="@color/black_aspp" />
             </LinearLayout>
 
@@ -93,6 +95,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
@@ -100,6 +103,7 @@
 
                     <EditText
                         android:id="@+id/txtPayment"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
@@ -119,6 +123,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
@@ -126,6 +131,7 @@
 
                     <TextView
                         android:id="@+id/txtLeft"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
@@ -157,21 +163,24 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
+                            android:layout_marginEnd="2dp"
                             android:text=""
                             android:textColor="@color/black_aspp" />
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
                             android:layout_weight=".1"
                             android:text="No"
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
@@ -181,6 +190,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
@@ -191,6 +201,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".25"

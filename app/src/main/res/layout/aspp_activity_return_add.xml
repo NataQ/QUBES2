@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -48,7 +48,7 @@
             android:src="@drawable/ic_back_aspp" />
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Title"
+           style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -61,6 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:textSize="@dimen/text_small"
             android:text="Save"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -142,6 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
+                    android:textSize="@dimen/text_small"
                     android:text="Add"
                     android:textAllCaps="true"
                     android:textColor="@color/black_aspp"

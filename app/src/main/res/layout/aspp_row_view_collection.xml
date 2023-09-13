@@ -21,12 +21,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Invoice No." />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -34,9 +36,10 @@
 
             <TextView
                 android:id="@+id/txtInvoiceNo"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="11001"
                 android:textColor="@color/darkGray" />
 
@@ -49,12 +52,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Invoice Date" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -62,9 +67,10 @@
 
             <TextView
                 android:id="@+id/txtInvoiceDate"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="01 January 2023"
                 android:textColor="@color/darkGray" />
 
@@ -77,12 +83,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Due Date" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -90,9 +98,10 @@
 
             <TextView
                 android:id="@+id/txtDueDate"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="01 January 2023"
                 android:textColor="@color/darkGray" />
 
@@ -105,12 +114,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Nett" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -118,9 +129,10 @@
 
             <TextView
                 android:id="@+id/txtNett"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="Rp 1,000,000"
                 android:textColor="@color/darkGray" />
 
@@ -133,12 +145,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Customer" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -146,9 +160,10 @@
 
             <TextView
                 android:id="@+id/txtCustomer"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="Bagus Customer"
                 android:textColor="@color/darkGray" />
 
@@ -161,12 +176,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Amount" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -174,9 +191,10 @@
 
             <TextView
                 android:id="@+id/txtAmount"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="Rp 1,000,000"
                 android:textColor="@color/darkGray" />
 
@@ -189,12 +207,14 @@
             android:padding="5dp">
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".4"
+                android:layout_weight=".3"
                 android:text="Paid" />
 
             <TextView
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -202,9 +222,10 @@
 
             <TextView
                 android:id="@+id/txtPaid"
+                style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".6"
+                android:layout_weight=".7"
                 android:text="0"
                 android:textColor="@color/darkGray" />
 

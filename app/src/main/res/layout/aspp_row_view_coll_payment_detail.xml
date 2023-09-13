@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <TextView
+        android:id="@+id/txtNo"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".05"
+        android:text="1"
+        android:textAlignment="center"
+        android:textColor="@color/gray8_aspp" />
+
+    <TextView
+        android:id="@+id/txtProduct"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_weight=".45"
+        android:padding="5dp"
+        android:text="Product"
+        android:textColor="@color/gray8_aspp" />
+
+    <TextView
+        android:id="@+id/txtPrice"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_weight=".25"
+        android:text="Price"
+        android:textColor="@color/gray8_aspp" />
+
+    <TextView
+        android:id="@+id/txtPaid"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".25"
+        android:padding="5dp"
+        android:text="Paid"
+        android:textColor="@color/gray8_aspp" />
+</LinearLayout>

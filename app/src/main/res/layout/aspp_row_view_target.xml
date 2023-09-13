@@ -23,6 +23,7 @@
 
             <TextView
                 android:id="@+id/txtGroupMat"
+                style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="REDBULL"
@@ -52,6 +53,7 @@
                     android:padding="5dp">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -69,6 +71,7 @@
                     android:padding="5dp">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -94,6 +97,7 @@
 
                     <TextView
                         android:id="@+id/txtTgtAt"
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -111,6 +115,7 @@
 
                     <TextView
                         android:id="@+id/txtAt"
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -128,6 +133,7 @@
 
                 <TextView
                     android:id="@+id/txtTotalPercentageAT"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -144,6 +150,7 @@
 
                 <TextView
                     android:id="@+id/txtTotalAT"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -174,6 +181,7 @@
                     android:padding="5dp">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -191,6 +199,7 @@
                     android:padding="5dp">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -216,6 +225,7 @@
 
                     <TextView
                         android:id="@+id/txtTgtOms"
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -233,6 +243,7 @@
 
                     <TextView
                         android:id="@+id/txtOms"
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -250,6 +261,7 @@
 
                 <TextView
                     android:id="@+id/txtTotalPercentageOMS"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -266,6 +278,7 @@
 
                 <TextView
                     android:id="@+id/txtTotalOMS"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"

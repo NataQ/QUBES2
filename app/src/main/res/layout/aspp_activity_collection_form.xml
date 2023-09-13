@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -48,7 +48,7 @@
             android:src="@drawable/ic_back_aspp" />
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,6 +64,7 @@
             android:text="Submit"
             android:textAllCaps="false"
             android:textColor="@color/white"
+            android:textSize="@dimen/text_small"
             app:backgroundTint="@color/blue_aspp"
             app:cornerRadius="5dp" />
     </LinearLayout>
@@ -82,12 +83,41 @@
             android:padding="@dimen/padding_inner">
 
             <LinearLayout
+                android:id="@+id/llOrder"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".4"
+                    android:text="Order No." />
+
+                <TextView
+                    android:id="@+id/txtOrderNo"
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:gravity="end"
+                    android:text="00001"
+                    android:textColor="@color/darkGray"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llInvoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
@@ -95,6 +125,7 @@
 
                 <TextView
                     android:id="@+id/txtInvNo"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
@@ -112,6 +143,7 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
@@ -119,6 +151,7 @@
 
                 <TextView
                     android:id="@+id/txtDate"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
@@ -136,6 +169,7 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
@@ -143,6 +177,7 @@
 
                 <TextView
                     android:id="@+id/txtAmount"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
@@ -186,6 +221,7 @@
 
                         <TextView
                             android:id="@+id/txtCash"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -209,6 +245,7 @@
 
                         <TextView
                             android:id="@+id/txtTransfer"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -233,6 +270,7 @@
 
                         <TextView
                             android:id="@+id/txtGiro"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -257,6 +295,7 @@
 
                         <TextView
                             android:id="@+id/txtCheq"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -281,11 +320,37 @@
 
                         <TextView
                             android:id="@+id/txtLain"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="Lain-Lain"
+                            android:textColor="@color/gray5_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/buttonKredit"
+                        android:layout_width="@dimen/widthType"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_type"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="8dp"
+                        android:paddingTop="5dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="5dp">
+
+                        <TextView
+                            android:id="@+id/txtKredit"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Kredit"
                             android:textColor="@color/gray5_aspp" />
 
                     </LinearLayout>
@@ -314,6 +379,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
@@ -321,6 +387,7 @@
 
                         <EditText
                             android:id="@+id/txtPaymentCash"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
@@ -340,6 +407,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
@@ -347,6 +415,7 @@
 
                         <TextView
                             android:id="@+id/txtLeftCash"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
@@ -378,30 +447,34 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:text=""
                                 android:textColor="@color/black_aspp" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".1"
+                                android:layout_weight=".05"
                                 android:text="No"
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
-                                android:layout_weight=".4"
+                                android:layout_weight=".45"
                                 android:text="Product"
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
@@ -412,6 +485,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".25"
@@ -447,6 +521,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -463,6 +538,7 @@
                         android:text="Add"
                         android:textAllCaps="true"
                         android:textColor="@color/black_aspp"
+                        android:textSize="@dimen/text_small"
                         app:cornerRadius="5dp"
                         app:icon="@drawable/ic_add_aspp"
                         app:iconSize="@dimen/icon_add_inside_btn"
@@ -494,6 +570,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -510,6 +587,7 @@
                         android:text="Add"
                         android:textAllCaps="true"
                         android:textColor="@color/black_aspp"
+                        android:textSize="@dimen/text_small"
                         app:cornerRadius="5dp"
                         app:icon="@drawable/ic_add_aspp"
                         app:iconSize="@dimen/icon_add_inside_btn"
@@ -541,6 +619,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -557,6 +636,7 @@
                         android:text="Add"
                         android:textAllCaps="true"
                         android:textColor="@color/black_aspp"
+                        android:textSize="@dimen/text_small"
                         app:cornerRadius="5dp"
                         app:icon="@drawable/ic_add_aspp"
                         app:iconSize="@dimen/icon_add_inside_btn"
@@ -595,6 +675,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
@@ -602,6 +683,7 @@
 
                         <EditText
                             android:id="@+id/txtPaymentLain"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
@@ -621,6 +703,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
@@ -628,6 +711,7 @@
 
                         <TextView
                             android:id="@+id/txtLeftLain"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
@@ -659,12 +743,14 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:text=""
                                 android:textColor="@color/black_aspp" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
@@ -674,6 +760,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
@@ -683,6 +770,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
@@ -693,6 +781,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".25"
@@ -704,6 +793,85 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerViewLain"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llKredit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="@dimen/corner_fragment"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".05"
+                                android:text="No"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_weight=".45"
+                                android:text="Product"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight=".25"
+                                android:text="Price"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                android:text="Amount Paid"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewKredit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clipToPadding="false" />

@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.AppCompat.Title"
+           style="@style/TextView_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Signature"
@@ -51,6 +51,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_small"
                 android:layout_marginEnd="20dp"
                 android:text="Clear"
                 android:textAllCaps="false"
@@ -64,6 +65,7 @@
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_small"
                 android:text="Send"
                 android:textAllCaps="false"
                 android:textColor="@color/white"

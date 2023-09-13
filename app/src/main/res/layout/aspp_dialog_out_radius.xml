@@ -17,7 +17,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextView_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Out Radius"
@@ -25,6 +25,7 @@
             android:textColor="@color/black_aspp" />
 
         <TextView
+            style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -48,6 +49,7 @@
                 android:text="@string/no"
                 android:textAllCaps="false"
                 android:textColor="@color/gray8_aspp"
+                android:textSize="@dimen/text_small"
                 app:cornerRadius="5dp"
                 app:strokeColor="@color/gray2_aspp"
                 app:strokeWidth="1dp" />
@@ -60,6 +62,7 @@
                 android:text="Yes"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
+                android:textSize="@dimen/text_small"
                 app:backgroundTint="@color/blue_aspp"
                 app:cornerRadius="5dp" />
         </LinearLayout>

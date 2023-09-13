@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -48,7 +48,7 @@
             android:src="@drawable/ic_back_aspp" />
 
         <TextView
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -84,18 +84,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Order No."
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtOrderNo"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1"
-                        android:textColor="@color/gray8_aspp" />
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -107,18 +108,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Order Date"
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtDate"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1 August 2023"
-                        android:textColor="@color/gray8_aspp" />
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -128,18 +130,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Invoice No."
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtInvoiceNo"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1023518"
-                        android:textColor="@color/gray8_aspp" />
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -147,8 +150,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="horizontal">
 
@@ -159,18 +162,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Outlet"
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtOutlet"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0WJ42 - SARI SARI (TK)"
-                        android:textColor="@color/gray8_aspp" />
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -182,18 +186,19 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Omzet"
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/gray8_aspp" />
 
                     <TextView
                         android:id="@+id/txtOmzet"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1,400,000"
-                        android:textColor="@color/gray8_aspp" />
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -203,7 +208,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Status"
@@ -213,13 +218,14 @@
                         android:id="@+id/llStatus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
                         android:background="@drawable/bg_status"
                         android:backgroundTint="@color/green2_aspp"
+                        android:gravity="center"
                         android:minWidth="100dp">
 
                         <TextView
                             android:id="@+id/txtStatus"
+                            style="@style/TextView_Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="5dp"
@@ -254,19 +260,19 @@
                         android:src="@drawable/refresh_grey_192x192" />
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/tap_to_refresh"
-                        android:textSize="17sp" />
+                        android:text="@string/tap_to_refresh" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/txtNoData"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="No Data"
-                    android:textSize="@dimen/smallFont"
                     android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView

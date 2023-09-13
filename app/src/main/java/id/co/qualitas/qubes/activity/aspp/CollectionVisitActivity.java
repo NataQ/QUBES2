@@ -37,7 +37,10 @@ public class CollectionVisitActivity extends BaseActivity {
 
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
             Helper.setItemParam(Constants.COLLECTION_HEADER, header);
-            Intent intent = new Intent(this, CollectionFormActivity.class);
+            Helper.setItemParam(Constants.COLLECTION_FROM, 2);
+//            Intent intent = new Intent(this, CollectionFormActivity.class);
+//            startActivity(intent);
+            Intent intent = new Intent(this, CollectionDetailActivity.class);
             startActivity(intent);
         });
 

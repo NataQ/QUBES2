@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,11 +32,11 @@ import java.util.Objects;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder> implements Filterable {
     private List<Material> mList;
-    private List<Material> mListExtra = new ArrayList<>();
     private List<Material> mFilteredList;
     private LayoutInflater mInflater;
     private OrderAddActivity mContext;
@@ -45,6 +46,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private LayoutInflater inflater;
     private Dialog alertDialog;
     private View dialogview;
+    private boolean isExpand = false;
 
     public OrderAddAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -152,9 +154,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     public void onBindViewHolder(Holder holder, int pos) {
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        mListExtra = detail.getExtraItem();
-
         setProgress();
+        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
 
         List<String> uomList = new ArrayList<>();
         uomList.add("BTL");
@@ -172,14 +173,17 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
             List<String> groupList = new ArrayList<>();
-            groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007 - KRATINGDAENG - MT");
-            groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-            groupList.add("11001 - KRATINGDAENG");
+            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+            groupList.add("11007_KRATINGDAENG - MT");
+            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+            groupList.add("11001_KRATINGDAENG");
 
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
+                String temp[] = nameItem.split("_");
                 holder.edtProduct.setText(nameItem);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setIdMaterial(temp[0]);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
                 alertDialog.dismiss();
             });
 
@@ -208,12 +212,12 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         });
 
         mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
-        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, header -> {
+        mAdapter = new OrderAddExtraAdapter(mContext, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getExtraItem(), holder.getAbsoluteAdapterPosition(), header -> {
         });
         holder.rvExtra.setAdapter(mAdapter);
 
         holder.llAddExtraItem.setOnClickListener(v -> {
-            addNew(holder.rvExtra);
+            addNew(holder.rvExtra, holder.getAbsoluteAdapterPosition());
         });
 
         holder.llDelete.setOnClickListener(v -> {
@@ -242,24 +246,84 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             });
             alertDialog.show();
         });
+
+        holder.imgView.setOnClickListener(v -> {
+            if (!isExpand) {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
+                holder.llDiscount.setVisibility(View.VISIBLE);
+                isExpand = true;
+            } else {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
+                holder.llDiscount.setVisibility(View.GONE);
+                isExpand = false;
+            }
+        });
+
+        holder.autoCompleteUom.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setUom(s.toString().trim());
+            }
+        });
+        holder.edtQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtQty, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                } else {
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                }
+            }
+        });
     }
-    private void addNew(RecyclerView rvExtra) {
+
+    private void addNew(RecyclerView rvExtra, int pos) {
+        List<Material> mListExtra = mFilteredList.get(pos).getExtraItem();
+        if (mListExtra == null) mListExtra = new ArrayList<>();
         Material detail = new Material("", "", "", "");
-        mList.add(detail);
+        mListExtra.add(detail);
+        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, pos, header -> {
+        });
+        rvExtra.setAdapter(mAdapter);
+        if (mListExtra.size() == 1) {
+            mFilteredList.get(pos).setExtraItem(mListExtra);
+            mAdapter.setData(mListExtra);
+        } else {
+            List<Material> finalMListExtra = mListExtra;
+            new CountDownTimer(1000, 1000) {
 
-        new CountDownTimer(1000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    progress.show();
+                    int sizeList = finalMListExtra.size();
+                    mAdapter.notifyItemInserted(sizeList);
+                }
 
-            public void onTick(long millisUntilFinished) {
-                progress.show();
-                int sizeList = mList.size();
-                mAdapter.notifyItemInserted(sizeList);
-            }
-
-            public void onFinish() {
-                progress.dismiss();
-                rvExtra.smoothScrollToPosition(rvExtra.getAdapter().getItemCount() - 1);
-            }
-        }.start();
+                public void onFinish() {
+                    progress.dismiss();
+                    rvExtra.smoothScrollToPosition(rvExtra.getAdapter().getItemCount() - 1);
+                }
+            }.start();
+        }
     }
 
     @Override

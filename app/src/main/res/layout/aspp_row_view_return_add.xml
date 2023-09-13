@@ -13,10 +13,11 @@
 
         <TextView
             android:id="@+id/txtNo"
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1."
+            android:textAlignment="center"
             android:textColor="@color/black_aspp"
             android:textStyle="bold" />
 
@@ -40,15 +41,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".6"
-                    android:hint="Expired Date"
+                    android:hint="Product"
                     app:hintAnimationEnabled="true">
 
                     <EditText
                         android:id="@+id/edtProduct"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
-                        android:inputType="date"
                         android:padding="0dp"
                         android:textColor="@color/black_aspp" />
 
@@ -68,6 +69,7 @@
 
                     <EditText
                         android:id="@+id/edtQty"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:inputType="numberDecimal"
@@ -88,6 +90,7 @@
 
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteUom"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
@@ -114,6 +117,7 @@
 
                     <EditText
                         android:id="@+id/edtExpDate"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
@@ -137,6 +141,7 @@
 
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteCondition"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
@@ -157,6 +162,7 @@
 
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteReason"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
@@ -178,7 +184,7 @@
             <ImageView
                 android:id="@+id/imgDelete"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_delete_aspp" />
         </LinearLayout>
     </LinearLayout>

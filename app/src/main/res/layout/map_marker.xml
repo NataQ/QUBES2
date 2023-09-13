@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <ImageView
@@ -17,36 +17,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        app:cardElevation="5dp"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="@color/white">
+        app:cardElevation="5dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
             android:background="@color/white"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="5dp">
 
             <TextView
                 android:id="@+id/txt_name"
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="@dimen/superExtraSmallFont"
                 android:layout_marginTop="3dp"
+                android:gravity="center"
                 android:textColor="@color/black_aspp" />
 
             <TextView
                 android:id="@+id/txt_add"
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
                 android:layout_marginTop="3dp"
-                android:textSize="@dimen/superExtraSmallFont"
                 android:gravity="center"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:visibility="gone" />
 
         </LinearLayout>
 

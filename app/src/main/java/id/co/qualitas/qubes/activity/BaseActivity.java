@@ -37,6 +37,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -164,6 +165,7 @@ public class BaseActivity extends AppCompatActivity {
     public ArrayAdapter<String> getSpinnerAdapter() {
         return spinnerAdapter;
     }
+
     public ArrayAdapter<Reason> getSpinnerReasonAdapter() {
         return spinnerReasonAdapter;
     }
@@ -198,18 +200,27 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void logOut(Activity activity) {
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
         LayoutInflater inflater = LayoutInflater.from(activity);
-        final Dialog alertDialog = new Dialog(activity);
+        final Dialog dialog = new Dialog(activity);
         View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(dialogView);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        Button btnNo = alertDialog.findViewById(R.id.btnNo);
-        Button btnYes = alertDialog.findViewById(R.id.btnYes);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+//        layoutParams.copyFrom(dialog.getWindow().getAttributes());
+//        layoutParams.width = 300;
+//        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//        dialog.getWindow().setAttributes(layoutParams);//height => (4 * height) / 5
+        dialog.getWindow().setLayout(400 , ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                dialog.dismiss();
             }
         });
 
@@ -219,11 +230,11 @@ public class BaseActivity extends AppCompatActivity {
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                alertDialog.dismiss();
+                dialog.dismiss();
             }
         });
 
-        alertDialog.show();
+        dialog.show();
     }
 
     public void snackBar(View rootView, int message) {
@@ -459,6 +470,7 @@ public class BaseActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
         spinner.setSelection(adapter.getCount());
     }
+
     public void init() {
         progress = new ProgressDialog(this);
         progress.setMessage(Constants.STR_WAIT);
@@ -467,6 +479,7 @@ public class BaseActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.setCanceledOnTouchOutside(false);
     }
+
     protected void setToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }

@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@id/txtNo"
-            style="@style/TextAppearance.AppCompat.Headline"
+            style="@style/TextView_Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

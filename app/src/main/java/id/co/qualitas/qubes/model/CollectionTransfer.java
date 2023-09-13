@@ -14,10 +14,8 @@ public class CollectionTransfer implements Serializable {
     public CollectionTransfer() {
     }
 
-    public CollectionTransfer(String tglTransfer, String totalPayment, String left, List<Material> materialList) {
+    public CollectionTransfer(String tglTransfer, List<Material> materialList) {
         this.tglTransfer = tglTransfer;
-        this.totalPayment = totalPayment;
-        this.left = left;
         this.materialList = materialList;
     }
 

@@ -21,7 +21,7 @@
 
             <TextView
                 android:id="@+id/txtTitle"
-                style="@style/TextAppearance.AppCompat.Title"
+               style="@style/TextView_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
@@ -58,6 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="12dp"
+                android:textSize="@dimen/text_small"
                 android:layout_marginEnd="20dp"
                 android:text="@string/cancel"
                 android:textAllCaps="false"
@@ -73,6 +74,7 @@
                 android:layout_height="wrap_content"
                 android:padding="12dp"
                 android:text="@string/save"
+                android:textSize="@dimen/text_small"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textStyle="bold"

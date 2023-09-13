@@ -18,7 +18,7 @@ public class CollectionGiro implements Serializable {
     public CollectionGiro() {
     }
 
-    public CollectionGiro(String noGiro, String tglCair, String tglGiro, String idBankName, String bankName, String idBankCust, String bankCust, String totalPayment, String left, List<Material> materialList) {
+    public CollectionGiro(String noGiro, String tglCair, String tglGiro, String idBankName, String bankName, String idBankCust, String bankCust, List<Material> materialList) {
         this.noGiro = noGiro;
         this.tglCair = tglCair;
         this.tglGiro = tglGiro;
@@ -26,8 +26,11 @@ public class CollectionGiro implements Serializable {
         this.bankName = bankName;
         this.idBankCust = idBankCust;
         this.bankCust = bankCust;
-        this.totalPayment = totalPayment;
-        this.left = left;
+        this.materialList = materialList;
+    }
+
+    public CollectionGiro(String noGiro, List<Material> materialList) {
+        this.noGiro = noGiro;
         this.materialList = materialList;
     }
 

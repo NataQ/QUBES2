@@ -121,62 +121,15 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
+        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
         holder.edtPaid.setText(String.valueOf(detail.getQty()));
-        holder.txtPrice.setText(Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
+        holder.txtPrice.setText(!Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cb.setChecked(false);
         } else {
             holder.cb.setChecked(true);
         }
-
-        holder.txtProduct.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(mContext);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007 - KRATINGDAENG - MT");
-            groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-            groupList.add("11001 - KRATINGDAENG");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                holder.txtProduct.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-        });
-
         holder.cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

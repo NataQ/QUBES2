@@ -148,36 +148,7 @@ public class NewMainActivity extends BaseActivity {
         imgLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater inflater = LayoutInflater.from(NewMainActivity.this);
-                final Dialog alertDialog = new Dialog(NewMainActivity.this);
-                View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setContentView(dialogView);
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                Button btnNo = alertDialog.findViewById(R.id.btnNo);
-                Button btnYes = alertDialog.findViewById(R.id.btnYes);
-
-                btnNo.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
-
-                btnYes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-//                        PARAM = 12;
-//                        new RequestUrl().execute();
-//                        progress.show();
-                        Intent intent = new Intent(NewMainActivity.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        alertDialog.dismiss();
-                    }
-                });
-
-                alertDialog.show();
+                logOut(NewMainActivity.this);
             }
         });
     }

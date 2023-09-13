@@ -10,7 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,15 +20,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdapter.Holder> implements Filterable {
@@ -40,8 +43,10 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
     private LayoutInflater inflater;
     private Dialog alertDialog;
     private View dialogview;
+    private int posHeader;
+    private boolean isExpand = false;
 
-    public OrderAddExtraAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public OrderAddExtraAdapter(OrderAddActivity mContext, List<Material> mList, int posHeader, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -49,6 +54,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.posHeader = posHeader;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
@@ -147,6 +153,20 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         uomList.add("SLOP");
         uomList.add("KRT");
 
+        holder.txtNo.setText(String.valueOf(posHeader + 1) + "." + String.valueOf(holder.getAbsoluteAdapterPosition() + 1));
+
+        holder.imgView.setOnClickListener(v -> {
+            if (!isExpand) {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
+                holder.llDiscount.setVisibility(View.VISIBLE);
+                isExpand = true;
+            } else {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
+                holder.llDiscount.setVisibility(View.GONE);
+                isExpand = false;
+            }
+        });
+
         holder.edtProduct.setOnClickListener(v -> {
             Dialog alertDialog = new Dialog(mContext);
 
@@ -158,14 +178,17 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
             List<String> groupList = new ArrayList<>();
-            groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007 - KRATINGDAENG - MT");
-            groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-            groupList.add("11001 - KRATINGDAENG");
+            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+            groupList.add("11007_KRATINGDAENG - MT");
+            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+            groupList.add("11001_KRATINGDAENG");
 
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
+                String temp[] = nameItem.split("_");
                 holder.edtProduct.setText(nameItem);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setIdMaterial(temp[0]);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
                 alertDialog.dismiss();
             });
 
@@ -194,6 +217,42 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         });
 
         mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
+        holder.autoCompleteUom.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setUom(s.toString().trim());
+            }
+        });
+        holder.edtQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtQty, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                } else {
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                }
+            }
+        });
 
         holder.llDelete.setOnClickListener(v -> {
             inflater = LayoutInflater.from(mContext);
@@ -209,7 +268,8 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                 @Override
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    notifyDataSetChanged();
                     alertDialog.dismiss();
                 }
             });

@@ -76,34 +76,36 @@ public class StockRequestAddActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 hideKeyboard();
-                todayDate = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(fromDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
-
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
-
-                        fromDate = calendar.getTime();
-                        fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                        txtDate.setText(fromDateString);
-                        txtDate.setError(null);
-                    }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(StockRequestAddActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.getDatePicker().setLayoutParams(params);
-                dialog.show();
+                openDateDialog();
             }
         });
+    }
+
+    private void openDateDialog() {
+        todayDate = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fromDate);
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int date = calendar.get(Calendar.DATE);
+
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DATE, dayOfMonth);
+
+                fromDate = calendar.getTime();
+                fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
+                paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+                txtDate.setText(fromDateString);
+                txtDate.setError(null);
+            }
+        };
+        DatePickerDialog dialog = new DatePickerDialog(StockRequestAddActivity.this, dateSetListener, year, month, date);
+        dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
+        dialog.show();
     }
 
     private void initData() {

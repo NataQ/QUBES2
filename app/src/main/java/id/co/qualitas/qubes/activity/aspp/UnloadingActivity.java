@@ -88,16 +88,17 @@ public class UnloadingActivity extends BaseActivity {
 
     public void openDialogUnloading() {
         LayoutInflater inflater = LayoutInflater.from(UnloadingActivity.this);
-        final Dialog alertDialog = new Dialog(UnloadingActivity.this);
+        final Dialog dialog = new Dialog(UnloadingActivity.this);
         View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
-        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.setContentView(dialogView);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
-        TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
-        Button btnNo = alertDialog.findViewById(R.id.btnNo);
-        Button btnYes = alertDialog.findViewById(R.id.btnYes);
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
 
         txtTitle.setText("Unloading");
         txtDialog.setText("Are you sure want to unloading?");
@@ -105,14 +106,14 @@ public class UnloadingActivity extends BaseActivity {
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                dialog.dismiss();
             }
         });
 
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alertDialog.dismiss();
+                dialog.dismiss();
                 if (checkPermission()) {
                     new AsyncTaskGeneratePDF().execute();
                 } else {
@@ -122,7 +123,7 @@ public class UnloadingActivity extends BaseActivity {
             }
         });
 
-        alertDialog.show();
+        dialog.show();
     }
 
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {

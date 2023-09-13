@@ -12,8 +12,11 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
@@ -26,6 +29,9 @@ public class SummaryDetailExtraAdapter extends RecyclerView.Adapter<SummaryDetai
     private LayoutInflater mInflater;
     private SummaryDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
+    private boolean isExpand = false;
 
     public SummaryDetailExtraAdapter(int positionHeader, SummaryDetailActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -126,23 +132,25 @@ public class SummaryDetailExtraAdapter extends RecyclerView.Adapter<SummaryDetai
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
+        setFormatSeparator();
 
-        holder.txtNo.setText(String.valueOf(positionHeader) + "." + String.valueOf(position + 1));
+        holder.txtNo.setText(String.valueOf(positionHeader + 1) + "." + String.valueOf(position + 1));
         holder.txtProduct.setText(detail.getMaterialCode());
-        holder.txtQty.setText(detail.getQty());
+        holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(detail.getUom());
         holder.txtPrice.setText(detail.getPrice());
 
         holder.imgView.setOnClickListener(v -> {
-            if (holder.imgView.getDrawable().equals(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down))) {
+            if (!isExpand) {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
                 holder.llDiscount.setVisibility(View.VISIBLE);
+                isExpand = true;
             } else {
-                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down));
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
                 holder.llDiscount.setVisibility(View.GONE);
+                isExpand = false;
             }
         });
-
     }
 
     @Override
@@ -152,6 +160,14 @@ public class SummaryDetailExtraAdapter extends RecyclerView.Adapter<SummaryDetai
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }
 

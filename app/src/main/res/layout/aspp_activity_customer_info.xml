@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -67,7 +67,7 @@
                     android:padding="12dp">
 
                     <TextView
-                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        style="@style/TextView_Headline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -104,7 +104,7 @@
 
                         <TextView
                             android:id="@+id/txtNamaPemilik"
-                            style="@style/TextAppearance.MaterialComponents.Headline6"
+                            style="@style/TextView_Headline"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
@@ -227,7 +227,7 @@
                     android:padding="12dp">
 
                     <TextView
-                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        style="@style/TextView_Headline"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="12dp"
@@ -264,7 +264,7 @@
 
                         <TextView
                             android:id="@+id/txtNamaToko"
-                            style="@style/TextAppearance.MaterialComponents.Headline6"
+                            style="@style/TextView_Headline"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"

@@ -13,7 +13,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -53,7 +53,7 @@
                 android:background="@drawable/ic_back_aspp" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
+               style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -66,6 +66,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/text_small"
                 android:layout_gravity="end"
                 android:text="Add"
                 android:textAllCaps="true"

@@ -19,9 +19,11 @@
 
         <TextView
             android:id="@+id/txtNo"
+            style="@style/TextView_Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
+            android:textAlignment="center"
             android:text="1"
             android:textColor="@color/black_aspp" />
 
@@ -43,7 +45,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Extra"
@@ -51,6 +53,7 @@
 
                     <TextView
                         android:id="@+id/txtProduct"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Kratingdaeng"
@@ -66,14 +69,15 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="QTY"
                         android:textColor="@color/gray8_aspp" />
 
                     <TextView
-                        android:id="@+id/txtDate"
+                        android:id="@+id/txtQty"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="20"
@@ -87,7 +91,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Small"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="UOM"
@@ -95,6 +99,7 @@
 
                     <TextView
                         android:id="@+id/txtUom"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="BTL"
@@ -112,6 +117,7 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -120,6 +126,7 @@
 
                 <TextView
                     android:id="@+id/txtPrice"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -128,9 +135,9 @@
                     android:textColor="@color/black_aspp" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_drop_down"
+                    android:layout_width="@dimen/icon_drop"
+                    android:layout_height="@dimen/icon_drop"
+                    android:src="@drawable/ic_drop_down_aspp"
                     android:visibility="invisible" />
             </LinearLayout>
 
@@ -149,6 +156,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -157,6 +165,7 @@
 
                     <TextView
                         android:id="@+id/txtTotalDiscount"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -167,17 +176,17 @@
 
                     <ImageView
                         android:id="@+id/imgView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_drop_down" />
+                        android:layout_width="@dimen/icon_drop"
+                        android:layout_height="@dimen/icon_drop"
+                        android:src="@drawable/ic_drop_down_aspp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/llDiscount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:id="@+id/llDiscountQty"
@@ -188,6 +197,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -196,6 +206,7 @@
 
                         <TextView
                             android:id="@+id/txtDiscountQty"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -205,10 +216,10 @@
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="invisible"
-                            android:src="@drawable/ic_drop_down" />
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:src="@drawable/ic_drop_down_aspp"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -220,6 +231,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -228,6 +240,7 @@
 
                         <TextView
                             android:id="@+id/txtDiscountValue"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -237,10 +250,10 @@
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="invisible"
-                            android:src="@drawable/ic_drop_down" />
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:src="@drawable/ic_drop_down_aspp"
+                            android:visibility="invisible" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -252,6 +265,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -260,6 +274,7 @@
 
                         <TextView
                             android:id="@+id/txtDiscountKelipatan"
+                            style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -269,10 +284,10 @@
                             android:textStyle="bold" />
 
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="invisible"
-                            android:src="@drawable/ic_drop_down" />
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:src="@drawable/ic_drop_down_aspp"
+                            android:visibility="invisible" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -286,7 +301,7 @@
                 android:padding="5dp">
 
                 <TextView
-                    style="@style/TextAppearance.AppCompat.Title"
+                    style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -296,7 +311,7 @@
 
                 <TextView
                     android:id="@+id/txtTotal"
-                    style="@style/TextAppearance.AppCompat.Title"
+                    style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -306,9 +321,9 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_drop_down"
+                    android:layout_width="@dimen/icon_drop"
+                    android:layout_height="@dimen/icon_drop"
+                    android:src="@drawable/ic_drop_down_aspp"
                     android:visibility="invisible" />
             </LinearLayout>
 

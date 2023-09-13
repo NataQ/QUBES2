@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardElevation="0dp"
-        app:cardCornerRadius="@dimen/corner_fragment">
+        app:cardCornerRadius="@dimen/corner_fragment"
+        app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,12 +22,12 @@
             android:padding="14dp">
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
+                style="@style/TextView_Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/summary"
                 android:textColor="@color/black_aspp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                     android:background="@drawable/edit_text_search"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="5dp">
+                    android:padding="6dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -52,6 +52,7 @@
 
                     <EditText
                         android:id="@+id/edtSearch"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -79,11 +80,12 @@
                         android:src="@drawable/ic_filter_aspp" />
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:textColor="@color/black_aspp"
-                        android:text="Filter"/>
+                        android:text="Filter"
+                        android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
 
@@ -113,6 +115,7 @@
                         android:src="@drawable/refresh_grey_192x192" />
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/tap_to_refresh" />
@@ -120,6 +123,7 @@
 
                 <TextView
                     android:id="@+id/txtNoData"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"

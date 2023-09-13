@@ -639,7 +639,7 @@
     <string name="no_partner_notice">tidak ada data partner, silahkan hubungi admin</string>
     <string name="load_more"><u>load more</u></string>
     <string name="alert_notice_order_back">Anda sedang memasukkan data order. Yakin ingin ke halaman sebelumnya?</string>
-    <string name="info_sync_all">Sync all mungkin akan memakan waktu lama. Jika muncul dialog untuk wait/tunggu. Silahkan pilih tunggu.</string>
+    <string name="info_sync_all">Sync mungkin akan memakan waktu. Jika muncul dialog untuk wait/tunggu. Silahkan pilih tunggu.</string>
     <string name="press_material_for_view">Press material for view</string>
     <string name="account">Account</string>
     <string name="pleaseEnablePermission">Please enable all permission</string>

@@ -38,8 +38,8 @@ public class OrderActivity extends BaseActivity {
         initData();
 
         mAdapter = new OrderAdapter(this, mList, header -> {
-//            Intent intent = new Intent(this, OrderAddActivity.class);
-//            startActivity(intent);
+            Intent intent = new Intent(this, OrderDetailActivity.class);
+            startActivity(intent);
         });
         recyclerView.setAdapter(mAdapter);
 

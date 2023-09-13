@@ -97,6 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/llPassword"
+            android:textSize="@dimen/text_small"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/montserrat"
             android:padding="12dp"

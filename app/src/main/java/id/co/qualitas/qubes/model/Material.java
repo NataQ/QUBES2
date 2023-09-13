@@ -10,6 +10,7 @@ public class Material {
     private String materialCode;
     private String materialQty;
     private int qty;
+    private double amount;
     private String desc;
     private String batch;
     private byte[] attachment;
@@ -22,6 +23,13 @@ public class Material {
     private List<Material> extraItem;
 
     public Material() {
+    }
+
+    public Material(String idMaterial, String materialCode, String price, double amount) {
+        this.idMaterial = idMaterial;
+        this.materialCode = materialCode;
+        this.amount = amount;
+        this.price = price;
     }
 
     public Material(String klasifikasi, String materialCode, int qty, String price, String uom) {
@@ -44,6 +52,20 @@ public class Material {
     public Material(String materialCode, int qty) {
         this.materialCode = materialCode;
         this.qty = qty;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public Material(String idMaterial, String materialCode, String price) {
+        this.idMaterial = idMaterial;
+        this.materialCode = materialCode;
+        this.price = price;
     }
 
     public Material(String idMaterial, String materialCode, String materialQty, String uom) {

@@ -169,7 +169,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                     holder.txtTglGiro.setError(null);
                 }
             };
-            DatePickerDialog dialog = new DatePickerDialog(mContext, R.style.DialogTheme, dateSetListener, year, month, date);
+            DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
             dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
             dialog.show();
         });
@@ -195,7 +195,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                     holder.txtTglCair.setError(null);
                 }
             };
-            DatePickerDialog dialog = new DatePickerDialog(mContext, R.style.DialogTheme, dateSetListener, year, month, date);
+            DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
             dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
             dialog.show();
         });

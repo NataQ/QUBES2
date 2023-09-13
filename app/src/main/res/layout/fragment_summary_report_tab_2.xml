@@ -173,7 +173,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceSalesMonthly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceCallMonthly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceECMonthly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -224,7 +224,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceEAMonthly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -669,7 +669,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceSalesDaily"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -686,7 +686,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceCallDaily"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -703,7 +703,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceECDaily"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -720,7 +720,7 @@
                         android:layout_marginBottom="10dp"/>
 
                     <TextView
-                        style="@style/TextAppearance.AppCompat.Title"
+                       style="@style/TextView_Title"
                         android:id="@+id/txtBalanceEADaily"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

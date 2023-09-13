@@ -14,7 +14,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -55,7 +55,7 @@
                 android:background="@drawable/ic_back_aspp" />
 
             <TextView
-                style="@style/TextAppearance.AppCompat.Title"
+                style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -72,6 +72,7 @@
                 android:text="Add"
                 android:textAllCaps="true"
                 android:textColor="@color/black_aspp"
+                android:textSize="@dimen/text_small"
                 app:cornerRadius="5dp"
                 app:icon="@drawable/ic_add_aspp"
                 app:iconSize="@dimen/icon_add_inside_btn"
@@ -103,19 +104,19 @@
                     android:src="@drawable/refresh_grey_192x192" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tap_to_refresh"
-                    android:textSize="17sp" />
+                    android:text="@string/tap_to_refresh" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/txtNoData"
+                style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="No Data"
-                android:textSize="@dimen/smallFont"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -124,17 +125,6 @@
                 android:layout_height="match_parent"
                 android:clipToPadding="false" />
 
-            <!--                <id.co.qualitas.qubes.helper.MovableFloatingActionButton-->
-            <!--                    android:id="@+id/btnAdd"-->
-            <!--                    android:layout_width="wrap_content"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:layout_gravity="bottom|end"-->
-            <!--                    android:layout_margin="5dp"-->
-            <!--                    android:padding="3dp"-->
-            <!--                    app:backgroundTint="@color/new_blue"-->
-            <!--                    app:fabSize="normal"-->
-            <!--                    app:srcCompat="@drawable/ic_plus"-->
-            <!--                    app:tint="@color/white" />-->
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     </LinearLayout>

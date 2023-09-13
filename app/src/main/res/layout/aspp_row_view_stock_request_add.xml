@@ -12,18 +12,21 @@
 
     <TextView
         android:id="@+id/txtNo"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight=".1"
+        android:layout_weight=".05"
         android:text="1"
+        android:textAlignment="center"
         android:textColor="@color/gray8_aspp" />
 
     <TextView
         android:id="@+id/txtProduct"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight=".4"
+        android:layout_weight=".45"
         android:background="@drawable/bg_spinner_2"
         android:completionThreshold="1"
         android:hint="Search.."
@@ -33,10 +36,11 @@
 
     <EditText
         android:id="@+id/edtQty"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
+        android:layout_height="@dimen/edt_height"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_weight=".2"
         android:background="@drawable/editbox"
         android:hint="0"
@@ -47,8 +51,9 @@
 
     <Spinner
         android:id="@+id/spinnerUom"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/edt_height"
         android:layout_weight=".2"
         android:background="@drawable/bg_spinner_2"
         android:padding="5dp"
@@ -56,15 +61,15 @@
         android:textColor="@color/gray8_aspp" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/icon_delete"
+        android:layout_height="@dimen/icon_delete"
         android:layout_gravity="center"
-        android:layout_weight=".1">
+        android:layout_margin="5dp">
 
         <ImageView
             android:id="@+id/imgDelete"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/ic_delete_2" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_delete_aspp" />
     </LinearLayout>
 </LinearLayout>

@@ -178,7 +178,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 //                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 //
 //                List<String> groupList = new ArrayList<>();
-//                groupList.add("11 - KTD R");
+//                groupList.add("11_KTD R");
 //                groupList.add("12 - REDBULL");
 //                groupList.add("13 - KTD PRO");
 //                groupList.add("14 - KTD S");
@@ -224,11 +224,11 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 //                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 //
 //                List<String> groupList = new ArrayList<>();
-//                groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-//                groupList.add("11007 - KRATINGDAENG - MT");
-//                groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-//                groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-//                groupList.add("11001 - KRATINGDAENG");
+//                groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+//                groupList.add("11007_KRATINGDAENG - MT");
+//                groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+//                groupList.add("11005_KRATINGDAENG LUAR PULAU");
+//                groupList.add("11001_KRATINGDAENG");
 //
 //                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
 //                    spnProduct.setText(nameItem);
@@ -311,7 +311,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 //                        materialArrayListFiltered.get(getAdapterPosition()).setExpDate(expDateBE);
                     }
                 };
-                DatePickerDialog dialog = new DatePickerDialog(mContext, R.style.DialogTheme, dateSetListener, year, month, date);
+                DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
                 dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
                 dialog.show();
             }
@@ -328,11 +328,11 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
             List<String> groupList = new ArrayList<>();
-            groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007 - KRATINGDAENG - MT");
-            groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-            groupList.add("11001 - KRATINGDAENG");
+            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+            groupList.add("11007_KRATINGDAENG - MT");
+            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+            groupList.add("11001_KRATINGDAENG");
 
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
                 holder.edtProduct.setText(nameItem);

@@ -7,14 +7,16 @@
 
     <TextView
         android:id="@+id/txtName"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textColor="@color/gray8_aspp"
-        android:text="Drink" />
+        android:text="Drink"
+        android:textColor="@color/gray8_aspp" />
 
     <TextView
         android:id="@+id/txtQty"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="3dp"

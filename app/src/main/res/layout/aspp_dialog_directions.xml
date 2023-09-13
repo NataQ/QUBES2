@@ -20,17 +20,17 @@
             android:id="@+id/imgClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_gravity="end"
             android:padding="10dp"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_close"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:text="Directions"
             android:textColor="@color/darkGray"
-            android:layout_marginBottom="20dp"
             android:textSize="@dimen/mediumFont"
             android:textStyle="bold" />
 
@@ -105,6 +105,7 @@
             android:text="Directions"
             android:textAllCaps="false"
             android:textColor="@color/white"
+            android:textSize="@dimen/text_small"
             android:textStyle="bold"
             app:backgroundTint="@color/new_blue"
             app:cornerRadius="8dp" />

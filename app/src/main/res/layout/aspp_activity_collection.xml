@@ -13,7 +13,7 @@
         android:padding="12dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -83,6 +83,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
@@ -91,6 +92,7 @@
 
                     <TextView
                         android:id="@+id/txtDate"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".7"
@@ -108,6 +110,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
@@ -116,6 +119,7 @@
 
                     <TextView
                         android:id="@+id/txtTotalInvoice"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".7"
@@ -133,6 +137,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".3"
@@ -141,6 +146,7 @@
 
                     <TextView
                         android:id="@+id/txtTotalPaid"
+                        style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".7"
@@ -174,19 +180,19 @@
                             android:src="@drawable/refresh_grey_192x192" />
 
                         <TextView
+                            style="@style/TextView_Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/tap_to_refresh"
-                            android:textSize="17sp" />
+                            android:text="@string/tap_to_refresh" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/txtNoData"
+                        style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="No Data"
-                        android:textSize="@dimen/smallFont"
                         android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView

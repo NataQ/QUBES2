@@ -14,7 +14,7 @@
         android:padding="50dp">
 
         <TextView
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
@@ -29,7 +29,7 @@
             android:padding="30dp">
 
             <TextView
-                style="@style/TextAppearance.MaterialComponents.Headline5"
+                style="@style/TextView_Qubes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Selamat Datang"
@@ -37,7 +37,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                style="@style/TextAppearance.MaterialComponents.Headline6"
+                style="@style/TextView_Headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -46,6 +46,7 @@
 
             <TextView
                 android:id="@+id/txtUsername"
+                style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -62,14 +63,9 @@
                 android:orientation="horizontal"
                 android:padding="10dp">
 
-                <!--                <ImageView-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginEnd="8dp"-->
-                <!--                    android:src="@drawable/ic_username" />-->
-
                 <EditText
                     android:id="@+id/edtUsername"
+                    style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/space_transparent"
@@ -80,51 +76,9 @@
 
             </LinearLayout>
 
-            <!--        <TextView-->
-            <!--            android:id="@+id/txtSalesOffice"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_below="@+id/llSlsNo"-->
-            <!--            android:layout_marginTop="12dp"-->
-            <!--            android:fontFamily="@font/montserrat_medium"-->
-            <!--            android:text="Sales Office"-->
-            <!--            android:textColor="@color/black"-->
-            <!--            android:textSize="@dimen/smallFont" />-->
-
-            <!--        <LinearLayout-->
-            <!--            android:id="@+id/llSalesOffice"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_below="@+id/txtSalesOffice"-->
-            <!--            android:layout_marginTop="8dp"-->
-            <!--            android:background="@drawable/rectangle_edittext"-->
-            <!--            android:gravity="center_vertical"-->
-            <!--            android:orientation="horizontal"-->
-            <!--            android:padding="10dp">-->
-
-            <!--            <ImageView-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginEnd="8dp"-->
-            <!--                android:src="@drawable/ic_username" />-->
-
-            <!--            <EditText-->
-            <!--                android:id="@+id/edtSalesOffice"-->
-            <!--                android:layout_width="0dp"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_weight="1"-->
-            <!--                android:background="@color/space_transparent"-->
-            <!--                android:fontFamily="@font/montserrat_regular"-->
-            <!--                android:hint="Sales Office"-->
-            <!--                android:inputType="textPersonName"-->
-            <!--                android:text="10"-->
-            <!--                android:textColor="@color/black"-->
-            <!--                android:textSize="@dimen/smallFont" />-->
-
-            <!--        </LinearLayout>-->
-
             <TextView
                 android:id="@+id/txtPassword"
+                style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -141,14 +95,9 @@
                 android:orientation="horizontal"
                 android:padding="10dp">
 
-                <!--                <ImageView-->
-                <!--                    android:layout_width="wrap_content"-->
-                <!--                    android:layout_height="wrap_content"-->
-                <!--                    android:layout_marginEnd="8dp"-->
-                <!--                    android:src="@drawable/ic_password" />-->
-
                 <EditText
                     android:id="@+id/edtPassword"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -166,47 +115,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtKey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/montserrat_medium"
-                android:text="Key"
-                android:textColor="@color/black"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:id="@+id/llKey"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/rectangle_edittext"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_username" />
-
-                <EditText
-                    android:id="@+id/edtKey"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@color/space_transparent"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:hint="Key"
-                    android:inputType="textPersonName"
-                    android:text="36570"
-                    android:textColor="@color/black" />
-
-            </LinearLayout>
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogIn"
                 android:layout_width="match_parent"
@@ -216,12 +124,14 @@
                 android:text="Log In"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
+                android:textSize="@dimen/text_small"
                 app:backgroundTint="@color/blue_aspp"
                 app:cornerRadius="12dp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/txtVersion"
+            style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/txtSettings"
@@ -231,6 +141,7 @@
 
         <TextView
             android:id="@+id/txtSettings"
+            style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -240,45 +151,10 @@
 
     </RelativeLayout>
 
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:src="@drawable/login_pattern" />
-
-    <!--    <ImageView-->
-    <!--        android:id="@+id/imageViewBottom"-->
-    <!--        android:layout_width="0dp"-->
-    <!--        android:layout_height="0dp"-->
-    <!--        android:background="@drawable/ic_bacground_under_login"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/guideline73" />-->
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/ipChanger"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginStart="8dp"-->
-    <!--        android:layout_marginBottom="8dp"-->
-    <!--        android:text="@string/setting"-->
-    <!--        android:textColor="@color/blue4"-->
-    <!--        android:textSize="@dimen/smallFont"-->
-    <!--        app:layout_constraintBottom_toTopOf="@+id/guideline10"-->
-    <!--        app:layout_constraintLeft_toLeftOf="parent" />-->
-
-    <!--    <TextView-->
-    <!--        android:id="@+id/txtQubesVersion"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginEnd="8dp"-->
-    <!--        android:layout_marginBottom="8dp"-->
-    <!--        android:text="version"-->
-    <!--        android:textColor="@color/blue4"-->
-    <!--        android:textSize="@dimen/smallFont"-->
-    <!--        app:layout_constraintBottom_toBottomOf="@+id/guideline10"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
 </LinearLayout>

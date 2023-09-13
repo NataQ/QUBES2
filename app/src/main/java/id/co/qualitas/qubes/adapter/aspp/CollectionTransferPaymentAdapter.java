@@ -121,9 +121,9 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
+        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
         holder.edtPaid.setText(String.valueOf(detail.getQty()));
-        holder.txtPrice.setText(Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
+        holder.txtPrice.setText(!Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cb.setChecked(false);
@@ -142,11 +142,11 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
             List<String> groupList = new ArrayList<>();
-            groupList.add("11008 - KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007 - KRATINGDAENG - MT");
-            groupList.add("11006 - KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005 - KRATINGDAENG LUAR PULAU");
-            groupList.add("11001 - KRATINGDAENG");
+            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+            groupList.add("11007_KRATINGDAENG - MT");
+            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+            groupList.add("11001_KRATINGDAENG");
 
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
                 holder.txtProduct.setText(nameItem);

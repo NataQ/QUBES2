@@ -5,340 +5,343 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-<!--        <LinearLayout-->
-<!--            android:id="@+id/llDelete"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:background="@color/red_aspp"-->
-<!--            android:padding="5dp">-->
+        <TextView
+            android:id="@+id/txtNo"
+            style="@style/TextView_Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.1"
+            android:textAlignment="center"
+            android:textColor="@color/black_aspp"
+            android:textStyle="bold" />
 
-<!--            <ImageView-->
-<!--                android:id="@+id/imgDelete"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="25dp"-->
-<!--                android:src="@drawable/ic_delete_aspp" />-->
-<!--        </LinearLayout>-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-<!--    </RelativeLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:background="@color/gray9_aspp" />-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".6"
+                    android:hint="Product"
+                    app:hintAnimationEnabled="true">
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:padding="8dp">-->
+                    <EditText
+                        android:id="@+id/edtProduct"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:inputType="date"
+                        android:padding="0dp"
+                        android:textColor="@color/black_aspp" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/txtNo"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="1.1"-->
-<!--            android:textColor="@color/black_aspp"-->
-<!--            android:textStyle="bold" />-->
+                </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="5dp"-->
-<!--            android:layout_marginEnd="5dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:orientation="vertical">-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight=".2"
+                    android:hint="Qty"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="5dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:orientation="horizontal">-->
+                    <EditText
+                        android:id="@+id/edtQty"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="numberDecimal"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    style="@style/TextInputLayoutMaterial"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight=".6"-->
-<!--                    android:hint="Product"-->
-<!--                    app:hintAnimationEnabled="true">-->
+                </com.google.android.material.textfield.TextInputLayout>
 
-<!--                    <EditText-->
-<!--                        android:id="@+id/edtProduct"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="40dp"-->
-<!--                        android:focusableInTouchMode="false"-->
-<!--                        android:inputType="date"-->
-<!--                        android:padding="0dp"-->
-<!--                        android:textColor="@color/black_aspp" />-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpinnerInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight=".2"
+                    android:hint="@string/uom"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
 
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteUom"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    style="@style/TextInputLayoutMaterial"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center_vertical"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:layout_marginEnd="4dp"-->
-<!--                    android:layout_weight=".2"-->
-<!--                    android:hint="Qty"-->
-<!--                    android:padding="3dp"-->
-<!--                    app:hintAnimationEnabled="true">-->
+                </com.google.android.material.textfield.TextInputLayout>
 
-<!--                    <EditText-->
-<!--                        android:id="@+id/edtQty"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="40dp"-->
-<!--                        android:inputType="numberDecimal"-->
-<!--                        android:padding="3dp"-->
-<!--                        android:textColor="@color/black_aspp" />-->
+            </LinearLayout>
 
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    style="@style/SpinnerInputLayoutMaterial"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center_vertical"-->
-<!--                    android:layout_weight=".2"-->
-<!--                    android:hint="@string/uom"-->
-<!--                    android:padding="3dp"-->
-<!--                    app:hintAnimationEnabled="true">-->
+                <TextView
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Price"
+                    android:textColor="@color/gray8_aspp" />
 
-<!--                    <AutoCompleteTextView-->
-<!--                        android:id="@+id/autoCompleteUom"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="40dp"-->
-<!--                        android:focusableInTouchMode="false"-->
-<!--                        android:padding="3dp"-->
-<!--                        android:textColor="@color/black_aspp" />-->
+                <TextView
+                    android:id="@+id/txtPrice"
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="2,000,000"
+                    android:textColor="@color/black_aspp" />
 
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
+                <ImageView
+                    android:layout_width="@dimen/icon_drop"
+                    android:layout_height="@dimen/icon_drop"
+                    android:src="@drawable/ic_drop_down_aspp"
+                    android:visibility="invisible" />
+            </LinearLayout>
 
-<!--            </LinearLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue8_aspp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:padding="5dp">-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-<!--                <TextView-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="Price"-->
-<!--                    android:textColor="@color/gray8_aspp" />-->
+                    <TextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total Discount"
+                        android:textColor="@color/gray8_aspp" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/txtPrice"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:gravity="end"-->
-<!--                    android:text="2,000,000"-->
-<!--                    android:textColor="@color/black_aspp" />-->
+                    <TextView
+                        android:id="@+id/txtTotalDiscount"
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="19,500"
+                        android:textColor="@color/black_aspp"
+                        android:textStyle="bold" />
 
-<!--                <ImageView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:src="@drawable/ic_drop_down"-->
-<!--                    android:visibility="invisible" />-->
-<!--            </LinearLayout>-->
+                    <ImageView
+                        android:id="@+id/imgView"
+                        android:layout_width="@dimen/icon_drop"
+                        android:layout_height="@dimen/icon_drop"
+                        android:layout_marginStart="5dp"
+                        android:src="@drawable/ic_drop_down_aspp" />
+                </LinearLayout>
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/blue8_aspp"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="vertical"-->
-<!--                android:padding="5dp">-->
+                <LinearLayout
+                    android:id="@+id/llDiscount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:gravity="center"-->
-<!--                    android:orientation="horizontal">-->
+                    <LinearLayout
+                        android:id="@+id/llDiscountQty"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-<!--                    <TextView-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:text="Total Discount"-->
-<!--                        android:textColor="@color/gray8_aspp" />-->
+                        <TextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Qty"
+                            android:textColor="@color/gray8_aspp" />
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/txtTotalDiscount"-->
-<!--                        android:layout_width="0dp"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_weight="1"-->
-<!--                        android:gravity="end"-->
-<!--                        android:text="19,500"-->
-<!--                        android:textColor="@color/black_aspp"-->
-<!--                        android:textStyle="bold" />-->
+                        <TextView
+                            android:id="@+id/txtDiscountQty"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="15,500"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-<!--                    <ImageView-->
-<!--                        android:id="@+id/imgView"-->
-<!--                        android:layout_width="@dimen/icon_drop"-->
-<!--                        android:layout_height="@dimen/icon_drop"-->
-<!--                        android:layout_marginStart="5dp"-->
-<!--                        android:src="@drawable/ic_drop_down_aspp" />-->
-<!--                </LinearLayout>-->
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
 
-<!--                <LinearLayout-->
-<!--                    android:id="@+id/llDiscount"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:visibility="gone">-->
+                    <LinearLayout
+                        android:id="@+id/llDiscountValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/llDiscountQty"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="5dp"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="horizontal">-->
+                        <TextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Value"
+                            android:textColor="@color/gray8_aspp" />
 
-<!--                        <TextView-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:text="Discount Qty"-->
-<!--                            android:textColor="@color/gray8_aspp" />-->
+                        <TextView
+                            android:id="@+id/txtDiscountValue"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="2,000"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/txtDiscountQty"-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:gravity="end"-->
-<!--                            android:text="15,500"-->
-<!--                            android:textColor="@color/black_aspp"-->
-<!--                            android:textStyle="bold" />-->
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="@dimen/icon_drop"-->
-<!--                            android:layout_height="@dimen/icon_drop"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:visibility="invisible" />-->
-<!--                    </LinearLayout>-->
+                    <LinearLayout
+                        android:id="@+id/llDiscountKelipatan"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/llDiscountValue"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="5dp"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="horizontal">-->
+                        <TextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Discount Kelipatan"
+                            android:textColor="@color/gray8_aspp" />
 
-<!--                        <TextView-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:text="Discount Value"-->
-<!--                            android:textColor="@color/gray8_aspp" />-->
+                        <TextView
+                            android:id="@+id/txtDiscountKelipatan"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="2,000"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/txtDiscountValue"-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:gravity="end"-->
-<!--                            android:text="2,000"-->
-<!--                            android:textColor="@color/black_aspp"-->
-<!--                            android:textStyle="bold" />-->
+                        <ImageView
+                            android:layout_width="@dimen/icon_drop"
+                            android:layout_height="@dimen/icon_drop"
+                            android:layout_marginStart="5dp"
+                            android:visibility="invisible" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="@dimen/icon_drop"-->
-<!--                            android:layout_height="@dimen/icon_drop"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:visibility="invisible" />-->
-<!--                    </LinearLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/llDiscountKelipatan"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_marginTop="5dp"-->
-<!--                        android:gravity="center"-->
-<!--                        android:orientation="horizontal">-->
+                <TextView
+                    style="@style/TextView_Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total"
+                    android:textColor="@color/gray8_aspp"
+                    android:textStyle="bold" />
 
-<!--                        <TextView-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:text="Discount Kelipatan"-->
-<!--                            android:textColor="@color/gray8_aspp" />-->
+                <TextView
+                    android:id="@+id/txtTotal"
+                    style="@style/TextView_Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="2,000,000"
+                    android:textColor="@color/black_aspp"
+                    android:textStyle="bold" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/txtDiscountKelipatan"-->
-<!--                            android:layout_width="0dp"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_weight="1"-->
-<!--                            android:gravity="end"-->
-<!--                            android:text="2,000"-->
-<!--                            android:textColor="@color/black_aspp"-->
-<!--                            android:textStyle="bold" />-->
+                <ImageView
+                    android:layout_width="@dimen/icon_drop"
+                    android:layout_height="@dimen/icon_drop"
+                    android:src="@drawable/ic_drop_down_aspp"
+                    android:visibility="invisible" />
+            </LinearLayout>
+        </LinearLayout>
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="@dimen/icon_drop"-->
-<!--                            android:layout_height="@dimen/icon_drop"-->
-<!--                            android:layout_marginStart="5dp"-->
-<!--                            android:visibility="invisible" />-->
-<!--                    </LinearLayout>-->
-<!--                </LinearLayout>-->
-<!--            </LinearLayout>-->
+        <LinearLayout
+            android:id="@+id/llDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@color/red_aspp"
+            android:padding="5dp">
 
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:gravity="center"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:padding="5dp">-->
+            <ImageView
+                android:id="@+id/imgDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_delete_aspp" />
+        </LinearLayout>
+    </LinearLayout>
 
-<!--                <TextView-->
-<!--                    style="@style/TextAppearance.AppCompat.Title"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:text="Total"-->
-<!--                    android:textColor="@color/gray8_aspp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/txtTotal"-->
-<!--                    style="@style/TextAppearance.AppCompat.Title"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:gravity="end"-->
-<!--                    android:text="2,000,000"-->
-<!--                    android:textColor="@color/black_aspp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:src="@drawable/ic_drop_down"-->
-<!--                    android:visibility="invisible" />-->
-<!--            </LinearLayout>-->
-<!--        </LinearLayout>-->
-<!--    </LinearLayout>-->
-
-<!--    <View-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:layout_marginBottom="10dp"-->
-<!--        android:background="@color/gray9_aspp" />-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/gray9_aspp" />
 
 </LinearLayout>

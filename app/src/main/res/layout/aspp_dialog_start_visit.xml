@@ -18,7 +18,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.AppCompat.Title"
+            style="@style/TextView_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Time Visit"
@@ -33,6 +33,7 @@
             android:background="@color/gray9_aspp" />
 
         <TextView
+            style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="KM Awal"
@@ -40,6 +41,7 @@
 
         <EditText
             android:id="@+id/txtKmAwal"
+            style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -50,6 +52,7 @@
             android:textColor="@color/gray8_aspp" />
 
         <TextView
+            style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -60,12 +63,12 @@
             android:id="@+id/llImgBerangkat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="100dp"
-            android:padding="10dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_add_image"
             android:gravity="center"
-            android:orientation="vertical">
+            android:minHeight="100dp"
+            android:orientation="vertical"
+            android:padding="10dp">
 
             <ImageView
                 android:id="@+id/imgAdd"
@@ -98,6 +101,7 @@
                 android:text="@string/cancel"
                 android:textAllCaps="false"
                 android:textColor="@color/gray8_aspp"
+                android:textSize="@dimen/text_small"
                 app:cornerRadius="5dp"
                 app:strokeColor="@color/gray2_aspp"
                 app:strokeWidth="1dp" />
@@ -110,6 +114,7 @@
                 android:text="Start"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
+                android:textSize="@dimen/text_small"
                 app:backgroundTint="@color/blue_aspp"
                 app:cornerRadius="5dp" />
         </LinearLayout>

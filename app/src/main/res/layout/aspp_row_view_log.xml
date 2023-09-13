@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--<androidx.cardview.widget.CardView -->
-<!--    android:id="@+id/card_view"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="wrap_content"-->
-<!--    android:layout_gravity="center"-->
-<!--    -->
-<!--    card_view:cardCornerRadius="4dp">-->
-
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -23,7 +16,7 @@
 
         <TextView
             android:id="@+id/txtDate"
-            style="@style/TextAppearance.AppCompat.Small"
+            style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="8 August 2023"
@@ -45,7 +38,7 @@
 
         <TextView
             android:id="@+id/txtTime"
-            style="@style/TextAppearance.AppCompat.Small"
+            style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="08:00"
@@ -55,6 +48,7 @@
 
     <TextView
         android:id="@+id/txtDesc"
+        style="@style/TextView_Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

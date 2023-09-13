@@ -38,8 +38,11 @@ public class CollectionActivity extends BaseActivity {
 
         mAdapter = new CollectionAdapter(this, mList, header -> {
             Helper.setItemParam(Constants.COLLECTION_HEADER,header);
+            Helper.setItemParam(Constants.COLLECTION_FROM, 1);
             Intent intent = new Intent(this, CollectionFormActivity.class);
             startActivity(intent);
+//            Intent intent = new Intent(this, CollectionDetailActivity.class);
+//            startActivity(intent);
         });
 
         recyclerView.setAdapter(mAdapter);

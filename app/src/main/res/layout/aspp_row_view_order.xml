@@ -31,13 +31,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="ID Mobile"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -46,9 +48,10 @@
 
                 <TextView
                     android:id="@+id/txtIdMobile"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1"
                     android:textColor="@color/black_aspp" />
 
@@ -61,13 +64,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Order No."
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -76,9 +81,10 @@
 
                 <TextView
                     android:id="@+id/txtOrderNo"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1"
                     android:textColor="@color/black_aspp" />
 
@@ -91,13 +97,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Omzet"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -106,9 +114,10 @@
 
                 <TextView
                     android:id="@+id/txtOmzet"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1,000,000"
                     android:textColor="@color/black_aspp" />
 
@@ -130,6 +139,7 @@
 
             <TextView
                 android:id="@+id/txtStatus"
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"

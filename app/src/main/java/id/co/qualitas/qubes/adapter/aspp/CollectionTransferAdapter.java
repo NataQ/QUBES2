@@ -166,7 +166,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     holder.txtTglTransfer.setError(null);
                 }
             };
-            DatePickerDialog dialog = new DatePickerDialog(mContext, R.style.DialogTheme, dateSetListener, year, month, date);
+            DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
 //            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 //            dialog.getDatePicker().setLayoutParams(params);
 //            dialog.getWindow().setLayout(100,200);

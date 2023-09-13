@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/imgBack"
@@ -292,6 +292,7 @@
                 <com.google.android.material.button.MaterialButton
                     style="@style/Widget.MaterialComponents.Button"
                     android:id="@+id/btnAddMaterial"
+                    android:textSize="@dimen/text_small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+ Add Material"

@@ -18,7 +18,12 @@ public class CollectionCheque implements Serializable {
     public CollectionCheque() {
     }
 
-    public CollectionCheque(String noCheque, String tglCair, String tglCheque, String idBankName, String bankName, String idBankCust, String bankCust, String totalPayment, String left, List<Material> materialList) {
+    public CollectionCheque(String noCheque, List<Material> materialList) {
+        this.noCheque = noCheque;
+        this.materialList = materialList;
+    }
+
+    public CollectionCheque(String noCheque, String tglCair, String tglCheque, String idBankName, String bankName, String idBankCust, String bankCust, List<Material> materialList) {
         this.noCheque = noCheque;
         this.tglCair = tglCair;
         this.tglCheque = tglCheque;
@@ -26,8 +31,6 @@ public class CollectionCheque implements Serializable {
         this.bankName = bankName;
         this.idBankCust = idBankCust;
         this.bankCust = bankCust;
-        this.totalPayment = totalPayment;
-        this.left = left;
         this.materialList = materialList;
     }
 

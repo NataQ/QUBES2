@@ -18,7 +18,7 @@
             android:padding="12dp">
 
             <TextView
-                style="@style/TextAppearance.MaterialComponents.Headline5"
+                style="@style/TextView_Qubes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"

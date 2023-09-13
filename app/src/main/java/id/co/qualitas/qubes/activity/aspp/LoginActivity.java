@@ -37,7 +37,7 @@ public class LoginActivity extends BaseActivity {
     private String registerID;
     boolean showPassword = false;
     private ImageView imgShowPassword;
-    private EditText input_password;
+    private EditText edtPassword, edtUsername;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +69,12 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
                 if (!showPassword) {
                     //show password
-                    input_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    edtPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                     imgShowPassword.setImageDrawable(ContextCompat.getDrawable(LoginActivity.this, R.drawable.ic_not_look_password));
                     showPassword = true;
                 } else {
                     // hide password
-                    input_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
                     imgShowPassword.setImageDrawable(ContextCompat.getDrawable(LoginActivity.this, R.drawable.ic_look_password));
                     showPassword = false;
                 }
@@ -111,6 +111,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initialize() {
+        edtPassword = findViewById(R.id.edtPassword);
+        edtUsername = findViewById(R.id.edtUsername);
         imgShowPassword = findViewById(R.id.imgShowPassword);
         txtVersion = findViewById(R.id.txtVersion);
         login = findViewById(R.id.btnLogIn);

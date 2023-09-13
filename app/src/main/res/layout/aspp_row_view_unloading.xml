@@ -12,33 +12,38 @@
 
     <TextView
         android:id="@+id/txtNo"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight=".1"
+        android:layout_weight=".05"
         android:text="1"
+        android:textAlignment="center"
         android:textColor="@color/gray8_aspp" />
 
     <TextView
         android:id="@+id/txtProduct"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight=".4"
+        android:layout_weight=".45"
         android:text="Product"
         android:textColor="@color/gray8_aspp" />
 
     <TextView
         android:id="@+id/txtQty"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_weight=".2"
         android:text="Qty"
         android:textColor="@color/gray8_aspp" />
 
     <TextView
         android:id="@+id/txtSisaStock"
+        style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".2"

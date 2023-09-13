@@ -31,13 +31,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Order No."
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -46,9 +48,10 @@
 
                 <TextView
                     android:id="@+id/txtOrderNo"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="0WJ42100010001"
                     android:textColor="@color/black_aspp" />
 
@@ -61,13 +64,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Order Date"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -76,9 +81,10 @@
 
                 <TextView
                     android:id="@+id/txtDate"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1 June 2023"
                     android:textColor="@color/black_aspp" />
 
@@ -91,13 +97,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Invoice No."
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -106,9 +114,10 @@
 
                 <TextView
                     android:id="@+id/txtInvoiceNo"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1050A60GR82000001"
                     android:textColor="@color/black_aspp" />
 
@@ -121,13 +130,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Omzet"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -136,9 +147,10 @@
 
                 <TextView
                     android:id="@+id/txtOmzet"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="1,400,000"
                     android:textColor="@color/black_aspp" />
 
@@ -151,13 +163,15 @@
                 android:padding="5dp">
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
+                    android:layout_weight=".3"
                     android:text="Outlet"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
+                    style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -166,9 +180,10 @@
 
                 <TextView
                     android:id="@+id/txtOutlet"
+                    style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
+                    android:layout_weight=".7"
                     android:text="0WJ42 - SARI SARI (TK)"
                     android:textColor="@color/black_aspp" />
 
@@ -181,15 +196,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:background="@drawable/bg_status"
             android:backgroundTint="@color/green2_aspp"
+            android:gravity="center"
             android:minWidth="100dp">
 
             <TextView
                 android:id="@+id/txtStatus"
+                style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"

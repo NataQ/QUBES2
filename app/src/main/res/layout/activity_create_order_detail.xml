@@ -22,7 +22,7 @@
 
         <TextView
             android:id="@+id/txtTitle"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/imgBack"
@@ -61,6 +61,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:text="@string/next"
+            android:textSize="@dimen/text_small"
             android:textColor="@color/new_blue"
             app:cornerRadius="5dp"
             app:backgroundTint="@color/white" />
@@ -361,6 +362,7 @@
                     android:id="@+id/btnAddMaterial"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_small"
                     android:text="+ Add Material"
                     android:textAllCaps="false"
                     android:textColor="@color/white"

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -24,8 +25,8 @@ import id.co.qualitas.qubes.model.User;
 public class OrderAddActivity extends BaseActivity {
     private OrderAddAdapter mAdapter;
     private List<Material> mList;
-    private MovableFloatingActionButton btnAdd;
-    private Button btnNext, btnGetDiscount;
+    private Button btnAdd, btnNext, btnGetDiscount;
+    private TextView txtDate, txtOmzet;
     private ImageView imgBack;
 
     @Override
@@ -38,6 +39,7 @@ public class OrderAddActivity extends BaseActivity {
         initData();
 
         mAdapter = new OrderAddAdapter(this, mList, header -> {
+
         });
 
         recyclerView.setAdapter(mAdapter);
@@ -47,19 +49,24 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         btnNext.setOnClickListener(v -> {
-            Intent intent = new Intent(this, OrderSummaryActivity.class);
+            onBackPressed();
+            Helper.setItemParam(Constants.COLLECTION_FROM, 3);
+            Intent intent = new Intent(this, CollectionFormActivity.class);
             startActivity(intent);
         });
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(OrderAddActivity.this);
+        });
     }
 
     private void addNew() {
         Material detail = new Material("", "", "", "");
         mList.add(detail);
-
         new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -76,13 +83,17 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
+        txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        txtOmzet = findViewById(R.id.txtOmzet);
+        txtDate = findViewById(R.id.txtDate);
         btnGetDiscount = findViewById(R.id.btnGetDiscount);
+        imgLogOut = findViewById(R.id.imgLogOut);
         btnNext = findViewById(R.id.btnNext);
         imgBack = findViewById(R.id.imgBack);
         btnAdd = findViewById(R.id.btnAdd);
@@ -94,10 +105,5 @@ public class OrderAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    public void delete(Material detail, int pos) {
-        mList.remove(pos);
-        mAdapter.notifyItemRemoved(pos);
     }
 }

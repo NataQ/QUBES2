@@ -100,7 +100,7 @@ public class StoreCheckActivity extends BaseActivity {
                         txtDate.setError(null);
                     }
                 };
-                DatePickerDialog dialog = new DatePickerDialog(StoreCheckActivity.this, R.style.DialogTheme, dateSetListener, year, month, date);
+                DatePickerDialog dialog = new DatePickerDialog(StoreCheckActivity.this, dateSetListener, year, month, date);
                 dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
                 ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 dialog.getDatePicker().setLayoutParams(params);
