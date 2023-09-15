@@ -29,6 +29,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.datecs.printer.Printer;
 import com.datecs.printer.ProtocolAdapter;
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +55,10 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     private SwipeRefreshLayout mSwipeLayout;
     private List<AbstractConnector> mConnectorList;
     private ConnectorAdapter mConnectorAdapter;
-
+    public static final int PERMISSION_BLUETOOTH = 1;
+    public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
+    public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
+    public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final Handler mHandler = new Handler();
 
     @Override
@@ -61,19 +66,37 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_connector);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+            }
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+            }
+        } else {
+            setPrinterList();
+        }
+    }
+
+    private void setPrinterList() {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mConnectorList = new ArrayList<>();
         mConnectorAdapter = new ConnectorAdapter(ConnectorActivity.this, mConnectorList, this);
 
-        mConnectorView = (RecyclerView) findViewById(R.id.list);
+        mConnectorView = findViewById(R.id.list);
         mConnectorView.setAdapter(mConnectorAdapter);
 
         ItemTouchHelper.Callback callback = new ConnectorSwipeHelper(mConnectorAdapter);
         ItemTouchHelper helper = new ItemTouchHelper(callback);
         helper.attachToRecyclerView(mConnectorView);
 
-        mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        mSwipeLayout = findViewById(R.id.swipe_container);
         assert mSwipeLayout != null;
         mSwipeLayout.setOnRefreshListener(this);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -81,16 +104,14 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        // When activity is started from application launcher probably we want Bluetooth to
-        // be enabled.
+        // When activity is started from application launcher probably we want Bluetooth to be enabled.
         if (Intent.ACTION_MAIN.equals(getIntent().getAction())) {
             grandLocationPermission();
             enableBluetooth();
         }
 
         // Register receiver to notify when USB device is detached.
-        registerReceiver(mUsbDeviceDetachedReceiver, new IntentFilter(UsbManager
-                .ACTION_USB_DEVICE_DETACHED));
+        registerReceiver(mUsbDeviceDetachedReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
         // Register receiver to notify when Bluetooth state is changed.
         IntentFilter bluetoothFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         bluetoothFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
@@ -223,13 +244,8 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     }
 
     public void grandLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
         }
     }
 
@@ -537,18 +553,18 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
             public void run(ProgressDialog dialog, Printer printer) throws IOException {
                 StringBuffer textBuffer = new StringBuffer();
                 textBuffer.append("{reset}{center}{w}{h}RECEIPT");
-                textBuffer.append("{br}");
-                textBuffer.append("{br}");
-                textBuffer.append("{reset}1. {b}First item{br}");
-                textBuffer.append("{reset}{right}{h}$0.50 A{br}");
-                textBuffer.append("{reset}2. {u}Second item{br}");
-                textBuffer.append("{reset}{right}{h}$1.00 B{br}");
-                textBuffer.append("{reset}3. {i}Third item{br}");
-                textBuffer.append("{reset}{right}{h}$1.50 C{br}");
-                textBuffer.append("{br}");
-                textBuffer.append("{reset}{right}{w}{h}TOTAL: {/w}$3.00  {br}");
-                textBuffer.append("{br}");
-                textBuffer.append("{reset}{center}{s}Thank You!{br}");
+//                textBuffer.append("{br}");
+//                textBuffer.append("{br}");
+//                textBuffer.append("{reset}1. {b}First item{br}");
+//                textBuffer.append("{reset}{right}{h}$0.50 A{br}");
+//                textBuffer.append("{reset}2. {u}Second item{br}");
+//                textBuffer.append("{reset}{right}{h}$1.00 B{br}");
+//                textBuffer.append("{reset}3. {i}Third item{br}");
+//                textBuffer.append("{reset}{right}{h}$1.50 C{br}");
+//                textBuffer.append("{br}");
+//                textBuffer.append("{reset}{right}{w}{h}TOTAL: {/w}$3.00  {br}");
+//                textBuffer.append("{br}");
+//                textBuffer.append("{reset}{center}{s}Thank You!{br}");
 
                 printer.reset();
                 printer.printTaggedText(textBuffer.toString());

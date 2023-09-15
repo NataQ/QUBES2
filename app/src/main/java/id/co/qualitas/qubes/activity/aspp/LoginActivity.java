@@ -61,10 +61,6 @@ public class LoginActivity extends BaseActivity {
     private ImageView imgShowPassword;
     private EditText edtPassword, edtUsername;
 
-    public static final int PERMISSION_BLUETOOTH = 1;
-    public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
-    public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
-    public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private final Locale locale = new Locale("id", "ID");
     private final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a", locale);
     private final NumberFormat nf = NumberFormat.getCurrencyInstance(locale);
