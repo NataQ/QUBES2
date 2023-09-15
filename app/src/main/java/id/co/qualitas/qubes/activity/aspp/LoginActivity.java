@@ -1,9 +1,18 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -16,12 +25,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.UUID;
 
 import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
@@ -30,6 +47,11 @@ import id.co.qualitas.qubes.activity.SettingActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.printer.ConnectorActivity;
+
+//https://github.com/DantSu/ESCPOS-ThermalPrinter-Android
+//https://stackoverflow.com/questions/48496035/how-to-connect-to-a-bluetooth-printer
+//https://github.com/sanxy/BluetoothPrinter
 
 public class LoginActivity extends BaseActivity {
     private Button login;
@@ -39,6 +61,14 @@ public class LoginActivity extends BaseActivity {
     private ImageView imgShowPassword;
     private EditText edtPassword, edtUsername;
 
+    public static final int PERMISSION_BLUETOOTH = 1;
+    public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
+    public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
+    public static final int PERMISSION_BLUETOOTH_SCAN = 4;
+    private final Locale locale = new Locale("id", "ID");
+    private final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a", locale);
+    private final NumberFormat nf = NumberFormat.getCurrencyInstance(locale);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +77,20 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.aspp_activity_login);
 
         init();
+        deleteHelper();
         initialize();
 
         txtVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
 
+        txtVersion.setOnClickListener(v -> {
+        });
+
         txtSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogSetting();
+//                showDialogSetting();
+                Intent intent = new Intent(getApplicationContext(), ConnectorActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -150,5 +186,13 @@ public class LoginActivity extends BaseActivity {
         } else {
             registerID = Helper.getItemParam(Constants.REGIISTERID).toString();
         }
+    }
+
+    private void deleteHelper() {
+        Helper.removeItemParam(Constants.CURRENTPAGE);
+        Helper.removeItemParam(Constants.USER_DETAIL);
+        Helper.removeItemParam(Constants.ROUTE_CUSTOMER_HEADER);
+        Helper.removeItemParam(Constants.COLLECTION_FROM);
+        Helper.removeItemParam(Constants.COLLECTION_HEADER);
     }
 }

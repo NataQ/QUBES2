@@ -28,6 +28,7 @@
         android:id="@+id/layoutChangeIP"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="@drawable/selector_menu_setting"
         android:clickable="true"
         android:orientation="horizontal"
@@ -48,6 +49,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:background="@color/light_gray" />
 
     <LinearLayout

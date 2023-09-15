@@ -1,10 +1,12 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
@@ -14,10 +16,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
@@ -28,28 +34,43 @@ import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
+import id.co.qualitas.qubes.fragment.TimerFragment;
+import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
 
 public class DailySalesmanActivity extends BaseActivity {
-    private TextView txtOutlet, txtTypeOutlet;
+    private TextView txtOutlet, txtTypeOutlet, txtStatus;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
-    private Chronometer timerValue;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn;
     private LinearLayout llKTP, llNPWP, llOutlet;
-    private ImageView imgKTP, imgNPWP, imgOutlet;
+    private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
     private RecyclerView rvPromo, rvOutstandingFaktur, rvDCTOutlet;
-
     private CustomerInfoPromoAdapter promoAdapter;
     private CustomerInfoOutstandingFakturAdapter fakturAdapter;
     private CustomerInfoDctOutletAdapter dctOutletAdapter;
-
     private List<Material> fakturList;
     private List<Material> dctOutletList;
     private List<Promotion> promoList;
+
+    static int h;
+    static int m;
+    static int s;
+    @SuppressLint("StaticFieldLeak")
+    static Chronometer timerValue;
+    //how to save chronometer => checkInOutRequest.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
+    private Date curDate = new Date();
+    private Date dCheckIn = null, dCurrent = null, dResume = null;
+    public String checkInTime, pauseTime, curTime, continueTime, timeDuration;
+    public boolean pause = false;
+
+    public static Chronometer getTimerValue() {
+        return timerValue;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +150,18 @@ public class DailySalesmanActivity extends BaseActivity {
 
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
 //                spnBankTransfer.setText(nameItem);
+                if (Helper.getItemParam(Constants.PAUSE) != null) {
+                    Helper.setItemParam(Constants.PLAY, "1");
+                    Helper.removeItemParam(Constants.PAUSE);
+                } else {
+                    Helper.setItemParam(Constants.PAUSE, "1");
+                    Helper.removeItemParam(Constants.PLAY);
+                }
+                if (pause) {
+                    resumeTimer();
+                } else {
+                    pauseTimer();
+                }
                 alertDialog.dismiss();
             });
 
@@ -221,6 +254,10 @@ public class DailySalesmanActivity extends BaseActivity {
         promoList.add(new Promotion("Beli 4 Kratingdaeng get discount 10%"));
         promoList.add(new Promotion("Beli kratingdaeng bisa nonton bola di Madrid"));
         promoList.add(new Promotion("Dapatkan voucher Buy 1 Get 1 untuk variant Kratingdaeng Bull"));
+
+//        if (PARAM_STATUS_OUTLET.equals(Constants.PAUSE)) {
+//            checkInOutRequest.setContinueTime(null);
+//        }
     }
 
     private void initialize() {
@@ -258,11 +295,172 @@ public class DailySalesmanActivity extends BaseActivity {
         llOrder = findViewById(R.id.llOrder);
         llCollection = findViewById(R.id.llCollection);
         llReturn = findViewById(R.id.llReturn);
+        txtStatus = findViewById(R.id.txtStatus);
+        imgPause = findViewById(R.id.imgPause);
         imgLogOut = findViewById(R.id.imgLogOut);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        setTimerValue();
+    }
+
+    private void pauseTimer() {
+        timerValue.stop();
+//            OutletResponse pause = new OutletResponse();
+//            pause.setIdOutlet(outletResponse.getIdOutlet());
+//            pause.setTimer(String.valueOf(timerValue.getBase()));
+
+        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_play));
+    }
+
+    private void resumeTimer() {
+        if (Helper.valTime == 1) {
+            Helper.tempTime = SystemClock.elapsedRealtime();
+            Helper.valTime = 2;
+        }
+        formatResumeTime();
+        timerValue.start();
+        Helper.resume = false;
+
+        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
+    }
+
+    private static void formatTime() {
+        long time = SystemClock.elapsedRealtime() - Helper.tempTime;
+        h = (int) (time / 3600000);
+        m = (int) (time - h * 3600000) / 60000;
+        s = (int) (time - h * 3600000 - m * 60000) / 1000;
+        Helper.mm = m < 10 ? "0" + m : m + "";
+        Helper.ss = s < 10 ? "0" + s : s + "";
+    }
+
+    private static void formatResumeTime() {
+        timerValue.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onChronometerTick(Chronometer cArg) {
+                formatTime();
+                int finalMinute = Integer.parseInt(Helper.mm) + Helper.tempMinute;
+                int finalSecond = Integer.parseInt(Helper.ss) + Helper.tempSecond;
+
+                if (finalSecond >= 60) {
+                    finalMinute += 1;
+                    finalSecond -= 60;
+                }
+
+                String fnMinute = finalMinute < 10 ? "0" + finalMinute : finalMinute + "";
+                String fnSecond = finalSecond < 10 ? "0" + finalSecond : finalSecond + "";
+                Helper.mm = fnMinute;
+                Helper.ss = fnSecond;
+                cArg.setText(fnMinute + ":" + fnSecond);
+            }
+        });
+    }
+
+    private void playTimerBy(long time) {
+        timerValue.setBase(time);
+        if (!PARAM_STATUS_OUTLET.equals(Constants.PAUSE)
+                && !PARAM_STATUS_OUTLET.equals(Constants.FINISHED)) {
+            timerValue.start();
+        } else {
+            timerValue.stop();
+        }
+    }
+
+    private void setTimerValue() {
+        /*Timer*/
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_TYPE_6);
+
+        if (curDate != null) {
+            String currentDate = Helper.convertDateToString(Constants.DATE_TYPE_5, curDate);
+            curTime = getTimeFromDate(currentDate);
+        } else {
+            curTime = null;
+            dCurrent = null;
+        }
+
+//        if (checkInOutRequest.getCheckInTime() != null) {
+//            try {
+//                String date = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getCheckInTime());
+//                checkInTime = getTimeFromDate(date);
+//            } catch (Exception ignored) {
+//                checkInTime = null;
+//            }
+//        } else {
+        checkInTime = null;
+//        }
+
+//        if (checkInOutRequest.getPauseTime() != null) {
+//            try {
+//                String pauseDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getPauseTime());
+//                pauseTime = getTimeFromDate(pauseDate);
+//            } catch (Exception ignored) {
+//                pauseTime = null;
+//            }
+//        } else {
+        pauseTime = null;
+//        }
+
+//        if (checkInOutRequest.getContinueTime() != null) {
+//            try {
+//                String continueDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getContinueTime());
+//                continueTime = getTimeFromDate(continueDate);
+//            } catch (Exception ignored) {
+//                continueTime = null;
+//                dResume = null;
+//            }
+//        } else {
+        continueTime = null;
+        dResume = null;
+//        }
+
+        try {
+            if (checkInTime != null) {
+                dCheckIn = format.parse(checkInTime);
+            }
+            if (curTime != null) {
+                dCurrent = format.parse(curTime);
+            }
+            if (continueTime != null) {
+                dResume = format.parse(continueTime);
+            }
+        } catch (ParseException ignored) {
+        }
+
+        //in milliseconds
+        long elapseTimeNow = dCheckIn != null ? dCurrent.getTime() - dCheckIn.getTime() : 0;
+
+        switch (PARAM_STATUS_OUTLET) {
+            case Constants.CHECK_IN:
+                playTimerBy(SystemClock.elapsedRealtime() - elapseTimeNow);
+                break;
+            case Constants.PAUSE:
+            case Constants.RESUME:
+                if (timeDuration != null) {
+                    try {
+                        playTimerBy(SystemClock.elapsedRealtime() - (Long.parseLong(timeDuration) + (dResume != null ? dCurrent.getTime() - dResume.getTime() : 0)));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+                break;
+            case Constants.FINISHED:
+                if (timeDuration != null) {
+                    try {
+                        playTimerBy(SystemClock.elapsedRealtime() - Long.parseLong(timeDuration));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+                break;
+            default:
+                timerValue.start();
+                break;
+        }
+    }
+
+    private String getTimeFromDate(String date) {
+        String[] part = date.split(Constants.SPACE);
+        return part[1];
     }
 }

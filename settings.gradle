@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "QUBES"
 include ':app'
+include ':lib'

@@ -30,6 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Map;
 
@@ -80,59 +81,6 @@ public class NewMainActivity extends BaseActivity {
 //    // The BroadcastReceiver used to listen from broadcasts from the service.
 //    private MyReceiver myReceiver;
 //    private static LocationUpdatesService mServiceFusedLocation = null;
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
-            if (currentpage == null) {
-                currentpage = "0";
-            }
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    if (!currentpage.equals("1")) {
-                        Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                        fragment = new HomeFragment();
-                        setContent(fragment);
-                    }
-                    return true;
-                case R.id.navigation_route_customer:
-                    if (!currentpage.equals("2")) {
-                        Helper.setItemParam(Constants.CURRENTPAGE, "2");
-//                        fragment = new OrderPlanFragment();
-                        fragment = new RouteCustomerFragment();
-//                        fragment = new NewVisitHomeFragment();
-                        setContent(fragment);
-                    }
-                    return true;
-                case R.id.navigation_activity:
-                    if (!currentpage.equals("3")) {
-                        Helper.setItemParam(Constants.CURRENTPAGE, "3");
-//                        fragment = new NewVisitHomeFragment();
-                        fragment = new ActivityFragment();
-                        setContent(fragment);
-                    }
-                    return true;
-                case R.id.navigation_summary:
-                    if (!currentpage.equals("4")) {
-                        Helper.setItemParam(Constants.CURRENTPAGE, "4");
-                        fragment = new SummaryFragment();
-                        setContent(fragment);
-                    }
-                    return true;
-                case R.id.navigation_account:
-                    if (!currentpage.equals("5")) {
-                        Helper.setItemParam(Constants.CURRENTPAGE, "5");
-                        fragment = new AccountFragment();
-                        setContent(fragment);
-                    }
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,8 +199,55 @@ public class NewMainActivity extends BaseActivity {
     private void initialize() {
         imgLogOut = findViewById(R.id.imgLogOut);
         bottomNavigationView = findViewById(R.id.navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fragmentManager = getSupportFragmentManager();
+
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
+                if (currentpage == null) {
+                    currentpage = "0";
+                }
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        if (!currentpage.equals("1")) {
+                            Helper.setItemParam(Constants.CURRENTPAGE, "1");
+                            fragment = new HomeFragment();
+                            setContent(fragment);
+                        }
+                        return true;
+                    case R.id.navigation_route_customer:
+                        if (!currentpage.equals("2")) {
+                            Helper.setItemParam(Constants.CURRENTPAGE, "2");
+                            fragment = new RouteCustomerFragment();
+                            setContent(fragment);
+                        }
+                        return true;
+                    case R.id.navigation_activity:
+                        if (!currentpage.equals("3")) {
+                            Helper.setItemParam(Constants.CURRENTPAGE, "3");
+                            fragment = new ActivityFragment();
+                            setContent(fragment);
+                        }
+                        return true;
+                    case R.id.navigation_summary:
+                        if (!currentpage.equals("4")) {
+                            Helper.setItemParam(Constants.CURRENTPAGE, "4");
+                            fragment = new SummaryFragment();
+                            setContent(fragment);
+                        }
+                        return true;
+                    case R.id.navigation_account:
+                        if (!currentpage.equals("5")) {
+                            Helper.setItemParam(Constants.CURRENTPAGE, "5");
+                            fragment = new AccountFragment();
+                            setContent(fragment);
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
     }
 
     public void setContent(Fragment fragment) {

@@ -33,11 +33,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import com.dantsu.escposprinter.EscPosPrinter;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothConnection;
-import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections;
-import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.DateFormat;
@@ -192,13 +187,6 @@ public class LoginActivity extends BaseActivity {
             }
         }
 
-        txtQubes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                doPrint();
-            }
-        });
-
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -241,49 +229,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
-    }
-
-    public void doPrint() {
-        try {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-            } else {
-                BluetoothConnection connection = BluetoothPrintersConnections.selectFirstPaired();
-                if (connection != null) {
-                    EscPosPrinter printer = new EscPosPrinter(connection, 203, 48f, 32);
-                    final String text = "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer,
-                            this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.ic_qubes,
-                                    DisplayMetrics.DENSITY_LOW, getTheme())) + "</img>\n" +
-                            "[L]\n" +
-                            "[L]" + df.format(new Date()) + "\n" +
-                            "[C]================================\n" +
-                            "[L]<b>Effective Java</b>\n" +
-                            "[L]    1 pcs[R]" + nf.format(25000) + "\n" +
-                            "[L]<b>Headfirst Android Development</b>\n" +
-                            "[L]    1 pcs[R]" + nf.format(45000) + "\n" +
-                            "[L]<b>The Martian</b>\n" +
-                            "[L]    1 pcs[R]" + nf.format(20000) + "\n" +
-                            "[C]--------------------------------\n" +
-                            "[L]TOTAL[R]" + nf.format(90000) + "\n" +
-                            "[L]DISCOUNT 15%[R]" + nf.format(13500) + "\n" +
-                            "[L]TAX 10%[R]" + nf.format(7650) + "\n" +
-                            "[L]<b>GRAND TOTAL[R]" + nf.format(84150) + "</b>\n" +
-                            "[C]--------------------------------\n" +
-                            "[C]<barcode type='ean13' height='10'>202105160005</barcode>\n" +
-                            "[C]--------------------------------\n" +
-                            "[C]Thanks For Shopping\n" +
-                            "[C]https://kodejava.org\n" +
-                            "[L]\n" +
-                            "[L]<qrcode>https://kodejava.org</qrcode>\n";
-
-                    printer.printFormattedText(text);
-                } else {
-                    Toast.makeText(this, "No printer was connected!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        } catch (Exception e) {
-            Log.e("APP", "Can't print", e);
-        }
     }
 
     @Override

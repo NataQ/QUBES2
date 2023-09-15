@@ -427,7 +427,6 @@ public class Timer2Fragment extends BaseFragment {
             } else {
                 gpsTracker.showSettingsAlert();
             }
-
             progress.dismiss();
         }
     }

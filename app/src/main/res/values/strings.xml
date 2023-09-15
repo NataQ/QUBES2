@@ -668,6 +668,7 @@
     <string name="default_notification_channel_name">broadcast name</string>
     <string name="location_updated">Location Updated: %1$s</string>
     <string name="directions">Directions</string>
-<!--    <string name="areYourSureDelete">Are you sure want to delete the item?</string>-->
+    <string name="msg_printing_text">Printing...</string>
+    <!--    <string name="areYourSureDelete">Are you sure want to delete the item?</string>-->
 
 </resources>
