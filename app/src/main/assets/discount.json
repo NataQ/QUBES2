@@ -1,0 +1,32 @@
+{
+   "kodeLangganan":"BR346",
+   "tipeOutlet":"3A",
+   "NoOrder":"BTA275023",
+   "tglOrder":"2023-01-31",
+   "barang":[
+      {
+         "kodeBarang":"61404",
+         "diskon":{
+            "discQty":"500",
+            "discValue":"500",
+            "discKelipatan":"500"
+         },
+         "extra":{
+            "KodeBarang":"61403",
+            "Qty":"10"
+         }
+      },
+      {
+         "kodeBarang":"65713",
+         "diskon":{
+            "discQty":"1000",
+            "discValue":"1000",
+            "discKelipatan":"1000"
+         },
+         "extra":{
+            "KodeBarang":"65713",
+            "Qty":"10"
+         }
+      }
+   ]
+}
