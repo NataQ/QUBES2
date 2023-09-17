@@ -18,11 +18,30 @@ public class Material {
     private String klasifikasi;
     private String price;
     private String uom;
+    private int totalDiscount;
     private Discount discount;
     private List<Discount> extra;
     private List<Material> extraItem;
 
     public Material() {
+    }
+    public Material(String idMaterial, String materialCode, int qty, String uom, String price, int totalDiscount) {
+        this.idMaterial = idMaterial;
+        this.materialCode = materialCode;
+        this.qty = qty;
+        this.price = price;
+        this.uom = uom;
+        this.totalDiscount = totalDiscount;
+    }
+
+    public Material(String idMaterial, String materialCode, int qty, String uom, String price, int totalDiscount, List<Material> extraItem) {
+        this.idMaterial = idMaterial;
+        this.materialCode = materialCode;
+        this.qty = qty;
+        this.price = price;
+        this.uom = uom;
+        this.totalDiscount = totalDiscount;
+        this.extraItem = extraItem;
     }
 
     public Material(String idMaterial, String materialCode, String price, double amount) {
@@ -52,6 +71,14 @@ public class Material {
     public Material(String materialCode, int qty) {
         this.materialCode = materialCode;
         this.qty = qty;
+    }
+
+    public int getTotalDiscount() {
+        return totalDiscount;
+    }
+
+    public void setTotalDiscount(int totalDiscount) {
+        this.totalDiscount = totalDiscount;
     }
 
     public double getAmount() {

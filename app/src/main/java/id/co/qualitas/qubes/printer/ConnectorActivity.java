@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Contacts;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -31,16 +32,23 @@ import com.datecs.printer.ProtocolAdapter;
 
 import org.checkerframework.checker.units.qual.C;
 
+import java.io.Console;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Material;
 
 public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ConnectorAdapter.OnItemClickListener {
 
@@ -61,6 +69,8 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
     public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final Handler mHandler = new Handler();
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -550,14 +560,24 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         void run(ProgressDialog dialog, Printer printer) throws IOException;
     }
 
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
+    }
+
     private void printText() {
+        setFormatSeparator();
         Log.d(TAG, "Print Text");
 
         runTask(new PrinterRunnable() {
             @Override
             public void run(ProgressDialog dialog, Printer printer) throws IOException {
+                List<Material> materialList = initDataMaterial();
                 StringBuffer textBuffer = new StringBuffer();
-                textBuffer.append("{reset}{center}{w}{h}RECEIPT");
+                //  textBuffer.append("{reset}{center}{w}{h}Yasha Kishi");
 //                textBuffer.append("{br}");
 //                textBuffer.append("{br}");
 //                textBuffer.append("{reset}1. {b}First item{br}");
@@ -571,12 +591,62 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 //                textBuffer.append("{br}");
 //                textBuffer.append("{reset}{center}{s}Thank You!{br}");
 
+                textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
+                textBuffer.append("{reset}{center}Jl.Gatot Subroto Kav. 99{br}");
+                textBuffer.append("{reset}{center}Jakarta Selatan{br}{br}");
+                textBuffer.append("{reset}{center}{b}Tanda Terima Barang{br}{br}");
+                textBuffer.append("{reset}No.     : 305430000001{br}");
+                textBuffer.append("{reset}Tgl.    : " + Helper.getTodayDate(Constants.DATE_FORMAT_6) + "{br}");
+                textBuffer.append("{reset}Toko    : KOPRASI GANA ARTHA{br}");
+                textBuffer.append("{reset}Alamat  : JL ABDUL RAHMAN SALE{br}");
+                textBuffer.append("{reset}No.Cust : 76149{br}");
+                textBuffer.append("{reset}No.SJ   : SMAO001393{br}");
+                textBuffer.append("{reset}Payment : Kredit{br}");
+                textBuffer.append("================================{br}");
+
+                double totalDiscount = 0.0, totalPrice = 0.0;
+                for (Material mat : materialList) {
+                    textBuffer.append("{reset}" + mat.getIdMaterial() + " - " + mat.getMaterialCode() + "{br}");
+                    textBuffer.append("{reset}" + format.format(mat.getQty()) + " " + mat.getUom() + "{reset}{right}" + "Rp. " + mat.getPrice() + "{br}");
+                    textBuffer.append("{reset}{right}- Rp. " + format.format(mat.getTotalDiscount()) + "{br}");
+                    totalPrice = totalPrice + Double.parseDouble(mat.getPrice().replace(",", ""));
+                    totalDiscount = totalDiscount + mat.getTotalDiscount();
+                    if (mat.getExtraItem() != null) {
+                        for (Material matExtra : mat.getExtraItem()) {
+                            textBuffer.append("{reset}" + matExtra.getIdMaterial() + " - " + matExtra.getMaterialCode() + "[PROMO]{br}");
+                            textBuffer.append("{reset}" + format.format(matExtra.getQty()) + " " + matExtra.getUom() + "{reset}{right}Rp. " + matExtra.getPrice() + "{br}");
+                            textBuffer.append("{reset}{right}" + "- Rp. " + format.format(matExtra.getTotalDiscount()) + "{br}");
+                            totalPrice = totalPrice + Double.parseDouble(matExtra.getPrice().replace(",", ""));
+                            totalDiscount = totalDiscount + matExtra.getTotalDiscount();
+                        }
+                    }
+                }
+                textBuffer.append("--------------------------------{br}");
+                textBuffer.append("{reset}Total : {reset}{right}Rp." + format.format(totalPrice) + "{br}{br}");
+                textBuffer.append("{reset}{right}TANDA TANGAN / STEMPEL{br}");
+                textBuffer.append("{br}{br}{br}{br}{br}{br}");
+                textBuffer.append("{reset}{right}WELMAX L     TOKO  {br}{br}");
+
                 printer.reset();
                 printer.printTaggedText(textBuffer.toString());
                 printer.feedPaper(110);
                 printer.flush();
             }
         }, R.string.msg_printing_text);
+    }
+
+    private List<Material> initDataMaterial() {
+        List<Material> mList = new ArrayList<>();
+        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", "1,000,000", 1000, initDataMaterialExtra()));
+//        mList.add(new Material("11030", "Redbull", 10, "CAN", "1,000,000", 5000, initDataMaterialExtra()));
+//        mList.add(new Material("31020", "You C1000 Vitamin Orange", 24, "BTL", "1,000,000", 2000, initDataMaterialExtra()));
+        return mList;
+    }
+
+    private List<Material> initDataMaterialExtra() {
+        List<Material> mList = new ArrayList<>();
+        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", "0", 0));
+        return mList;
     }
 
     private void error(final String text) {
