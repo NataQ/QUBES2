@@ -40,6 +40,7 @@ import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 
 public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ConnectorAdapter.OnItemClickListener {
 
@@ -66,6 +67,9 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_connector);
 
+        imgBack = findViewById(R.id.imgBack);
+        imgLogOut = findViewById(R.id.imgLogOut);
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
         } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
@@ -81,6 +85,14 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         } else {
             setPrinterList();
         }
+
+        imgBack.setOnClickListener(v -> {
+            onBackPressed();
+        });
+
+        imgLogOut.setOnClickListener(v -> {
+            logOut(ConnectorActivity.this);
+        });
     }
 
     private void setPrinterList() {
@@ -105,10 +117,10 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 android.R.color.holo_red_light);
 
         // When activity is started from application launcher probably we want Bluetooth to be enabled.
-        if (Intent.ACTION_MAIN.equals(getIntent().getAction())) {
-            grandLocationPermission();
-            enableBluetooth();
-        }
+//        if (Intent.ACTION_MAIN.equals(getIntent().getAction())) {
+        grandLocationPermission();
+        enableBluetooth();
+//        }
 
         // Register receiver to notify when USB device is detached.
         registerReceiver(mUsbDeviceDetachedReceiver, new IntentFilter(UsbManager.ACTION_USB_DEVICE_DETACHED));
@@ -328,13 +340,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         if (adapter != null && !adapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
