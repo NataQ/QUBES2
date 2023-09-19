@@ -30,7 +30,7 @@
             android:layout_gravity="center"
             android:layout_centerInParent="true"
             android:textSize="@dimen/smallFont"
-            android:fontFamily="@font/montserrat_extra_bold"
+
             android:gravity="start"
             android:layout_toEndOf="@+id/imgBack"
             android:text="Order Plan"

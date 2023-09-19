@@ -116,7 +116,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/space_transparent"
                 android:orientation="vertical"
                 android:padding="12dp">
@@ -203,20 +203,19 @@
                         android:layout_width="@dimen/icon_delete"
                         android:layout_height="@dimen/icon_delete"
                         android:layout_gravity="center"
-                        android:layout_margin="5dp"/>
+                        android:layout_margin="5dp" />
 
                 </LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/f1"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1">
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
                         android:id="@+id/tap_to_refresh"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:orientation="horizontal"
@@ -239,16 +238,16 @@
                     <TextView
                         android:id="@+id/txtNoData"
                         style="@style/TextView_Small"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:text="No Data"
                         android:visibility="gone" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:clipToPadding="false" />
                 </RelativeLayout>
             </LinearLayout>

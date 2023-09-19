@@ -6,6 +6,7 @@ public class Customer {
     private String idCustomer;
     private String nameCustomer;
     private String address;
+    private int status;
     private boolean route;
     private double latitude;
     private double longitude;
@@ -26,6 +27,23 @@ public class Customer {
         this.address = address;
         this.route = route;
         this.position = position;
+    }
+
+    public Customer(String idCustomer, String nameCustomer, String address, boolean route, LatLng position, int status) {
+        this.idCustomer = idCustomer;
+        this.nameCustomer = nameCustomer;
+        this.address = address;
+        this.route = route;
+        this.position = position;
+        this.status = status;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public double getLatitude() {

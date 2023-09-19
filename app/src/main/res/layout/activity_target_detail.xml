@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:fontFamily="@font/montserrat_extra_bold"
+
             android:gravity="center"
             android:text="DETAIL TARGET"
             android:textAllCaps="true"

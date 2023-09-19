@@ -209,6 +209,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
+                android:textStyle="bold"
                 android:text="Approve"
                 android:textAlignment="center"
                 android:textColor="@color/green_aspp" />

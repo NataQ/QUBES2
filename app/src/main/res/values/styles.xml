@@ -15,7 +15,7 @@
         <item name="colorOnSecondary">@color/blue3_aspp</item>
         <item name="android:textColor">@color/black_aspp</item>
         <item name="android:textColorSecondary">@color/black_aspp</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/inter</item>
 <!--        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>-->
 <!--        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>-->
         <item name="android:windowSharedElementEnterTransition">@transition/changebounds</item>
@@ -31,13 +31,13 @@
         <item name="android:backgroundDimAmount">0.3</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
     </style>
 
     <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
@@ -58,8 +58,8 @@
     </style>
 
     <style name="AppTheme.ActionBar" parent="AppTheme.Base">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TextAppearance</item>
         <item name="android:subtitleTextStyle">@style/AppTheme.ActionBar.TextAppearance.SubTitle
         </item>
@@ -79,8 +79,8 @@
     </style>
 
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/blue_aspp</item>
@@ -90,8 +90,8 @@
     </style>
 
     <style name="attachmentStyle" parent="android:style/Theme.Holo.Light.Dialog">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:windowNoTitle">true</item>
         <!--supaya layout default dialog ngga ikut tampil-->
         <item name="android:windowIsTranslucent">true</item>
@@ -99,8 +99,8 @@
     </style>
 
     <style name="spinner_style">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:background">@drawable/ic_down_png</item>
         <item name="android:text">12sp</item>
         <item name="android:paddingRight">20dp</item>
@@ -127,8 +127,8 @@
 
     <style name="CaldroidDefaultCustomMonthName">
         <!--<item name="android:textColor">@color/darkCyan</item>-->
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
@@ -144,15 +144,15 @@
     </style>
 
     <style name="CaldroidDefaultCustomCell" parent="CaldroidDefaultCell">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@color/cell_text_color_dark</item>
         <item name="android:background">@drawable/cell_bg_dark</item>
     </style>
 
     <style name="CaldroidDefaultDarkCell" parent="CaldroidDefaultCell">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@drawable/cell_text_color_calldroid</item>
         <item name="android:background">@drawable/cell_bg_calldroid</item>
         <item name="android:textSize">10sp</item>
@@ -187,7 +187,7 @@
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">5dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:background">@color/blue_aspp</item>
     </style>
 
@@ -218,7 +218,7 @@
     </style>
 
     <style name="TextAppearance.MaterialComponents.Headline4" parent="TextAppearance.AppCompat.Display1">
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textSize">34sp</item>
@@ -228,8 +228,8 @@
     <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textSize">@dimen/superExtraSmallFont</item>
         <item name="android:padding">0dp</item>
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="color">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="backgroundColor">@color/white</item>
@@ -243,8 +243,8 @@
     <style name="TextLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textSize">@dimen/superExtraSmallFont</item>
         <item name="android:padding">0dp</item>
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="color">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="backgroundColor">@color/white</item>
@@ -254,8 +254,8 @@
     <style name="SpinnerInputLayoutMaterial" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
         <item name="android:padding">0dp</item>
         <item name="color">@color/blue_aspp</item>
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="colorAccent">@color/blue_aspp</item>
         <item name="boxCornerRadiusBottomEnd">5dp</item>
         <item name="boxCornerRadiusBottomStart">5dp</item>
@@ -291,8 +291,8 @@
 
     <!-- Date picker ok/cancel button styles    -->
     <style name="DialogButtonStyled" parent="Theme.MaterialComponents.Light">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textColor">@color/blue_aspp</item>
         <item name="android:background">@color/space_transparent</item>
     </style>
@@ -302,8 +302,8 @@
     </style>
 
     <style name="GreenButtonThemeOverlay">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="colorPrimary">@color/blue_aspp</item>
         <item name="colorOnSurface">@color/gray_aspp</item>
         <item name="cornerRadius">12dp</item>
@@ -314,8 +314,8 @@
     </style>
 
     <style name="ButtonCoverageColor">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="colorPrimary">@color/blue6_aspp</item>
         <item name="colorOnSurface">@color/gray_aspp</item>
         <item name="cornerRadius">12dp</item>
@@ -326,8 +326,8 @@
     </style>
 
     <style name="ButtonEndVisitThemeOverlay">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="colorPrimary">@color/blue6_aspp</item>
         <item name="colorOnSurface">@color/gray_aspp</item>
         <item name="cornerRadius">12dp</item>
@@ -336,8 +336,8 @@
     <style name="TextInputLayoutMaterial" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textSize">@dimen/text_small</item>
         <item name="android:padding">0dp</item>
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="color">@color/blue_aspp</item>
         <item name="colorAccent">@color/blue_aspp</item>
         <item name="backgroundColor">@color/white</item>
@@ -350,30 +350,30 @@
     </style>
 
     <style name="TextView_Small" parent="TextAppearance.AppCompat">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextView_Status" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">@dimen/text_small</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextView_Tab" parent="TextAppearance.AppCompat">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">@dimen/text_tab</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextView_Title" parent="TextAppearance.AppCompat">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textSize">@dimen/text_title</item>
-    </style>
-
-    <style name="TextView_Small_Bold" parent="TextAppearance.AppCompat">
-        <item name="fontFamily">@font/montserrat_black</item>
-        <item name="android:fontFamily">@font/montserrat_black</item>
-        <item name="android:textSize">@dimen/text_small</item>
-        <item name="android:letterSpacing">0</item>
     </style>
 
     <style name="TextView_Qubes" parent="TextAppearance.AppCompat.Headline">
@@ -386,11 +386,11 @@
     </style>
 
     <style name="TextView_Headline" parent="TextAppearance.AppCompat.Headline">
-        <item name="fontFamily">@font/montserrat</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textSize">@dimen/text_title</item>
         <item name="android:letterSpacing">0</item>
     </style>
 

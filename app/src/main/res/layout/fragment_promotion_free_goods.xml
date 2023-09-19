@@ -254,7 +254,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="end"
-                    android:fontFamily="@font/montserrat_regular"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/load_more"
                     android:textColor="@color/blue3"
                     android:textSize="@dimen/smallFont" />
@@ -277,7 +277,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="@font/montserrat_regular"
+            android:fontFamily="@font/montserrat"
             android:text="@string/errorData"
             android:visibility="gone" />
     </RelativeLayout>

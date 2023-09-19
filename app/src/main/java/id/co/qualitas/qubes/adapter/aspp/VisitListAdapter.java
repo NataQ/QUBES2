@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 
 public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Holder> implements Filterable {
@@ -79,15 +81,17 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtOutlet, txtAddress, txtLabelRoute, txtNo;
-        ImageView imgStatus, imgStatus2;
+        TextView txtOutlet, txtAddress, txtLabelRoute, txtNo, txtStatus;
+        ImageView imgStatus;
+        LinearLayout llStatus;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
             txtOutlet = itemView.findViewById(R.id.txtOutlet);
+            txtStatus = itemView.findViewById(R.id.txtStatus);
             imgStatus = itemView.findViewById(R.id.imgStatus);
-            imgStatus2 = itemView.findViewById(R.id.imgStatus2);
+            llStatus = itemView.findViewById(R.id.llStatus);
             txtAddress = itemView.findViewById(R.id.txtAddress);
             txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
             txtNo = itemView.findViewById(R.id.txtNo);
@@ -114,12 +118,6 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
         holder.txtAddress.setText(detail.getAddress());
         holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
 
-        if (position == 1) {
-            holder.imgStatus2.setVisibility(View.VISIBLE);
-        } else {
-            holder.imgStatus2.setVisibility(View.GONE);
-        }
-
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");
             holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_route));
@@ -128,6 +126,33 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
             holder.txtLabelRoute.setText("Non Route");
             holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.bg_label_non_route));
             holder.txtLabelRoute.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red2_aspp));
+        }
+
+        switch (detail.getStatus()) {
+            case 0:
+                holder.llStatus.setVisibility(View.GONE);
+                break;
+            case 1:
+                //checked in
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.imgStatus.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_status_checked_in));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.yellow_aspp));
+                holder.txtStatus.setText("Checked In");
+                break;
+            case 2:
+                //pause
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.imgStatus.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_status_pause));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red));
+                holder.txtStatus.setText("Pause");
+                break;
+            case 3:
+                //completed
+                holder.llStatus.setVisibility(View.VISIBLE);
+                holder.imgStatus.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_status_completed));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.aspp_blue9));
+                holder.txtStatus.setText("Completed");
+                break;
         }
     }
 

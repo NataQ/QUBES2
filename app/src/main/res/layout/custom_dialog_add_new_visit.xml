@@ -49,7 +49,7 @@
                 android:layout_marginEnd="8dp"
                 android:background="@color/space_transparent"
                 android:hint="Search Outlet"
-                android:fontFamily="@font/montserrat_regular"
+                android:fontFamily="@font/montserrat"
                 android:imeOptions="actionDone"
                 android:minEms="12"
                 android:padding="8dp"

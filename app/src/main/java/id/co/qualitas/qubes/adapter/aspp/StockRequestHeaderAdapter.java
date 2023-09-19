@@ -127,8 +127,8 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
                 holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.yellow_aspp));
             } else if (detail.getStatus().toLowerCase().contains("rejected")) {
                 holder.llStatus.setVisibility(View.VISIBLE);
-                holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.red2_aspp));
-                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red_aspp));
+                holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.red_aspp));
+                holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red2_aspp));
             } else {
                 holder.llStatus.setVisibility(View.GONE);
                 holder.llStatus.setBackground(null);

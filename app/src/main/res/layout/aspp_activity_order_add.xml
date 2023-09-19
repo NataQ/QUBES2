@@ -67,6 +67,7 @@
             android:textColor="@color/blue_aspp"
             android:textSize="@dimen/text_small"
             app:cornerRadius="5dp"
+            app:backgroundTint="@color/white"
             app:strokeColor="@color/blue_aspp" />
 
         <com.google.android.material.button.MaterialButton
@@ -149,19 +150,19 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAdd"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:text="Add"
-            android:textAllCaps="true"
-            android:textColor="@color/black_aspp"
+            android:textAllCaps="false"
+            android:textColor="@color/blue_aspp"
             android:textSize="@dimen/text_small"
+            android:layout_marginEnd="5dp"
             app:cornerRadius="5dp"
+            app:backgroundTint="@color/white"
             app:icon="@drawable/ic_add_aspp"
             app:iconSize="@dimen/icon_add_inside_btn"
-            app:iconTint="@null"
-            app:strokeColor="@color/blue6_aspp" />
+            app:iconTint="@color/blue_aspp" />
     </LinearLayout>
 
     <View

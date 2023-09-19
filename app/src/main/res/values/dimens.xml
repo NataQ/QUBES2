@@ -45,10 +45,11 @@
     <dimen name="corner_dialog">14dp</dimen>
     <dimen name="corner_fragment">10dp</dimen>
     <dimen name="icon_point">25dp</dimen>
-    <dimen name="icon_add_inside_btn">25dp</dimen>
+    <dimen name="icon_add_inside_btn">20dp</dimen>
     <dimen name="padding_inner">14dp</dimen>
     <dimen name="icon_drop">20dp</dimen>
 
+    <dimen name="text_status">10sp</dimen>
     <dimen name="text_small">12sp</dimen>
     <dimen name="text_tab">14sp</dimen>
     <dimen name="text_title">16sp</dimen>

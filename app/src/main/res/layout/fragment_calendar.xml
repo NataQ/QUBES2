@@ -199,12 +199,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:fontFamily="More Fonts..."
                         android:padding="8dp"
-                        android:fontFamily="@font/montserrat_black"
                         android:text="@string/totalOutlet"
                         android:textColor="@color/white"
-                        android:textStyle="bold"
-                        android:textSize="@dimen/superSmallFont" />
+                        android:textSize="@dimen/superSmallFont"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/imgSearch"

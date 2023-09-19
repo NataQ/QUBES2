@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:fontFamily="@font/montserrat_extra_bold"
+
             android:gravity="center"
             android:text="@string/account"
             android:textAllCaps="true"
@@ -78,7 +78,7 @@
                         android:text="@string/profile"
                         android:textAllCaps="false"
                         android:textStyle="bold"
-                        android:fontFamily="@font/montserrat_regular"
+                        android:fontFamily="@font/montserrat"
                         android:textColor="@color/new_blue"
                         android:textSize="@dimen/smallFont" />
 
@@ -124,7 +124,7 @@
                         android:text="Sync"
                         android:textAllCaps="false"
                         android:textStyle="bold"
-                        android:fontFamily="@font/montserrat_regular"
+                        android:fontFamily="@font/montserrat"
                         android:textColor="@color/new_blue"
                         android:textSize="@dimen/smallFont" />
 
@@ -169,7 +169,7 @@
                         android:text="Log"
                         android:textAllCaps="false"
                         android:textStyle="bold"
-                        android:fontFamily="@font/montserrat_regular"
+                        android:fontFamily="@font/montserrat"
                         android:textColor="@color/new_blue"
                         android:textSize="@dimen/smallFont" />
 
@@ -216,7 +216,7 @@
                         android:text="@string/changePwd"
                         android:textAllCaps="false"
                         android:textStyle="bold"
-                        android:fontFamily="@font/montserrat_regular"
+                        android:fontFamily="@font/montserrat"
                         android:textColor="@color/new_blue"
                         android:textSize="@dimen/smallFont" />
 

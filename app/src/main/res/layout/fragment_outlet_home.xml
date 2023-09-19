@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textStyle="bold"
-            android:fontFamily="@font/montserrat_medium"
+
             android:text="Total Customer: "/>
 
         <RelativeLayout
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="@string/errorData"
-                android:fontFamily="@font/montserrat_regular"
+                android:fontFamily="@font/montserrat"
                 android:textColor="@color/darkCyan"
                 android:visibility="gone" />
 

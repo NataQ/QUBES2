@@ -19,7 +19,7 @@
         android:layout_marginBottom="12dp"
         android:textAllCaps="true"
         android:textStyle="bold"
-        android:fontFamily="@font/montserrat_extra_bold"
+
         android:textColor="@color/white" />
 
     <View
@@ -43,7 +43,7 @@
             android:layout_marginBottom="10dp"
             android:textAllCaps="false"
             android:textStyle="bold"
-            android:fontFamily="@font/montserrat_medium"/>
+            />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                     android:textColor="@color/darkGray"
                     android:gravity="center"
                     android:layout_centerInParent="true"
-                    android:fontFamily="@font/montserrat_regular"
+                    android:fontFamily="@font/montserrat"
                     android:text="@string/noticeAddFirst"/>
 
             </RelativeLayout>

@@ -153,8 +153,9 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
+        android:layout_marginEnd="-23dp"
         android:src="@drawable/login_pattern" />
 
 </LinearLayout>

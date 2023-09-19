@@ -106,7 +106,7 @@ public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Hold
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.txtProduct.setText(detail.getMaterialCode());
+        holder.txtProduct.setText(detail.getIdMaterial() + " - " + detail.getMaterialCode());
         holder.txtNo.setText(String.valueOf(position + 1) + ".");
         holder.txtQty.setText(detail.getMaterialQty() + " " + detail.getUom());
         holder.txtSisaStock.setText(detail.getMaterialQty() + " " + detail.getUom());

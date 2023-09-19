@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
-        android:fontFamily="@font/montserrat_extra_bold"
+
         android:gravity="center"
         android:text="@string/visit"
         android:textAllCaps="true"

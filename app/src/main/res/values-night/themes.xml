@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:textColorSecondary">@color/darkGray</item>
-        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="android:fontFamily">@font/inter</item>
         <!--        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>-->
         <!--        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>-->
         <item name="android:windowSharedElementEnterTransition">@transition/changebounds</item>

@@ -20,7 +20,7 @@
             android:layout_marginBottom="14dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:fontFamily="@font/montserrat_medium"
+
             android:text="Matahari Putra Prima Tbk, PT"
             android:textSize="@dimen/mediumFont2" />
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:gravity="center"
-            android:fontFamily="@font/montserrat_regular"
+            android:fontFamily="@font/montserrat"
             android:text="Kembangan Sel., Kembangan"
             android:textSize="@dimen/superSmallFont" />
 
@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:fontFamily="@font/montserrat_regular"
+            android:fontFamily="@font/montserrat"
             android:text="Kota Jakarta, 11610"
             android:textSize="@dimen/superSmallFont" />
 

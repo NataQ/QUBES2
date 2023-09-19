@@ -95,7 +95,7 @@
             android:id="@+id/txtKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_medium"
+
             android:text="Key"
             android:textColor="@color/black" />
 
@@ -122,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/space_transparent"
-                android:fontFamily="@font/montserrat_regular"
+                android:fontFamily="@font/montserrat"
                 android:hint="Key"
                 android:inputType="number"
                 android:text="21878"
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/llKey"
             android:layout_marginTop="12dp"
-            android:fontFamily="@font/montserrat_medium"
+
             android:text="Result Key"
             android:textColor="@color/black" />
 
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/space_transparent"
-                android:fontFamily="@font/montserrat_regular"
+                android:fontFamily="@font/montserrat"
                 android:hint="Result Key"
                 android:inputType="text"
                 android:text="123456"
@@ -176,7 +176,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/llResultKey"
             android:layout_marginTop="12dp"
-            android:fontFamily="@font/montserrat_medium"
+
             android:text="@string/ipAddress"
             android:textColor="@color/black" />
 
@@ -204,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@color/space_transparent"
-                android:fontFamily="@font/montserrat_regular"
+                android:fontFamily="@font/montserrat"
                 android:hint="@string/ipAddress"
                 android:inputType="textPersonName"
                 android:textColor="@color/black" />
