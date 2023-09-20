@@ -1,13 +1,23 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +25,8 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.OrderAddAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductOrderAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -27,7 +39,11 @@ public class OrderAddActivity extends BaseActivity {
     private List<Material> mList;
     private Button btnAdd, btnNext, btnGetDiscount;
     private TextView txtDate, txtOmzet;
-    private ImageView imgBack;
+
+    private List<Material> listSpinner;
+    private CardView cvUnCheckAll, cvCheckedAll;
+    boolean checkedAll = false;
+    private SpinnerProductOrderAdapter spinnerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +61,7 @@ public class OrderAddActivity extends BaseActivity {
         recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(v -> {
-            addNew();
+            addProduct();
         });
 
         btnNext.setOnClickListener(v -> {
@@ -64,9 +80,8 @@ public class OrderAddActivity extends BaseActivity {
         });
     }
 
-    private void addNew() {
-        Material detail = new Material("", "", "", "");
-        mList.add(detail);
+    private void addNew(List<Material> addedList) {
+        mList.addAll(addedList);
         new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -105,5 +120,112 @@ public class OrderAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    private void addProduct() {
+        Dialog dialog = new Dialog(OrderAddActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
+        cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.rv);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+
+        listSpinner = new ArrayList<>();
+        listSpinner.addAll(initDataMaterial());
+
+        spinnerAdapter = new SpinnerProductOrderAdapter(OrderAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(spinnerAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                spinnerAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        cvCheckedAll.setOnClickListener(v -> {
+            checkedAll = false;
+            for (Material mat : listSpinner) {
+                mat.setChecked(checkedAll);
+            }
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.VISIBLE);
+            cvCheckedAll.setVisibility(View.GONE);
+        });
+
+        cvUnCheckAll.setOnClickListener(v -> {
+            checkedAll = true;
+            for (Material mat : listSpinner) {
+                mat.setChecked(checkedAll);
+            }
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.GONE);
+            cvCheckedAll.setVisibility(View.VISIBLE);
+        });
+
+        btnCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        btnSave.setOnClickListener(v -> {
+            List<Material> addList = new ArrayList<>();
+            for (Material mat : listSpinner) {
+                if (mat.isChecked()) {
+                    addList.add(mat);
+                }
+            }
+            addNew(addList);
+            dialog.dismiss();
+        });
+    }
+
+    public void setCheckedAll() {
+        int checked = 0;
+        for (Material mat : listSpinner) {
+            if (mat.isChecked()) {
+                checked++;
+            }
+        }
+        if (checked == listSpinner.size()) {
+            checkedAll = true;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.GONE);
+            cvCheckedAll.setVisibility(View.VISIBLE);
+        } else {
+            checkedAll = false;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.VISIBLE);
+            cvCheckedAll.setVisibility(View.GONE);
+        }
+    }
+
+    private List<Material> initDataMaterial() {
+        List<Material> mList = new ArrayList<>();
+        mList.add(new Material("11001", "Kratingdaeng", "1,000,000", 1000000));
+        mList.add(new Material("11030", "Redbull", "2,000,000", 2000000));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000", 5000000));
+        return mList;
     }
 }

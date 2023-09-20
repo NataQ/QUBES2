@@ -106,51 +106,51 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
 
-            txtProduct.setOnClickListener(v -> {
-                Dialog alertDialog = new Dialog(mContext);
-
-                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                alertDialog.show();
-
-                EditText editText = alertDialog.findViewById(R.id.edit_text);
-                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-                List<String> groupList = new ArrayList<>();
-                groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-                groupList.add("11007_KRATINGDAENG - MT");
-                groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-                groupList.add("11005_KRATINGDAENG LUAR PULAU");
-                groupList.add("11001_KRATINGDAENG");
-
-                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                    txtProduct.setText(nameItem);
-                    alertDialog.dismiss();
-                });
-
-                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-                listView.setLayoutManager(mManager);
-                listView.setHasFixedSize(true);
-                listView.setNestedScrollingEnabled(false);
-                listView.setAdapter(spinnerAdapter);
-
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        spinnerAdapter.getFilter().filter(s);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-            });
+//            txtProduct.setOnClickListener(v -> {
+//                Dialog alertDialog = new Dialog(mContext);
+//
+//                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+//                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                alertDialog.show();
+//
+//                EditText editText = alertDialog.findViewById(R.id.edit_text);
+//                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+//
+//                List<String> groupList = new ArrayList<>();
+//                groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+//                groupList.add("11007_KRATINGDAENG - MT");
+//                groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+//                groupList.add("11005_KRATINGDAENG LUAR PULAU");
+//                groupList.add("11001_KRATINGDAENG");
+//
+//                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
+//                    txtProduct.setText(nameItem);
+//                    alertDialog.dismiss();
+//                });
+//
+//                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
+//                listView.setLayoutManager(mManager);
+//                listView.setHasFixedSize(true);
+//                listView.setNestedScrollingEnabled(false);
+//                listView.setAdapter(spinnerAdapter);
+//
+//                editText.addTextChangedListener(new TextWatcher() {
+//                    @Override
+//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                        spinnerAdapter.getFilter().filter(s);
+//                    }
+//
+//                    @Override
+//                    public void afterTextChanged(Editable s) {
+//
+//                    }
+//                });
+//            });
         }
 
         @Override
@@ -178,9 +178,16 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
         spn1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         holder.spinnerUom.setAdapter(spn1Adapter);
 
+        String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getIdMaterial()) ? detail.getIdMaterial() : null;
+
         holder.txtNo.setText(String.valueOf(position + 1) + ".");
-        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
+        holder.txtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(String.valueOf(detail.getQty()));
+
+        holder.imgDelete.setOnClickListener(v -> {
+            mContext.delete(holder.getAbsoluteAdapterPosition());
+        });
     }
 
     @Override

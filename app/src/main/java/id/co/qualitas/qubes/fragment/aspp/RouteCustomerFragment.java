@@ -184,20 +184,6 @@ public class RouteCustomerFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "2");
-
-//        try {
-//            if (getView() != null) {
-//                getView().setFocusableInTouchMode(true);
-//            }
-//        } catch (NullPointerException ignored) {
-//        }
-//        getView().requestFocus();
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
-//            }
-//        });
     }
 
     public void openDialogDirections(RouteCustomer detail) {

@@ -205,8 +205,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="1dp">
+                        app:cardCornerRadius="6dp"
+                        app:cardElevation="2dp">
 
                         <LinearLayout
                             android:id="@+id/llStoreCheck"
@@ -251,8 +251,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="1dp">
+                        app:cardCornerRadius="6dp"
+                        app:cardElevation="2dp">
 
                         <LinearLayout
                             android:id="@+id/llCollection"
@@ -303,8 +303,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="1dp">
+                        app:cardCornerRadius="6dp"
+                        app:cardElevation="2dp">
 
                         <LinearLayout
                             android:id="@+id/llOrder"
@@ -348,8 +348,8 @@
                         android:layout_gravity="center_vertical"
                         android:layout_margin="5dp"
                         android:layout_weight="1"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="1dp">
+                        app:cardCornerRadius="6dp"
+                        app:cardElevation="2dp">
 
                         <LinearLayout
                             android:id="@+id/llReturn"
@@ -421,7 +421,7 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="Nama Pemilik"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -431,7 +431,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="Sukirno"
                                 android:textColor="@color/black_aspp" />
 
@@ -448,7 +448,7 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="No. Telp"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -458,7 +458,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="08123456789"
                                 android:textColor="@color/black_aspp" />
 
@@ -475,7 +475,7 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="Sisa Kredit Limit"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -485,7 +485,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="924,000"
                                 android:textColor="@color/orange_aspp" />
 
@@ -502,7 +502,7 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="Total Tagihan"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -512,7 +512,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="1,075,000"
                                 android:textColor="@color/orange_aspp" />
 
@@ -529,7 +529,7 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="KTP"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -539,7 +539,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="3174254866632001"
                                 android:textColor="@color/black_aspp" />
 
@@ -556,9 +556,9 @@
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight=".4"
+                                android:layout_weight=".25"
                                 android:text="NPWP"
-                                android:textColor="@color/black_aspp" />
+                                android:textColor="@color/gray8_aspp" />
 
                             <TextView
                                 android:id="@+id/txtNPWP"
@@ -566,9 +566,9 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
-                                android:layout_weight=".6"
+                                android:layout_weight=".75"
                                 android:text="3174.2548.6663.2001"
-                                android:textColor="@color/gray8_aspp" />
+                                android:textColor="@color/black_aspp" />
 
                         </LinearLayout>
 
@@ -734,7 +734,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
 
                         <TextView
                             style="@style/TextView_Small"
@@ -763,6 +764,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:visibility="gone"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         android:background="@color/gray9_aspp" />

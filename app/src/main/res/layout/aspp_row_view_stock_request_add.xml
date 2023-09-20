@@ -27,10 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_weight=".45"
-        android:background="@drawable/bg_spinner_2"
-        android:completionThreshold="1"
-        android:hint="Search.."
-        android:padding="5dp"
         android:text="Product"
         android:textColor="@color/gray8_aspp" />
 

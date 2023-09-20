@@ -85,13 +85,5 @@ public class SummaryFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "4");
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
-            }
-        });
     }
 }

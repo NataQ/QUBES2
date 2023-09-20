@@ -22,9 +22,11 @@ public class Material {
     private Discount discount;
     private List<Discount> extra;
     private List<Material> extraItem;
+    private boolean isChecked;
 
     public Material() {
     }
+
     public Material(String idMaterial, String materialCode, int qty, String uom, String price, int totalDiscount) {
         this.idMaterial = idMaterial;
         this.materialCode = materialCode;
@@ -71,6 +73,14 @@ public class Material {
     public Material(String materialCode, int qty) {
         this.materialCode = materialCode;
         this.qty = qty;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 
     public int getTotalDiscount() {

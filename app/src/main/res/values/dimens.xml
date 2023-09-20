@@ -50,13 +50,15 @@
     <dimen name="icon_drop">20dp</dimen>
 
     <dimen name="text_status">10sp</dimen>
-    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_small">13sp</dimen>
     <dimen name="text_tab">14sp</dimen>
     <dimen name="text_title">16sp</dimen>
     <dimen name="text_headline_qubes">24sp</dimen>
     <dimen name="text_headline">20sp</dimen>
     <dimen name="icon_delete">20dp</dimen>
     <dimen name="edt_height">35dp</dimen>
+    <dimen name="icon_check_box">20dp</dimen>
+    <dimen name="icon_check">22dp</dimen>
 
 
 </resources>

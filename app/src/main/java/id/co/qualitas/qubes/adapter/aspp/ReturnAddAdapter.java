@@ -290,6 +290,10 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         List<Reason> reasonList = new ArrayList<>();
         reasonList.addAll(Helper.getDataReason());
 
+        String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getIdMaterial()) ? detail.getIdMaterial() : null;
+        holder.edtProduct.setText(productId + " - " + productName);
+
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -317,51 +321,51 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             }
         });
 
-        holder.edtProduct.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(mContext);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007_KRATINGDAENG - MT");
-            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005_KRATINGDAENG LUAR PULAU");
-            groupList.add("11001_KRATINGDAENG");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                holder.edtProduct.setText(nameItem);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-        });
+//        holder.edtProduct.setOnClickListener(v -> {
+//            Dialog alertDialog = new Dialog(mContext);
+//
+//            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+//            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//            alertDialog.show();
+//
+//            EditText editText = alertDialog.findViewById(R.id.edit_text);
+//            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+//
+//            List<String> groupList = new ArrayList<>();
+//            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+//            groupList.add("11007_KRATINGDAENG - MT");
+//            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+//            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+//            groupList.add("11001_KRATINGDAENG");
+//
+//            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
+//                holder.edtProduct.setText(nameItem);
+//                alertDialog.dismiss();
+//            });
+//
+//            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
+//            listView.setLayoutManager(mManager);
+//            listView.setHasFixedSize(true);
+//            listView.setNestedScrollingEnabled(false);
+//            listView.setAdapter(spinnerAdapter);
+//
+//            editText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                    spinnerAdapter.getFilter().filter(s);
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//
+//                }
+//            });
+//        });
 
         mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
         mContext.setAutoCompleteAdapter(conditionList, holder.autoCompleteCondition);

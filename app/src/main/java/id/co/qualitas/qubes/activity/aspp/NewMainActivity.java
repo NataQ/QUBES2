@@ -213,39 +213,35 @@ public class NewMainActivity extends BaseActivity {
                         if (!currentpage.equals("1")) {
                             Helper.setItemParam(Constants.CURRENTPAGE, "1");
                             fragment = new HomeFragment();
-                            setContent(fragment);
                         }
-                        return true;
+                        break;
                     case R.id.navigation_route_customer:
                         if (!currentpage.equals("2")) {
                             Helper.setItemParam(Constants.CURRENTPAGE, "2");
                             fragment = new RouteCustomerFragment();
-                            setContent(fragment);
                         }
-                        return true;
+                        break;
                     case R.id.navigation_activity:
                         if (!currentpage.equals("3")) {
                             Helper.setItemParam(Constants.CURRENTPAGE, "3");
                             fragment = new ActivityFragment();
-                            setContent(fragment);
                         }
-                        return true;
+                        break;
                     case R.id.navigation_summary:
                         if (!currentpage.equals("4")) {
                             Helper.setItemParam(Constants.CURRENTPAGE, "4");
                             fragment = new SummaryFragment();
-                            setContent(fragment);
                         }
-                        return true;
+                        break;
                     case R.id.navigation_account:
                         if (!currentpage.equals("5")) {
                             Helper.setItemParam(Constants.CURRENTPAGE, "5");
                             fragment = new AccountFragment();
-                            setContent(fragment);
                         }
-                        return true;
+                        break;
                 }
-                return false;
+                setContent(fragment);
+                return true;
             }
         });
     }

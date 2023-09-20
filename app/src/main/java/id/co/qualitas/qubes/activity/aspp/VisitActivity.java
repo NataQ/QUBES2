@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -414,6 +415,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void openDialogEndVisit() {
         Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600 , ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_end_visit);
         Button btnEnd = dialog.findViewById(R.id.btnEnd);
@@ -439,6 +441,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void openDialogStartVisit() {
         Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600 , ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_start_visit);
         Button btnStart = dialog.findViewById(R.id.btnStart);

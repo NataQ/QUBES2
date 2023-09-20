@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.work.WorkManager;
@@ -55,6 +56,16 @@ public class ActivityFragment extends BaseFragment {
         initialize();
 
         workManager = WorkManager.getInstance(getActivity());
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+                    ((NewMainActivity) getActivity()).changePage(1);
+                }
+            }
+        });
 
 //        llEndVisit.setOnClickListener(v -> {
 //            workManager.cancelAllWork();
@@ -108,13 +119,5 @@ public class ActivityFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "3");
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                return event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK;
-            }
-        });
     }
 }

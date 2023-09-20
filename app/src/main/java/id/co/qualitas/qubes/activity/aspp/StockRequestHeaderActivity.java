@@ -77,4 +77,10 @@ public class StockRequestHeaderActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //intent ke main activity terus di set fragment nya ke activity fragment
+    }
 }

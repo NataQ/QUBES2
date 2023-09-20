@@ -185,8 +185,9 @@
                         android:textColor="@color/black_aspp" />
 
                     <ImageView
-                        android:layout_width="@dimen/icon_drop"
-                        android:layout_height="@dimen/icon_drop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
                         android:src="@drawable/ic_drop_down_aspp"
                         android:visibility="invisible" />
                 </LinearLayout>
@@ -226,9 +227,9 @@
 
                         <ImageView
                             android:id="@+id/imgView"
-                            android:layout_width="@dimen/icon_drop"
-                            android:layout_height="@dimen/icon_drop"
-                            android:layout_marginStart="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
                             android:src="@drawable/ic_drop_down_aspp" />
                     </LinearLayout>
 
@@ -267,8 +268,8 @@
                                 android:textStyle="bold" />
 
                             <ImageView
-                                android:layout_width="@dimen/icon_drop"
-                                android:layout_height="@dimen/icon_drop"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:visibility="invisible" />
                         </LinearLayout>
@@ -301,8 +302,8 @@
                                 android:textStyle="bold" />
 
                             <ImageView
-                                android:layout_width="@dimen/icon_drop"
-                                android:layout_height="@dimen/icon_drop"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:visibility="invisible" />
                         </LinearLayout>
@@ -335,8 +336,8 @@
                                 android:textStyle="bold" />
 
                             <ImageView
-                                android:layout_width="@dimen/icon_drop"
-                                android:layout_height="@dimen/icon_drop"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:visibility="invisible" />
                         </LinearLayout>
@@ -372,8 +373,9 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:layout_width="@dimen/icon_drop"
-                        android:layout_height="@dimen/icon_drop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
                         android:src="@drawable/ic_drop_down_aspp"
                         android:visibility="invisible" />
                 </LinearLayout>

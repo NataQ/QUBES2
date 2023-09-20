@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -105,16 +106,25 @@ public class AccountFragment extends BaseFragment {
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
-        this.rootView.setOnKeyListener(new View.OnKeyListener() {
+//        this.rootView.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                        ((NewMainActivity) getActivity()).changePage(1);
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(1);
-                        return true;
-                    }
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+                    ((NewMainActivity) getActivity()).changePage(1);
                 }
-                return false;
             }
         });
 
