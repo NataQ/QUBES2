@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.FreeGoodsNAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -108,7 +108,7 @@ public class OrderSummary2Fragment extends BaseFragment implements Spinner.OnIte
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(13);
+                        ((MainActivity) getActivity()).changePage(13);
                         return true;
                     }
                 }
@@ -123,7 +123,7 @@ public class OrderSummary2Fragment extends BaseFragment implements Spinner.OnIte
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(13);
+                ((MainActivity) getActivity()).changePage(13);
             }
         });
 
@@ -182,7 +182,7 @@ public class OrderSummary2Fragment extends BaseFragment implements Spinner.OnIte
         imgDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(15);
+                ((MainActivity) getActivity()).changePage(15);
 //                Intent intent = new Intent(OrderSummary2Fragment.this, OrderSummaryDetail2Fragment.class);
 //                startActivity(intent);
 //                fragment = new OrderSummaryDetailFragment();

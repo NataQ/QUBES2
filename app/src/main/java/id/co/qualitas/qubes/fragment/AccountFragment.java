@@ -30,7 +30,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.LoginActivity;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
@@ -106,7 +106,7 @@ public class AccountFragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(1);
+                        ((MainActivity) getActivity()).changePage(1);
                         return true;
                     }
                 }
@@ -117,14 +117,14 @@ public class AccountFragment extends BaseFragment {
         llProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(6);
+                ((MainActivity) getActivity()).changePage(6);
             }
         });
 
         llChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(7);
+                ((MainActivity) getActivity()).changePage(7);
             }
         });
 

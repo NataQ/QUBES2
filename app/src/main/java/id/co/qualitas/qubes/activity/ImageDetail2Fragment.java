@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -38,7 +38,7 @@ public class ImageDetail2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(13);
+                        ((MainActivity) getActivity()).changePage(13);
                         return true;
                     }
                 }

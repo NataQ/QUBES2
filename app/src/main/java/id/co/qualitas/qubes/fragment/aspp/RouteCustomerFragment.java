@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -70,7 +70,7 @@ public class RouteCustomerFragment extends BaseFragment {
         initData();
 
         btnCoverage.setOnClickListener(v -> {
-            ((NewMainActivity) getActivity()).changePage(23);
+            ((MainActivity) getActivity()).changePage(23);
 //            Intent intent = new Intent(getActivity(), CoverageActivity.class);
 //            startActivity(intent);
         });
@@ -99,8 +99,8 @@ public class RouteCustomerFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-//                    ((NewMainActivity) getActivity()).changePage(1);
-                    ((NewMainActivity) getActivity()).backPress();
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
                 }
             }
         });
@@ -111,7 +111,7 @@ public class RouteCustomerFragment extends BaseFragment {
     public void moveDirection(RouteCustomer headerCustomer) {
         if (Utils.isGPSOn(getContext())) {
             Helper.setItemParam(Constants.ROUTE_CUSTOMER_HEADER, headerCustomer);
-            ((NewMainActivity) getActivity()).changePage(24);
+            ((MainActivity) getActivity()).changePage(24);
         } else {
             Utils.turnOnGPS(getActivity());
         }

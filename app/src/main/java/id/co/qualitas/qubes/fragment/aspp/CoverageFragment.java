@@ -3,12 +3,6 @@ package id.co.qualitas.qubes.fragment.aspp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,12 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -48,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -106,7 +98,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(2);
+                ((MainActivity) getActivity()).changePage(2);
             }
         });
 
@@ -123,7 +115,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
                 if (isEnabled()) {
                     setEnabled(false);
 //                    requireActivity().onBackPressed();
-                    ((NewMainActivity) getActivity()).changePage(2);
+                    ((MainActivity) getActivity()).changePage(2);
                 }
             }
         });

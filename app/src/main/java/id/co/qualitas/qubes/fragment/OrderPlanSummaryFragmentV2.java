@@ -35,7 +35,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OrderPlanSummaryAdapterV2;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -124,9 +124,9 @@ public class OrderPlanSummaryFragmentV2 extends BaseFragment implements SearchVi
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
                         if (Helper.getItemParam(Constants.IS_TODAY) != null) {
-                            ((NewMainActivity) getActivity()).changePage(2);
+                            ((MainActivity) getActivity()).changePage(2);
                         } else {
-                            ((NewMainActivity) getActivity()).changePage(20);
+                            ((MainActivity) getActivity()).changePage(20);
                         }
                         return true;
                     }
@@ -139,9 +139,9 @@ public class OrderPlanSummaryFragmentV2 extends BaseFragment implements SearchVi
             @Override
             public void onClick(View view) {
                 if (Helper.getItemParam(Constants.IS_TODAY) != null) {
-                    ((NewMainActivity) getActivity()).changePage(2);
+                    ((MainActivity) getActivity()).changePage(2);
                 } else {
-                    ((NewMainActivity) getActivity()).changePage(20);
+                    ((MainActivity) getActivity()).changePage(20);
                 }
             }
         });

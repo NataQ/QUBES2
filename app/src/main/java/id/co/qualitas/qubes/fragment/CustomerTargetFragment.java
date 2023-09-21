@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.CustomerTargetAdapter;
 import id.co.qualitas.qubes.adapter.SalesTargetAdapter;
 import id.co.qualitas.qubes.constants.Constants;
@@ -303,7 +303,7 @@ public class CustomerTargetFragment extends BaseFragment {
     }
 
     public void goToTargetDetailFragment() {
-        ((NewMainActivity) getActivity()).changePage(22);
+        ((MainActivity) getActivity()).changePage(22);
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, TargetResponse[]> {

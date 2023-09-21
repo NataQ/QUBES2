@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.ReturnDetailAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -46,7 +46,7 @@ public class ReturnDetail2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(17);
+                        ((MainActivity) getActivity()).changePage(17);
                         return true;
                     }
                 }
@@ -57,7 +57,7 @@ public class ReturnDetail2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(17);
+                ((MainActivity) getActivity()).changePage(17);
             }
         });
 

@@ -81,7 +81,7 @@ public class StockRequestHeaderActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        intent = new Intent(StockRequestHeaderActivity.this, NewMainActivity.class);
+//        intent = new Intent(StockRequestHeaderActivity.this, MainActivity.class);
 //        startActivity(intent);
     }
 }

@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OrderPlanAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -59,7 +59,7 @@ public class OrderPlanFragment extends BaseFragment implements SearchView.OnQuer
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(1);
+                        ((MainActivity) getActivity()).changePage(1);
                         return true;
                     }
                 }
@@ -70,7 +70,7 @@ public class OrderPlanFragment extends BaseFragment implements SearchView.OnQuer
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(20);
+                ((MainActivity) getActivity()).changePage(20);
 //                Fragment fr = new OrderPlanDetailFragmentV2();
 //                setContent(fr);
             }

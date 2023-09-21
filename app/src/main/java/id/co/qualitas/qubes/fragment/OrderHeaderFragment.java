@@ -18,7 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OrderHeaderAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -61,7 +61,7 @@ public class OrderHeaderFragment extends BaseFragment {
                 Helper.removeItemParam(Constants.VISIT_ORDER_HEADER);
                 Helper.removeItemParam(Constants.ALL_ONE_TIME_DISCOUNT_DETAIL);
 
-                ((NewMainActivity) getActivity()).changePage(12);
+                ((MainActivity) getActivity()).changePage(12);
 //                Intent intent = new Intent(getActivity(), CreateOrder2Fragment.class);
 //                startActivity(intent);
 //                fragment = new OrderSoldFragment();

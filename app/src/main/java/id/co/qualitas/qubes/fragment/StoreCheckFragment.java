@@ -33,7 +33,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.CreateStoreCheckAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -88,7 +88,7 @@ public class StoreCheckFragment extends BaseFragment implements SearchView.OnQue
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(8);
+                        ((MainActivity) getActivity()).changePage(8);
                         return true;
                     }
                 }
@@ -99,7 +99,7 @@ public class StoreCheckFragment extends BaseFragment implements SearchView.OnQue
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(8);
+                ((MainActivity) getActivity()).changePage(8);
             }
         });
 
@@ -171,7 +171,7 @@ public class StoreCheckFragment extends BaseFragment implements SearchView.OnQue
                     }
                 }
 
-                ((NewMainActivity) getActivity()).changePage(8);
+                ((MainActivity) getActivity()).changePage(8);
 //                Intent intent = new Intent(StoreCheckActivity.this, Timer2Fragment.class);
 //                startActivity(intent);
 //                fragment = new TimerFragment();

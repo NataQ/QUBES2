@@ -148,12 +148,12 @@ public class UnloadingActivity extends BaseActivity {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result == null) {
-                setToast("generate pdf failed, please try again");
+                setToast("Gagal membuat pdf.. Silahkan coba lagi..");
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
                 } else {
-                    setToast("Can't show pdf. Please try again later..");
+                    setToast("Gagal membuat pdf.. Silahkan coba lagi..");
                 }
             }
         }
@@ -224,10 +224,6 @@ public class UnloadingActivity extends BaseActivity {
             //below android 11
             ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
         }
-    }
-
-    private void requestPermission11() {
-
     }
 
     @Override

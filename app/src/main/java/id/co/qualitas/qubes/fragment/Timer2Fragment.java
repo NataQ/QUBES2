@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.CalendarUtils;
@@ -102,7 +102,7 @@ public class Timer2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(3);
+                        ((MainActivity) getActivity()).changePage(3);
                         return true;
                     }
                 }
@@ -113,7 +113,7 @@ public class Timer2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(3);
+                ((MainActivity) getActivity()).changePage(3);
             }
         });
 
@@ -124,7 +124,7 @@ public class Timer2Fragment extends BaseFragment {
         llCreditInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((NewMainActivity) getActivity()).changePage(9);
+                ((MainActivity) getActivity()).changePage(9);
             }
         });
 
@@ -133,7 +133,7 @@ public class Timer2Fragment extends BaseFragment {
             public void onClick(View v) {
                 Helper.removeItemParam(Constants.GET_DETAIL_VISIT);
                 Helper.removeItemParam(Constants.STORE_CHECK_DETAIL);
-                ((NewMainActivity) getActivity()).changePage(10);
+                ((MainActivity) getActivity()).changePage(10);
 //                fragment = new StockOpnameBfrFragment();
 //                setContent(fragment);
             }
@@ -143,7 +143,7 @@ public class Timer2Fragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Helper.removeItemParam(Constants.CURRENTPAGE);
-                ((NewMainActivity) getActivity()).changePage(11);
+                ((MainActivity) getActivity()).changePage(11);
 //                Intent intent = new Intent(Timer2Fragment.this, Order2Fragment.class);
 //                startActivity(intent);
 //                fragment = new OrderTypeFragment();
@@ -156,7 +156,7 @@ public class Timer2Fragment extends BaseFragment {
             public void onClick(View v) {
                 Helper.removeItemParam(Constants.CURRENTPAGE);
                 Helper.removeItemParam(Constants.RETURN_DETAIL);
-                ((NewMainActivity) getActivity()).changePage(17);
+                ((MainActivity) getActivity()).changePage(17);
 //                Intent intent = new Intent(Timer2Fragment.this, Return2Fragment.class);
 //                startActivity(intent);
 //                fragment = new ReturnSalesFragment();

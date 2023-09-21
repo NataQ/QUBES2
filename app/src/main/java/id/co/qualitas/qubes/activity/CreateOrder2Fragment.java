@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -80,7 +80,7 @@ public class CreateOrder2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(11);
+                        ((MainActivity) getActivity()).changePage(11);
                         return true;
                     }
                 }
@@ -91,7 +91,7 @@ public class CreateOrder2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(12);
+                ((MainActivity) getActivity()).changePage(12);
             }
         });
         setAdapterDataShipTo();
@@ -517,7 +517,7 @@ public class CreateOrder2Fragment extends BaseFragment {
             Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
             Helper.removeItemParam(Constants.FROM_SALES_ORDER);
 
-            ((NewMainActivity) getActivity()).changePage(13);
+            ((MainActivity) getActivity()).changePage(13);
 //            Intent intent = new Intent(CreateOrder2Fragment.this, CreateOrderDetail2Fragment.class);
 //            startActivity(intent);
 //            fragment = new OrderFragment();

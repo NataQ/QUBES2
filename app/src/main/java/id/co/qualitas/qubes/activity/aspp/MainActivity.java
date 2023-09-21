@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,21 +11,14 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -35,35 +27,13 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
-
-import org.checkerframework.checker.units.qual.C;
-
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.CreateOrder2Fragment;
-import id.co.qualitas.qubes.activity.CreateOrderDetail2Fragment;
-import id.co.qualitas.qubes.activity.CreateReturn2Fragment;
-import id.co.qualitas.qubes.activity.ImageDetail2Fragment;
-import id.co.qualitas.qubes.activity.OrderSummary2Fragment;
-import id.co.qualitas.qubes.activity.OrderSummaryDetail2Fragment;
-import id.co.qualitas.qubes.activity.Return2Fragment;
-import id.co.qualitas.qubes.activity.ReturnDetail2Fragment;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.fragment.ChangePasswordFragment;
-import id.co.qualitas.qubes.fragment.CreditInfo2Fragment;
 import id.co.qualitas.qubes.fragment.aspp.DirectionFragment;
 import id.co.qualitas.qubes.fragment.aspp.HomeFragment;
-import id.co.qualitas.qubes.fragment.Order2Fragment;
-import id.co.qualitas.qubes.fragment.OrderPlanDetailFragmentV2;
-import id.co.qualitas.qubes.fragment.OrderPlanSummaryFragmentV2;
-import id.co.qualitas.qubes.fragment.Profile2Fragment;
-import id.co.qualitas.qubes.fragment.StoreCheckFragment;
-import id.co.qualitas.qubes.fragment.TargetDetailFragment;
-import id.co.qualitas.qubes.fragment.Timer2Fragment;
 import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
 import id.co.qualitas.qubes.fragment.aspp.ActivityFragment;
 import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
@@ -74,7 +44,7 @@ import id.co.qualitas.qubes.services.LocationUpdatesService;
 import id.co.qualitas.qubes.services.MyFirebaseMessagingService2;
 import id.co.qualitas.qubes.session.SessionManager;
 
-public class NewMainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity {
     String currentpage;
     private String page = "0";
     String[] permissionsRequired = new String[]{
@@ -114,7 +84,7 @@ public class NewMainActivity extends BaseActivity {
         imgLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logOut(NewMainActivity.this);
+                logOut(MainActivity.this);
             }
         });
     }
@@ -141,7 +111,7 @@ public class NewMainActivity extends BaseActivity {
                         || shouldShowRequestPermissionRationale(permissionsRequired[1])
                         || shouldShowRequestPermissionRationale(permissionsRequired[2])
                         || shouldShowRequestPermissionRationale(permissionsRequired[3])) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(NewMainActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("Need Multiple Permissions");
                     builder.setCancelable(false);
                     builder.setMessage("This app needs Gallery and Location permissions.");

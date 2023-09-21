@@ -32,7 +32,7 @@ import java.util.Locale;
 
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.CreateNewReturnAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -107,7 +107,7 @@ public class CreateReturn2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(17);
+                        ((MainActivity) getActivity()).changePage(17);
                         return true;
                     }
                 }
@@ -118,7 +118,7 @@ public class CreateReturn2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(17);
+                ((MainActivity) getActivity()).changePage(17);
             }
         });
 
@@ -217,7 +217,7 @@ public class CreateReturn2Fragment extends BaseFragment {
                                             returnList.get(i).setIdReturn(returnRequest.getIdHeader());
                                             db.addReturnDetail(returnList.get(i));
                                         }
-                                        ((NewMainActivity) getActivity()).changePage(17);
+                                        ((MainActivity) getActivity()).changePage(17);
                                     } else {
                                         errorBrb = 0;
                                         snackBar(rootView, R.string.usedNoBrb);
@@ -390,7 +390,7 @@ public class CreateReturn2Fragment extends BaseFragment {
                                             returnList.get(i).setIdReturn(returnRequest.getIdHeader());
                                             db.addReturnDetail(returnList.get(i));
                                         }
-                                        ((NewMainActivity) getActivity()).changePage(17);
+                                        ((MainActivity) getActivity()).changePage(17);
                                     } else {
                                         errorBrb = 0;
                                         snackBar(rootView, R.string.usedNoBrb);

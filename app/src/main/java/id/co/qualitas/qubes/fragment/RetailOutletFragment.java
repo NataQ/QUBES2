@@ -55,7 +55,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OutletAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -110,7 +110,7 @@ public class RetailOutletFragment extends BaseFragment implements OnMapReadyCall
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(3);
+                        ((MainActivity) getActivity()).changePage(3);
                         return true;
                     }
                 }
@@ -154,7 +154,7 @@ public class RetailOutletFragment extends BaseFragment implements OnMapReadyCall
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                             Toast.makeText(getActivity(), "Please enable your gps", Toast.LENGTH_SHORT).show();
-                            ((NewMainActivity) getActivity()).changePage(1);
+                            ((MainActivity) getActivity()).changePage(1);
                             dialog.cancel();
                         }
                     });
@@ -489,7 +489,7 @@ public class RetailOutletFragment extends BaseFragment implements OnMapReadyCall
     }
 
     public void changeFragment() {
-        ((NewMainActivity) getActivity()).changePage(8);
+        ((MainActivity) getActivity()).changePage(8);
     }
 
     @SuppressLint("StaticFieldLeak")

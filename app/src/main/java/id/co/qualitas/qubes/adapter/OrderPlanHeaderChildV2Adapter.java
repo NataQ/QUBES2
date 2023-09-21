@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.OrderPlanFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -96,16 +96,16 @@ public class OrderPlanHeaderChildV2Adapter extends RecyclerView.Adapter<OrderPla
                         Helper.setItemParam(Constants.IS_TODAY, "Y");
                         Helper.setItemParam(Constants.ORDER_PLAN_DETAIL_HEADER, orderPlan);
 
-                        ((NewMainActivity) mcontext.getActivity()).changePage(21);
+                        ((MainActivity) mcontext.getActivity()).changePage(21);
 //                        fragment = new OrderPlanSummaryFragmentV2();
 //                        mcontext.setContent(fragment);
                     } else {
-                        ((NewMainActivity) mcontext.getActivity()).changePage(20);
+                        ((MainActivity) mcontext.getActivity()).changePage(20);
 //                        fragment = new OrderPlanDetailFragmentV2();
 //                        mcontext.setContent(fragment);
                     }
                 } else {
-                    ((NewMainActivity) mcontext.getActivity()).changePage(20);
+                    ((MainActivity) mcontext.getActivity()).changePage(20);
 //                    fragment = new OrderPlanDetailFragmentV2();
 //                    mcontext.setContent(fragment);
                 }

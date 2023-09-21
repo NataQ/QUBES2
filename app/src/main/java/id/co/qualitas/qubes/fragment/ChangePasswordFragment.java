@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -77,7 +77,7 @@ public class ChangePasswordFragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(5);
+                        ((MainActivity) getActivity()).changePage(5);
                         return true;
                     }
                 }
@@ -88,7 +88,7 @@ public class ChangePasswordFragment extends BaseFragment {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((NewMainActivity) getActivity()).changePage(5);
+                ((MainActivity) getActivity()).changePage(5);
             }
         });
         
@@ -134,7 +134,7 @@ public class ChangePasswordFragment extends BaseFragment {
                     Toast.makeText(getActivity(), msg.getMessage(), Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getActivity(), msg.getMessage(), Toast.LENGTH_SHORT).show();
-                    ((NewMainActivity) getActivity()).changePage(5);
+                    ((MainActivity) getActivity()).changePage(5);
                 }
             } else {
                 Toast.makeText(getActivity(), getResources().getString(R.string.serverError), Toast.LENGTH_SHORT).show();

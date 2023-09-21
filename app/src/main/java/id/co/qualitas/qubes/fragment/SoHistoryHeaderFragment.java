@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.SalesOrderHistoryAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
@@ -89,6 +89,6 @@ public class SoHistoryHeaderFragment extends BaseFragment {
     }
 
     public void goToOrder() {
-        ((NewMainActivity) getActivity()).changePage(13);
+        ((MainActivity) getActivity()).changePage(13);
     }
 }

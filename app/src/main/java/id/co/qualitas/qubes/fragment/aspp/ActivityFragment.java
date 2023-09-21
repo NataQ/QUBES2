@@ -1,18 +1,10 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
-import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -21,10 +13,9 @@ import androidx.work.WorkManager;
 import androidx.work.WorkRequest;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
 import id.co.qualitas.qubes.activity.aspp.InvoiceVerificationActivity;
-import id.co.qualitas.qubes.activity.aspp.OutletActivity;
 import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.constants.Constants;
@@ -34,7 +25,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.User;
 
 public class ActivityFragment extends BaseFragment {
-    private static final String TAG = NewMainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
     private CardView llStockRequest, llInvoice, llVisit, llCollection;
     WorkManager workManager;
     private WorkRequest workRequest;
@@ -62,8 +53,8 @@ public class ActivityFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-//                    ((NewMainActivity) getActivity()).changePage(1);
-                    ((NewMainActivity) getActivity()).backPress();
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
                 }
             }
         });

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.LoginActivity;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.LogAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -111,7 +110,7 @@ public class AccountFragment extends BaseFragment {
 //            public boolean onKey(View v, int keyCode, KeyEvent event) {
 //                if (event.getAction() == KeyEvent.ACTION_DOWN) {
 //                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                        ((NewMainActivity) getActivity()).changePage(1);
+//                        ((MainActivity) getActivity()).changePage(1);
 //                        return true;
 //                    }
 //                }
@@ -123,8 +122,8 @@ public class AccountFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-//                    ((NewMainActivity) getActivity()).changePage(1);
-                    ((NewMainActivity) getActivity()).backPress();
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
                 }
             }
         });
@@ -139,7 +138,7 @@ public class AccountFragment extends BaseFragment {
         llChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ((NewMainActivity) getActivity()).changePage(7);
+//                ((MainActivity) getActivity()).changePage(7);
                 openDialogChangePassword();
             }
         });

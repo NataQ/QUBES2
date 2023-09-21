@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OrderPlanDetailAdapterV2;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
@@ -146,7 +146,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(2);
+                        ((MainActivity) getActivity()).changePage(2);
                         return true;
                     }
                 }
@@ -207,7 +207,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
 
                                 Helper.setItemParam(Constants.AMOUNT_PLAN, edtPlan.getText().toString());
 
-                                ((NewMainActivity) getActivity()).changePage(21);
+                                ((MainActivity) getActivity()).changePage(21);
 //                                fragment = new OrderPlanSummaryFragmentV2();
 //                                setContent(fragment);
                             } else {
@@ -287,7 +287,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(2);
+                ((MainActivity) getActivity()).changePage(2);
             }
         });
 
@@ -893,7 +893,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
 
                                 Helper.setItemParam(Constants.AMOUNT_PLAN, edtPlan.getText().toString());
 
-                                ((NewMainActivity) getActivity()).changePage(21);
+                                ((MainActivity) getActivity()).changePage(21);
 //                                fragment = new OrderPlanSummaryFragmentV2();
 //                                setContent(fragment);
                             } else {

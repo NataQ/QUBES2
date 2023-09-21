@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.Return2Fragment;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
@@ -91,7 +91,7 @@ public class ReturnSalesAdapter extends RecyclerView.Adapter<ReturnSalesAdapter.
             public void onClick(View v) {
                 Helper.setItemParam(Constants.RETURN_DETAIL_CHOOSE, returnHeader);
                 Helper.removeItemParam(Constants.CURRENTPAGE);
-                ((NewMainActivity) mContext.getActivity()).changePage(19);
+                ((MainActivity) mContext.getActivity()).changePage(19);
 //                Intent intent = new Intent(mContext, ReturnDetail2Fragment.class);
 //                mContext.startActivity(intent);
 //                fragment = new ReturnSalesDetailFragment(); ada sebelumnya, blum d ubah ke activity

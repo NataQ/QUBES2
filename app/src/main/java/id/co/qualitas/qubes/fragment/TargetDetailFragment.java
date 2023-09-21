@@ -52,7 +52,7 @@ public class TargetDetailFragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                        ((NewMainActivity) getActivity()).changePage(1);
+//                        ((MainActivity) getActivity()).changePage(1);
                         getFragmentManager().popBackStack();
                         return true;
                     }
@@ -64,7 +64,7 @@ public class TargetDetailFragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ((NewMainActivity) getActivity()).changePage(1);
+//                ((MainActivity) getActivity()).changePage(1);
                 getFragmentManager().popBackStack();
             }
         });

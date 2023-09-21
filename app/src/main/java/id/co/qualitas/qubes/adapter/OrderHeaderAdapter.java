@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.OrderHeaderFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -79,7 +79,7 @@ public class OrderHeaderAdapter extends RecyclerView.Adapter<OrderHeaderAdapter.
                 Helper.removeItemParam(Constants.VISIT_ORDER_HEADER);
                 Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
 
-                ((NewMainActivity) mContext.getActivity()).changePage(12);
+                ((MainActivity) mContext.getActivity()).changePage(12);
 
 //                Fragment fr = new OrderSoldFragment();
 //                mContext.setContent(fr);

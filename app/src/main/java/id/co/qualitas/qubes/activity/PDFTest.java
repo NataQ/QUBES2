@@ -118,7 +118,7 @@ public class PDFTest extends BaseActivity {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result == null) {
-                setToast("generate pdf failed, please try again");
+                setToast("Gagal membuat pdf.. Silahkan coba lagi..");
             } else {
                 if (result) {
                     loadPdfViewer(pdfView, pdfFile);

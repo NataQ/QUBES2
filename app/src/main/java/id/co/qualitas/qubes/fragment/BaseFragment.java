@@ -86,7 +86,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.AddNewOutletListAdapter;
 import id.co.qualitas.qubes.adapter.ShowPriceAdapter;
 import id.co.qualitas.qubes.constants.Constants;
@@ -326,7 +326,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                             outletResponse.setReason(checkOutRequest.getReason());
                             db.updateVisitPlan(outletResponse);
 
-                            ((NewMainActivity) getActivity()).changePage(3);
+                            ((MainActivity) getActivity()).changePage(3);
 //                            fragment = new RetailOutletFragment();
 //                            setContent(fragment);
 
@@ -617,9 +617,9 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                             }
 
                             if (Helper.getItemParam(Constants.FROM_SALES_ORDER) != null) {
-                                ((NewMainActivity) getActivity()).changePage(4);
+                                ((MainActivity) getActivity()).changePage(4);
                             } else {
-                                ((NewMainActivity) getActivity()).changePage(11);
+                                ((MainActivity) getActivity()).changePage(11);
                             }
 
 
@@ -696,7 +696,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         PARAM_STATUS_OUTLET = Constants.CHECK_IN;
 
                         onResume();
-//                        Intent intent = new Intent(getActivity(), NewMainActivity.class);
+//                        Intent intent = new Intent(getActivity(), MainActivity.class);
 //                        startActivity(intent);
 //                        fragment = new TimerFragment();
 //                        setContent(fragment);
@@ -837,7 +837,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 //                            std.setCustomer_no(Helper.customerNo);
 //                            db.checkOut(std);
 //                            alertDialog.dismiss();
-//                            ((NewMainActivity) getActivity()).changePage(3);
+//                            ((MainActivity) getActivity()).changePage(3);
 ////                            fragment = new RetailOutletFragment();
 ////                            setContent(fragment);
 //                            Helper.removeItemParam(Constants.CHECK_IN);
@@ -880,7 +880,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 //                            std.setCustomer_no(Helper.customerNo);
 //                            database.pass(std);
 //                            alertDialog.dismiss();
-//                            ((NewMainActivity) getActivity()).changePage(3);
+//                            ((MainActivity) getActivity()).changePage(3);
 ////                            fragment = new RetailOutletFragment();
 ////                            setContent(fragment);
 //                        }
@@ -1219,7 +1219,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                                 }
 
 //                                progress.dismiss();
-                                ((NewMainActivity) getActivity()).changePage(2);
+                                ((MainActivity) getActivity()).changePage(2);
 //                                fragment = new OrderPlanFragment();
 //                                setContent(fragment);
                             } else {
@@ -2733,7 +2733,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         outletResponse.setStatusCheckIn("true");
 
                         db.updateStatusCheckIn(outletResponse);
-                        ((NewMainActivity) getActivity()).changePage(8);
+                        ((MainActivity) getActivity()).changePage(8);
 //                        fragment = new TimerFragment();
 //                        setContent(fragment);
                     }
@@ -2759,7 +2759,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         Helper.resume = true;
 
                         Helper.removeItemParam(Constants.CHECK_IN);
-                        ((NewMainActivity) getActivity()).changePage(3);
+                        ((MainActivity) getActivity()).changePage(3);
 //                        fragment = new RetailOutletFragment();
 //                        setContent(fragment);
                     }
@@ -2786,7 +2786,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
 
                         TimerFragment.setPlayPause();
                         Helper.removeItemParam(Constants.CHECK_IN);
-                        ((NewMainActivity) getActivity()).changePage(3);
+                        ((MainActivity) getActivity()).changePage(3);
 //                        fragment = new RetailOutletFragment();
 //                        setContent(fragment);
                     }
@@ -2799,7 +2799,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 if (messageResponseSave != null) {
                     if (messageResponseSave.getIdMessage() == 1) {
                         Toast.makeText(getContext(), messageResponseSave.getMessage(), Toast.LENGTH_LONG).show();
-                        ((NewMainActivity) getActivity()).changePage(8);
+                        ((MainActivity) getActivity()).changePage(8);
 //                        fragment = new TimerFragment();
 //                        setContent(fragment);
                     } else {
@@ -2915,7 +2915,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     }
 
     public void setContentToHome() {
-        ((NewMainActivity) getActivity()).changePage(1);
+        ((MainActivity) getActivity()).changePage(1);
 //        fragment = new CalendarFragment();
 //        setContent(fragment);
     }

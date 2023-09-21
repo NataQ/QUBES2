@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.OrderSummaryDetailAdapterV2;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -45,7 +45,7 @@ public class OrderSummaryDetail2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(14);
+                        ((MainActivity) getActivity()).changePage(14);
                         return true;
                     }
                 }
@@ -56,7 +56,7 @@ public class OrderSummaryDetail2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(14);
+                ((MainActivity) getActivity()).changePage(14);
             }
         });
 

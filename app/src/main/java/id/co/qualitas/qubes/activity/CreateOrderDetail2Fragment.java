@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.VisitOrderDetailAdapterV2;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -175,7 +175,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                         if (Helper.getItemParam(Constants.FROM_SALES_ORDER) != null) {
                             getFragmentManager().popBackStack();
                         } else {
-                            ((NewMainActivity) getActivity()).changePage(12);
+                            ((MainActivity) getActivity()).changePage(12);
                         }
 
                         return true;
@@ -193,7 +193,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                 if (Helper.getItemParam(Constants.FROM_SALES_ORDER) != null) {
                     getFragmentManager().popBackStack();
                 } else {
-                    ((NewMainActivity) getActivity()).changePage(12);
+                    ((MainActivity) getActivity()).changePage(12);
                 }
             }
         });
@@ -403,7 +403,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
 
                                             Helper.setItemParam(Constants.LIST_FREE_GOODS, listFreeGoods);
 
-                                            ((NewMainActivity) getActivity()).changePage(14);
+                                            ((MainActivity) getActivity()).changePage(14);
 //                                            Intent intent = new Intent(CreateOrderDetail2Fragment.this, OrderSummary2Fragment.class);
 //                                            startActivity(intent);
 //                                            fragment = new OrderSummaryFragmentN();
@@ -453,7 +453,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
 
                 }
 
-                ((NewMainActivity) getActivity()).changePage(16);
+                ((MainActivity) getActivity()).changePage(16);
 //                Intent intent= new Intent(CreateOrderDetail2Fragment.this, ImageDetail2Fragment.class);
 //                startActivity(intent);
 //                Fragment fr = new ImageDetailFragment();
@@ -953,7 +953,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                         Collections.addAll(listFreeGoods, freeGoods);
                         Helper.setItemParam(Constants.LIST_FREE_GOODS, listFreeGoods);
                     }
-                    ((NewMainActivity) getActivity()).changePage(14);
+                    ((MainActivity) getActivity()).changePage(14);
 //                    Intent intent= new Intent(CreateOrderDetail2Fragment.this, OrderSummary2Fragment.class);
 //                    startActivity(intent);
 //                    fragment = new OrderSummaryFragmentN();

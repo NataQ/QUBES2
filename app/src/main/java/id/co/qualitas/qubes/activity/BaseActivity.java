@@ -37,7 +37,6 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -79,7 +78,7 @@ import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.database.SecondDatabaseHelper;
@@ -245,14 +244,14 @@ public class BaseActivity extends AppCompatActivity {
         snack.show();
     }
 
-    public void setSpinnerGrey(List<String> items, Spinner spinner) {
+    public void setSpinnerData(List<String> items, Spinner spinner) {
         spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
 
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
                 TextView text = view.findViewById(R.id.text1);
-                text.setTextColor(getResources().getColor(R.color.grey));
+//                text.setTextColor(getResources().getColor(R.color.grey));
                 return view;
             }
 
@@ -851,7 +850,7 @@ public class BaseActivity extends AppCompatActivity {
                                 }
 
                                 Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                                Intent intent = new Intent(getApplicationContext(), NewMainActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                 startActivity(intent);
 //                                fragment = new OrderPlanFragment(); //ubah ke activity dulu
 //                                setContent(fragment);
@@ -1220,7 +1219,7 @@ public class BaseActivity extends AppCompatActivity {
                             db.updateVisitPlan(outletResponse);
 
                             Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                            Intent intent = new Intent(getApplicationContext(), NewMainActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             startActivity(intent);
 
 //                            fragment = new RetailOutletFragment(); pindah halaman ke retail outlet??

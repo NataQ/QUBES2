@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -94,7 +94,7 @@ public class OrderSoldFragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(11);
+                        ((MainActivity) getActivity()).changePage(11);
                         return true;
                     }
                 }
@@ -105,7 +105,7 @@ public class OrderSoldFragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(11);
+                ((MainActivity) getActivity()).changePage(11);
             }
         });
 
@@ -524,7 +524,7 @@ public class OrderSoldFragment extends BaseFragment {
             Helper.removeItemParam(Constants.GET_DETAIL_VISIT);
             Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
 
-//            ((NewMainActivity) getActivity()).changePage(11);
+//            ((MainActivity) getActivity()).changePage(11);
 //            fragment = new OrderFragment();
 //            setContent(fragment);
         } else if(checkSegment == 0){

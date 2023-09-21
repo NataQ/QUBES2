@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.ReturnSalesAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -53,7 +53,7 @@ public class Return2Fragment extends BaseFragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        ((NewMainActivity) getActivity()).changePage(8);
+                        ((MainActivity) getActivity()).changePage(8);
                         return true;
                     }
                 }
@@ -66,7 +66,7 @@ public class Return2Fragment extends BaseFragment {
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((NewMainActivity) getActivity()).changePage(8);
+                ((MainActivity) getActivity()).changePage(8);
             }
         });
 
@@ -75,7 +75,7 @@ public class Return2Fragment extends BaseFragment {
         btnAddNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((NewMainActivity) getActivity()).changePage(18);
+                ((MainActivity) getActivity()).changePage(18);
 //                Intent intent = new Intent(Return2Fragment.this, CreateReturn2Fragment.class);
 //                startActivity(intent);
 //                fragment = new CreateNewReturnFragment();

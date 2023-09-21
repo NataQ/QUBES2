@@ -15,7 +15,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.tabs.TabLayout;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.NewTabFragmentAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -124,7 +124,7 @@ public class HomeFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-                    ((NewMainActivity) getActivity()).backPress();
+                    ((MainActivity) getActivity()).backPress();
                 }
             }
         });

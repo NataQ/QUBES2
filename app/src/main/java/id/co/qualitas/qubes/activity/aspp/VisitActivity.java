@@ -11,10 +11,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -32,6 +36,8 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,6 +58,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +77,9 @@ import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.utils.LashPdfUtils;
+import id.co.qualitas.qubes.utils.UnloadingPdfUtils;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class VisitActivity extends BaseActivity implements LocationListener {
     private VisitListAdapter mAdapterVisit;
@@ -86,6 +96,16 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private LocationManager lm;
     private Location currentLocation = null;
     private Customer outletClicked;
+
+    private LashPdfUtils pdfUtils;
+    private File pdfFile;
+    private Boolean success = false;
+
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private final static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,10 +163,12 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnEndDay.setOnClickListener(v -> {
-            btnEndDay.setVisibility(View.GONE);
-            btnNextDay.setVisibility(View.VISIBLE);
-            Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-            startActivity(intent);
+            if (checkPermission()) {
+                new AsyncTaskGeneratePDF().execute();
+            } else {
+                setToast(getString(R.string.pleaseEnablePermission));
+                requestPermission();
+            }
         });
 
         btnAddNoo.setOnClickListener(v -> {
@@ -415,7 +437,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void openDialogEndVisit() {
         Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(600 , ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_end_visit);
         Button btnEnd = dialog.findViewById(R.id.btnEnd);
@@ -441,7 +463,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void openDialogStartVisit() {
         Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(600 , ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_start_visit);
         Button btnStart = dialog.findViewById(R.id.btnStart);
@@ -514,20 +536,21 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, new LatLng(-6.090263984566263, 106.74593288657607),1));
-        mList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, new LatLng(-6.09047339393416, 106.74535959301855),2));
-        mList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, new LatLng(-6.09102018270127, 106.74661148098058),0));
+        mList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, new LatLng(-6.090263984566263, 106.74593288657607), 1));
+        mList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, new LatLng(-6.09047339393416, 106.74535959301855), 2));
+        mList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, new LatLng(-6.09102018270127, 106.74661148098058), 0));
 
         mListNoo = new ArrayList<>();
         mListNoo.add(new Customer("CHGI", "Cluster Harmony, Golf Island", "WP6W+7JR, Pantai Indah Kapuk St, Kamal Muara, Penjaringan, North Jakarta City, Jakarta 14460", false, new LatLng(-6.089065696336256, 106.74676357552187), 0));
-        mListNoo.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, new LatLng(-6.09032214182743, 106.74191982249332),3));
-        mListNoo.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, new LatLng(-6.088542162422348, 106.74239952686823),2));
+        mListNoo.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, new LatLng(-6.09032214182743, 106.74191982249332), 3));
+        mListNoo.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, new LatLng(-6.088542162422348, 106.74239952686823), 2));
 
     }
 
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        pdfUtils = LashPdfUtils.getInstance(VisitActivity.this);
 
         txtNOO = findViewById(R.id.txtNOO);
         txtNOOLine = findViewById(R.id.txtNOOLine);
@@ -565,5 +588,114 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
+    }
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean check =
+                    Environment.isExternalStorageManager();
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            return check;
+        } else {
+            if (
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private void requestPermission() {
+        //  if(!Environment.isExternalStorageManager()){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", new Object[]{getApplicationContext().getPackageName()})));
+                    startActivityForResult(intent, 2296);
+                } catch (Exception e) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, 2296);
+                }
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            //below android 11
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2296) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+                } else {
+                    setToast("Allow permission for storage access!");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    new AsyncTaskGeneratePDF().execute();
+                } else {
+                    setToast(getString(R.string.pleaseEnablePermission));
+                }
+                break;
+        }
+    }
+
+    private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lash.pdf");
+                success = pdfUtils.createPDF(pdfFile);
+                return success;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (result == null) {
+                setToast("Gagal membuat pdf.. Silahkan coba lagi..");
+            } else {
+                if (result) {
+                    setToast("Downloaded to " + pdfFile.getAbsolutePath());
+                    btnEndDay.setVisibility(View.GONE);
+                    btnNextDay.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                    startActivity(intent);
+                } else {
+                    setToast("Gagal membuat pdf.. Silahkan coba lagi");
+                }
+
+            }
+
+        }
     }
 }

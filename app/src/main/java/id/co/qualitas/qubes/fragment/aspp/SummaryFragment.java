@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.fragment.aspp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.NewMainActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
 import id.co.qualitas.qubes.adapter.aspp.SummaryAdapter;
 import id.co.qualitas.qubes.constants.Constants;
@@ -56,8 +55,8 @@ public class SummaryFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-//                    ((NewMainActivity) getActivity()).changePage(1);
-                    ((NewMainActivity) getActivity()).backPress();
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
                 }
             }
         });
