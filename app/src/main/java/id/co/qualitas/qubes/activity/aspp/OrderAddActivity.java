@@ -40,7 +40,7 @@ public class OrderAddActivity extends BaseActivity {
     private Button btnAdd, btnNext, btnGetDiscount;
     private TextView txtDate, txtOmzet;
 
-    private List<Material> listSpinner;
+    private List<Material> listSpinner, listFilteredSpinner;
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
     private SpinnerProductOrderAdapter spinnerAdapter;
@@ -166,9 +166,18 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         cvCheckedAll.setOnClickListener(v -> {
+            if (listFilteredSpinner == null) {
+                listFilteredSpinner = new ArrayList<>();
+            }
             checkedAll = false;
-            for (Material mat : listSpinner) {
-                mat.setChecked(checkedAll);
+            if (!listFilteredSpinner.isEmpty()) {
+                for (Material mat : listFilteredSpinner) {
+                    mat.setChecked(checkedAll);
+                }
+            } else {
+                for (Material mat : listSpinner) {
+                    mat.setChecked(checkedAll);
+                }
             }
             spinnerAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.VISIBLE);
@@ -176,9 +185,18 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         cvUnCheckAll.setOnClickListener(v -> {
+            if (listFilteredSpinner == null) {
+                listFilteredSpinner = new ArrayList<>();
+            }
             checkedAll = true;
-            for (Material mat : listSpinner) {
-                mat.setChecked(checkedAll);
+            if (!listFilteredSpinner.isEmpty()) {
+                for (Material mat : listFilteredSpinner) {
+                    mat.setChecked(checkedAll);
+                }
+            } else {
+                for (Material mat : listSpinner) {
+                    mat.setChecked(checkedAll);
+                }
             }
             spinnerAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.GONE);
@@ -209,6 +227,29 @@ public class OrderAddActivity extends BaseActivity {
             }
         }
         if (checked == listSpinner.size()) {
+            checkedAll = true;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.GONE);
+            cvCheckedAll.setVisibility(View.VISIBLE);
+        } else {
+            checkedAll = false;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.VISIBLE);
+            cvCheckedAll.setVisibility(View.GONE);
+        }
+    }
+
+    public void setFilteredData(List<Material> mFilteredList) {
+        listFilteredSpinner = new ArrayList<>();
+        listFilteredSpinner.addAll(mFilteredList);
+
+        int checked = 0;
+        for (Material mat : listFilteredSpinner) {
+            if (mat.isChecked()) {
+                checked++;
+            }
+        }
+        if (checked == listFilteredSpinner.size()) {
             checkedAll = true;
             spinnerAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.GONE);

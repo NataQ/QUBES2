@@ -290,5 +290,23 @@ public class StockRequestAddActivity extends BaseActivity {
     public void setFilteredData(List<Material> mFilteredList) {
         listFilteredSpinner = new ArrayList<>();
         listFilteredSpinner.addAll(mFilteredList);
+
+        int checked = 0;
+        for (Material mat : listFilteredSpinner) {
+            if (mat.isChecked()) {
+                checked++;
+            }
+        }
+        if (checked == listFilteredSpinner.size()) {
+            checkedAll = true;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.GONE);
+            cvCheckedAll.setVisibility(View.VISIBLE);
+        } else {
+            checkedAll = false;
+            spinnerAdapter.notifyDataSetChanged();
+            cvUnCheckAll.setVisibility(View.VISIBLE);
+            cvCheckedAll.setVisibility(View.GONE);
+        }
     }
 }

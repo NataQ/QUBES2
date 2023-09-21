@@ -3,9 +3,13 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -14,6 +18,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -31,6 +37,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.Map;
 
@@ -62,6 +70,8 @@ import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.services.LocationUpdatesService;
+import id.co.qualitas.qubes.services.MyFirebaseMessagingService2;
 import id.co.qualitas.qubes.session.SessionManager;
 
 public class NewMainActivity extends BaseActivity {
@@ -77,10 +87,18 @@ public class NewMainActivity extends BaseActivity {
     private ImageView imgLogOut;
     private boolean sentToSettings = false;
     // Tracks the bound state of the service.
-//    private boolean mBound = false;
-//    // The BroadcastReceiver used to listen from broadcasts from the service.
-//    private MyReceiver myReceiver;
-//    private static LocationUpdatesService mServiceFusedLocation = null;
+    private boolean mBound = false;
+    // The BroadcastReceiver used to listen from broadcasts from the service.
+    private MyReceiver myReceiver;
+    private static LocationUpdatesService mServiceFusedLocation = null;
+
+    HomeFragment homeFragment = new HomeFragment();
+    RouteCustomerFragment routeCustomerFragment = new RouteCustomerFragment();
+    ActivityFragment activityFragment = new ActivityFragment();
+    SummaryFragment summaryFragment = new SummaryFragment();
+    AccountFragment accountFragment = new AccountFragment();
+    CoverageFragment coverageFragment = new CoverageFragment();
+    DirectionFragment directionFragment = new DirectionFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +107,7 @@ public class NewMainActivity extends BaseActivity {
         setContentView(R.layout.new_activity_main);
         initialize();
         setSession();
-//        myReceiver = new MyReceiver();
+        myReceiver = new MyReceiver();
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
 
@@ -200,49 +218,50 @@ public class NewMainActivity extends BaseActivity {
         imgLogOut = findViewById(R.id.imgLogOut);
         bottomNavigationView = findViewById(R.id.navigation);
         fragmentManager = getSupportFragmentManager();
-
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
-                if (currentpage == null) {
-                    currentpage = "0";
-                }
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        if (!currentpage.equals("1")) {
-                            Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                            fragment = new HomeFragment();
-                        }
-                        break;
-                    case R.id.navigation_route_customer:
-                        if (!currentpage.equals("2")) {
-                            Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                            fragment = new RouteCustomerFragment();
-                        }
-                        break;
-                    case R.id.navigation_activity:
-                        if (!currentpage.equals("3")) {
-                            Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                            fragment = new ActivityFragment();
-                        }
-                        break;
-                    case R.id.navigation_summary:
-                        if (!currentpage.equals("4")) {
-                            Helper.setItemParam(Constants.CURRENTPAGE, "4");
-                            fragment = new SummaryFragment();
-                        }
-                        break;
-                    case R.id.navigation_account:
-                        if (!currentpage.equals("5")) {
-                            Helper.setItemParam(Constants.CURRENTPAGE, "5");
-                            fragment = new AccountFragment();
-                        }
-                        break;
-                }
-                setContent(fragment);
-                return true;
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
+            if (currentpage == null) {
+                currentpage = "0";
             }
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    if (!currentpage.equals("1")) {
+                        Helper.setItemParam(Constants.CURRENTPAGE, "1");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, homeFragment).commit();
+//                        fragment = new HomeFragment();
+                    }
+                    return true;
+                case R.id.navigation_route_customer:
+                    if (!currentpage.equals("2")) {
+                        Helper.setItemParam(Constants.CURRENTPAGE, "2");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, routeCustomerFragment).commit();
+//                        fragment = new RouteCustomerFragment();
+                    }
+                    return true;
+                case R.id.navigation_activity:
+                    if (!currentpage.equals("3")) {
+                        Helper.setItemParam(Constants.CURRENTPAGE, "3");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, activityFragment).commit();
+//                        fragment = new ActivityFragment();
+                    }
+                    return true;
+                case R.id.navigation_summary:
+                    if (!currentpage.equals("4")) {
+                        Helper.setItemParam(Constants.CURRENTPAGE, "4");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, summaryFragment).commit();
+//                        fragment = new SummaryFragment();
+                    }
+                    return true;
+                case R.id.navigation_account:
+                    if (!currentpage.equals("5")) {
+                        Helper.setItemParam(Constants.CURRENTPAGE, "5");
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, accountFragment).commit();
+//                        fragment = new AccountFragment();
+                    }
+                    return true;
+            }
+//            setContent(fragment);
+            return false;
         });
     }
 
@@ -264,19 +283,21 @@ public class NewMainActivity extends BaseActivity {
             case 1:
                 if (!currentpage.equals("1")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                    fragment = new HomeFragment();
-                    setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, homeFragment).commit();
+//                    fragment = new HomeFragment();
+//                    setContent(fragment);
+//                    bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                 }
                 break;
             case 2:
                 if (!currentpage.equals("2")) {
 //                    if (getMenu(124) || getMenu(127)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "2");
-//                    fragment = new OrderPlanFragment();
-                    fragment = new RouteCustomerFragment();
-                    setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_route_customer);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, routeCustomerFragment).commit();
+
+//                    fragment = new RouteCustomerFragment();
+//                    setContent(fragment);
+//                    bottomNavigationView.setSelectedItemId(R.id.navigation_route_customer);
 //                    } else {
 //                        setToast("You don't have access to this menu");
 //                    }
@@ -286,30 +307,32 @@ public class NewMainActivity extends BaseActivity {
                 if (!currentpage.equals("3")) {
 //                    if (getMenu(88) || getMenu(92)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "3");
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, activityFragment).commit();
 //                    fragment = new NewVisitHomeFragment();
-                    fragment = new ActivityFragment();
-                    setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
+//                    fragment = new ActivityFragment();
+//                    setContent(fragment);
+//                    bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
 //                    }
                 }
                 break;
             case 4:
                 if (!currentpage.equals("4")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "4");
-                    fragment = new SummaryFragment();
-                    setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_summary);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, summaryFragment).commit();
+//                    fragment = new SummaryFragment();
+////                    setContent(fragment);
+//                    bottomNavigationView.setSelectedItemId(R.id.navigation_summary);
                 }
                 break;
             case 5:
                 if (!currentpage.equals("5")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "5");
-                    fragment = new AccountFragment();
-                    setContent(fragment);
-                    bottomNavigationView.setSelectedItemId(R.id.navigation_account);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, accountFragment).commit();
+////                    setContent(fragment);
+//                    bottomNavigationView.setSelectedItemId(R.id.navigation_account);
                 }
                 break;
-            case 6:
+/*            case 6:
                 if (!currentpage.equals("6")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "6");
                     fragment = new Profile2Fragment();
@@ -427,29 +450,32 @@ public class NewMainActivity extends BaseActivity {
                     fragment = new TargetDetailFragment();
                     setContent(fragment);
                 }
-                break;
+                break;*/
             case 23:
                 if (!currentpage.equals("23")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "23");
-                    fragment = new CoverageFragment();
-                    setContent(fragment);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, coverageFragment).commit();
+//                    fragment = new CoverageFragment();
+//                    setContent(fragment);
                 }
                 break;
             case 24:
                 if (!currentpage.equals("24")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "24");
-                    fragment = new DirectionFragment();
-                    setContent(fragment);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, directionFragment).commit();
+//                    fragment = new DirectionFragment();
+//                    setContent(fragment);
                 }
                 break;
         }
+//        setContent(fragment);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         init();
-//        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
+        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
         setPage();
     }
 
@@ -473,7 +499,7 @@ public class NewMainActivity extends BaseActivity {
         }
 
         this.doubleBackToExitPressedOnce = true;
-        setToast("Please click BACK again to exit");
+        setToast("Tekan lagi untuk keluar");
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -533,57 +559,57 @@ public class NewMainActivity extends BaseActivity {
 //
 //        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 //
-        // Bind to the service. If the service is in foreground mode, this signals to the service
-        // that since this activity is in the foreground, the service can exit foreground mode.
-        //enhancement tracking
+//         Bind to the service. If the service is in foreground mode, this signals to the service
+//         that since this activity is in the foreground, the service can exit foreground mode.
+//        enhancement tracking
 //        bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-//    private class MyReceiver extends BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
-//            if (actionTracking.equals("start_tracking")) {
-//                mServiceFusedLocation.requestLocationUpdates();
-//            } else if (actionTracking.equals("stop_tracking")) {
-//                mServiceFusedLocation.removeLocationUpdates();
-//            }
-//        }
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        //enhancement tracking
-//        if (mBound) {
-//            // Unbind from the service. This signals to the service that this activity is no longer
-//            // in the foreground, and the service can respond by promoting itself to a foreground
-//            // service.
-//            unbindService(mServiceConnection);
-//            mBound = false;
-//        }
-//        super.onStop();
-//    }
-//
-//    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-//            mServiceFusedLocation = binder.getService();
-//            mBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            mServiceFusedLocation = null;
-//            mBound = false;
-//        }
-//    };
-//
-//    @Override
-//    protected void onPause() {
-//        //enhancement tracking
-//        unregisterReceiver(myReceiver);
-//        super.onPause();
-//    }
+    private class MyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
+            if (actionTracking.equals("start_tracking")) {
+                mServiceFusedLocation.requestLocationUpdates();
+            } else if (actionTracking.equals("stop_tracking")) {
+                mServiceFusedLocation.removeLocationUpdates();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        //enhancement tracking
+        if (mBound) {
+            // Unbind from the service. This signals to the service that this activity is no longer
+            // in the foreground, and the service can respond by promoting itself to a foreground
+            // service.
+            unbindService(mServiceConnection);
+            mBound = false;
+        }
+        super.onStop();
+    }
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+            mServiceFusedLocation = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mServiceFusedLocation = null;
+            mBound = false;
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        //enhancement tracking
+        unregisterReceiver(myReceiver);
+        super.onPause();
+    }
 }

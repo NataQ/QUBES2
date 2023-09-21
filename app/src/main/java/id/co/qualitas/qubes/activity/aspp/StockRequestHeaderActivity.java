@@ -34,14 +34,14 @@ public class StockRequestHeaderActivity extends BaseActivity {
         initData();
 
         mAdapter = new StockRequestHeaderAdapter(this, mList, header -> {
-            Intent intent = new Intent(this, StockRequestDetailActivity.class);
+            intent = new Intent(this, StockRequestDetailActivity.class);
             startActivity(intent);
         });
-        
+
         recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(v -> {
-            Intent intent = new Intent(this, StockRequestAddActivity.class);
+            intent = new Intent(this, StockRequestAddActivity.class);
             startActivity(intent);
         });
 
@@ -81,6 +81,7 @@ public class StockRequestHeaderActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //intent ke main activity terus di set fragment nya ke activity fragment
+//        intent = new Intent(StockRequestHeaderActivity.this, NewMainActivity.class);
+//        startActivity(intent);
     }
 }

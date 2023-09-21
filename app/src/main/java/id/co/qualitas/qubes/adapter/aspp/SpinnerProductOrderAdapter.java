@@ -71,6 +71,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 mFilteredList = (ArrayList<Material>) filterResults.values;
+                mContext.setFilteredData(mFilteredList);
                 notifyDataSetChanged();
             }
         };

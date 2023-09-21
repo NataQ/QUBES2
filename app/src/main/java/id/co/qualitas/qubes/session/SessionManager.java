@@ -9,9 +9,6 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.constants.Constants;
 
-//import android.support.multidex.MultiDex;
-
-
 public class SessionManager {
     // Shared Preferences
     private SharedPreferences pref;

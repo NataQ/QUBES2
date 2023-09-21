@@ -123,7 +123,8 @@ public class AccountFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-                    ((NewMainActivity) getActivity()).changePage(1);
+//                    ((NewMainActivity) getActivity()).changePage(1);
+                    ((NewMainActivity) getActivity()).backPress();
                 }
             }
         });

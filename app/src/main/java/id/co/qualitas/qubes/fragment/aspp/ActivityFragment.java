@@ -62,15 +62,11 @@ public class ActivityFragment extends BaseFragment {
             public void handleOnBackPressed() {
                 if (isEnabled()) {
                     setEnabled(false);
-                    ((NewMainActivity) getActivity()).changePage(1);
+//                    ((NewMainActivity) getActivity()).changePage(1);
+                    ((NewMainActivity) getActivity()).backPress();
                 }
             }
         });
-
-//        llEndVisit.setOnClickListener(v -> {
-//            workManager.cancelAllWork();
-//            openDialogEndVisit();
-//        });
 
         llStockRequest.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), StockRequestHeaderActivity.class);
