@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.helper;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -20,6 +22,7 @@ import android.util.Base64OutputStream;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +43,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -66,6 +70,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.CameraActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
@@ -699,5 +704,36 @@ public class Helper extends BaseFragment {
         reasonList.add(new Reason("N5", "Tutup", false, true));
         reasonList.add(new Reason("N6", "Other", true, false));
         return reasonList;
+    }
+
+    public static String getMimeType(Context context, Uri uri) {
+        String extension;
+
+        //Check uri format to avoid null
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            //If scheme is a content
+            final MimeTypeMap mime = MimeTypeMap.getSingleton();
+            extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
+        } else {
+            //If scheme is a File
+            //This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
+            extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
+        }
+        return extension;
+    }
+
+    public static void takePhoto(Activity activity) {
+        Intent camera = new Intent(activity, CameraActivity.class);
+        activity.startActivityForResult(camera, Constants.REQUEST_CAMERA_CODE);
+    }
+
+    public static void removeImage(Context context, String path) {
+        File fileName = new File(path);
+        try {
+            fileName.delete();
+            Log.e("Delete img : ", String.valueOf(path).toString() + " success");
+        } catch (Exception e) {
+            Log.e("Delete img : ", e.getMessage());
+        }
     }
 }

@@ -37,8 +37,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -201,46 +203,6 @@ public class Utils {
         return String.format(Locale.US, "%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
                 TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
                 TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
-    }
-
-    public static File getDirLoc(Context applicationContext) {
-        String PDF_FOLDER_NAME = "/POD/";
-        File directory = null;
-        directory = new File(String.valueOf(applicationContext.getFilesDir()));
-        // if no directory exists, create new directory
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-//        //if there is no SD card, create new directory objects to make directory on device
-//        if (Environment.getExternalStorageState() == null) {
-//            //create new file directory object
-//            directory = new File(Environment.getDataDirectory() + PDF_FOLDER_NAME);
-//            // if no directory exists, create new directory
-//            if (!directory.exists()) {
-//                directory.mkdir();
-//            }
-//
-//            // if phone DOES have sd card
-//        } else if (Environment.getExternalStorageState() != null) {
-//            // search for directory on SD card
-//            try {
-//                int version = Build.VERSION.SDK_INT;
-//                if (version >= 30) {
-//                    directory = new File(applicationContext.getFilesDir() + PDF_FOLDER_NAME);
-//
-//                } else {
-//                    directory = new File(Environment.getExternalStorageDirectory() + PDF_FOLDER_NAME);
-//                }
-//                // results
-//                if (!directory.exists()) {
-//                    directory.mkdir();
-//                }
-//            } catch (Exception ex) {
-//                Toast.makeText(applicationContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        }// end of SD card checking
-
-        return directory;
     }
 
     public static boolean isGPSOn(Context context) {
@@ -623,5 +585,77 @@ public class Utils {
         }
 
         return newDir;
+    }
+
+    public static Uri cropPhoto(Activity activity, Uri photoUri) {
+        try {
+            Uri outputUri = Uri.fromFile(createImageFile(activity.getApplicationContext()));
+
+            UCrop.Options opt = new UCrop.Options();
+            opt.setCompressionQuality(25);
+            opt.setCompressionFormat(Bitmap.CompressFormat.PNG);
+            opt.setLogoColor(ContextCompat.getColor(activity, R.color.white));
+            opt.setToolbarColor(ContextCompat.getColor(activity, R.color.white));
+            opt.setStatusBarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark));
+            opt.setActiveControlsWidgetColor(ContextCompat.getColor(activity, R.color.white));
+
+            UCrop.of(photoUri, outputUri)
+//                    .withAspectRatio(16, 9)//16:9 default
+                    .withOptions(opt)
+                    .withMaxResultSize(600, 250)
+                    .start(activity);
+            return outputUri;
+        } catch (IOException e) {
+            Toast.makeText(activity.getApplicationContext(), "Error", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+    public static File createImageFile(Context context) throws IOException {
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.GERMAN).format(new Date());
+        String imageFileName = "crop_";
+        File storageDir = getDirLoc(context);
+        File image = File.createTempFile(
+                imageFileName,   //prefix
+                ".jpg",   //suffix
+                storageDir  //directory
+                ///data/user/0/id.co.qualitas.oem/files/storage/emulated/0/Pictures/JPEG_20201125_121251_-1693854433.jpg
+        );
+        return image;
+//        return new File(Environment.getExternalStorageDirectory(), imageFileName);
+    }
+
+    public static File getDirLoc(Context applicationContext) {
+        String PDF_FOLDER_NAME = "/KTC/";
+        File directory = null;
+        //if there is no SD card, create new directory objects to make directory on device
+        if (Environment.getExternalStorageState() == null) {
+            //create new file directory object
+            directory = new File(Environment.getDataDirectory() + PDF_FOLDER_NAME);
+            // if no directory exists, create new directory
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            // if phone DOES have sd card
+        } else if (Environment.getExternalStorageState() != null) {
+            // search for directory on SD card
+            try {
+                int version = Build.VERSION.SDK_INT;
+                if (version >= 30) {
+                    directory = new File(applicationContext.getFilesDir() + PDF_FOLDER_NAME);
+                } else {
+                    directory = new File(Environment.getExternalStorageDirectory() + PDF_FOLDER_NAME);
+                }
+                // results
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+            } catch (Exception ex) {
+                Toast.makeText(applicationContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }// end of SD card checking
+
+        return directory;
     }
 }

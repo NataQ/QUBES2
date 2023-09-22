@@ -6,6 +6,7 @@ public class Constants {
     public static final String FCM = "fcm";
     public static final String COLLECTION_HEADER = "collection header";
     public static final String COLLECTION_FROM = "collection from";
+    public static final String IMAGE_TYPE = "image_type";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
@@ -17,6 +18,7 @@ public class Constants {
     public static final String EQUALS = "=";
     public static final String QUESTION = "?";
     public static final String AND = "&";
+
     public static final String TXTPASSWORD = "password";
     public static final String KEY_URL = "key_url";
     public static final String IS_URL = "IsUrl";
@@ -41,9 +43,11 @@ public class Constants {
     public static final String INVALID_GRANT = "invalid_grant";
     public static final String PIPE_ = "|";
     public static final int LIMIT_ITEM_LIST = 10;
-
     public static final long LONG_1000 = 1000;
     public static final long LONG_100 = 400;
+    public static final int REQUEST_CAMERA_CODE = 4;
+    public static final String FRAGMENT_DIALOG = "dialog";
+    public static final String OUTPUT_CAMERA = "OutputURI";
 
     public static final String PIPE = " | ";
     public static final String STRIP = " - ";

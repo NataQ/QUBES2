@@ -669,6 +669,18 @@
     <string name="location_updated">Location Updated: %1$s</string>
     <string name="directions">Directions</string>
     <string name="msg_printing_text">Printing...</string>
-    <!--    <string name="areYourSureDelete">Are you sure want to delete the item?</string>-->
+    <string name="attachPhotoHere">Attach your photo here</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="flash_auto">Flash auto</string>
+    <string name="flash_off">Flash off</string>
+    <string name="flash_on">Flash on</string>
+    <string name="aspect_ratio">Aspect ratio</string>
+    <string name="switch_flash">Switch flash</string>
+    <string name="switch_camera">Switch camera</string>
+    <string name="camera_permission_confirmation">Needs permission to access camera and storage.</string>
+    <string name="camera_permission_not_granted">Camera app cannot do anything without camera permission.</string>
+    <string name="camera_and_storage_permission_not_granted">Camera app cannot do anything without camera and storage permission.</string>
+    <string name="picture_taken">Picture taken</string>
 
 </resources>

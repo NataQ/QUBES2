@@ -16,6 +16,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
@@ -64,8 +65,10 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1693,4 +1696,68 @@ public class BaseActivity extends AppCompatActivity {
         spinner.setAdapter(spinnerReasonAdapter);
     }
 
+    public byte[] getByteArrayFromUriGallery(Uri uri) {
+        InputStream iStream = null;
+        byte[] inputData = null;
+        try {
+            iStream = getContentResolver().openInputStream(uri);
+            inputData = getBytesGallery(iStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return inputData;
+    }
+    public byte[] getBytesGallery(InputStream inputStream) throws IOException {
+        Bitmap bmp = BitmapFactory.decodeStream(inputStream);
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, byteBuffer);
+        bmp = Bitmap.createScaledBitmap(bmp, 600, 250, true);
+        return encodeTobase64(bmp);
+    }
+
+    public byte[] encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        byte[] b = baos.toByteArray();
+//        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        return b;
+    }
+
+    public File getDirLoc(Context applicationContext) {
+        String PDF_FOLDER_NAME = "/Qubes/";
+        File directory = null;
+        //if there is no SD card, create new directory objects to make directory on device
+        if (Environment.getExternalStorageState() == null) {
+            //create new file directory object
+            directory = new File(Environment.getDataDirectory() + PDF_FOLDER_NAME);
+            // if no directory exists, create new directory
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            // if phone DOES have sd card
+        } else if (Environment.getExternalStorageState() != null) {
+            // search for directory on SD card
+            try {
+                int version = Build.VERSION.SDK_INT;
+                if (version >= 30) {
+                    directory = new File(applicationContext.getFilesDir() + PDF_FOLDER_NAME);
+                } else {
+                    directory = new File(Environment.getExternalStorageDirectory() + PDF_FOLDER_NAME);
+                }
+                // results
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+            } catch (Exception ex) {
+                setToast(ex.getMessage());
+            }
+        }// end of SD card checking
+
+        return directory;
+    }
 }

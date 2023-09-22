@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Color when the row is selected -->
+    <!--<item android:drawable="@color/darkBlue" android:state_pressed="true" android:state_focused="true" android:state_selected="true" />-->
+    <item android:state_pressed="true"
+        android:drawable="@drawable/bg_attach_photo_select" />
+    <!-- Standard background color -->
+    <item android:drawable="@drawable/bg_attach_photo_unselected"/>
+</selector>
