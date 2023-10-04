@@ -34,7 +34,7 @@ public class CustomerInfoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_customer_info);
 
-        init();
+        initProgress();
         initialize();
         setData();
 

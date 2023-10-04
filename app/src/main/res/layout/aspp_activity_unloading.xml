@@ -125,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="16dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -135,17 +135,75 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".3"
-                android:text="Surat Jalan"
+                android:text="No. Document"
                 android:textColor="@color/gray8_aspp" />
 
             <TextView
-                android:id="@+id/txtSuratJalan"
+                android:id="@+id/txtNoDoc"
                 style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".7"
                 android:gravity="end"
-                android:text="1234567890"
+                android:text=""
+                android:textColor="@color/black_aspp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:text="Tanggal Kirim"
+                android:textColor="@color/gray8_aspp" />
+
+            <TextView
+                android:id="@+id/txtTglKirim"
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".7"
+                android:gravity="end"
+                android:text=""
+                android:textColor="@color/black_aspp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:text="No. Surat Jalan"
+                android:textColor="@color/gray8_aspp" />
+
+            <TextView
+                android:id="@+id/txtNoSuratJalan"
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".7"
+                android:gravity="end"
+                android:text=""
                 android:textColor="@color/black_aspp" />
 
         </LinearLayout>
@@ -249,11 +307,27 @@
                         android:text="No Data"
                         android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
+                    <ProgressBar
+                        android:id="@+id/progressCircle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/progress"
+                        android:visibility="gone" />
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeLayout"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_unloading" />
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                 </RelativeLayout>
             </LinearLayout>

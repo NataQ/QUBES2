@@ -138,7 +138,7 @@ public class SummaryDetailExtraAdapter extends RecyclerView.Adapter<SummaryDetai
         holder.txtProduct.setText(detail.getMaterialCode());
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(detail.getUom());
-        holder.txtPrice.setText(detail.getPrice());
+        holder.txtPrice.setText(format.format(detail.getPrice()));
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {

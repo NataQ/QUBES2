@@ -57,7 +57,7 @@ public class StoreCheckActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_store_check);
 
-        init();
+        initProgress();
         initialize();
         initData();
 
@@ -305,9 +305,9 @@ public class StoreCheckActivity extends BaseActivity {
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1,000,000", 1000000));
-        mList.add(new Material("11030", "Redbull", "2,000,000", 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000", 5000000));
+        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
+        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
         return mList;
     }
 

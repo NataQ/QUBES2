@@ -36,6 +36,7 @@ import id.co.qualitas.qubes.model.CollectionTransfer;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionDetailActivity extends BaseActivity {
     private ImageView imgBack;
@@ -54,13 +55,14 @@ public class CollectionDetailActivity extends BaseActivity {
     private CollectionTransferDetailAdapter mAdapterTransfer;
     private CollectionGiroDetailAdapter mAdapterGiro;
     private CollectionChequeDetailAdapter mAdapterCheque;
+    private int colLFrom;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_collection_detail);
 
-        init();
+        initProgress();
         initialize();
         initData();
         setCashView();
@@ -156,9 +158,9 @@ public class CollectionDetailActivity extends BaseActivity {
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1,000,000", 1000000));
-        mList.add(new Material("11030", "Redbull", "2,000,000", 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000", 5000000));
+        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
+        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", 890000, 5000000));
         return mList;
     }
 
@@ -170,22 +172,29 @@ public class CollectionDetailActivity extends BaseActivity {
         mListTransfer.add(new CollectionTransfer(Helper.getTodayDate(Constants.DATE_FORMAT_4), initDataMaterial()));
         mListTransfer.add(new CollectionTransfer(Helper.getTodayDate(Constants.DATE_FORMAT_4), initDataMaterial()));
 
-        mListGiro.add(new CollectionGiro("000001","21-04-2023","17-04-2023","BM", "Bank MONAS","BJ", "Bank JAYA", initDataMaterial()));
-        mListGiro.add(new CollectionGiro("000002","27-07-2023","20-06-2023","BCA", "Bank Central Asia","Mandiri", "Bank Mandiri", initDataMaterial()));
+        mListGiro.add(new CollectionGiro("000001", "21-04-2023", "17-04-2023", "BM", "Bank MONAS", "BJ", "Bank JAYA", initDataMaterial()));
+        mListGiro.add(new CollectionGiro("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
 
-        mListCheque.add(new CollectionCheque("000002","27-07-2023","20-06-2023","BCA", "Bank Central Asia","Mandiri", "Bank Mandiri", initDataMaterial()));
-        mListCheque.add(new CollectionCheque("000002","27-07-2023","20-06-2023","BCA", "Bank Central Asia","Mandiri", "Bank Mandiri", initDataMaterial()));
+        mListCheque.add(new CollectionCheque("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
+        mListCheque.add(new CollectionCheque("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
 
-        int colLFrom = Helper.getItemParam(Constants.COLLECTION_FROM) != null ? (int) Helper.getItemParam(Constants.COLLECTION_FROM) : 0;
-
-        if (colLFrom == 3) {
-            llOrder.setVisibility(View.VISIBLE);
-            llInvoice.setVisibility(View.GONE);
-            buttonKredit.setVisibility(View.VISIBLE);
+        if (SessionManagerQubes.getCollectionHeader() == null) {
+            onBackPressed();
+            setToast("Gagal ambil data. Silahkan coba lagi");
         } else {
-            llOrder.setVisibility(View.GONE);
-            llInvoice.setVisibility(View.VISIBLE);
-            buttonKredit.setVisibility(View.GONE);
+            collectionHeader = SessionManagerQubes.getCollectionHeader();
+
+            colLFrom = SessionManagerQubes.getCollectionSource();
+
+            if (colLFrom == 3) {
+                llOrder.setVisibility(View.VISIBLE);
+                llInvoice.setVisibility(View.GONE);
+                buttonKredit.setVisibility(View.VISIBLE);
+            } else {
+                llOrder.setVisibility(View.GONE);
+                llInvoice.setVisibility(View.VISIBLE);
+                buttonKredit.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -329,7 +338,6 @@ public class CollectionDetailActivity extends BaseActivity {
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-        collectionHeader = (Invoice) Helper.getItemParam(Constants.COLLECTION_HEADER);
 
         recyclerViewCash = findViewById(R.id.recyclerViewCash);
         recyclerViewCash.setLayoutManager(new LinearLayoutManager(this));

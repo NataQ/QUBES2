@@ -1,44 +1,56 @@
 package id.co.qualitas.qubes.model;
 
-import java.util.List;
+import androidx.annotation.NonNull;
 
-/**
- * Created by Natalia on 2/25/2016.
- */
-public class Material {
-    private String idMaterial;
+import java.util.List;
+public class Material implements Cloneable{
+    private String idHeader;
+    private String materialId;
+    private String materialName;
     private String materialCode;
     private String materialQty;
     private int qty;
+    private int qtySisa;
     private double amount;
+    private double amountPaid;
     private String desc;
     private String batch;
     private byte[] attachment;
     private String DeliveryNumber;
     private String klasifikasi;
-    private String price;
+    private double price;
     private String uom;
+    private String uomSisa;
     private int totalDiscount;
+    private double total;
     private Discount discount;
     private List<Discount> extra;
     private List<Material> extraItem;
     private boolean isChecked;
+    private boolean isSync;
 
     public Material() {
     }
 
-    public Material(String idMaterial, String materialCode, int qty, String uom, String price, int totalDiscount) {
-        this.idMaterial = idMaterial;
-        this.materialCode = materialCode;
+    public Material(String materialId, String materialName, int qty, String uom) {
+        this.materialId = materialId;
+        this.materialName = materialName;
+        this.qty = qty;
+        this.uom = uom;
+    }
+
+    public Material(String materialId, String materialName, int qty, String uom, double price, int totalDiscount) {
+        this.materialId = materialId;
+        this.materialName = materialName;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
         this.totalDiscount = totalDiscount;
     }
 
-    public Material(String idMaterial, String materialCode, int qty, String uom, String price, int totalDiscount, List<Material> extraItem) {
-        this.idMaterial = idMaterial;
-        this.materialCode = materialCode;
+    public Material(String materialId, String materialName, int qty, String uom, double price, int totalDiscount, List<Material> extraItem) {
+        this.materialId = materialId;
+        this.materialName = materialName;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
@@ -46,23 +58,23 @@ public class Material {
         this.extraItem = extraItem;
     }
 
-    public Material(String idMaterial, String materialCode, String price, double amount) {
-        this.idMaterial = idMaterial;
-        this.materialCode = materialCode;
+    public Material(String materialId, String materialName, double price, double amount) {
+        this.materialId = materialId;
+        this.materialName = materialName;
         this.amount = amount;
         this.price = price;
     }
 
-    public Material(String klasifikasi, String materialCode, int qty, String price, String uom) {
-        this.materialCode = materialCode;
+    public Material(String klasifikasi, String materialName, int qty, double price, String uom) {
+        this.materialName = materialName;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
         this.uom = uom;
     }
 
-    public Material(String klasifikasi, String materialCode, int qty, String price, String uom, List<Material> extraItem) {
-        this.materialCode = materialCode;
+    public Material(String klasifikasi, String materialName, int qty, double price, String uom, List<Material> extraItem) {
+        this.materialName = materialName;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
@@ -70,9 +82,78 @@ public class Material {
         this.extraItem = extraItem;
     }
 
-    public Material(String materialCode, int qty) {
-        this.materialCode = materialCode;
+    public Material(String materialName, int qty) {
+        this.materialName = materialName;
         this.qty = qty;
+    }
+
+    public Material(String materialId, String materialName, double price) {
+        this.materialId = materialId;
+        this.materialName = materialName;
+        this.price = price;
+    }
+
+    public Material(String materialId, String materialName, String materialQty, String uom) {
+        this.materialId = materialId;
+        this.materialName = materialName;
+        this.materialQty = materialQty;
+        this.uom = uom;
+    }
+
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
+    }
+
+    public int getQtySisa() {
+        return qtySisa;
+    }
+
+    public void setQtySisa(int qtySisa) {
+        this.qtySisa = qtySisa;
+    }
+
+    public String getUomSisa() {
+        return uomSisa;
+    }
+
+    public void setUomSisa(String uomSisa) {
+        this.uomSisa = uomSisa;
+    }
+
+    public String getMaterialName() {
+        return materialName;
+    }
+
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
     public boolean isChecked() {
@@ -97,19 +178,6 @@ public class Material {
 
     public void setAmount(double amount) {
         this.amount = amount;
-    }
-
-    public Material(String idMaterial, String materialCode, String price) {
-        this.idMaterial = idMaterial;
-        this.materialCode = materialCode;
-        this.price = price;
-    }
-
-    public Material(String idMaterial, String materialCode, String materialQty, String uom) {
-        this.idMaterial = idMaterial;
-        this.materialCode = materialCode;
-        this.materialQty = materialQty;
-        this.uom = uom;
     }
 
     public List<Material> getExtraItem() {
@@ -144,11 +212,11 @@ public class Material {
         this.uom = uom;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -168,12 +236,12 @@ public class Material {
         DeliveryNumber = deliveryNumber;
     }
 
-    public String getIdMaterial() {
-        return idMaterial;
+    public String getMaterialId() {
+        return materialId;
     }
 
-    public void setIdMaterial(String idMaterial) {
-        this.idMaterial = idMaterial;
+    public void setMaterialId(String materialId) {
+        this.materialId = materialId;
     }
 
     public String getMaterialCode() {
@@ -222,5 +290,12 @@ public class Material {
 
     public void setKlasifikasi(String klasifikasi) {
         this.klasifikasi = klasifikasi;
+    }
+
+    @NonNull
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+
     }
 }

@@ -298,15 +298,15 @@ public class CreateNewReturnFragment extends BaseFragment {
 
     private String validateMaterial(Return listReturn) {
         String results = null;
-        if (listReturn.getQty1() == null || String.valueOf(listReturn.getQty1()).trim().equals(Constants.EMPTY_STRING)) {
-            results = Constants.errorQTY;
-        } else if (listReturn.getBatch() == null || listReturn.getBatch().trim().equals(Constants.EMPTY_STRING)) {
-            results = Constants.errorBatch;
-        } else if (listReturn.getExpiredDate() == null || listReturn.getExpiredDate().trim().equals(Constants.EMPTY_STRING)) {
-            results = Constants.errorExpiredDate;
-        } else if (listReturn.getReason() == null || listReturn.getReason().trim().equals(Constants.EMPTY_STRING) || listReturn.getReason().equals(Constants.REASON)) {
-            results = Constants.errorReason;
-        }
+//        if (listReturn.getQty1() == null || String.valueOf(listReturn.getQty1()).trim().equals(Constants.EMPTY_STRING)) {
+//            results = Constants.errorQTY;
+//        } else if (listReturn.getBatch() == null || listReturn.getBatch().trim().equals(Constants.EMPTY_STRING)) {
+//            results = Constants.errorBatch;
+//        } else if (listReturn.getExpiredDate() == null || listReturn.getExpiredDate().trim().equals(Constants.EMPTY_STRING)) {
+//            results = Constants.errorExpiredDate;
+//        } else if (listReturn.getReason() == null || listReturn.getReason().trim().equals(Constants.EMPTY_STRING) || listReturn.getReason().equals(Constants.REASON)) {
+//            results = Constants.errorReason;
+//        }
         return results;
     }
 
@@ -351,7 +351,7 @@ public class CreateNewReturnFragment extends BaseFragment {
             customerName.setText(Helper.validateResponseEmpty(outletResponse.getOutletName()));
         }
         if (material != null) {
-            returns.setIdMaterial(Helper.validateResponseEmpty(material.getMaterialCode()));
+            returns.setMaterialId(Helper.validateResponseEmpty(material.getMaterialCode()));
             returns.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
 
             if (material.getMaterialCode() != null) {
@@ -362,7 +362,7 @@ public class CreateNewReturnFragment extends BaseFragment {
 
             if (returnList != null && !returnList.isEmpty()) {
                 for (int i = 0; i < returnList.size(); i++) {
-                    if (returnList.get(i).getIdMaterial().equals(returns.getIdMaterial())) {
+                    if (returnList.get(i).getMaterialId().equals(returns.getMaterialId())) {
                         returnList.remove(i);
                     }
                 }
@@ -401,7 +401,7 @@ public class CreateNewReturnFragment extends BaseFragment {
             for (int i = 0; i < returnList.size(); i++) {
                 Return material = returnList.get(i);
 
-                listUom = db.getListUomByIdMat(material.getIdMaterial(), Constants.IS_RETURN);
+                listUom = db.getListUomByIdMat(material.getMaterialId(), Constants.IS_RETURN);
                 material.setListUomName(listUom);
 
                 selectedReason = new ArrayList<>();
@@ -458,10 +458,10 @@ public class CreateNewReturnFragment extends BaseFragment {
 
     public void setDataRet(Return returns) {
         mLinearLayout.removeAllViews();
-        returns.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(returns.getIdMaterial())));
+        returns.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(returns.getMaterialId())));
 //        if (!isNetworkAvailable()) {
-        if (returns.getIdMaterial() != null) {
-            listUom = db.getListUomByIdMat(returns.getIdMaterial(), Constants.IS_RETURN);
+        if (returns.getMaterialId() != null) {
+            listUom = db.getListUomByIdMat(returns.getMaterialId(), Constants.IS_RETURN);
             returns.setListUomName(listUom);
         }
 //        }
@@ -488,7 +488,7 @@ public class CreateNewReturnFragment extends BaseFragment {
             material = (Material) Helper.getItemParam(Constants.ADD_MATERIAL);
 
             Return addedMat = new Return();
-            addedMat.setIdMaterial(Helper.validateResponseEmpty(material.getMaterialCode()));
+            addedMat.setMaterialId(Helper.validateResponseEmpty(material.getMaterialCode()));
             addedMat.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
 
             if (Helper.getItemParam(Constants.RETURN_DETAIL) != null) {

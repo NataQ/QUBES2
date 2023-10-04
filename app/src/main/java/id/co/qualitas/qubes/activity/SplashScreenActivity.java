@@ -38,6 +38,7 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -46,6 +47,7 @@ import id.co.qualitas.qubes.model.LoginResponse;
 import id.co.qualitas.qubes.model.OffDate;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 
 public class SplashScreenActivity extends BaseActivity {
@@ -87,7 +89,7 @@ public class SplashScreenActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
-        init();
+        initProgress();
 
         initialize();
 
@@ -106,43 +108,43 @@ public class SplashScreenActivity extends BaseActivity {
             }
         }
 
-//        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
-//            @Override
-//            public void onActivityResult(Map<String, Boolean> result) {
-//                if (result.get(Manifest.permission.CAMERA) != null) {
-//                    isCameraPermissionGranted = result.get(Manifest.permission.CAMERA);
-//                }
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//                    if (result.get(Manifest.permission.READ_MEDIA_IMAGES) != null) {
-//                        isReadPermissionGranted = result.get(Manifest.permission.READ_MEDIA_IMAGES);
-//                    }
-//                } else {
-//                    if (result.get(Manifest.permission.READ_EXTERNAL_STORAGE) != null) {
-//                        isReadPermissionGranted = result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
-//                    }
-//                }
-//
-//                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
-//                    isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
-//                }
-//
-//                if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
-//                    isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
-//                }
-//
-//                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
-//                    if (!Helper.isGPSOn(SplashScreenActivity.this)) {
-//                        setToast("Please turn on GPS");
-//                        Helper.turnOnGPS(SplashScreenActivity.this);
-//                    } else {
-//                        setData();
-//                    }
-//                } else {
-//                    setToast("Please allow all permissions");
-//                }
-//            }
-//        });
+        mPermissionResultLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+            @Override
+            public void onActivityResult(Map<String, Boolean> result) {
+                if (result.get(Manifest.permission.CAMERA) != null) {
+                    isCameraPermissionGranted = result.get(Manifest.permission.CAMERA);
+                }
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (result.get(Manifest.permission.READ_MEDIA_IMAGES) != null) {
+                        isReadPermissionGranted = result.get(Manifest.permission.READ_MEDIA_IMAGES);
+                    }
+                } else {
+                    if (result.get(Manifest.permission.READ_EXTERNAL_STORAGE) != null) {
+                        isReadPermissionGranted = result.get(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    }
+                }
+
+                if (result.get(Manifest.permission.ACCESS_FINE_LOCATION) != null) {
+                    isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
+                }
+
+                if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
+                    isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
+                }
+
+                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+                    if (!Helper.isGPSOn(SplashScreenActivity.this)) {
+                        setToast("Please turn on GPS");
+                        Helper.turnOnGPS(SplashScreenActivity.this);
+                    } else {
+                        setData();
+                    }
+                } else {
+                    setToast("Please allow all permissions");
+                }
+            }
+        });
     }
 
     @Override
@@ -254,8 +256,7 @@ public class SplashScreenActivity extends BaseActivity {
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         llText.setVisibility(View.VISIBLE);
-//                        requestPermission();
-                        setData();
+                        requestPermission();
                     }
                 });
             }
@@ -278,30 +279,23 @@ public class SplashScreenActivity extends BaseActivity {
 //            }
 //        }
 
-        if (loginResponse != null) {
-            Helper.setItemParam(Constants.LOGIN, loginResponse);
-            Helper.setItemParam(Constants.TOKEN, loginResponse.getAccess_token());
-        }
+//        if (loginResponse != null) {
+//            Helper.setItemParam(Constants.LOGIN, loginResponse);
+//            Helper.setItemParam(Constants.TOKEN, loginResponse.getAccess_token());
+//        }
+//
+//        if (session.isUrlEmpty()) {
+//            Map<String, String> urlSession = session.getUrl();
+//            Constants.IP = urlSession.get(Constants.KEY_URL);
+//        } else {
+//            Constants.IP = Constants.URL;
+//        }
+//        Constants.URL = Constants.IP;
+//        Helper.setItemParam(Constants.URL, Constants.URL);
 
-        if (session.isUrlEmpty()) {
-            Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        }
-
-        if (user != null) {
-            Helper.setItemParam(Constants.USER_DETAIL, user);
-            Helper.setItemParam(Constants.SUPERVISOR_DETAIL, user);
-        }
-
-        if (offlineDat != null) {
-            SecureDate.getInstance().initServerDate(Helper.convertStringtoDate(Constants.DATE_TYPE_16, offlineDat.getCurDate()), offlineDat.getElapseTime());
-        }
+//        if (offlineDat != null) {
+//            SecureDate.getInstance().initServerDate(Helper.convertStringtoDate(Constants.DATE_TYPE_16, offlineDat.getCurDate()), offlineDat.getElapseTime());
+//        }
 
         new CountDownTimer(Constants.LONG_1000, Constants.LONG_100) {
 
@@ -309,7 +303,11 @@ public class SplashScreenActivity extends BaseActivity {
             }
 
             public void onFinish() {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);//LoginActivity
+                if (SessionManagerQubes.getUserProfile() == null) {
+                    intent = new Intent(getApplicationContext(), LoginActivity.class);
+                } else {
+                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }

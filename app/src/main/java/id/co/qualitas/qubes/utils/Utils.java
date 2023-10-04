@@ -29,19 +29,23 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.yalantis.ucrop.UCrop;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -56,6 +60,9 @@ import java.util.concurrent.TimeUnit;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class Utils {
     private static final Gson gson = new Gson();
@@ -69,6 +76,18 @@ public class Utils {
     public static void init(Context context) {
         toaster = Toast.makeText(context, null, Toast.LENGTH_LONG);
     }
+
+    public static String encodeImageBase64Sign(Bitmap bm) {
+        if (bm == null) {
+            return null;
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, Constants.COMPRESS_SIGN, baos);
+        byte[] b = baos.toByteArray();
+
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
     public static void sendNotification(Context context) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
@@ -611,6 +630,67 @@ public class Utils {
         }
     }
 
+    public static void saveBitmap(Context context, String path, Bitmap mBitmap) {
+
+//        File f = new File(Environment.getExternalStorageDirectory().toString() + "/" + bitName + ".png");
+        File f = getDirLoc(context);
+
+        try {
+            f.createNewFile();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+        }
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static File saveImage(Bitmap finalBitmap) {
+        String root = Environment.getDataDirectory().toString();
+        File myDir = new File(root + "/Qubes");
+        myDir.mkdirs();
+        User user = SessionManagerQubes.getUserProfile();
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "sign_" + user.getUsername() + "_" + timeStamp + ".png";
+
+        File file = new File(myDir, fname);
+        if (file.exists()) file.delete();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+            return file;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /* Checks if external storage is available for read and write */
+    public boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
     public static File createImageFile(Context context) throws IOException {
 //        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.GERMAN).format(new Date());
         String imageFileName = "crop_";
@@ -626,7 +706,7 @@ public class Utils {
     }
 
     public static File getDirLoc(Context applicationContext) {
-        String PDF_FOLDER_NAME = "/KTC/";
+        String PDF_FOLDER_NAME = "/Qubes/";
         File directory = null;
         //if there is no SD card, create new directory objects to make directory on device
         if (Environment.getExternalStorageState() == null) {
@@ -657,5 +737,57 @@ public class Utils {
         }// end of SD card checking
 
         return directory;
+    }
+
+    public static <T> void loadImageFit(Context mContext, T res, ImageView image) {
+        Glide.with(mContext)
+                .load(res)
+                .fitCenter()
+                .error(R.drawable.ic_map)
+                .placeholder(R.drawable.ic_qubes_new)
+                .into(image);
+    }
+
+    public static Bitmap rotateImageIfRequired(Bitmap img, Uri selectedImage) throws IOException {
+        ExifInterface ei = new ExifInterface(selectedImage.getPath());
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
+    public static String getFilePath(Context context, Uri uri) {
+        String imagePath;
+        String[] filePath = {MediaStore.Images.Media.DATA};
+        Cursor c = context.getContentResolver().query(uri, filePath, null, null, null);
+        assert c != null;
+        c.moveToFirst();
+        int columnIndex = c.getColumnIndex(filePath[0]);
+        imagePath = c.getString(columnIndex);
+        c.close();
+        return imagePath;
+    }
+
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
     }
 }

@@ -56,7 +56,7 @@ public class LoginPenggantiActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_pengganti);
 
-        init();
+        initProgress();
         initialize();
 
         ipChanger.setOnClickListener(new View.OnClickListener() {

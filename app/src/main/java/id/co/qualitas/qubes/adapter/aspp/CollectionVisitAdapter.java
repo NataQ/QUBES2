@@ -111,7 +111,7 @@ public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisit
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtDate.setText(detail.getDate());
+        holder.txtDate.setText(detail.getInvoiceDate());
         holder.txtInvoiceNo.setText(detail.getInvoiceNo());
         holder.txtAmount.setText(format.format(detail.getAmount()));
         holder.txtPaid.setText(format.format(detail.getPaid()));

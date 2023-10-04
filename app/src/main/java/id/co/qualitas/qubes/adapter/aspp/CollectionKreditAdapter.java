@@ -18,8 +18,11 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
@@ -33,6 +36,8 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
     private CollectionFormActivity mContext;
     private OnAdapterListener onAdapterListener;
     SparseBooleanArray itemStateArray = new SparseBooleanArray();
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public CollectionKreditAdapter(CollectionFormActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -118,13 +123,14 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
-        holder.txtPrice.setText(!Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
-        holder.edtPaid.setText(String.valueOf(detail.getQty()));
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
 
+        holder.edtPaid.setVisibility(View.GONE);
         holder.cb.setVisibility(View.GONE);
     }
 
@@ -135,5 +141,13 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

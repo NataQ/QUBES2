@@ -1,35 +1,102 @@
 package id.co.qualitas.qubes.model;
 
+import java.util.List;
+
 public class Invoice {
+    private String idHeader;
     private String invoiceNo;
     private String customerName;
     private String customerID;
-    private float amount;
-    private float paid;
-    private String date;
+    private double amount;
+    private double paid;
+    private double nett;
+    private String invoiceDate;
+    private String dueDate;
     private String route;
+    private String signature;
     private boolean isChecked;
     private boolean isRoute;
+    private boolean isSync;
+    private boolean isVerification;
+    private List<Material> materialList;
 
-    public Invoice(String invoiceNo, String customerName, String customerID, float amount, float paid, String date, String route) {
-        this.invoiceNo = invoiceNo;
-        this.customerName = customerName;
-        this.customerID = customerID;
-        this.amount = amount;
-        this.paid = paid;
-        this.date = date;
-        this.route = route;
-
+    public Invoice() {
     }
 
-    public Invoice(String invoiceNo, String customerName, String customerID, float amount, float paid, String date, boolean isRoute) {
+    public Invoice(String invoiceNo, String customerName, String customerID, double amount, double paid, String invoiceDate, boolean isRoute) {
         this.invoiceNo = invoiceNo;
         this.customerName = customerName;
         this.customerID = customerID;
         this.amount = amount;
         this.paid = paid;
-        this.date = date;
+        this.invoiceDate = invoiceDate;
         this.isRoute = isRoute;
+    }
+
+    public Invoice(String invoiceNo, String customerName, String customerID, double amount, double paid, String invoiceDate, boolean isRoute, List<Material> materialList) {
+        this.invoiceNo = invoiceNo;
+        this.customerName = customerName;
+        this.customerID = customerID;
+        this.amount = amount;
+        this.paid = paid;
+        this.invoiceDate = invoiceDate;
+        this.isRoute = isRoute;
+        this.materialList = materialList;
+    }
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
+    }
+
+    public boolean isVerification() {
+        return isVerification;
+    }
+
+    public void setVerification(boolean verification) {
+        isVerification = verification;
+    }
+
+    public List<Material> getMaterialList() {
+        return materialList;
+    }
+
+    public void setMaterialList(List<Material> materialList) {
+        this.materialList = materialList;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public double getNett() {
+        return nett;
+    }
+
+    public void setNett(double nett) {
+        this.nett = nett;
+    }
+
+    public String getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
     }
 
     public boolean isRoute() {
@@ -80,27 +147,27 @@ public class Invoice {
         this.customerID = customerID;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public float getPaid() {
+    public double getPaid() {
         return paid;
     }
 
-    public void setPaid(float paid) {
+    public void setPaid(double paid) {
         this.paid = paid;
     }
 
-    public String getDate() {
-        return date;
+    public String getInvoiceDate() {
+        return invoiceDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setInvoiceDate(String invoiceDate) {
+        this.invoiceDate = invoiceDate;
     }
 }

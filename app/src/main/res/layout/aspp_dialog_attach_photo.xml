@@ -23,7 +23,7 @@
             android:gravity="center"
             android:text="@string/attachPhotoHere"
             android:textAllCaps="true"
-            android:textColor="@color/black"
+            android:textColor="@color/black_aspp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -35,25 +35,26 @@
 
             <LinearLayout
                 android:id="@+id/layoutGallery"
-                android:layout_width="120dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
+                android:layout_weight="1"
                 android:background="@drawable/selector_bg_photo"
                 android:clickable="true"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="@dimen/icon_add_inside_btn"
+                    android:layout_height="@dimen/icon_add_inside_btn"
                     android:src="@drawable/selector_gallery" />
 
                 <TextView
                     style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
                     android:text="@string/gallery"
                     android:textAllCaps="true"
@@ -63,25 +64,26 @@
 
             <LinearLayout
                 android:id="@+id/layoutCamera"
-                android:layout_width="120dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_weight="1"
                 android:background="@drawable/selector_bg_photo"
                 android:clickable="true"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="@dimen/icon_add_inside_btn"
+                    android:layout_height="@dimen/icon_add_inside_btn"
                     android:src="@drawable/selector_camera" />
 
                 <TextView
                     style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
                     android:text="@string/camera"
                     android:textAllCaps="true"
@@ -91,20 +93,83 @@
 
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancel"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="250dp"
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_image"
+                android:padding="12dp">
+
+                <ImageView
+                    android:id="@+id/photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutUpload"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_upload" />
+
+                    <TextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Photo"
+                        android:textColor="@color/black_aspp"
+                        android:textSize="@dimen/text_small" />
+                </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/cancel"
-            android:textAllCaps="false"
-            android:textColor="@color/black_aspp"
-            android:textSize="@dimen/text_small"
-            app:cornerRadius="5dp"
-            app:strokeColor="@color/gray2_aspp"
-            app:strokeWidth="1dp" />
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/black_aspp"
+                android:textSize="@dimen/text_small"
+                app:cornerRadius="5dp"
+                app:strokeColor="@color/gray2_aspp"
+                app:strokeWidth="1dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:visibility="visible"
+                app:backgroundTint="@color/blue_aspp"
+                app:cornerRadius="5dp" />
+        </LinearLayout>
 
     </LinearLayout>
 

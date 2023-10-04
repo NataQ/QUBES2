@@ -12,6 +12,10 @@ public class Order {
     private String date;
     private String soNo;
     private String outlet;
+    private String idOrderBE;
+    private String customerId;
+    private double omzet;
+    private boolean isSync;
 
     public Order(String txtOrderCode, String txtPriceNett, String outlet, String soNo, String status, String date) {
         this.txtOrderCode = txtOrderCode;
@@ -20,6 +24,38 @@ public class Order {
         this.status = status;
         this.date = date;
         this.outlet = outlet;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
+    }
+
+    public String getIdOrderBE() {
+        return idOrderBE;
+    }
+
+    public void setIdOrderBE(String idOrderBE) {
+        this.idOrderBE = idOrderBE;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public double getOmzet() {
+        return omzet;
+    }
+
+    public void setOmzet(double omzet) {
+        this.omzet = omzet;
     }
 
     public String getOutlet() {

@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -42,6 +43,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,14 +76,15 @@ import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.printer.ConnectorAdapter;
 import id.co.qualitas.qubes.printer.NetworkConnector;
 import id.co.qualitas.qubes.printer.UsbDeviceConnector;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionFormActivity extends BaseActivity {
-    private ImageView imgBack;
+    double totalPaymentCash, totalPaymentLain, leftCash, leftLain;
     private Button btnSubmit, btnAddTransfer, btnAddGiro, btnAddCheque;
     private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain, recyclerViewKredit;
-    private TextView txtPaymentCash, txtLeftCash, txtAmount;
-    private TextView txtPaymentLain, txtLeftLain;
-    private TextView txtInvNo, txtDate, txtOrderNo;
+    private EditText edtPaymentCash, edtPaymentLain;
+    private TextView txtLeftCash, txtLeftLain;
+    private TextView txtInvNo, txtDate, txtAmount, txtOrderNo;
     private LinearLayout llOrder, llInvoice;
     private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain, txtKredit;
     private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain, buttonKredit;
@@ -89,8 +92,8 @@ public class CollectionFormActivity extends BaseActivity {
     private List<CollectionTransfer> mListTransfer;
     private List<CollectionGiro> mListGiro;
     private List<CollectionCheque> mListCheque;
-    private List<Material> mListCash, mListLain, mListKredit;
-    private Invoice collectionHeader;
+    private List<Material> mListCash, mListLain, mListKredit, mListMaster;
+    private Invoice header;
     private CollectionKreditAdapter mAdapterKredit;
     private CollectionCashAdapter mAdapterCash;
     private CollectionTransferAdapter mAdapterTransfer;
@@ -115,15 +118,7 @@ public class CollectionFormActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_collection_form);
 
-        init();
         initialize();
-        initData();
-        setCashView();
-        setTransferView();
-        setGiroView();
-        setChequeView();
-        setLainView();
-        setKreditView();
 
         btnSubmit.setOnClickListener(v -> {
             if (colLFrom == 3) {
@@ -158,53 +153,63 @@ public class CollectionFormActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(CollectionFormActivity.this);
         });
+    }
+
+    private void setCashView() {
+        mAdapterCash = new CollectionCashAdapter(this, mListCash, header -> {
+
+        });
+        recyclerViewCash.setAdapter(mAdapterCash);
 
         buttonCash.setOnClickListener(v -> {
             setSelectView(1);
         });
 
-        buttonTransfer.setOnClickListener(v -> {
-            setSelectView(2);
-        });
+        edtPaymentCash.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        buttonGiro.setOnClickListener(v -> {
-            setSelectView(3);
-        });
+            }
 
-        buttonCheq.setOnClickListener(v -> {
-            setSelectView(4);
-        });
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-        buttonLain.setOnClickListener(v -> {
-            setSelectView(5);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(edtPaymentCash, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+                    if (qty < 0) {
+                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                    } else {
+                        totalPaymentCash = qty;
+                    }
+                } else {
+                    totalPaymentCash = 0;
+                }
+                setLeftCash();
+            }
         });
+    }
+
+    private void setKreditView() {
+        mAdapterKredit = new CollectionKreditAdapter(this, mListKredit, header -> {
+
+        });
+        recyclerViewKredit.setAdapter(mAdapterKredit);
 
         buttonKredit.setOnClickListener(v -> {
             setSelectView(6);
         });
     }
 
-    private void setCashView() {
-        mListCash = new ArrayList<>();
-        mListCash.addAll(initDataMaterial());
-
-        mAdapterCash = new CollectionCashAdapter(this, mListCash, header -> {
-
-        });
-        recyclerViewCash.setAdapter(mAdapterCash);
-    }
-
-    private void setKreditView() {
-        mListKredit = new ArrayList<>();
-        mListKredit.addAll(initDataMaterial());
-
-        mAdapterKredit = new CollectionKreditAdapter(this, mListKredit, header -> {
-
-        });
-        recyclerViewKredit.setAdapter(mAdapterKredit);
-    }
-
     private void setTransferView() {
+        buttonTransfer.setOnClickListener(v -> {
+            setSelectView(2);
+        });
+
         mAdapterTransfer = new CollectionTransferAdapter(this, mListTransfer, header -> {
 
         });
@@ -213,7 +218,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionTransfer detail = new CollectionTransfer(null, initDataMaterial());
+                CollectionTransfer detail = new CollectionTransfer(null, mListMaster);
                 mListTransfer.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -233,6 +238,10 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private void setGiroView() {
+        buttonGiro.setOnClickListener(v -> {
+            setSelectView(3);
+        });
+
         mAdapterGiro = new CollectionGiroAdapter(this, mListGiro, header -> {
 
         });
@@ -241,7 +250,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddGiro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionGiro detail = new CollectionGiro(null, initDataMaterial());
+                CollectionGiro detail = new CollectionGiro(null, mListMaster);
                 mListGiro.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -261,6 +270,10 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private void setChequeView() {
+        buttonCheq.setOnClickListener(v -> {
+            setSelectView(4);
+        });
+
         mAdapterCheque = new CollectionChequeAdapter(this, mListCheque, header -> {
 
         });
@@ -269,7 +282,7 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddCheque.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionCheque detail = new CollectionCheque(null, initDataMaterial());
+                CollectionCheque detail = new CollectionCheque(null, mListMaster);
                 mListCheque.add(detail);
 
                 new CountDownTimer(1000, 1000) {
@@ -289,38 +302,96 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private void setLainView() {
-        mListLain = new ArrayList<>();
-        mListLain.addAll(initDataMaterial());
-
         mAdapterLain = new CollectionLainAdapter(this, mListLain, header -> {
 
         });
         recyclerViewLain.setAdapter(mAdapterLain);
-    }
 
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1,000,000"));
-        mList.add(new Material("11030", "Redbull", "2,000,000"));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000"));
-        return mList;
+        buttonLain.setOnClickListener(v -> {
+            setSelectView(5);
+        });
+
+        edtPaymentLain.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(edtPaymentLain, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+                    if (qty < 0) {
+                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                    } else {
+                        totalPaymentLain = qty;
+                    }
+                } else {
+                    totalPaymentLain = 0;
+                }
+                setLeftLain();
+            }
+        });
     }
 
     private void initData() {
-        mListTransfer = new ArrayList<>();
-        mListGiro = new ArrayList<>();
-        mListCheque = new ArrayList<>();
-
-        colLFrom = Helper.getItemParam(Constants.COLLECTION_FROM) != null ? (int) Helper.getItemParam(Constants.COLLECTION_FROM) : 0;
-
-        if (colLFrom == 3) {
-            llOrder.setVisibility(View.VISIBLE);
-            llInvoice.setVisibility(View.GONE);
-            buttonKredit.setVisibility(View.VISIBLE);
+        if (SessionManagerQubes.getCollectionHeader() == null) {
+            onBackPressed();
+            setToast("Gagal ambil data. Silahkan coba lagi");
         } else {
-            llOrder.setVisibility(View.GONE);
-            llInvoice.setVisibility(View.VISIBLE);
-            buttonKredit.setVisibility(View.GONE);
+            header = SessionManagerQubes.getCollectionHeader();
+            colLFrom = SessionManagerQubes.getCollectionSource();
+
+            mListTransfer = new ArrayList<>();
+            mListGiro = new ArrayList<>();
+            mListCheque = new ArrayList<>();
+
+            if (colLFrom == 3) {
+                llOrder.setVisibility(View.VISIBLE);
+                llInvoice.setVisibility(View.GONE);
+                buttonKredit.setVisibility(View.VISIBLE);
+            } else {
+                llOrder.setVisibility(View.GONE);
+                llInvoice.setVisibility(View.VISIBLE);
+                buttonKredit.setVisibility(View.GONE);
+            }
+
+            mListMaster = database.getAllInvoiceDetail(header.getIdHeader());
+            mListCash = database.getAllInvoiceDetail(header.getIdHeader());
+            mListLain = database.getAllInvoiceDetail(header.getIdHeader());
+            mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
+
+            txtInvNo.setText(Helper.isEmpty(header.getInvoiceNo(), "-"));
+            txtAmount.setText("Rp." + format.format(header.getAmount()));
+            if (!Helper.isNullOrEmpty(header.getInvoiceDate())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoiceDate());
+                txtDate.setText(requestDate);
+            } else {
+                txtDate.setText("-");
+            }
+
+            setCashView();
+            setTransferView();
+            setGiroView();
+            setChequeView();
+            setLainView();
+            setKreditView();
+
+//            Material clone = null;
+//            try  {
+//                clone = (Material) super.clone();
+//                //Copy new date object to cloned method
+//                clone.setDob((Date) this.getDob().clone());
+//            }
+//            catch (CloneNotSupportedException e)  {
+//                throw new RuntimeException(e);
+//            }
         }
     }
 
@@ -464,7 +535,6 @@ public class CollectionFormActivity extends BaseActivity {
     private void initialize() {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-        collectionHeader = (Invoice) Helper.getItemParam(Constants.COLLECTION_HEADER);
 
         recyclerViewCash = findViewById(R.id.recyclerViewCash);
         recyclerViewCash.setLayoutManager(new LinearLayoutManager(this));
@@ -496,12 +566,12 @@ public class CollectionFormActivity extends BaseActivity {
         txtCheq = findViewById(R.id.txtCheq);
         txtLain = findViewById(R.id.txtLain);
         txtKredit = findViewById(R.id.txtKredit);
-        txtPaymentCash = findViewById(R.id.txtPaymentCash);
+        edtPaymentCash = findViewById(R.id.edtPaymentCash);
         txtLeftCash = findViewById(R.id.txtLeftCash);
         btnAddTransfer = findViewById(R.id.btnAddTransfer);
         btnAddGiro = findViewById(R.id.btnAddGiro);
         btnAddCheque = findViewById(R.id.btnAddCheque);
-        txtPaymentLain = findViewById(R.id.txtPaymentLain);
+        edtPaymentLain = findViewById(R.id.edtPaymentLain);
         txtLeftLain = findViewById(R.id.txtLeftLain);
         buttonCash = findViewById(R.id.buttonCash);
         buttonTransfer = findViewById(R.id.buttonTransfer);
@@ -523,129 +593,70 @@ public class CollectionFormActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        initData();
     }
 
-    //printer
-//    public void openDialogSearchPrinter() {
-//        LayoutInflater inflater = LayoutInflater.from(CollectionFormActivity.this);
-//        final Dialog dialog = new Dialog(CollectionFormActivity.this);
-//        View dialogView = inflater.inflate(R.layout.aspp_dialog_connector, null);
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        dialog.setContentView(dialogView);
-//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//
-//        mSwipeLayout = dialog.findViewById(R.id.swipe_container);
-//        mConnectorView = dialog.findViewById(R.id.list);
-//        Button btnCancel = dialog.findViewById(R.id.btnCancel);
-//
-//        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-//
-//        mConnectorList = new ArrayList<>();
-//        mConnectorAdapter = new ConnectorAdapter(CollectionFormActivity.this, mConnectorList, this);
-//        mConnectorView.setAdapter(mConnectorAdapter);
-//
-//        ItemTouchHelper.Callback callback = new ConnectorSwipeHelper(mConnectorAdapter);
-//        ItemTouchHelper helper = new ItemTouchHelper(callback);
-//        helper.attachToRecyclerView(mConnectorView);
-//
-//        assert mSwipeLayout != null;
-//        mSwipeLayout.setOnRefreshListener(this);
-//        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-//                android.R.color.holo_green_light,
-//                android.R.color.holo_orange_light,
-//                android.R.color.holo_red_light);
-//
-//        IntentFilter bluetoothFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-//        bluetoothFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-//        bluetoothFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-//        bluetoothFilter.addAction(BluetoothDevice.ACTION_FOUND);
-//        registerReceiver(mBluetoothReceiver, bluetoothFilter);
-//        initConnector();
-//
-//        btnCancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        dialog.show();
-//    }
-//
-//    public void initConnector() {
-//        mConnectorAdapter.clear();
-//
-//        // Enumerate all network devices.
-//        Set<String> hostList = mPreferences.getStringSet(PREF_HOST_LIST, new HashSet<String>());
-//        for (String url : hostList) {
-//            int delimiter = url.indexOf(":");
-//            String host = url.substring(0, delimiter > 0 ? delimiter : url.length());
-//            int port = Integer.parseInt(url.substring(delimiter > 0 ? delimiter + 1 : 0));
-//            AbstractConnector connector = new NetworkConnector(this, host, port);
-//            mConnectorAdapter.addLast(connector);
-//            mConnectorView.smoothScrollToPosition(0);
-//        }
-//
-//        // Enumerate USB devices
-//        UsbManager manager = (UsbManager) getSystemService(Context.USB_SERVICE);
-//        if (manager != null) {
-//            HashMap<String, UsbDevice> deviceList = manager.getDeviceList();
-//
-//            for (UsbDevice device : deviceList.values()) {
-//                if (manager.hasPermission(device)) {
-//                    AbstractConnector connector = new UsbDeviceConnector(this, manager, device);
-//                    mConnectorAdapter.addLast(connector);
-//                    mConnectorView.smoothScrollToPosition(0);
-//                }
-//            }
-//        }
-//
-//        // Enumerate Bluetooth devices
-//        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-//        if (adapter != null && adapter.isEnabled()) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                // TODO: Consider calling
-//                //    ActivityCompat#requestPermissions
-//                // here to request the missing permissions, and then overriding
-//                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//                //                                          int[] grantResults)
-//                // to handle the case where the user grants the permission. See the documentation
-//                // for ActivityCompat#requestPermissions for more details.
-//                return;
-//            }
-//            Set<BluetoothDevice> boundedDevices = adapter.getBondedDevices();
-//
-//            for (BluetoothDevice device : boundedDevices) {
-//                AbstractConnector connector;
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//                    if (device.getType() == BluetoothDevice.DEVICE_TYPE_LE) {
-//                        connector = new BluetoothLeConnector(this, adapter, device);
-//                    } else {
-//                        connector = new BluetoothSppConnector(this, adapter, device);
-//                    }
-//                } else {
-//                    connector = new BluetoothSppConnector(this, adapter, device);
-//                }
-//                mConnectorAdapter.addLast(connector);
-//                mConnectorView.smoothScrollToPosition(0);
-//            }
-//        }
-//
-////        String searchPattern = mSearchView.getText().toString();
-////        mConnectorAdapter.applySearchPattern(searchPattern);
-////        mConnectorAdapter.notifyDataSetChanged();
-//    }
-//
-//    private void enableBluetooth() {
-//        final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-//
-//        if (adapter != null && !adapter.isEnabled()) {
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        }
-//    }
+    public void setLeftCash() {
+        double totalPaid = 0;
+        for (Material mat : mListCash) {
+            if (mat.isChecked()) {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
+        }
+
+        leftCash = totalPaymentCash - totalPaid;
+        txtLeftCash.setText("Rp." + format.format(leftCash));
+    }
+
+    public double calculateLeftCash(double qty, int pos) {
+        double totalPaid = 0;
+        for (int i = 0; i < mListCash.size(); i++) {
+            Material mat = mListCash.get(i);
+            if (mat.isChecked()) {
+                if (i == pos) {
+                    totalPaid = totalPaid + qty;
+                } else {
+                    totalPaid = totalPaid + mat.getAmountPaid();
+                }
+            }
+        }
+        leftCash = totalPaymentCash - totalPaid;
+        return leftCash;
+    }
+
+    public double getTotalAmountCash() {
+        return totalPaymentCash;
+    }
+
+    public double getTotalAmountLain() {
+        return totalPaymentLain;
+    }
+
+    public void setLeftLain() {
+        double totalPaid = 0;
+        for (Material mat : mListLain) {
+            if (mat.isChecked()) {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
+        }
+
+        leftLain = totalPaymentLain - totalPaid;
+        txtLeftLain.setText("Rp." + format.format(leftLain));
+    }
+
+    public double calculateLeftLain(double qty, int pos) {
+        double totalPaid = 0;
+        for (int i = 0; i < mListLain.size(); i++) {
+            Material mat = mListLain.get(i);
+            if (mat.isChecked()) {
+                if (i == pos) {
+                    totalPaid = totalPaid + qty;
+                } else {
+                    totalPaid = totalPaid + mat.getAmountPaid();
+                }
+            }
+        }
+        leftLain = totalPaymentLain - totalPaid;
+        return leftLain;
+    }
 }

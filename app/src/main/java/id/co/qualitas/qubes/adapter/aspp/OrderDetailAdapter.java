@@ -13,8 +13,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderDetailActivity;
@@ -28,6 +31,8 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     private OnAdapterListener onAdapterListener;
     private OrderDetailExtraAdapter mAdapter;
     private boolean isExpand = false;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public OrderDetailAdapter(OrderDetailActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -128,12 +133,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtProduct.setText(detail.getMaterialCode());
         holder.txtQty.setText(String.valueOf(detail.getQty()));
         holder.txtUom.setText(detail.getUom());
-        holder.txtPrice.setText(detail.getPrice());
+        holder.txtPrice.setText(format.format(detail.getPrice()));
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {
@@ -160,6 +166,14 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }
 

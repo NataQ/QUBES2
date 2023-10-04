@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class CollectionGiro implements Serializable {
+    public String customerId;
+    public String date;
+    public double omzet;
     public String noGiro;
     public String tglCair;
     public String tglGiro;
@@ -11,9 +14,10 @@ public class CollectionGiro implements Serializable {
     public String bankName;
     public String idBankCust;
     public String bankCust;
-    public String totalPayment;
-    public String left;
+    public double totalPayment;
+    public double left;
     public List<Material> materialList;
+    private boolean isSync;
 
     public CollectionGiro() {
     }
@@ -32,6 +36,38 @@ public class CollectionGiro implements Serializable {
     public CollectionGiro(String noGiro, List<Material> materialList) {
         this.noGiro = noGiro;
         this.materialList = materialList;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public double getOmzet() {
+        return omzet;
+    }
+
+    public void setOmzet(double omzet) {
+        this.omzet = omzet;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
     }
 
     public String getNoGiro() {
@@ -90,19 +126,19 @@ public class CollectionGiro implements Serializable {
         this.tglGiro = tglGiro;
     }
 
-    public String getTotalPayment() {
+    public double getTotalPayment() {
         return totalPayment;
     }
 
-    public void setTotalPayment(String totalPayment) {
+    public void setTotalPayment(double totalPayment) {
         this.totalPayment = totalPayment;
     }
 
-    public String getLeft() {
+    public double getLeft() {
         return left;
     }
 
-    public void setLeft(String left) {
+    public void setLeft(double left) {
         this.left = left;
     }
 

@@ -25,7 +25,7 @@ public class OutletActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_outlet);
 
-        init();
+        initProgress();
         initialize();
 
         imgBack.setOnClickListener(v -> {

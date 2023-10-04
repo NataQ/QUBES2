@@ -10,7 +10,6 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +23,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -187,7 +185,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
                 String temp[] = nameItem.split("_");
                 holder.edtProduct.setText(nameItem);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setIdMaterial(temp[0]);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialId(temp[0]);
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
                 alertDialog.dismiss();
             });

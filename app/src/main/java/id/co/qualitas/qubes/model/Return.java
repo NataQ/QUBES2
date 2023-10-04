@@ -13,8 +13,8 @@ public class Return {
     private String idReturn;
     private String itemNr;
     private String idRow;
-    private String idMaterial;
-    private BigDecimal qty;
+    private String materialId;
+    private double qty;
 
     private BigDecimal qty2;
     private String uom;
@@ -40,17 +40,89 @@ public class Return {
     private String[] itemsReason;
 
     private String category;
+    private String customerId;
+    private String date;
+    private String condition;
+    private String idReason;
+    private String nameReason;
+    private String descReason;
+    private String photoReason;
+    private boolean isSync;
 
     public Return(String idReturn, String expiredDate) {
         this.idReturn = idReturn;
         this.expiredDate = expiredDate;
     }
 
-    public BigDecimal getQty() {
+    public String getIdReason() {
+        return idReason;
+    }
+
+    public void setIdReason(String idReason) {
+        this.idReason = idReason;
+    }
+
+    public String getNameReason() {
+        return nameReason;
+    }
+
+    public void setNameReason(String nameReason) {
+        this.nameReason = nameReason;
+    }
+
+    public String getDescReason() {
+        return descReason;
+    }
+
+    public void setDescReason(String descReason) {
+        this.descReason = descReason;
+    }
+
+    public String getPhotoReason() {
+        return photoReason;
+    }
+
+    public void setPhotoReason(String photoReason) {
+        this.photoReason = photoReason;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public boolean isSync() {
+        return isSync;
+    }
+
+    public void setSync(boolean sync) {
+        isSync = sync;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(BigDecimal qty) {
+    public void setQty(double qty) {
         this.qty = qty;
     }
 
@@ -110,12 +182,12 @@ public class Return {
         this.itemNr = itemNr;
     }
 
-    public String getIdMaterial() {
-        return idMaterial;
+    public String getMaterialId() {
+        return materialId;
     }
 
-    public void setIdMaterial(String idMaterial) {
-        this.idMaterial = idMaterial;
+    public void setMaterialId(String materialId) {
+        this.materialId = materialId;
     }
 
     public String getExpiredDateString() {
@@ -174,18 +246,18 @@ public class Return {
     }
 
     public String getIdMat() {
-        return idMaterial;
+        return materialId;
     }
 
     public void setIdMat(String idMat) {
-        this.idMaterial = idMat;
+        this.materialId = idMat;
     }
 
-    public BigDecimal getQty1() {
+    public double getQty1() {
         return qty;
     }
 
-    public void setQty1(BigDecimal qty) {
+    public void setQty1(double qty) {
         this.qty = qty;
     }
 

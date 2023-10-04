@@ -18,26 +18,26 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionVisitActivity extends BaseActivity {
     private CollectionVisitAdapter mAdapter;
     private List<Invoice> mList;
     private TextView txtDate, txtTotalInvoice, txtTotalPaid;
-    private int totalInvoice = 0;
-    private float totalPaid = 0.0F;
+    private double totalInvoice = 0;
+    private double totalPaid = 0.0F;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_collection_visit);
 
-        init();
         initialize();
         initData();
 
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
-            Helper.setItemParam(Constants.COLLECTION_HEADER, header);
-            Helper.setItemParam(Constants.COLLECTION_FROM, 2);
+            SessionManagerQubes.setCollectionHeader(header);
+            SessionManagerQubes.setCollectionSource(2);
 //            Intent intent = new Intent(this, CollectionFormActivity.class);
 //            startActivity(intent);
             Intent intent = new Intent(this, CollectionDetailActivity.class);

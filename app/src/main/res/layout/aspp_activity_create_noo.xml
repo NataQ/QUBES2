@@ -107,24 +107,32 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_margin="3dp"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:id="@+id/llKTP"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_add_image_alert"
-                                android:gravity="center"
                                 android:minHeight="100dp"
                                 android:orientation="vertical"
-                                android:padding="10dp">
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteKTP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
 
                                 <ImageView
                                     android:id="@+id/imgAddKTP"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
                                     android:layout_margin="5dp"
                                     android:background="@drawable/ic_add_photo"
                                     android:backgroundTint="@color/blue_aspp" />
@@ -132,12 +140,17 @@
                                 <ImageView
                                     android:id="@+id/imgKTP"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
                                     android:layout_gravity="center"
-                                    android:maxHeight="100dp" />
-                            </LinearLayout>
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp" />
+                            </RelativeLayout>
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -150,37 +163,50 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_margin="3dp"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:id="@+id/llNPWP"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_add_image"
-                                android:gravity="center"
                                 android:minHeight="100dp"
                                 android:orientation="vertical"
-                                android:padding="10dp">
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteNPWP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
 
                                 <ImageView
                                     android:id="@+id/imgAddNPWP"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
-                                    android:layout_margin="5dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp"
                                     android:background="@drawable/ic_add_photo"
                                     android:backgroundTint="@color/blue_aspp" />
 
                                 <ImageView
                                     android:id="@+id/imgNPWP"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
                                     android:layout_gravity="center"
-                                    android:maxHeight="100dp" />
-                            </LinearLayout>
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -193,24 +219,32 @@
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:layout_margin="3dp"
+                            android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:id="@+id/llOutlet"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/bg_add_image_alert"
-                                android:gravity="center"
                                 android:minHeight="100dp"
                                 android:orientation="vertical"
-                                android:padding="10dp">
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteOutlet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
 
                                 <ImageView
                                     android:id="@+id/imgAddOutlet"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
                                     android:layout_margin="5dp"
                                     android:background="@drawable/ic_add_photo"
                                     android:backgroundTint="@color/blue_aspp" />
@@ -218,12 +252,14 @@
                                 <ImageView
                                     android:id="@+id/imgOutlet"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
                                     android:layout_gravity="center"
-                                    android:maxHeight="100dp" />
-                            </LinearLayout>
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
 
                             <TextView
+                                style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -491,6 +527,32 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
+                            android:text="No. NPWP"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <EditText
+                            android:id="@+id/edtNoNpwp"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/editbox"
+                            android:padding="5dp"
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
                             android:text="Nama NPWP"
                             android:textColor="@color/gray8_aspp" />
 
@@ -521,32 +583,6 @@
 
                         <EditText
                             android:id="@+id/edtAlamatNpwp"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:padding="5dp"
-                            android:textColor="@color/black_aspp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="5dp">
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="No. NPWP"
-                            android:textColor="@color/gray8_aspp" />
-
-                        <EditText
-                            android:id="@+id/edtNoNpwp"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -875,7 +911,7 @@
                             android:layout_weight=".6"
                             android:background="@drawable/editbox_disable"
                             android:padding="5dp"
-                            android:text="2,000,000"
+                            android:text="2000000"
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>

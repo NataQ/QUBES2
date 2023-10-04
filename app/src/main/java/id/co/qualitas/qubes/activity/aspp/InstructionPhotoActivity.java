@@ -20,7 +20,7 @@ public class InstructionPhotoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_instruction_photo);
 
-        init();
+        initProgress();
         initialize();
 
         imgBack.setOnClickListener(v -> {

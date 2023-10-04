@@ -56,18 +56,18 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Return aReturn = returnList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
-        holder.kodeProduk.setText(Helper.validateResponseEmpty(aReturn.getIdMaterial()));
+        holder.kodeProduk.setText(Helper.validateResponseEmpty(aReturn.getMaterialId()));
         holder.namaProduk.setText(Helper.validateResponseEmpty(aReturn.getMaterialName()));
         if (aReturn.getExpiredDate() != null) {
             holder.date.setText(Helper.changeDateFormat(Constants.DATE_TYPE_2, Constants.DATE_TYPE_12, aReturn.getExpiredDate()));
         }
         holder.notesDetail.setText(Helper.validateResponseEmpty(aReturn.getDescription()));
-        if (aReturn.getQty1() != null && aReturn.getUom1() != null) {
-            holder.qty.setText(Helper.validateResponseEmpty(String.valueOf(aReturn.getQty1())));
-            holder.uom1.setText(Helper.validateResponseEmpty(db.getUomName(aReturn.getUom1())));
-        } else {
-            holder.qty.setText("-");
-        }
+//        if (aReturn.getQty1() != null && aReturn.getUom1() != null) {
+//            holder.qty.setText(Helper.validateResponseEmpty(String.valueOf(aReturn.getQty1())));
+//            holder.uom1.setText(Helper.validateResponseEmpty(db.getUomName(aReturn.getUom1())));
+//        } else {
+//            holder.qty.setText("-");
+//        }
         if (aReturn.getQty2() != null && aReturn.getUom2() != null) {
             holder.qty2.setText(Helper.validateResponseEmpty(String.valueOf(aReturn.getQty2())));
             holder.uom2.setText(Helper.validateResponseEmpty(db.getUomName(aReturn.getUom2())));

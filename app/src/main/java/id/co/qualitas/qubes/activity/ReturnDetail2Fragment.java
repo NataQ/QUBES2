@@ -94,8 +94,8 @@ public class ReturnDetail2Fragment extends BaseFragment {
                 if (returnDetail != null && !returnDetail.isEmpty()) {
                     for (int i = 0; i < returnDetail.size(); i++) {
                         if (returnDetail.get(i).getMaterialName() == null) {
-                            if (returnDetail.get(i).getIdMaterial() != null) {
-                                String materialName = db.getMaterialName(returnDetail.get(i).getIdMaterial());
+                            if (returnDetail.get(i).getMaterialId() != null) {
+                                String materialName = db.getMaterialName(returnDetail.get(i).getMaterialId());
                                 if (materialName != null) {
                                     returnDetail.get(i).setMaterialName(materialName);
                                 }

@@ -14,6 +14,7 @@ import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
@@ -47,7 +48,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn;
-    private LinearLayout llKTP, llNPWP, llOutlet;
+    private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
     private RecyclerView rvPromo, rvOutstandingFaktur, rvDCTOutlet;
     private CustomerInfoPromoAdapter promoAdapter;
@@ -77,7 +78,7 @@ public class DailySalesmanActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_daily_salesman);
 
-        init();
+        initProgress();
         initialize();
         setData();
         setView();
@@ -312,7 +313,8 @@ public class DailySalesmanActivity extends BaseActivity {
 //            pause.setIdOutlet(outletResponse.getIdOutlet());
 //            pause.setTimer(String.valueOf(timerValue.getBase()));
 
-        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_play));
+        txtStatus.setText("Resume");
+        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
     }
 
     private void resumeTimer() {
@@ -324,6 +326,7 @@ public class DailySalesmanActivity extends BaseActivity {
         timerValue.start();
         Helper.resume = false;
 
+        txtStatus.setText("Pause");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
     }
 

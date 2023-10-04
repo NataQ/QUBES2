@@ -950,7 +950,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setIdMaterial(edtMaterialCode.getText().toString());
+                            material.setMaterialId(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -2976,7 +2976,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -2999,7 +2999,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -3021,7 +3021,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
                 }
 

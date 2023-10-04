@@ -69,8 +69,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
     public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final Handler mHandler = new Handler();
-    protected DecimalFormatSymbols otherSymbols;
-    protected DecimalFormat format;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +167,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_ENABLE_BT) {
-            init();
+            initProgress();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -390,12 +388,12 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
                 switch (state) {
                     case BluetoothAdapter.STATE_OFF:
-                        init();
+                        initProgress();
                         break;
                     case BluetoothAdapter.STATE_TURNING_OFF:
                         break;
                     case BluetoothAdapter.STATE_ON:
-                        init();
+                        initProgress();
                         break;
                     case BluetoothAdapter.STATE_TURNING_ON:
                         break;
@@ -559,15 +557,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     private interface PrinterRunnable {
         void run(ProgressDialog dialog, Printer printer) throws IOException;
     }
-
-    private void setFormatSeparator() {
-        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
-        otherSymbols.setDecimalSeparator(',');
-        otherSymbols.setGroupingSeparator('.');
-        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
-        format.setDecimalSeparatorAlwaysShown(false);
-    }
-
     private void printText() {
         setFormatSeparator();
         Log.d(TAG, "Print Text");
@@ -607,7 +596,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 //                    textBuffer.append("{reset}" + mat.getIdMaterial() + " - " + mat.getMaterialCode() + "{br}");
 
                     String qtyUom = format.format(mat.getQty()) + " " + mat.getUom();
-                    String price = mat.getPrice();
+                    String price = format.format(mat.getPrice());
                     String priceSpace = "";
 //                    while (qtyUom.length() < 20) qtyUom.concat(" ");
 //                    for (int i = qtyUom.length(); i < 20; i++) {
@@ -619,7 +608,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 //                    while (priceSpace.length() < (12 - price.length())) priceSpace.concat(" ");
                     textBuffer.append("{reset}" + qtyUom + "Rp. " + priceSpace + "{br}");
 //                    textBuffer.append("{reset}{left}Disc {/left}{reset}{right}Rp. " + format.format(mat.getTotalDiscount()) + "{/right}{br}");
-                    totalPrice = totalPrice + Double.parseDouble(mat.getPrice().replace(".", ""));
+                    totalPrice = totalPrice + mat.getPrice();
                     totalDiscount = totalDiscount + mat.getTotalDiscount();
 //                    if (mat.getExtraItem() != null) {
 //                        for (Material matExtra : mat.getExtraItem()) {
@@ -672,7 +661,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", "1.000.000", 1000, initDataMaterialExtra()));
+        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", 1000000, 1000, initDataMaterialExtra()));
 //        mList.add(new Material("11030", "Redbull", 10, "CAN", "1.000.000", 5000, initDataMaterialExtra()));
 //        mList.add(new Material("31020", "You C1000 Vitamin Orange", 24, "BTL", "1.000.000", 2000, initDataMaterialExtra()));
         return mList;
@@ -680,7 +669,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     private List<Material> initDataMaterialExtra() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", "0", 0));
+        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", 0, 0));
         return mList;
     }
 

@@ -1045,8 +1045,8 @@ public class OrderFragment extends BaseFragment implements SearchView.OnQueryTex
                             if (material.getDesc() != null) {
                                 visitOrderDetailResponse.setMaterialName(material.getDesc());
                             }
-                            if (material.getIdMaterial() != null) {
-                                visitOrderDetailResponse.setIdMaterial(material.getIdMaterial());
+                            if (material.getMaterialId() != null) {
+                                visitOrderDetailResponse.setIdMaterial(material.getMaterialId());
                             }
                             if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
                                 visitOrderDetailResponseList = new ArrayList<>();

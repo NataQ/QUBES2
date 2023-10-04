@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.StockRequestDetailActivity;
 import id.co.qualitas.qubes.activity.aspp.UnloadingActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Holder> implements Filterable {
@@ -23,6 +26,8 @@ public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Hold
     private LayoutInflater mInflater;
     private UnloadingActivity mContext;
     private OnAdapterListener onAdapterListener;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public UnloadingAdapter(UnloadingActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -105,11 +110,19 @@ public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Hold
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtProduct.setText(detail.getIdMaterial() + " - " + detail.getMaterialCode());
-        holder.txtNo.setText(String.valueOf(position + 1) + ".");
-        holder.txtQty.setText(detail.getMaterialQty() + " " + detail.getUom());
-        holder.txtSisaStock.setText(detail.getMaterialQty() + " " + detail.getUom());
+        String idMat = Helper.isEmpty(detail.getMaterialId(), "");
+        String nameMat = Helper.isEmpty(detail.getMaterialName(), "");
+        String uom = Helper.isEmpty(detail.getUom(), "");
+        String uomSisa = Helper.isEmpty(detail.getUomSisa(), "");
+        String qty = format.format(detail.getQty());
+        String qtySisa = format.format(detail.getQtySisa());
+
+        holder.txtNo.setText(format.format(position + 1) + ".");
+        holder.txtProduct.setText(idMat + " - " + nameMat);
+        holder.txtQty.setText(qty + " " + uom);
+        holder.txtSisaStock.setText(qtySisa + " " + uomSisa);
     }
 
     @Override
@@ -119,5 +132,13 @@ public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Hold
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

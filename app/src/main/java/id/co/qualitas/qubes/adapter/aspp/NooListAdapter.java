@@ -18,15 +18,16 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.CustomerNoo;
 
 public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> implements Filterable {
-    private List<Customer> mList;
-    private List<Customer> mFilteredList;
+    private List<CustomerNoo> mList;
+    private List<CustomerNoo> mFilteredList;
     private LayoutInflater mInflater;
     private VisitActivity mContext;
     private OnAdapterListener onAdapterListener;
 
-    public NooListAdapter(VisitActivity mContext, List<Customer> mList, OnAdapterListener onAdapterListener) {
+    public NooListAdapter(VisitActivity mContext, List<CustomerNoo> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -39,7 +40,7 @@ public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> 
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Customer> mDataSet) {
+    public void setData(List<CustomerNoo> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -54,11 +55,11 @@ public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> 
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Customer> filteredList = new ArrayList<>();
-                    for (Customer row : mList) {
+                    List<CustomerNoo> filteredList = new ArrayList<>();
+                    for (CustomerNoo row : mList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getName().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -73,7 +74,7 @@ public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> 
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Customer>) filterResults.values;
+                mFilteredList = (ArrayList<CustomerNoo>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -111,10 +112,10 @@ public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        Customer detail = mFilteredList.get(position);
+        CustomerNoo detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
+        holder.txtOutlet.setText(detail.getName());
 
         switch (detail.getStatus()) {
             case 0:
@@ -150,6 +151,6 @@ public class NooListAdapter extends RecyclerView.Adapter<NooListAdapter.Holder> 
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(Customer Customer);
+        void onAdapterClick(CustomerNoo Customer);
     }
 }

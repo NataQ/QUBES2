@@ -19,6 +19,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
@@ -52,11 +53,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -71,6 +74,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,6 +88,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.database.SecondDatabaseHelper;
 import id.co.qualitas.qubes.fragment.TimerFragment;
@@ -103,19 +109,25 @@ import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
 import id.co.qualitas.qubes.model.VisitOrderRequest;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 //import android.support.multidex.MultiDex;
 
 public class BaseActivity extends AppCompatActivity {
+    protected ProgressBar progressCircle;
     protected Context context;
     protected ProgressDialog progress;
     protected DatabaseHelper db;
+    protected Database database;
+    protected SessionManagerQubes sessionManagerQubes;
     protected SecondDatabaseHelper sdb;
     protected int PARAM = 0, FLAG = 0;
     protected SessionManager session;
     public BottomNavigationView bottomNavigationView;
     public boolean doubleBackToExitPressedOnce = false;
+    protected SwipeRefreshLayout swipeLayout;
+    protected TextView txtNoData, txtTitle;
     protected Intent intent;
     protected Fragment fragment;
     protected FragmentManager fragmentManager;
@@ -163,6 +175,8 @@ public class BaseActivity extends AppCompatActivity {
     private SignaturePad mSignaturePad;
     private ArrayList<VisitOrderHeader> orderHeaderList;
     private Bitmap bitmapPhoto, compressedBitmapGallery;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public ArrayAdapter<String> getSpinnerAdapter() {
         return spinnerAdapter;
@@ -186,6 +200,36 @@ public class BaseActivity extends AppCompatActivity {
 
     public ProgressDialog getProgress() {
         return progress;
+    }
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        database = new Database(getApplicationContext());
+        Helper.trustSSL();
+        initProgress();
+        initBase();
+        setFormatSeparator();
+    }
+
+    public void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
+    }
+    public void initBase() {
+        if (SessionManagerQubes.getUserProfile() != null) {
+            Helper.setItemParam(Constants.USER_DETAIL,  SessionManagerQubes.getUserProfile());
+            user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+            if (user == null) {
+                setToast("Session telah habis. Silahkan login ulang.");
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        }
     }
 
     public boolean isNetworkAvailable() {
@@ -216,7 +260,7 @@ public class BaseActivity extends AppCompatActivity {
 //        layoutParams.width = 300;
 //        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 //        dialog.getWindow().setAttributes(layoutParams);//height => (4 * height) / 5
-        dialog.getWindow().setLayout(400 , ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
         Button btnNo = dialog.findViewById(R.id.btnNo);
         Button btnYes = dialog.findViewById(R.id.btnYes);
         btnNo.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +273,7 @@ public class BaseActivity extends AppCompatActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearAllSession();
                 Intent intent = new Intent(activity, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
@@ -237,6 +282,12 @@ public class BaseActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    private void clearAllSession() {
+        SessionManagerQubes.clearLoginSession();
+        SessionManagerQubes.clearStockRequestHeaderSession();
+        SessionManagerQubes.clearInvoiceHeaderSession();
     }
 
     public void snackBar(View rootView, int message) {
@@ -473,7 +524,7 @@ public class BaseActivity extends AppCompatActivity {
         spinner.setSelection(adapter.getCount());
     }
 
-    public void init() {
+    public void initProgress() {
         progress = new ProgressDialog(this);
         progress.setMessage(Constants.STR_WAIT);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -604,31 +655,33 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void initActivity() {
-        db = new DatabaseHelper(getApplicationContext());
-        sdb = new SecondDatabaseHelper(getApplicationContext());
+        database = new Database(getApplicationContext());
 
-        attendances = db.getAttendance();
-        int ATZchecked = 0;
-        int ATchecked = 0;
-        try {
-            ATZchecked = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AUTO_TIME_ZONE);
-            ATchecked = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AUTO_TIME);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
+//        db = new DatabaseHelper(getApplicationContext());
+//        sdb = new SecondDatabaseHelper(getApplicationContext());
 
-        SecureDate.getInstance().initAttend(attendances, ATZchecked, ATchecked);
-        curDate = SecureDate.getInstance().getDate();
-        if (curDate == null) {
-            PARAM = 5;
-            new RequestUrl().execute();
-        }
-        user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-        if (user != null) {
-            if (user.getIdEmployee() != null) {
-                idEmployee = user.getIdEmployee();
-            }
-        }
+//        attendances = db.getAttendance();
+//        int ATZchecked = 0;
+//        int ATchecked = 0;
+//        try {
+//            ATZchecked = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AUTO_TIME_ZONE);
+//            ATchecked = Settings.Global.getInt(getApplicationContext().getContentResolver(), Settings.Global.AUTO_TIME);
+//        } catch (Settings.SettingNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        SecureDate.getInstance().initAttend(attendances, ATZchecked, ATchecked);
+//        curDate = SecureDate.getInstance().getDate();
+//        if (curDate == null) {
+//            PARAM = 5;
+//            new RequestUrl().execute();
+//        }
+//        user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+//        if (user != null) {
+//            if (user.getIdEmployee() != null) {
+//                idEmployee = user.getIdEmployee();
+//            }
+//        }
     }
 
     private void initDialog(int resource) {
@@ -974,7 +1027,7 @@ public class BaseActivity extends AppCompatActivity {
                 alertDialog.show();
                 break;
             case DIALOG_ATTACH_PHOTO:
-                init();
+                initProgress();
                 db = new DatabaseHelper(getApplicationContext());
                 initDialog(R.layout.custom_dialog_photo_new);
 
@@ -1275,7 +1328,7 @@ public class BaseActivity extends AppCompatActivity {
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setIdMaterial(edtMaterialCode.getText().toString());
+                            material.setMaterialId(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -1320,7 +1373,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1342,7 +1395,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1364,7 +1417,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getIdMaterial());
+                        listMaterialCode.add(data.getMaterialId());
                     }
                 }
 
@@ -1382,7 +1435,7 @@ public class BaseActivity extends AppCompatActivity {
             super.onPreExecute();
 
             /*32019 beta update*/
-            init();
+            initProgress();
             progress.show();
 
             /**/
@@ -1710,6 +1763,7 @@ public class BaseActivity extends AppCompatActivity {
 
         return inputData;
     }
+
     public byte[] getBytesGallery(InputStream inputStream) throws IOException {
         Bitmap bmp = BitmapFactory.decodeStream(inputStream);
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();

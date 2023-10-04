@@ -118,7 +118,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".7"
-                    android:text="1,000,000"
+                    android:text="1000000"
                     android:textColor="@color/black_aspp" />
 
             </LinearLayout>

@@ -1,36 +1,24 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
@@ -291,7 +279,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         reasonList.addAll(Helper.getDataReason());
 
         String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getIdMaterial()) ? detail.getIdMaterial() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getMaterialId()) ? detail.getMaterialId() : null;
         holder.edtProduct.setText(productId + " - " + productName);
 
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {

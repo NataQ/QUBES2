@@ -52,6 +52,9 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -68,6 +71,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CameraActivity;
@@ -112,6 +121,49 @@ public class Helper extends BaseFragment {
         param.remove(key);
     }
 
+    public static void trustSSL() {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            @Override
+            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+
+            }
+
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+//            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+//            }
+//
+//            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+//            }
+        }
+        };
+
+        // Install the all-trusting trust manager
+        SSLContext sc = null; // Add in try catch block if you get error.
+        try {
+            sc = SSLContext.getInstance("SSL");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom()); // Add in try catch block if you get error.
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+            // Create all-trusting host name verifier
+            HostnameVerifier allHostsValid = (hostname, session) -> true;
+
+            // Install the all-trusting host verifier
+            HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static boolean isEmptyEditText(Object obj) {
         boolean bool = false;
@@ -122,6 +174,18 @@ public class Helper extends BaseFragment {
         return bool;
     }
 
+    public static String isEmpty(String input, String placeHolder) {
+        if (input != null) {
+            if (input.length() != 0) {
+                return input;
+            } else {
+                return placeHolder;
+            }
+        } else {
+            return placeHolder;
+        }
+//        return input != null ? input : placeHolder;
+    }
     public static boolean isEmpty(Object obj) {
         if (obj != null)
             return false;

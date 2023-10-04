@@ -13,7 +13,6 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
@@ -28,13 +27,17 @@ import com.lowagie.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class UnloadingPdfUtils {
     Font calibriRegularWhite, calibriRegular, calibriBoldUnderline, calibriUnderline, bigCalibriBold, bigCalibri, calibriBold, arialRegular, bigArialBold, arialBold, myriadproRegular;
@@ -52,6 +55,7 @@ public class UnloadingPdfUtils {
     private static UnloadingPdfUtils instance;
     private Context context;
     private static final String TAG = "UnloadingPdfUtils";
+    private User user;
 
     public static UnloadingPdfUtils getInstance(Context context) {
         if (instance == null) {
@@ -158,7 +162,7 @@ public class UnloadingPdfUtils {
         }
     }
 
-    public PdfPTable createPDFTitle() {
+    public PdfPTable createPDFTitle(StockRequest header) {
         PdfPTable table = new PdfPTable(MAX_COLUMN_TABLE);
         table.setWidthPercentage(100);
         PdfPCell cell;
@@ -198,7 +202,6 @@ public class UnloadingPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-
         cell = new PdfPCell(new Phrase("Surat Jalan", calibriBoldUnderline));
         cell.setUseAscender(true);
         cell.setColspan(MAX_COLUMN_TABLE);
@@ -207,7 +210,8 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("No.SJ : DKAO007109", calibriUnderline));
+        String noSJ = Helper.isEmpty(header.getSuratJalan(), "");
+        cell = new PdfPCell(new Phrase("No.SJ : " + noSJ, calibriUnderline));
         cell.setUseAscender(true);
         cell.setColspan(MAX_COLUMN_TABLE);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -218,7 +222,7 @@ public class UnloadingPdfUtils {
         return table;
     }
 
-    public PdfPTable createPDFTop() {
+    public PdfPTable createPDFTop(StockRequest header) {
         PdfPCell cell;
 
         PdfPTable mainTable = new PdfPTable(MAX_COLUMN_TABLE);
@@ -242,7 +246,13 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable1.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_3), bigCalibri));
+        String tglKirim;
+        if (!Helper.isNullOrEmpty(header.getTanggalKirim())) {
+            tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalKirim());
+        } else {
+            tglKirim = "";
+        }
+        cell = new PdfPCell(new Phrase(": " + tglKirim, bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable1.addCell(cell);
 
@@ -252,7 +262,7 @@ public class UnloadingPdfUtils {
         cell.addElement(rightTable1);
         mainTable.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", bigCalibri));
+        cell = new PdfPCell(new Phrase(user.getUsername() + " (PT. AHEB)", bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         cell.setColspan(2);
         mainTable.addCell(cell);
@@ -269,7 +279,8 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(": " + "20230207100010001", bigCalibri));
+        String noOrder = Helper.isEmpty(header.getNoDoc(), "");
+        cell = new PdfPCell(new Phrase(": " + noOrder, bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
 
@@ -292,7 +303,13 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable3.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_1), bigCalibri));
+        String tgl;
+        if (!Helper.isNullOrEmpty(header.getRequestDate())) {
+            tgl = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getRequestDate());
+        } else {
+            tgl = "";
+        }
+        cell = new PdfPCell(new Phrase(": " + tgl, bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable3.addCell(cell);
 
@@ -433,7 +450,8 @@ public class UnloadingPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", calibriRegular));
+
+        cell = new PdfPCell(new Phrase(user.getUsername() + " (PT. AHEB)", calibriRegular));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -444,7 +462,7 @@ public class UnloadingPdfUtils {
         return table;
     }
 
-    public PdfPTable createPDFHeaderTable() {
+    public PdfPTable createPDFHeaderTable(List<Material> materialList) {
         setFormatSeparator();
         PdfPCell cell;
         Phrase text;
@@ -506,8 +524,9 @@ public class UnloadingPdfUtils {
         table.addCell(cell);
 
         //detail
-        for (int i = 0; i < 6; i++) {
-            cell = new PdfPCell(new Phrase("NUTRIVILLE COLLAGEN DRINK LYCHEE LEMON " + String.valueOf(i + 1), calibriRegular));//jenis barang
+        for (int i = 0; i < materialList.size(); i++) {
+            String nameMat = Helper.isEmpty(materialList.get(i).getMaterialName(), "");
+            cell = new PdfPCell(new Phrase(nameMat, calibriRegular));//jenis barang
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -515,7 +534,9 @@ public class UnloadingPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(String.valueOf(i + 1) + " CAN", calibriRegular));//qty
+            String uom = Helper.isEmpty(materialList.get(i).getUom(), "");
+            String qty = format.format(materialList.get(i).getQty());
+            cell = new PdfPCell(new Phrase(qty + " " + uom, calibriRegular));//qty
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -523,7 +544,9 @@ public class UnloadingPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(String.valueOf(i + 1) + " CAN", calibriRegular));//baik
+            String uomSisa = Helper.isEmpty(materialList.get(i).getUomSisa(), "");
+            String qtySisa = format.format(materialList.get(i).getQtySisa());
+            cell = new PdfPCell(new Phrase(qtySisa + " " + uomSisa, calibriRegular));//baik
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -531,7 +554,7 @@ public class UnloadingPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(String.valueOf(i + 1) + " CAN", calibriRegular));//rusak
+            cell = new PdfPCell(new Phrase(qtySisa + " " + uomSisa, calibriRegular));//rusak
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -539,14 +562,14 @@ public class UnloadingPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(String.valueOf(i + 1) + " CAN", calibriRegular));//terjual
+            String qtyOrder = format.format(materialList.get(i).getQty() - materialList.get(i).getQtySisa());
+            cell = new PdfPCell(new Phrase(qtyOrder + " " + uom, calibriRegular));//terjual
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
-
         }
 
         autoEnter(table, cell, 3);
@@ -586,7 +609,7 @@ public class UnloadingPdfUtils {
         return table;
     }
 
-    public Boolean createPDF(File pdfFile) {
+    public Boolean createPDF(File pdfFile, StockRequest header, List<Material> mList) {
         initFontPdf();
         Boolean isGood = false;
         Document document = new Document(PageSize.A4.rotate());//landscape
@@ -630,10 +653,11 @@ public class UnloadingPdfUtils {
             HeaderFooterPageEvent event = new HeaderFooterPageEvent();
             writer.setPageEvent(event);
             document.open();
+            user = SessionManagerQubes.getUserProfile();
 
-            document.add(createPDFTitle());
-            document.add(createPDFTop());
-            document.add(createPDFHeaderTable());
+            document.add(createPDFTitle(header));
+            document.add(createPDFTop(header));
+            document.add(createPDFHeaderTable(mList));
             document.add(createPDFSign());
             isGood = true;
 

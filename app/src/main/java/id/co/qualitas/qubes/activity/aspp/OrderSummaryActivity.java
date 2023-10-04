@@ -30,7 +30,7 @@ public class OrderSummaryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_summary);
 
-        init();
+        initProgress();
         initialize();
         setData();
 

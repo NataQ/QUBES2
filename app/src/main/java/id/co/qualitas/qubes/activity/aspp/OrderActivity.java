@@ -33,7 +33,7 @@ public class OrderActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order);
 
-        init();
+        initProgress();
         initialize();
         initData();
 
@@ -59,8 +59,8 @@ public class OrderActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Order("ORDER000001", "1,000,000", "0WJ42 - SARI SARI (TK)", "SO0000001", "Draft", "1 June 2023"));
-        mList.add(new Order("ORDER000002", "2,000,000", "0WJ42 - SARI SARI (TK)", "SO0000002", "Pending", "2 June 2023"));
+        mList.add(new Order("ORDER000001", "1000000", "0WJ42 - SARI SARI (TK)", "SO0000001", "Draft", "1 June 2023"));
+        mList.add(new Order("ORDER000002", "2000000", "0WJ42 - SARI SARI (TK)", "SO0000002", "Pending", "2 June 2023"));
         mList.add(new Order("ORDER000003", "3,000,000", "0WJ42 - SARI SARI (TK)", "SO0000003", "Approve", "3 June 2023"));
         mList.add(new Order("ORDER000004", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000004", "Reject", "4 June 2023"));
         mList.add(new Order("ORDER000006", "4,000,000", "0WJ42 - SARI SARI (TK)", "SO0000005", "Sync Success", "5 June 2023"));

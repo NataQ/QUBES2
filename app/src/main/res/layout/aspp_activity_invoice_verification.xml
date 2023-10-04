@@ -13,6 +13,7 @@
         android:padding="12dp">
 
         <TextView
+            android:id="@+id/txtTitle"
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -207,23 +208,38 @@
                         android:text="No Data"
                         android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
-
-                    <id.co.qualitas.qubes.helper.MovableFloatingActionButton
-                        android:id="@+id/btnAdd"
+                    <ProgressBar
+                        android:id="@+id/progressCircle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="5dp"
-                        android:padding="3dp"
-                        app:backgroundTint="@color/new_blue"
-                        app:fabSize="normal"
-                        app:srcCompat="@drawable/refresh_grey_192x192"
-                        app:tint="@color/white" />
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/progress"
+                        android:visibility="gone" />
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_invoice_verification" />
+
+                        <!--                    <id.co.qualitas.qubes.helper.MovableFloatingActionButton-->
+                        <!--                        android:id="@+id/btnAdd"-->
+                        <!--                        android:layout_width="wrap_content"-->
+                        <!--                        android:layout_height="wrap_content"-->
+                        <!--                        android:layout_gravity="bottom|end"-->
+                        <!--                        android:layout_margin="5dp"-->
+                        <!--                        android:padding="3dp"-->
+                        <!--                        app:backgroundTint="@color/new_blue"-->
+                        <!--                        app:fabSize="normal"-->
+                        <!--                        app:srcCompat="@drawable/refresh_grey_192x192"-->
+                        <!--                        app:tint="@color/white" />-->
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

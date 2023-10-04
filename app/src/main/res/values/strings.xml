@@ -423,6 +423,8 @@
     <string name="pleaseFillConfPass">Please fill conf password field</string>
     <string name="passwordNotMatched">New password not match with your old one</string>
     <string name="pleaseFillReason">Please fill reason first !!</string>
+    <string name="emptyField">Field ini tidak boleh kosong</string>
+    <string name="emptyMaterial">Material tidak boleh kosong</string>
 
 
     <string name="noticeDelete">Anda yakin ingin menghapus?</string>
@@ -682,5 +684,6 @@
     <string name="camera_permission_not_granted">Camera app cannot do anything without camera permission.</string>
     <string name="camera_and_storage_permission_not_granted">Camera app cannot do anything without camera and storage permission.</string>
     <string name="picture_taken">Picture taken</string>
+    <string name="failedGetData">Gagal mengambil data. Silahkan coba lagi</string>
 
 </resources>

@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.activity.aspp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -35,7 +36,10 @@ import id.co.qualitas.qubes.activity.SettingActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.printer.ConnectorActivity;
+import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 //https://github.com/DantSu/ESCPOS-ThermalPrinter-Android
 //https://stackoverflow.com/questions/48496035/how-to-connect-to-a-bluetooth-printer
@@ -60,7 +64,7 @@ public class LoginActivity extends BaseActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.aspp_activity_login);
 
-        init();
+        initProgress();
         deleteHelper();
         initialize();
 
@@ -79,9 +83,28 @@ public class LoginActivity extends BaseActivity {
         });
 
         login.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            if (Helper.isEmptyEditText(edtUsername)) {
+                edtUsername.setError(getString(R.string.pleaseFillUsername));
+//            } else if (Helper.isEmptyEditText(edtPassword)) {
+//                edtPassword.setError(getString(R.string.pleaseFillPassword));
+            } else {
+                user = new User();
+                user.setUsername(edtUsername.getText().toString().trim());
+
+                String imei = null;
+                try {
+                    imei = generateUniqueIdentifier();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                SessionManagerQubes.setUserProfile(user);
+                SessionManagerQubes.setImei(imei);
+
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
         });
 
         imgShowPassword.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +199,9 @@ public class LoginActivity extends BaseActivity {
         Helper.removeItemParam(Constants.CURRENTPAGE);
         Helper.removeItemParam(Constants.USER_DETAIL);
         Helper.removeItemParam(Constants.ROUTE_CUSTOMER_HEADER);
-        Helper.removeItemParam(Constants.COLLECTION_FROM);
-        Helper.removeItemParam(Constants.COLLECTION_HEADER);
+    }
+
+    public String generateUniqueIdentifier() throws Exception {
+        return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }

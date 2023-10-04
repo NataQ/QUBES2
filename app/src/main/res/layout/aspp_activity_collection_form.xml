@@ -386,14 +386,15 @@
                             android:text="Total Payment" />
 
                         <EditText
-                            android:id="@+id/txtPaymentCash"
+                            android:id="@+id/edtPaymentCash"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
-                            android:text="5,000,000"
+                            android:text=""
+                            android:inputType="numberDecimal"
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
@@ -499,7 +500,8 @@
                             android:id="@+id/recyclerViewCash"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clipToPadding="false" />
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_coll_payment"/>
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -551,7 +553,8 @@
                     android:id="@+id/recyclerViewTransfer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false" />
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/aspp_row_view_coll_trarnsfer"/>
 
             </LinearLayout>
 
@@ -600,7 +603,8 @@
                     android:id="@+id/recyclerViewGiro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false" />
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/aspp_row_view_coll_giro"/>
 
             </LinearLayout>
 
@@ -649,7 +653,8 @@
                     android:id="@+id/recyclerViewCheque"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:clipToPadding="false" />
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/aspp_row_view_coll_cheque"/>
 
             </LinearLayout>
 
@@ -682,14 +687,15 @@
                             android:text="Total Payment" />
 
                         <EditText
-                            android:id="@+id/txtPaymentLain"
+                            android:id="@+id/edtPaymentLain"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
-                            android:text="5,000,000"
+                            android:inputType="numberDecimal"
+                            android:text=""
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
@@ -795,7 +801,8 @@
                             android:id="@+id/recyclerViewLain"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clipToPadding="false" />
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_coll_payment"/>
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -874,7 +881,8 @@
                             android:id="@+id/recyclerViewKredit"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clipToPadding="false" />
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_coll_payment"/>
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

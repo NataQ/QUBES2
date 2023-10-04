@@ -18,8 +18,8 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.InvoiceVerificationActivity;
-import id.co.qualitas.qubes.activity.aspp.StockRequestDetailActivity;
-import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Invoice;
 
 public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVerificationAdapter.Holder> implements Filterable {
@@ -118,13 +118,24 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtCustomer.setText(detail.getCustomerID() + " - " + detail.getCustomerName());
-        holder.txtInvoiceDate.setText(detail.getDate());
-        holder.txtDueDate.setText(detail.getDate());
-        holder.txtInvoiceNo.setText(detail.getInvoiceNo());
-        holder.txtAmount.setText(format.format(detail.getAmount()));
-        holder.txtNett.setText(format.format(detail.getPaid()));
-        holder.txtPaid.setText(format.format(detail.getPaid()));
+
+        String idCust = Helper.isEmpty(detail.getInvoiceNo(), "");
+        String nameCust = Helper.isEmpty(detail.getCustomerName(), "");
+
+        if (!Helper.isNullOrEmpty(detail.getInvoiceDate())) {
+            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoiceDate());
+            holder.txtInvoiceDate.setText(invDate);
+        }
+
+        if (!Helper.isNullOrEmpty(detail.getDueDate())) {
+            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getDueDate());
+            holder.txtDueDate.setText(dueDate);
+        }
+        holder.txtCustomer.setText(idCust + " - " + nameCust);
+        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getInvoiceNo(), "-"));
+        holder.txtAmount.setText("Rp. " + format.format(detail.getAmount()));
+        holder.txtNett.setText("Rp. " + format.format(detail.getNett()));
+        holder.txtPaid.setText("Rp. " + format.format(detail.getPaid()));
 
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");

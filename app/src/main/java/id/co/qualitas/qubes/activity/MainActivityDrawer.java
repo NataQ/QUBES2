@@ -163,7 +163,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
         setContentView(R.layout.activity_main_slide);
         mToolbar = findViewById(R.id.tool_bar);
         initialize();
-        init();
+        initProgress();
 
         setData();
         initToolbar();

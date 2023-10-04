@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -14,52 +15,53 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestHeaderAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Attachment;
-import id.co.qualitas.qubes.model.Reason;
-import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class CreateNooActivity extends BaseActivity {
     private Button btnSave;
     private Spinner spnSuku, spnStatusToko, spnStatusNpwp;
-    private LinearLayout llKTP, llNPWP, llOutlet;
-    private int imageType = 0;
-    public static final int CAMERA_PERM_CODE = 101;
+    private RelativeLayout llKTP, llNPWP, llOutlet;
+    private ImageType imageType;
+    private int typeImage = 0;
+    public static final int GALLERY_PERM_CODE = 101;
+    public static final int CAMERA_PERM_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
-    Attachment attachmentKtp, attachmentNpwp, attachmentOutlet;
     ImageView imgKTP, imgNPWP, imgOutlet;
     ImageView imgAddKTP, imgAddNPWP, imgAddOutlet;
+    ImageView imgDeleteKTP, imgDeleteNPWP, imgDeleteOutlet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_create_noo);
 
-        init();
+        initProgress();
         initialize();
 
         imgBack.setOnClickListener(v -> {
@@ -73,10 +75,64 @@ public class CreateNooActivity extends BaseActivity {
         btnSave.setOnClickListener(v -> {
             onBackPressed();
         });
+
         setDropDown();
 
         llKTP.setOnClickListener(view -> {
+            typeImage = 1;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
             openDialogPhoto();
+        });
+
+        llNPWP.setOnClickListener(view -> {
+            typeImage = 2;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            openDialogPhoto();
+        });
+
+        llOutlet.setOnClickListener(view -> {
+            typeImage = 3;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            openDialogPhoto();
+        });
+
+        imgDeleteKTP.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoKTP(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(CreateNooActivity.this, null, imgKTP);
+            imgAddKTP.setVisibility(View.VISIBLE);
+            imgDeleteKTP.setVisibility(View.GONE);
+            imgKTP.setVisibility(View.GONE);
+        });
+
+        imgDeleteNPWP.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoNPWP(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(CreateNooActivity.this, null, imgNPWP);
+            imgAddNPWP.setVisibility(View.VISIBLE);
+            imgDeleteNPWP.setVisibility(View.GONE);
+            imgNPWP.setVisibility(View.GONE);
+        });
+
+        imgDeleteOutlet.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoOutlet(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(CreateNooActivity.this, null, imgOutlet);
+            imgAddOutlet.setVisibility(View.VISIBLE);
+            imgDeleteOutlet.setVisibility(View.GONE);
+            imgOutlet.setVisibility(View.GONE);
         });
     }
 
@@ -86,9 +142,46 @@ public class CreateNooActivity extends BaseActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_attach_photo);
 
+        LinearLayout layoutUpload = dialog.findViewById(R.id.layoutUpload);
         LinearLayout layoutGallery = dialog.findViewById(R.id.layoutGallery);
         LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
+        ImageView photo = dialog.findViewById(R.id.photo);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+        btnSave.setVisibility(View.GONE);
+
+        switch (typeImage) {
+            case 1:
+                if (imageType.getPhotoKTP() != null) {
+                    photo.setImageURI(imageType.getPhotoKTP());
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 2:
+                if (imageType.getPhotoNPWP() != null) {
+                    photo.setImageURI(imageType.getPhotoNPWP());
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 3:
+                if (imageType.getPhotoOutlet() != null) {
+                    photo.setImageURI(imageType.getPhotoOutlet());
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+        }
 
         layoutGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,23 +195,7 @@ public class CreateNooActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                switch (imageType) {
-                    case 1:
-//                        saveAllData();//ktp
-                        Helper.setItemParam(Constants.IMAGE_TYPE, "ktp");
-                        Helper.takePhoto(CreateNooActivity.this);
-                        break;
-                    case 2:
-//                        saveAllData();//npwp click
-                        Helper.setItemParam(Constants.IMAGE_TYPE, "npwp");
-                        Helper.takePhoto(CreateNooActivity.this);
-                        break;
-                    case 3:
-//                        saveAllData();//click outlet
-                        Helper.setItemParam(Constants.IMAGE_TYPE, "outlet");
-                        Helper.takePhoto(CreateNooActivity.this);
-                        break;
-                }
+                askPermissionCamera();
             }
         });
 
@@ -170,26 +247,89 @@ public class CreateNooActivity extends BaseActivity {
         imgNPWP = findViewById(R.id.imgNPWP);
         imgOutlet = findViewById(R.id.imgOutlet);
         imgAddKTP = findViewById(R.id.imgAddKTP);
+        imgDeleteKTP = findViewById(R.id.imgDeleteKTP);
         imgAddNPWP = findViewById(R.id.imgAddNPWP);
+        imgDeleteNPWP = findViewById(R.id.imgDeleteNPWP);
         imgAddOutlet = findViewById(R.id.imgAddOutlet);
+        imgDeleteOutlet = findViewById(R.id.imgDeleteOutlet);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
+            imageType = new ImageType();
+            imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
+        } else {
+            imageType = new ImageType();
+        }
+        typeImage = imageType.getPosImage();
+
+        if (getIntent().getExtras() != null) {
+            Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
+            getIntent().removeExtra(Constants.OUTPUT_CAMERA);
+//            Bitmap myBitmap = null;
+//            Uri rotate = null;
+//            try {
+//                myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+//                myBitmap = Utils.rotateImageIfRequired(myBitmap, uri);
+//                rotate = Utils.getImageUri(CreateNooActivity.this, myBitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            switch (typeImage) {
+                case 1:
+                    imageType.setPhotoKTP(uri);
+                    break;
+                case 2:
+                    imageType.setPhotoNPWP(uri);
+                    break;
+                case 3:
+                    imageType.setPhotoOutlet(uri);
+                    break;
+            }
+        }
+
+        imgKTP.setImageURI(imageType.getPhotoKTP());
+        imgNPWP.setImageURI(imageType.getPhotoNPWP());
+        imgOutlet.setImageURI(imageType.getPhotoOutlet());
+        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+
+//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
+//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
+//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
     }
 
     //foto
     public void askPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
             ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE}, CAMERA_PERM_CODE);
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
+            }, GALLERY_PERM_CODE);
         } else {
             openGallery();
+        }
+    }
+
+    public void askPermissionCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, CAMERA_PERM_CODE);
+        } else {
+            Helper.takePhoto(CreateNooActivity.this);
         }
     }
 
@@ -204,8 +344,12 @@ public class CreateNooActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == GALLERY_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openGallery();
+        } else if (requestCode == CAMERA_PERM_CODE
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            Helper.takePhoto(CreateNooActivity.this);
         } else {
             setToast("This permission(s) required");
         }
@@ -218,7 +362,6 @@ public class CreateNooActivity extends BaseActivity {
             if (data.getData() != null) {
                 onSelectFromGalleryResult(data);
             }
-
         } else {
             setToast("Failed to Get Image");
         }
@@ -226,46 +369,38 @@ public class CreateNooActivity extends BaseActivity {
 
     private void onSelectFromGalleryResult(Intent data) {
         Uri selectedImage = data.getData();
-        String path = getImageFilePath(selectedImage);
-        File pathImg = new File(path);
+//        String path = getImageFilePath(selectedImage);
+//        File pathImg = new File(path);
+//        byte[] imgByte = getByteArrayFromUriGallery(Uri.fromFile(pathImg));
 
-        byte[] imgByte = getByteArrayFromUriGallery(Uri.fromFile(pathImg));
-
-        switch (imageType) {
+        switch (typeImage) {
             case 1:
-                attachmentKtp = new Attachment();
-                attachmentKtp.setImgUri(Uri.fromFile(pathImg));
-                attachmentKtp.setImg(imgByte);
-                attachmentKtp.setFile_description("ktp");
-                attachmentKtp.setMime_type(Helper.getMimeType(getApplicationContext(), selectedImage));
-                attachmentKtp.setFile_name(pathImg.getName());
+                imageType.setPhotoKTP(selectedImage);
                 imgKTP.setImageURI(selectedImage);
+//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
                 imgKTP.setVisibility(View.VISIBLE);
+                imgDeleteKTP.setVisibility(View.VISIBLE);
                 imgAddKTP.setVisibility(View.GONE);
                 break;
             case 2:
-                attachmentNpwp = new Attachment();
-                attachmentNpwp.setImgUri(Uri.fromFile(pathImg));
-                attachmentNpwp.setImg(imgByte);
-                attachmentNpwp.setFile_description("npwp");
-                attachmentNpwp.setMime_type(Helper.getMimeType(getApplicationContext(), selectedImage));
-                attachmentNpwp.setFile_name(pathImg.getName());
+                imageType.setPhotoNPWP(selectedImage);
                 imgNPWP.setImageURI(selectedImage);
+//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
                 imgNPWP.setVisibility(View.VISIBLE);
+                imgDeleteNPWP.setVisibility(View.VISIBLE);
                 imgAddNPWP.setVisibility(View.GONE);
                 break;
             case 3:
-                attachmentOutlet = new Attachment();
-                attachmentOutlet.setImgUri(Uri.fromFile(pathImg));
-                attachmentOutlet.setImg(imgByte);
-                attachmentOutlet.setFile_description("outlet");
-                attachmentOutlet.setMime_type(Helper.getMimeType(getApplicationContext(), selectedImage));
-                attachmentOutlet.setFile_name(pathImg.getName());
+                imageType.setPhotoOutlet(selectedImage);
                 imgOutlet.setImageURI(selectedImage);
+//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
                 imgOutlet.setVisibility(View.VISIBLE);
+                imgDeleteOutlet.setVisibility(View.VISIBLE);
                 imgAddOutlet.setVisibility(View.GONE);
                 break;
         }
+
+        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
     }
 
     public String getImageFilePath(Uri uri) {

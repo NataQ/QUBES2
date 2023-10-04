@@ -14,16 +14,22 @@ import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.CollectionCheque;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<CollectionChequePaymentAdapter.Holder> implements Filterable {
@@ -33,8 +39,11 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
     private CollectionFormActivity mContext;
     private OnAdapterListener onAdapterListener;
     SparseBooleanArray itemStateArray = new SparseBooleanArray();
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
+    protected CollectionChequeAdapter headerAdapter;
 
-    public CollectionChequePaymentAdapter(CollectionFormActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CollectionChequePaymentAdapter(CollectionFormActivity mContext, CollectionChequeAdapter headerAdapter, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -42,6 +51,7 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.headerAdapter = headerAdapter;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
@@ -118,29 +128,93 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
-        holder.edtPaid.setText(String.valueOf(detail.getQty()));
-        holder.txtPrice.setText(!Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
+        holder.edtPaid.setText(format.format(detail.getQty()));
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cb.setChecked(false);
+            holder.edtPaid.setEnabled(false);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
         } else {
             holder.cb.setChecked(true);
+            holder.edtPaid.setEnabled(true);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
         }
 
         holder.cb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
-                    holder.cb.setChecked(true);
-                    itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+                if (headerAdapter.getTotalAmount() != 0) {
+                    if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+                        holder.cb.setChecked(true);
+                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+                        detail.setChecked(true);
+                        holder.edtPaid.setEnabled(true);
+                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+                    } else {
+                        holder.cb.setChecked(false);
+                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+                        detail.setChecked(false);
+                        detail.setAmountPaid(0);
+                        holder.edtPaid.setText(null);
+                        holder.edtPaid.setEnabled(false);
+                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+                        headerAdapter.setLeft();
+                    }
                 } else {
+                    Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
                     holder.cb.setChecked(false);
                     itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+                    detail.setChecked(false);
+                    detail.setAmountPaid(0);
+                    holder.edtPaid.setText(null);
+                    holder.edtPaid.setEnabled(false);
+                    holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+                    headerAdapter.setLeft();
                 }
+            }
+        });
+
+        holder.edtPaid.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtPaid, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    double qty = Double.parseDouble((s.toString().replace(",", "")));
+                    if (qty > detail.getPrice()) {
+                        Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                    } else if (qty < 0) {
+                        Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                    } else if (qty > headerAdapter.getTotalAmount()) {
+                        Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                    } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                        Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                    } else {
+                        detail.setAmountPaid(qty);
+                    }
+                } else {
+                    detail.setAmountPaid(0);
+                }
+                headerAdapter.setLeft();
             }
         });
     }
@@ -152,5 +226,13 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

@@ -1,10 +1,5 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +11,12 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
 import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
@@ -179,7 +172,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
         holder.spinnerUom.setAdapter(spn1Adapter);
 
         String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getIdMaterial()) ? detail.getIdMaterial() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getMaterialId()) ? detail.getMaterialId() : null;
 
         holder.txtNo.setText(String.valueOf(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);

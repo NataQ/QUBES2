@@ -169,9 +169,10 @@
 
                             <ImageView
                                 android:id="@+id/imgPause"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_pause_visit" />
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:src="@drawable/ic_pause_visit"
+                                app:tint="@color/gray14_aspp" />
 
                             <TextView
                                 android:id="@+id/txtStatus"
@@ -601,23 +602,35 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
-                                <LinearLayout
+                                <RelativeLayout
                                     android:id="@+id/llKTP"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/bg_add_image_alert"
-                                    android:gravity="center"
                                     android:minHeight="100dp"
                                     android:orientation="vertical"
-                                    android:padding="10dp">
+                                    android:padding="5dp">
+
+                                    <ImageView
+                                        android:id="@+id/imgAddKTP"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:layout_centerInParent="true"
+                                        android:layout_margin="5dp"
+                                        android:background="@drawable/ic_add_photo"
+                                        android:backgroundTint="@color/blue_aspp" />
 
                                     <ImageView
                                         android:id="@+id/imgKTP"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="80dp"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center"
-                                        android:maxHeight="100dp" />
-                                </LinearLayout>
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_marginBottom="5dp" />
+                                </RelativeLayout>
 
                                 <TextView
                                     style="@style/TextView_Small"
@@ -637,23 +650,35 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
-                                <LinearLayout
+                                <RelativeLayout
                                     android:id="@+id/llNPWP"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/bg_add_image"
-                                    android:gravity="center"
                                     android:minHeight="100dp"
                                     android:orientation="vertical"
-                                    android:padding="10dp">
+                                    android:padding="5dp">
+
+                                    <ImageView
+                                        android:id="@+id/imgAddNPWP"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:layout_centerInParent="true"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_marginTop="5dp"
+                                        android:layout_marginEnd="5dp"
+                                        android:layout_marginBottom="5dp"
+                                        android:background="@drawable/ic_add_photo"
+                                        android:backgroundTint="@color/blue_aspp" />
 
                                     <ImageView
                                         android:id="@+id/imgNPWP"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="80dp"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center"
-                                        android:maxHeight="100dp" />
-                                </LinearLayout>
+                                        android:layout_margin="5dp" />
+                                </RelativeLayout>
 
                                 <TextView
                                     style="@style/TextView_Small"
@@ -673,23 +698,32 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
-                                <LinearLayout
+                                <RelativeLayout
                                     android:id="@+id/llOutlet"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@drawable/bg_add_image_alert"
-                                    android:gravity="center"
                                     android:minHeight="100dp"
                                     android:orientation="vertical"
-                                    android:padding="10dp">
+                                    android:padding="5dp">
+
+                                    <ImageView
+                                        android:id="@+id/imgAddOutlet"
+                                        android:layout_width="30dp"
+                                        android:layout_height="30dp"
+                                        android:layout_centerInParent="true"
+                                        android:layout_margin="5dp"
+                                        android:background="@drawable/ic_add_photo"
+                                        android:backgroundTint="@color/blue_aspp" />
 
                                     <ImageView
                                         android:id="@+id/imgOutlet"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
+                                        android:layout_height="80dp"
+                                        android:layout_centerInParent="true"
                                         android:layout_gravity="center"
-                                        android:maxHeight="100dp" />
-                                </LinearLayout>
+                                        android:layout_margin="5dp" />
+                                </RelativeLayout>
 
                                 <TextView
                                     style="@style/TextView_Small"
@@ -733,9 +767,9 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:gravity="center"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
+                        android:orientation="horizontal">
 
                         <TextView
                             style="@style/TextView_Small"
@@ -764,10 +798,10 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:visibility="gone"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        android:background="@color/gray9_aspp" />
+                        android:background="@color/gray9_aspp"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -789,18 +823,18 @@
                     </LinearLayout>
                 </LinearLayout>
 
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="2dp"-->
-<!--                    android:layout_marginTop="12dp"-->
-<!--                    android:layout_marginEnd="2dp"-->
-<!--                    android:layout_marginBottom="2dp"-->
-<!--                    app:cardCornerRadius="5dp"-->
-<!--                    app:cardElevation="2dp">-->
+                <!--                <androidx.cardview.widget.CardView-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:layout_marginStart="2dp"-->
+                <!--                    android:layout_marginTop="12dp"-->
+                <!--                    android:layout_marginEnd="2dp"-->
+                <!--                    android:layout_marginBottom="2dp"-->
+                <!--                    app:cardCornerRadius="5dp"-->
+                <!--                    app:cardElevation="2dp">-->
 
-<!--                    -->
-<!--                </androidx.cardview.widget.CardView>-->
+                <!--                    -->
+                <!--                </androidx.cardview.widget.CardView>-->
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

@@ -33,6 +33,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderAddActivity extends BaseActivity {
     private OrderAddAdapter mAdapter;
@@ -50,7 +51,7 @@ public class OrderAddActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_add);
 
-        init();
+        initProgress();
         initialize();
         initData();
 
@@ -66,7 +67,7 @@ public class OrderAddActivity extends BaseActivity {
 
         btnNext.setOnClickListener(v -> {
             onBackPressed();
-            Helper.setItemParam(Constants.COLLECTION_FROM, 3);
+            SessionManagerQubes.setCollectionSource(3);
             Intent intent = new Intent(this, CollectionFormActivity.class);
             startActivity(intent);
         });
@@ -264,9 +265,9 @@ public class OrderAddActivity extends BaseActivity {
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1,000,000", 1000000));
-        mList.add(new Material("11030", "Redbull", "2,000,000", 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000", 5000000));
+        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
+        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
+        mList.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
         return mList;
     }
 }

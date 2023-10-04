@@ -119,7 +119,7 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
 
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null);
-        holder.txtPrice.setText(!Helper.isNullOrEmpty(detail.getPrice()) ? detail.getPrice() : null);
+        holder.txtPrice.setText(format.format(detail.getPrice()));
         holder.txtPaid.setText(format.format(detail.getAmount()));
     }
 

@@ -25,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 
@@ -41,7 +42,9 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.UnloadingPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
 
@@ -52,7 +55,8 @@ public class UnloadingActivity extends BaseActivity {
     private UnloadingPdfUtils pdfUnloadingUtils;
     private File pdfFile;
     private Boolean success = false;
-
+    private TextView txtDate, txtNoDoc, txtTglKirim, txtNoSuratJalan;
+    private StockRequest header;
     private static final int PERMISSION_REQUEST_CODE = 1;
     private final static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -64,14 +68,7 @@ public class UnloadingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_unloading);
 
-        init();
         initialize();
-        initData();
-
-        mAdapter = new UnloadingAdapter(this, mList, header -> {
-
-        });
-        recyclerView.setAdapter(mAdapter);
 
         btnSubmit.setOnClickListener(v -> {
             openDialogUnloading();
@@ -83,6 +80,18 @@ public class UnloadingActivity extends BaseActivity {
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
+        });
+
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapter();
+                swipeLayout.setRefreshing(false);
+            }
         });
     }
 
@@ -115,6 +124,7 @@ public class UnloadingActivity extends BaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 if (checkPermission()) {
+                    progress.show();
                     new AsyncTaskGeneratePDF().execute();
                 } else {
                     setToast(getString(R.string.pleaseEnablePermission));
@@ -135,8 +145,9 @@ public class UnloadingActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
+                header = database.getStockRequestHeader(header.getIdHeader());
                 pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/unloading.pdf");
-                success = pdfUnloadingUtils.createPDF(pdfFile);
+                success = pdfUnloadingUtils.createPDF(pdfFile, header, mList);
                 return success;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -147,11 +158,18 @@ public class UnloadingActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
+            progress.dismiss();
             if (result == null) {
                 setToast("Gagal membuat pdf.. Silahkan coba lagi..");
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
+                    header.setUnloading(true);
+                    header.setSync(false);
+                    header.setStatus(Constants.STATUS_UNLOADING);
+                    database.updateUnloading(header, user.getUsername());
+                    setToast("Unloading sukses");
+                    onBackPressed();
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi..");
                 }
@@ -160,10 +178,29 @@ public class UnloadingActivity extends BaseActivity {
     }
 
     private void initData() {
-        mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1", "BTL"));
-        mList.add(new Material("11030", "Redbull", "1", "BTL"));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "1", "BTL"));
+        header = SessionManagerQubes.getStockRequestHeader();
+        if (header == null) {
+            onBackPressed();
+            setToast(getString(R.string.failedGetData));
+        } else {
+            txtNoSuratJalan.setText(Helper.isEmpty(header.getSuratJalan(), "-"));
+            txtNoDoc.setText(Helper.isEmpty(header.getNoDoc(), "-"));
+
+            if (!Helper.isNullOrEmpty(header.getRequestDate())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getRequestDate());
+                txtDate.setText(requestDate);
+            } else {
+                txtDate.setText("-");
+            }
+
+            if (!Helper.isNullOrEmpty(header.getTanggalKirim())) {
+                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalKirim());
+                txtTglKirim.setText(tglKirim);
+            } else {
+                txtTglKirim.setText("-");
+            }
+            getDataOffline();
+        }
     }
 
     private void initialize() {
@@ -171,6 +208,13 @@ public class UnloadingActivity extends BaseActivity {
         pdfUnloadingUtils = UnloadingPdfUtils.getInstance(UnloadingActivity.this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        txtNoData = findViewById(R.id.txtNoData);
+        txtNoSuratJalan = findViewById(R.id.txtNoSuratJalan);
+        txtTglKirim = findViewById(R.id.txtTglKirim);
+        txtNoDoc = findViewById(R.id.txtNoDoc);
+        txtDate = findViewById(R.id.txtDate);
+        swipeLayout = findViewById(R.id.swipeLayout);
+        progressCircle = findViewById(R.id.progressCircle);
         imgBack = findViewById(R.id.imgBack);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSubmit = findViewById(R.id.btnSubmit);
@@ -182,6 +226,7 @@ public class UnloadingActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        initData();
     }
 
     private boolean checkPermission() {
@@ -252,5 +297,31 @@ public class UnloadingActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    private void setAdapter() {
+        mAdapter = new UnloadingAdapter(this, mList, header -> {
+
+        });
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    private void getDataOffline() {
+        mList = new ArrayList<>();
+        mList = database.getAllStockRequestDetail(header.getIdHeader());
+
+        if (mList == null || mList.isEmpty()) {
+            txtNoData.setVisibility(View.VISIBLE);
+        } else {
+            txtNoData.setVisibility(View.GONE);
+            setAdapter();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), StockRequestHeaderActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

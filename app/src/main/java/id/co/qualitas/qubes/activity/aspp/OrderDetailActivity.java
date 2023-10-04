@@ -33,7 +33,7 @@ public class OrderDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_detail);
 
-        init();
+        initProgress();
         initialize();
         initData();
         setDataDummy();
@@ -86,16 +86,16 @@ public class OrderDetailActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Material("11_KTD R", "11008_KRATINGDAENG LUAR PULAU - MT", 1, "1,000", "BTL", initDataExtra()));
-        mList.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, "2,000", "BTL", initDataExtra()));
-        mList.add(new Material("11_KTD R", "11006_KRATINGDAENG - LAIN-LAIN", 1, "3,000", "BTL", initDataExtra()));
-        mList.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, "4,000", "BTL", initDataExtra()));
+        mList.add(new Material("11_KTD R", "11008_KRATINGDAENG LUAR PULAU - MT", 1, 1000, "BTL", initDataExtra()));
+        mList.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL", initDataExtra()));
+        mList.add(new Material("11_KTD R", "11006_KRATINGDAENG - LAIN-LAIN", 1, 3000, "BTL", initDataExtra()));
+        mList.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL", initDataExtra()));
     }
 
     private List<Material> initDataExtra() {
         mListExtra = new ArrayList<>();
-        mListExtra.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, "2,000", "BTL"));
-        mListExtra.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, "4,000", "BTL"));
+        mListExtra.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL"));
+        mListExtra.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL"));
         return mListExtra;
     }
 

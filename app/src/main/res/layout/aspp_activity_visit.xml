@@ -266,11 +266,26 @@
                         android:text="No Data"
                         android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewVisit"
+                    <ProgressBar
+                        android:id="@+id/progressCircleVisit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/progress"
+                        android:visibility="gone" />
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeLayoutVisit"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewVisit"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_visit"/>
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                     <id.co.qualitas.qubes.helper.MovableFloatingActionButton
                         android:id="@+id/btnAddVisit"
@@ -358,11 +373,26 @@
                         android:text="No Data"
                         android:visibility="gone" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewNoo"
+                    <ProgressBar
+                        android:id="@+id/progressCircleNoo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminateDrawable="@drawable/progress"
+                        android:visibility="gone" />
+
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/swipeLayoutNoo"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
+                        android:layout_height="match_parent">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewNoo"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:clipToPadding="false"
+                            tools:listitem="@layout/aspp_row_view_noo"/>
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
                     <id.co.qualitas.qubes.helper.MovableFloatingActionButton
                         android:id="@+id/btnAddNoo"

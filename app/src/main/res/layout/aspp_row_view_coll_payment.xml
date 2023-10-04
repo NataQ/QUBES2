@@ -61,9 +61,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".25"
-        android:background="@drawable/editbox"
+        android:background="@drawable/editbox_disable"
         android:inputType="numberDecimal"
         android:padding="5dp"
+        android:enabled="false"
         android:text="Paid"
         android:textColor="@color/gray8_aspp" />
 </LinearLayout>

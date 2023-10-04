@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -23,7 +22,6 @@ import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 import java.io.File;
-import java.util.HashMap;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
@@ -102,7 +100,7 @@ public class PDFTest extends BaseActivity {
                     success = pdfLashUtils.createPDF(pdfFile);
                 } else if (PARAM == 2) {
                     pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/unloading.pdf");
-                    success = pdfUnloadingUtils.createPDF(pdfFile);
+//                    success = pdfUnloadingUtils.createPDF(pdfFile, header, mList);
                 } else {
                     pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lk.pdf");
                     success = pdfLkUtils.createPDF(pdfFile);

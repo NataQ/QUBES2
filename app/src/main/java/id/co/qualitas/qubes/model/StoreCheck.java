@@ -7,68 +7,76 @@ import java.math.BigDecimal;
  */
 
 public class StoreCheck {
+    private String idStoreCheck;
+    private String date;
+    private String customerId;
+    private String materialId;
+    private String materialName;
+    private double qty;
+    private String uom;
+    private boolean isSync;
 
-    private String id_store_check;
-    private String idOutlet;
-    private String idMaterial;
-    private BigDecimal qty1;
-    private String uom1;
-    private BigDecimal qty2;
-    private String uom2;
-
-    public String getId_store_check() {
-        return id_store_check;
+    public boolean isSync() {
+        return isSync;
     }
 
-    public void setId_store_check(String id_store_check) {
-        this.id_store_check = id_store_check;
+    public void setSync(boolean sync) {
+        isSync = sync;
     }
 
-    public String getIdOutlet() {
-        return idOutlet;
+    public String getDate() {
+        return date;
     }
 
-    public void setIdOutlet(String idOutlet) {
-        this.idOutlet = idOutlet;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getIdMaterial() {
-        return idMaterial;
+    public String getMaterialName() {
+        return materialName;
     }
 
-    public void setIdMaterial(String idMaterial) {
-        this.idMaterial = idMaterial;
+    public void setMaterialName(String materialName) {
+        this.materialName = materialName;
     }
 
-    public BigDecimal getQty1() {
-        return qty1;
+    public String getIdStoreCheck() {
+        return idStoreCheck;
     }
 
-    public void setQty1(BigDecimal qty1) {
-        this.qty1 = qty1;
+    public void setIdStoreCheck(String idStoreCheck) {
+        this.idStoreCheck = idStoreCheck;
     }
 
-    public String getUom1() {
-        return uom1;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setUom1(String uom1) {
-        this.uom1 = uom1;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
-    public BigDecimal getQty2() {
-        return qty2;
+    public String getMaterialId() {
+        return materialId;
     }
 
-    public void setQty2(BigDecimal qty2) {
-        this.qty2 = qty2;
+    public void setMaterialId(String materialId) {
+        this.materialId = materialId;
     }
 
-    public String getUom2() {
-        return uom2;
+    public double getQty() {
+        return qty;
     }
 
-    public void setUom2(String uom2) {
-        this.uom2 = uom2;
+    public void setQty(double qty) {
+        this.qty = qty;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
     }
 }

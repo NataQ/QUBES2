@@ -786,7 +786,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_MATERIAL, values, KEY_ID_MATERIAL + " = ?",
-                new String[]{String.valueOf((material).getIdMaterial())});
+                new String[]{String.valueOf((material).getMaterialId())});
     }
 
     public void addMaterial(Material material) {
@@ -894,7 +894,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Material material = new Material();
         if (cursor.moveToFirst()) {
-            material.setIdMaterial(cursor.getString(0));
+            material.setMaterialId(cursor.getString(0));
             material.setMaterialCode(cursor.getString(1));
             material.setQty(cursor.getInt(2));
             material.setDesc(cursor.getString(3));
@@ -917,7 +917,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material material = new Material();
-                material.setIdMaterial(cursor.getString(0));
+                material.setMaterialId(cursor.getString(0));
                 material.setMaterialCode(cursor.getString(1));
                 material.setQty(cursor.getInt(2));
                 material.setDesc(cursor.getString(3));
@@ -2264,11 +2264,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_HEADER_RETURN, rt.getIdReturn());
-        values.put(KEY_ID_MATERIAL, rt.getIdMaterial());
-        if (rt.getQty1() != null && !rt.getQty1().equals(BigDecimal.ZERO)) {
-            values.put(KEY_QTY_1, String.valueOf(rt.getQty1()));
-            values.put(KEY_UOM_1, rt.getUom1());
-        }
+        values.put(KEY_ID_MATERIAL, rt.getMaterialId());
+//        if (rt.getQty1() != null && !rt.getQty1().equals(BigDecimal.ZERO)) {
+//            values.put(KEY_QTY_1, String.valueOf(rt.getQty1()));
+//            values.put(KEY_UOM_1, rt.getUom1());
+//        }
 //        if (rt.getQty2() != null && !rt.getQty2().equals(BigDecimal.ZERO)) {
 //            values.put(KEY_QTY_2, String.valueOf(rt.getQty2()));
 //            values.put(KEY_UOM_2, rt.getUom2());
@@ -2298,10 +2298,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 Return rt = new Return();
                 rt.setIdReturn(cursor.getString(0));
-                rt.setIdMaterial(cursor.getString(1));
-                if (cursor.getString(2) != null) {
-                    rt.setQty1(new BigDecimal(cursor.getString(2)));
-                }
+                rt.setMaterialId(cursor.getString(1));
+//                if (cursor.getString(2) != null) {
+//                    rt.setQty1(new BigDecimal(cursor.getString(2)));
+//                }
                 rt.setUom1(cursor.getString(3));
                 if (cursor.getString(4) != null && !cursor.getString(4).equals("null")) {
                     rt.setQty2(new BigDecimal(cursor.getString(4)));
@@ -2834,7 +2834,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material data = new Material();
-                data.setIdMaterial(cursor.getString(0));
+                data.setMaterialId(cursor.getString(0));
                 data.setMaterialCode(cursor.getString(1));
                 material.add(data);
             } while (cursor.moveToNext());

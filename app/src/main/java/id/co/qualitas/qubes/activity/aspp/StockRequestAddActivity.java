@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -33,7 +35,9 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class StockRequestAddActivity extends BaseActivity {
     private StockRequestAddAdapter mAdapter;
@@ -54,7 +58,6 @@ public class StockRequestAddActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_stock_request_add);
 
-        init();
         initialize();
         initData();
 
@@ -72,7 +75,7 @@ public class StockRequestAddActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-            onBackPressed();
+            validateData();
         });
 
         imgLogOut.setOnClickListener(v -> {
@@ -80,6 +83,42 @@ public class StockRequestAddActivity extends BaseActivity {
         });
 
         setDate();
+    }
+
+    private void validateData() {
+        int param = 0;
+
+        if (Helper.isEmpty(txtDate)) {
+            param++;
+            txtDate.setError(getString(R.string.emptyField));
+        } else {
+            txtDate.setError(null);
+        }
+
+        if (mList.isEmpty() || mList == null) {
+            param++;
+            setToast(getString(R.string.emptyMaterial));
+        }
+
+        if (param == 0) {
+            progress.show();
+            new AsyncLoading().execute();
+        }
+    }
+
+    private void setSaveData() {
+        StockRequest header = new StockRequest();
+        String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
+        header.setRequestDate(date);
+        header.setStatus(Constants.STATUS_PENDING);
+        header.setEnabled(true);
+        header.setSync(false);
+
+        int idHeader = database.addStockRequestHeader(header, user.getUsername());
+
+        for (Material param : mList) {
+            database.addStockRequestDetail(param, String.valueOf(idHeader), user.getUsername());
+        }
     }
 
     private void setDate() {
@@ -255,11 +294,26 @@ public class StockRequestAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", "1,000,000", 1000000));
-        mList.add(new Material("11030", "Redbull", "2,000,000", 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", "8,900,000", 5000000));
-        return mList;
+        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listMat = new ArrayList<>();
+        listMat.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
+        listMat.add(new Material("11030", "Redbull", 2000000, 2000000));
+        listMat.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
+
+
+        for (Material param : listMat) {
+            int exist = 0;
+            for (Material param1 : mList) {
+                if (param.getMaterialId().equals(param1.getMaterialId())) {
+                    exist++;
+                }
+            }
+            if (exist == 0) {
+                listSpinner.add(param);
+            }
+        }
+
+        return listSpinner;
     }
 
     @Override
@@ -307,6 +361,39 @@ public class StockRequestAddActivity extends BaseActivity {
             spinnerAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.VISIBLE);
             cvCheckedAll.setVisibility(View.GONE);
+        }
+    }
+
+    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                setSaveData();
+                return true;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("stockRequestAdd", ex.getMessage());
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progress.dismiss();
+
+            if (result) {
+                setToast("Save Success");
+                onBackPressed();
+            } else {
+                setToast("Save Failed");
+            }
         }
     }
 }

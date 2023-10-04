@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
 import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
 import id.co.qualitas.qubes.model.Material;
 
@@ -56,7 +55,7 @@ public class SpinnerProductStoreCheckAdapter extends RecyclerView.Adapter<Spinne
                 } else {
                     List<Material> filteredList = new ArrayList<>();
                     for (Material row : mList) {
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase()) || row.getIdMaterial().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase()) || row.getMaterialId().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -108,7 +107,7 @@ public class SpinnerProductStoreCheckAdapter extends RecyclerView.Adapter<Spinne
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.text.setText(detail.getIdMaterial() + " - " + detail.getMaterialCode());
+        holder.text.setText(detail.getMaterialId() + " - " + detail.getMaterialCode());
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);

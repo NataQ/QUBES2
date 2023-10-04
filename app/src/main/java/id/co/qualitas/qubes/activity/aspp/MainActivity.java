@@ -444,7 +444,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        init();
+        initProgress();
         registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
         setPage();
     }
@@ -490,7 +490,7 @@ public class MainActivity extends BaseActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Helper.setItemParam(Constants.CURRENTPAGE, savedInstanceState.getString("page_helper"));
-        init();
+        initProgress();
         setPage();
     }
 

@@ -1,12 +1,14 @@
 package id.co.qualitas.qubes.constants;
 
 public class Constants {
-
     public static final double ZOOM_LEVEL = 13.0;
     public static final String FCM = "fcm";
-    public static final String COLLECTION_HEADER = "collection header";
-    public static final String COLLECTION_FROM = "collection from";
     public static final String IMAGE_TYPE = "image_type";
+    public static final String STATUS_PENDING = "pending";
+    public static final String STATUS_APPROVE = "approve";
+    public static final String STATUS_REJECTED = "rejected";
+    public static final String STATUS_VERIFICATION = "verification";
+    public static final String STATUS_UNLOADING = "unloading";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
@@ -18,6 +20,7 @@ public class Constants {
     public static final String EQUALS = "=";
     public static final String QUESTION = "?";
     public static final String AND = "&";
+    public static final int COMPRESS_SIGN = 100;
 
     public static final String TXTPASSWORD = "password";
     public static final String KEY_URL = "key_url";

@@ -32,11 +32,13 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.IOException;
+
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.utils.Utils;
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.parameter.ScaleType;
@@ -69,6 +71,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     private TextView toolbarTitle;
     private String currentPhotoPath;
     private boolean notDelivered = false;
+    public static final int CAMERA_PERM_CODE = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.aspp_activity_camera);
 
         init();
+        initProgress();
         initCamera();
     }
 
@@ -131,23 +135,36 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     protected void onResume() {
         super.onResume();
         //permission don't allow
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ConfirmationDialogFragment
-                        .newInstance(R.string.camera_permission_confirmation,
-                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                Constants.REQUEST_CAMERA_CODE,
-                                R.string.camera_and_storage_permission_not_granted)
-                        .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        Constants.REQUEST_CAMERA_CODE);
-            }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, CAMERA_PERM_CODE);
         } else {
             startCamera();
         }
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+//                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                ConfirmationDialogFragment
+//                        .newInstance(R.string.camera_permission_confirmation,
+//                                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                                Constants.REQUEST_CAMERA_CODE,
+//                                R.string.camera_and_storage_permission_not_granted)
+//                        .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+//            } else {
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
+//            }
+//        } else {
+//            startCamera();
+//        }
     }
 
     @Override
@@ -185,15 +202,22 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case Constants.REQUEST_CAMERA_CODE:
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-                    onBackPressed();
-                    Toast.makeText(this, R.string.camera_and_storage_permission_not_granted, Toast.LENGTH_SHORT).show();
-                } else {
-                    startCamera();
-                }
-                break;
+//        switch (requestCode) {
+//            case Constants.REQUEST_CAMERA_CODE:
+//                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+//                    onBackPressed();
+//                    Toast.makeText(this, R.string.camera_and_storage_permission_not_granted, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    startCamera();
+//                }
+//                break;
+//        }
+        if (requestCode == CAMERA_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            startCamera();
+        } else {
+            onBackPressed();
+            Toast.makeText(this, R.string.camera_and_storage_permission_not_granted, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -225,6 +249,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         progress.show();
 //        File file = createBitmapFile();
         File file = null;
+
         try {
             file = createImageFile();
             File finalFile = file;
@@ -253,12 +278,11 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private File createImageFile() throws IOException {
         String imageFileName = "";
-        int imageType = 0;
-        imageType = Helper.getItemParam(Constants.IMAGE_TYPE)!= null ? (int) Helper.getItemParam(Constants.IMAGE_TYPE) :0;
+        ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
 //        String doNo = SessionManager.getDoHeader() != null ? SessionManager.getDoHeader().getDoNumber() : "null";
 //        String shipmentNo = SessionManager.getSelectedCustomerMobile() != null ? SessionManager.getSelectedCustomerMobile().getShipToNumber() : "null";
 
-        switch (imageType) {
+        switch (imageType.getPosImage()) {
             case 1:
                 imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_6);
                 break;

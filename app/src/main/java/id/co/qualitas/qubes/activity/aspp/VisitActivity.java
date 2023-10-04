@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -42,6 +44,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -75,6 +78,8 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.CustomerNoo;
+import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
@@ -84,7 +89,8 @@ import id.co.qualitas.qubes.utils.Utils;
 public class VisitActivity extends BaseActivity implements LocationListener {
     private VisitListAdapter mAdapterVisit;
     private NooListAdapter mAdapterNoo;
-    private List<Customer> mList, mListNoo;
+    private List<Customer> mList;
+    private List<CustomerNoo> mListNoo;
     private MovableFloatingActionButton btnAddVisit, btnAddNoo;
     private Button btnEndDay, btnNextDay, btnStartVisit, btnEndVisit;
     private TextView txtVisit, txtVisitLine, txtNOO, txtNOOLine;
@@ -96,7 +102,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private LocationManager lm;
     private Location currentLocation = null;
     private Customer outletClicked;
-
+    private CustomerNoo outletNooClicked;
     private LashPdfUtils pdfUtils;
     private File pdfFile;
     private Boolean success = false;
@@ -106,6 +112,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private SwipeRefreshLayout swipeLayoutNoo, swipeLayoutVisit;
+    private ProgressBar progressCircleNoo, progressCircleVisit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,43 +129,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
 
-        init();
         initialize();
-        initData();
+//        initData();
         setViewVisit();
         setViewNoo();
-
-        txtVisit.setOnClickListener(v -> {
-            txtVisit.setTextColor(ContextCompat.getColor(this, R.color.blue_aspp));
-            txtNOO.setTextColor(ContextCompat.getColor(this, R.color.gray8_aspp));
-            txtVisitLine.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_aspp));
-            txtNOOLine.setBackgroundColor(ContextCompat.getColor(this, R.color.space_transparent));
-
-            llVisit.setVisibility(View.VISIBLE);
-            llNoo.setVisibility(View.GONE);
-        });
-
-        txtNOO.setOnClickListener(v -> {
-            txtVisit.setTextColor(ContextCompat.getColor(this, R.color.gray8_aspp));
-            txtNOO.setTextColor(ContextCompat.getColor(this, R.color.blue_aspp));
-            txtVisitLine.setBackgroundColor(ContextCompat.getColor(this, R.color.space_transparent));
-            txtNOOLine.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_aspp));
-
-            llVisit.setVisibility(View.GONE);
-            llNoo.setVisibility(View.VISIBLE);
-        });
-
-        btnStartVisit.setOnClickListener(v -> {
-            openDialogStartVisit();
-        });
-
-        btnEndVisit.setOnClickListener(v -> {
-            openDialogEndVisit();
-        });
-
-        btnAddVisit.setOnClickListener(v -> {
-            openDialogAdd();
-        });
 
         btnNextDay.setOnClickListener(v -> {
             openDialogReasonNotVisit();
@@ -171,11 +147,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             }
         });
 
-        btnAddNoo.setOnClickListener(v -> {
-            Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-            startActivity(intent);
-        });
-
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
@@ -186,12 +157,35 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void setViewVisit() {
-        mAdapterVisit = new VisitListAdapter(this, mList, header -> {
-            outletClicked = header;
-            checkLocationPermission();
+        txtVisit.setOnClickListener(v -> {
+            txtVisit.setTextColor(ContextCompat.getColor(this, R.color.blue_aspp));
+            txtNOO.setTextColor(ContextCompat.getColor(this, R.color.gray8_aspp));
+            txtVisitLine.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_aspp));
+            txtNOOLine.setBackgroundColor(ContextCompat.getColor(this, R.color.space_transparent));
+
+            llVisit.setVisibility(View.VISIBLE);
+            llNoo.setVisibility(View.GONE);
         });
 
-        recyclerViewVisit.setAdapter(mAdapterVisit);
+        btnStartVisit.setOnClickListener(v -> {
+            openDialogStartVisit();
+        });
+
+        btnEndVisit.setOnClickListener(v -> {
+            openDialogEndVisit();
+        });
+
+        btnAddVisit.setOnClickListener(v -> {
+            openDialogAdd();
+        });
+
+        swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapterVisit();
+                swipeLayoutVisit.setRefreshing(false);
+            }
+        });
 
         edtSearchVisit.addTextChangedListener(new TextWatcher() {
             @Override
@@ -215,6 +209,15 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         btnAddVisit.setOnClickListener(v -> {
             openDialogAdd();
         });
+    }
+
+    private void setAdapterVisit() {
+        mAdapterVisit = new VisitListAdapter(this, mList, header -> {
+            outletClicked = header;
+            checkLocationPermission();
+        });
+
+        recyclerViewVisit.setAdapter(mAdapterVisit);
     }
 
     private void checkLocationPermission() {
@@ -357,12 +360,28 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void setViewNoo() {
-        mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
-            outletClicked = header;
-            checkLocationPermission();
+        txtNOO.setOnClickListener(v -> {
+            txtVisit.setTextColor(ContextCompat.getColor(this, R.color.gray8_aspp));
+            txtNOO.setTextColor(ContextCompat.getColor(this, R.color.blue_aspp));
+            txtVisitLine.setBackgroundColor(ContextCompat.getColor(this, R.color.space_transparent));
+            txtNOOLine.setBackgroundColor(ContextCompat.getColor(this, R.color.blue_aspp));
+
+            llVisit.setVisibility(View.GONE);
+            llNoo.setVisibility(View.VISIBLE);
         });
 
-        recyclerViewNoo.setAdapter(mAdapterNoo);
+        btnAddNoo.setOnClickListener(v -> {
+            Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+            startActivity(intent);
+        });
+
+        swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setAdapterNoo();
+                swipeLayoutNoo.setRefreshing(false);
+            }
+        });
 
         edtSearchNoo.addTextChangedListener(new TextWatcher() {
             @Override
@@ -387,6 +406,17 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             Intent intent = new Intent(this, CreateNooActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void setAdapterNoo() {
+        mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
+            outletNooClicked = header;
+            outletClicked = new Customer(header.getIdHeader(), header.getName(), header.getNamePemilik(), header.getAddress(), header.getPhone(), header.getCreditLimit(), header.getNoKtp(), header.getNoNpwp(), true, header.getLatitude(), header.getLongitude(), header.isSync());
+            outletClicked.setIdHeader(header.getIdHeader());
+            checkLocationPermission();
+        });
+
+        recyclerViewNoo.setAdapter(mAdapterNoo);
     }
 
     private void openDialogReasonNotVisit() {
@@ -536,15 +566,21 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, new LatLng(-6.090263984566263, 106.74593288657607), 1));
-        mList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, new LatLng(-6.09047339393416, 106.74535959301855), 2));
-        mList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, new LatLng(-6.09102018270127, 106.74661148098058), 0));
+        mList.add(new Customer("0GV43", "TOKO SIDIK HALIM", "Halim", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", "08123456789", 2000000, "123456789987456", "741852963369852", true, -6.090263984566263, 106.74593288657607, false));
+        mList.add(new Customer("0WJ42", "SARI SARI (TK)", "Sari", "Jl. Perancis No.88, Jatimulya, Kec. Kosambi, Kabupaten Tangerang, Banten 15211", "08748596123", 3000000, "123456789987456", "741852963369852", true, -6.095590779425033, 106.68757459341451, false));
 
-        mListNoo = new ArrayList<>();
-        mListNoo.add(new Customer("CHGI", "Cluster Harmony, Golf Island", "WP6W+7JR, Pantai Indah Kapuk St, Kamal Muara, Penjaringan, North Jakarta City, Jakarta 14460", false, new LatLng(-6.089065696336256, 106.74676357552187), 0));
-        mListNoo.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, new LatLng(-6.09032214182743, 106.74191982249332), 3));
-        mListNoo.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, new LatLng(-6.088542162422348, 106.74239952686823), 2));
+        List<Promotion> promoList = new ArrayList<>();
+        promoList.add(new Promotion("Beli 4 Kratingdaeng get discount 10%"));
+        promoList.add(new Promotion("Beli kratingdaeng bisa nonton bola di Madrid"));
+        promoList.add(new Promotion("Dapatkan voucher Buy 1 Get 1 untuk variant Kratingdaeng Bull"));
 
+        for (Customer cust : mList) {
+            cust.setSync(false);
+            int idHeader = database.addCustomer(cust, user.getUsername());
+            for (Promotion promotion : promoList) {
+                database.addCustomerPromotion(promotion, String.valueOf(idHeader), user.getUsername());
+            }
+        }
     }
 
     private void initialize() {
@@ -552,8 +588,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         pdfUtils = LashPdfUtils.getInstance(VisitActivity.this);
 
-        txtNOO = findViewById(R.id.txtNOO);
+        progressCircleNoo = findViewById(R.id.progressCircleNoo);
+        progressCircleVisit = findViewById(R.id.progressCircleVisit);
         txtNOOLine = findViewById(R.id.txtNOOLine);
+        txtNOO = findViewById(R.id.txtNOO);
         txtVisit = findViewById(R.id.txtVisit);
         txtVisitLine = findViewById(R.id.txtVisitLine);
         rlDaily = findViewById(R.id.rlDaily);
@@ -578,11 +616,24 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         recyclerViewNoo = findViewById(R.id.recyclerViewNoo);
         recyclerViewNoo.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewNoo.setHasFixedSize(true);
+
+        swipeLayoutNoo = findViewById(R.id.swipeLayoutNoo);
+        swipeLayoutNoo.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+
+        swipeLayoutVisit = findViewById(R.id.swipeLayoutVisit);
+        swipeLayoutVisit.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getFirstDataOffline();
     }
 
     @Override
@@ -696,6 +747,53 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
             }
 
+        }
+    }
+
+    private void getFirstDataOffline() {
+        getData();
+        setAdapterVisit();
+        setAdapterNoo();
+
+        if (mList == null || mList.isEmpty()) {
+            progressCircleVisit.setVisibility(View.VISIBLE);
+            new AsyncLoading().execute();
+        }
+    }
+
+    private void getData() {
+        mList = new ArrayList<>();
+        mList = database.getAllCustomerVisit();
+
+        mListNoo = new ArrayList<>();
+        mListNoo = database.getAllCustomerNoo();
+    }
+
+    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                initData();
+                return true;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("Customer", ex.getMessage());
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressCircle.setVisibility(View.GONE);
+            getData();
+            mAdapterVisit.setData(mList);
         }
     }
 }

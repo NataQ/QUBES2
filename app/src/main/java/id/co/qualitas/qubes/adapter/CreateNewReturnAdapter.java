@@ -150,9 +150,9 @@ public class CreateNewReturnAdapter extends BaseAdapter {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().trim().length() != 0) {
-                    returnList.get(holder.qty1.getId()).setQty1(new BigDecimal(s.toString().trim()));
+//                    returnList.get(holder.qty1.getId()).setQty1(new BigDecimal(s.toString().trim()));
                 } else {
-                    returnList.get(holder.qty1.getId()).setQty1(BigDecimal.ZERO);
+//                    returnList.get(holder.qty1.getId()).setQty1(BigDecimal.ZERO);
                 }
             }
 
@@ -494,9 +494,9 @@ public class CreateNewReturnAdapter extends BaseAdapter {
             }
         }
 
-        if (returnList.get(position).getQty1() != null) {
-            holder.qty1.setText(String.valueOf(aReturn.getQty1()));
-        }
+//        if (returnList.get(position).getQty1() != null) {
+//            holder.qty1.setText(String.valueOf(aReturn.getQty1()));
+//        }
 
         if (aReturn.getUom1() != null) {
             if (aReturn.getListUomName() != null && !aReturn.getListUomName().isEmpty()) {

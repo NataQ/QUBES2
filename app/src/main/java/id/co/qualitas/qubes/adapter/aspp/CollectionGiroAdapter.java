@@ -16,16 +16,20 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
@@ -33,6 +37,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.CollectionGiro;
 import id.co.qualitas.qubes.model.CollectionGiro;
+import id.co.qualitas.qubes.model.Material;
 
 public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAdapter.Holder> implements Filterable {
     private List<CollectionGiro> mList;
@@ -45,6 +50,11 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     Calendar todayCalendar;
     private CollectionGiroPaymentAdapter mAdapter;
     private boolean visible = false;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
+    private List<Material> materialList = new ArrayList<>();
+    private Holder dataObjectHolder;
+    double totalPayment, left;
 
     public CollectionGiroAdapter(CollectionFormActivity mContext, List<CollectionGiro> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -101,7 +111,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglGiro, txtPrice, txtTglCair, spnBankName, spnBankCust;
-        EditText txtPayment, edtNoGiro;
+        EditText edtPayment, edtNoGiro;
         RecyclerView recyclerView;
         ImageView imgView;
         LinearLayout llPayment, layout;
@@ -118,7 +128,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             edtNoGiro = itemView.findViewById(R.id.edtNoGiro);
             txtLeft = itemView.findViewById(R.id.txtLeft);
             txtTglGiro = itemView.findViewById(R.id.txtTglGiro);
-            txtPayment = itemView.findViewById(R.id.txtPayment);
+            edtPayment = itemView.findViewById(R.id.edtPayment);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             recyclerView = itemView.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -136,17 +146,19 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_giro, parent, false);
-        return new Holder(itemView, onAdapterListener);
+        dataObjectHolder = new Holder(itemView, onAdapterListener);
+        return dataObjectHolder;
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
+        setFormatSeparator();
         CollectionGiro detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
 
-        holder.txtTglGiro.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
-        holder.txtTglCair.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+//        holder.txtTglGiro.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+//        holder.txtTglCair.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
 
         holder.txtTglGiro.setOnClickListener(v -> {
             mContext.hideKeyboard();
@@ -292,7 +304,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             });
         });
 
-        mAdapter = new CollectionGiroPaymentAdapter(mContext, detail.getMaterialList(), header -> {
+        mAdapter = new CollectionGiroPaymentAdapter(mContext,CollectionGiroAdapter.this, detail.getMaterialList(), header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);
@@ -308,6 +320,66 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                 holder.llPayment.setVisibility(View.GONE);
             }
         });
+
+        holder.edtPayment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtPayment, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+                    if (qty < 0) {
+                        Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                    } else {
+                        totalPayment = qty;
+                    }
+                } else {
+                    totalPayment = 0;
+                }
+                setLeft();
+            }
+        });
+    }
+
+    public double getTotalAmount() {
+        return totalPayment;
+    }
+
+    public void setLeft() {
+        double totalPaid = 0;
+        for (Material mat : materialList) {
+            if (mat.isChecked()) {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
+        }
+
+        left = totalPayment - totalPaid;
+        dataObjectHolder.txtLeft.setText("Rp." + format.format(left));
+    }
+
+    public double calculateLeft(double qty, int pos) {
+        double totalPaid = 0;
+        for (int i = 0; i < materialList.size(); i++) {
+            Material mat = materialList.get(i);
+            if (mat.isChecked()) {
+                if (i == pos) {
+                    totalPaid = totalPaid + qty;
+                } else {
+                    totalPaid = totalPaid + mat.getAmountPaid();
+                }
+            }
+        }
+        left = totalPayment - totalPaid;
+        return left;
     }
 
     @Override
@@ -317,5 +389,13 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
     public interface OnAdapterListener {
         void onAdapterClick(CollectionGiro detail);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }
