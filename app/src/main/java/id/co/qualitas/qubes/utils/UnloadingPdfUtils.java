@@ -210,7 +210,7 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         table.addCell(cell);
 
-        String noSJ = Helper.isEmpty(header.getSuratJalan(), "");
+        String noSJ = Helper.isEmpty(header.getNosuratjalan(), "");
         cell = new PdfPCell(new Phrase("No.SJ : " + noSJ, calibriUnderline));
         cell.setUseAscender(true);
         cell.setColspan(MAX_COLUMN_TABLE);
@@ -247,8 +247,8 @@ public class UnloadingPdfUtils {
         rightTable1.addCell(cell);
 
         String tglKirim;
-        if (!Helper.isNullOrEmpty(header.getTanggalKirim())) {
-            tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalKirim());
+        if (!Helper.isNullOrEmpty(header.getTanggalkirim())) {
+            tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalkirim());
         } else {
             tglKirim = "";
         }
@@ -279,7 +279,7 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
 
-        String noOrder = Helper.isEmpty(header.getNoDoc(), "");
+        String noOrder = Helper.isEmpty(header.getNodoc(), "");
         cell = new PdfPCell(new Phrase(": " + noOrder, bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
@@ -304,8 +304,8 @@ public class UnloadingPdfUtils {
         rightTable3.addCell(cell);
 
         String tgl;
-        if (!Helper.isNullOrEmpty(header.getRequestDate())) {
-            tgl = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getRequestDate());
+        if (!Helper.isNullOrEmpty(header.getReqdate())) {
+            tgl = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReqdate());
         } else {
             tgl = "";
         }
@@ -525,7 +525,7 @@ public class UnloadingPdfUtils {
 
         //detail
         for (int i = 0; i < materialList.size(); i++) {
-            String nameMat = Helper.isEmpty(materialList.get(i).getMaterialName(), "");
+            String nameMat = Helper.isEmpty(materialList.get(i).getMaterialname(), "");
             cell = new PdfPCell(new Phrase(nameMat, calibriRegular));//jenis barang
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_LEFT);

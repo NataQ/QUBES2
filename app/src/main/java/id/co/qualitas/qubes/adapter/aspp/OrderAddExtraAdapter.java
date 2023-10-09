@@ -185,7 +185,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
                 String temp[] = nameItem.split("_");
                 holder.edtProduct.setText(nameItem);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialId(temp[0]);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialid(temp[0]);
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
                 alertDialog.dismiss();
             });

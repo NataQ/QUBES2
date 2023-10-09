@@ -46,7 +46,7 @@ public class ProfileFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.fragment_check_profile, container, false);
         getActivity().setTitle(getString(R.string.navmenu7));
         ((MainActivityDrawer) getActivity()).enableBackToolbar(false);
-        init();
+        initProgress();
         initialize();
         setData();
 

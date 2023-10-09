@@ -12,13 +12,20 @@ public class Reason implements Serializable {
     private String desc;
 
     @SerializedName("type")
-    private String type;
+    private String type;//old version
     private String category;
 
     private boolean freeText;
     private boolean photo;
     private boolean isSync;
-    private boolean enabled;
+
+    public Reason(String id, String desc, String category, boolean freeText, boolean photo) {
+        this.id = id;
+        this.desc = desc;
+        this.category = category;
+        this.freeText = freeText;
+        this.photo = photo;
+    }
 
     public Reason() {
     }
@@ -36,14 +43,6 @@ public class Reason implements Serializable {
 
     public void setSync(boolean sync) {
         isSync = sync;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public boolean isFreeText() {

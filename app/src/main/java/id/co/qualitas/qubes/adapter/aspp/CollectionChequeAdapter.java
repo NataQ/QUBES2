@@ -9,6 +9,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,9 +37,10 @@ import java.util.Locale;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.CollectionCheque;
-import id.co.qualitas.qubes.model.CollectionGiro;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionChequeAdapter.Holder> implements Filterable {
@@ -55,6 +59,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     private List<Material> materialList = new ArrayList<>();
     private Holder dataObjectHolder;
     double totalPayment, left;
+    private Database database;
 
     public CollectionChequeAdapter(CollectionFormActivity mContext, List<CollectionCheque> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -110,17 +115,20 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtLeft, txtTglCheque, txtPrice, txtTglCair, spnBankName, spnBankCust;
+        TextView txtLeft, txtTglCheque, txtPrice, txtTglCair, spnBankASPP, spnBankCust;
         EditText edtPayment, edtNoCheque;
+        CardView card_view;
         RecyclerView recyclerView;
         ImageView imgView;
-        LinearLayout llPayment, layout;
+        LinearLayout llPayment, layout, llDelete;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            llDelete = itemView.findViewById(R.id.llDelete);
+            card_view = itemView.findViewById(R.id.card_view);
             spnBankCust = itemView.findViewById(R.id.spnBankCust);
-            spnBankName = itemView.findViewById(R.id.spnBankName);
+            spnBankASPP = itemView.findViewById(R.id.spnBankASPP);
             txtTglCair = itemView.findViewById(R.id.txtTglCair);
             layout = itemView.findViewById(R.id.layout);
             llPayment = itemView.findViewById(R.id.llPayment);
@@ -153,12 +161,36 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
+        database = new Database(mContext);
         CollectionCheque detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
+        String idBankCust = Helper.isEmpty(detail.getIdBankCust(), "");
+        String nameBankCust = Helper.isEmpty(detail.getBankCust(), "");
 
-//        holder.txtTglCheque.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
-//        holder.txtTglCair.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+        String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
+        String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
+
+        if (!Helper.isNullOrEmpty(detail.getTglCheque())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglCheque());
+            holder.txtTglCheque.setText(date);
+        } else {
+            holder.txtTglCheque.setText(null);
+        }
+
+        if (!Helper.isNullOrEmpty(detail.getTglCair())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglCair());
+            holder.txtTglCair.setText(date);
+        } else {
+            holder.txtTglCair.setText(null);
+        }
+
+        holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
+        holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
+        holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
+
+        List<Bank> bankASPPList = database.getAllBank("Bank ASPP");
+        List<Bank> bankCustomerList = database.getAllBank("Bank Customer");
 
         holder.txtTglCheque.setOnClickListener(v -> {
             mContext.hideKeyboard();
@@ -176,7 +208,9 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DATE, dayOfMonth);
 
-                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
+                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
+                    String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+                    detail.setTglCheque(tglTf);
                     holder.txtTglCheque.setText(chooseDateString);
                     holder.txtTglCheque.setError(null);
                 }
@@ -202,7 +236,9 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DATE, dayOfMonth);
 
-                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
+                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
+                    String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+                    detail.setTglCair(tglTf);
                     holder.txtTglCair.setText(chooseDateString);
                     holder.txtTglCair.setError(null);
                 }
@@ -212,7 +248,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             dialog.show();
         });
 
-        holder.spnBankName.setOnClickListener(v -> {
+        holder.spnBankASPP.setOnClickListener(v -> {
             Dialog alertDialog = new Dialog(mContext);
 
             alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -222,15 +258,10 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("Y001 - BANK BCA");
-            groupList.add("Y002 - BANK MANDIRI");
-            groupList.add("Y003 - BANK MANDIRI SYARIAH");
-            groupList.add("Y004 - BANK BNI");
-            groupList.add("Y005 - BANK BNI SYARIAH");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                holder.spnBankName.setText(nameItem);
+            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankASPPList,true, (header, adapterPosition) -> {
+                detail.setIdBankASPP(header.getId());
+                detail.setBankNameASPP(header.getName());
+                holder.spnBankASPP.setText(header.getId() + " - " + header.getName());
                 alertDialog.dismiss();
             });
 
@@ -268,15 +299,10 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("Y001 - BANK BCA");
-            groupList.add("Y002 - BANK MANDIRI");
-            groupList.add("Y003 - BANK MANDIRI SYARIAH");
-            groupList.add("Y004 - BANK BNI");
-            groupList.add("Y005 - BANK BNI SYARIAH");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                holder.spnBankCust.setText(nameItem);
+            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList,false, (header, adapterPosition) -> {
+                detail.setIdBankCust(header.getId());
+                detail.setBankCust(header.getName());
+                holder.spnBankCust.setText(header.getId() + " - " + header.getName());
                 alertDialog.dismiss();
             });
 
@@ -309,15 +335,15 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         });
         holder.recyclerView.setAdapter(mAdapter);
 
-        holder.layout.setOnClickListener(v -> {
+        holder.card_view.setOnClickListener(v -> {
             if (visible) {
                 visible = false;
-                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
-                holder.llPayment.setVisibility(View.VISIBLE);
-            } else {
-                visible = true;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
                 holder.llPayment.setVisibility(View.GONE);
+            } else {
+                visible = true;
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
+                holder.llPayment.setVisibility(View.VISIBLE);
             }
         });
 
@@ -339,14 +365,49 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
                     double qty = Double.parseDouble(s.toString().replace(",", ""));
                     if (qty < 0) {
                         Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                        holder.edtPayment.setText(s.toString().substring(0, s.toString().length() - 1));
                     } else {
                         totalPayment = qty;
+                        detail.setTotalPayment(totalPayment);
                     }
                 } else {
                     totalPayment = 0;
+                    detail.setTotalPayment(0);
                 }
                 setLeft();
             }
+        });
+
+        holder.llDelete.setOnClickListener(v -> {
+            final Dialog dialog = new Dialog(mContext);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(dialogView);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+            TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+            Button btnNo = dialog.findViewById(R.id.btnNo);
+            Button btnYes = dialog.findViewById(R.id.btnYes);
+            txtTitle.setText("Hapus");
+            txtDialog.setText("Anda yakin?");
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    dialog.dismiss();
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
         });
     }
 

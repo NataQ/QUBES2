@@ -52,7 +52,7 @@ public class OutletVisitFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.visit));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         initData();

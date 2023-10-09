@@ -17,7 +17,6 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
-import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
 import id.co.qualitas.qubes.model.Material;
 
 public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<CustomerInfoOutstandingFakturAdapter.Holder> implements Filterable {

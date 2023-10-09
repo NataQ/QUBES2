@@ -127,9 +127,9 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
-        holder.edtPaid.setText(format.format(detail.getQty()));
+        holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cb.setChecked(false);
@@ -139,6 +139,16 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             holder.cb.setChecked(true);
             holder.edtPaid.setEnabled(true);
             holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+        }
+
+        if (detail.isChecked()) {
+            holder.cb.setChecked(true);
+            holder.edtPaid.setEnabled(true);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+        } else {
+            holder.cb.setChecked(false);
+            holder.edtPaid.setEnabled(false);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
         }
 
         holder.cb.setOnClickListener(new View.OnClickListener() {

@@ -95,7 +95,7 @@ public class AccountFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_account, container, false);
         initialize();
-        init();
+        initProgress();
         initFragment();
 
         rootView.setFocusableInTouchMode(true);

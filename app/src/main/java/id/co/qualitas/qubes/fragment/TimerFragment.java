@@ -93,7 +93,7 @@ public class TimerFragment extends BaseFragment {
 
 
         initialize();
-        init();
+        initProgress();
 
         setTodayDate();
 

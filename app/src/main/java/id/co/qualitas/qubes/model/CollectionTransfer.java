@@ -15,6 +15,7 @@ public class CollectionTransfer implements Serializable, Cloneable  {
     public double totalPayment;
     public double left;
     public List<Material> materialList;
+    public List<Material> checkedMaterialList;
     private boolean isSync;
 
     public CollectionTransfer() {
@@ -23,6 +24,14 @@ public class CollectionTransfer implements Serializable, Cloneable  {
     public CollectionTransfer(String tglTransfer, List<Material> materialList) {
         this.tglTransfer = tglTransfer;
         this.materialList = materialList;
+    }
+
+    public List<Material> getCheckedMaterialList() {
+        return checkedMaterialList;
+    }
+
+    public void setCheckedMaterialList(List<Material> checkedMaterialList) {
+        this.checkedMaterialList = checkedMaterialList;
     }
 
     public String getCustomerId() {
@@ -91,7 +100,7 @@ public class CollectionTransfer implements Serializable, Cloneable  {
 
     @NonNull
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
 }

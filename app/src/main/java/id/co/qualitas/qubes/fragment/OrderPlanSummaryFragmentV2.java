@@ -112,7 +112,7 @@ public class OrderPlanSummaryFragmentV2 extends BaseFragment implements SearchVi
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(true);
 
         initialize();
-        init();
+        initProgress();
         initFragment();
 
         rootView.setFocusableInTouchMode(true);

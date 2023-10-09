@@ -108,7 +108,7 @@ public class DirectionFragment extends BaseFragment {
         Context ctx = getContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         setData();

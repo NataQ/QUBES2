@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -50,7 +51,7 @@ import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 
-public class SplashScreenActivity extends BaseActivity {
+public class SplashScreenActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 0;
     private String mUSer, mProfile, mDate;
@@ -73,6 +74,7 @@ public class SplashScreenActivity extends BaseActivity {
     //    private boolean isWritePermissionGranted = false;
     private boolean isCameraPermissionGranted = false;
     private boolean isNotificationPermissionGranted = false;
+    private Intent intent;
 
 //    private final ActivityResultLauncher<String> requestPermissionLauncher =
 //            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -89,7 +91,6 @@ public class SplashScreenActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash_screen);
-        initProgress();
 
         initialize();
 
@@ -207,6 +208,10 @@ public class SplashScreenActivity extends BaseActivity {
 //        }
     }
 
+    private void setToast(String desc) {
+        Toast.makeText(this, desc, Toast.LENGTH_SHORT).show();
+    }
+
     public void ImageViewAnimatedChange(Context c, final ImageView v, final Drawable new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(c, android.R.anim.fade_out);
         final Animation anim_in = AnimationUtils.loadAnimation(c, R.anim.fade_in);
@@ -319,14 +324,6 @@ public class SplashScreenActivity extends BaseActivity {
         txtDetail = findViewById(R.id.txtDetail);
         llText = findViewById(R.id.llText);
         image = findViewById(R.id.imageView1);
-        session = new SessionManager(this);
-        db = new DatabaseHelper(getApplicationContext());
-
-        Map<String, String> dateSession = session.getDate();
-        mDate = dateSession.get(Constants.KEY_DATE);
-
-        offlineDat = (OffDate) Helper.stringToObject(mDate);
-
     }
 
     @Override

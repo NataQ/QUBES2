@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -27,16 +26,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.github.gcacace.signaturepad.views.SignaturePad;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.PDFTest;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestDetailAdapter;
 import id.co.qualitas.qubes.adapter.aspp.UnloadingAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -164,7 +159,7 @@ public class UnloadingActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
-                    header.setUnloading(true);
+                    header.setIsunloading(true);
                     header.setSync(false);
                     header.setStatus(Constants.STATUS_UNLOADING);
                     database.updateUnloading(header, user.getUsername());
@@ -183,18 +178,18 @@ public class UnloadingActivity extends BaseActivity {
             onBackPressed();
             setToast(getString(R.string.failedGetData));
         } else {
-            txtNoSuratJalan.setText(Helper.isEmpty(header.getSuratJalan(), "-"));
-            txtNoDoc.setText(Helper.isEmpty(header.getNoDoc(), "-"));
+            txtNoSuratJalan.setText(Helper.isEmpty(header.getNosuratjalan(), "-"));
+            txtNoDoc.setText(Helper.isEmpty(header.getNodoc(), "-"));
 
-            if (!Helper.isNullOrEmpty(header.getRequestDate())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getRequestDate());
+            if (!Helper.isNullOrEmpty(header.getReqdate())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReqdate());
                 txtDate.setText(requestDate);
             } else {
                 txtDate.setText("-");
             }
 
-            if (!Helper.isNullOrEmpty(header.getTanggalKirim())) {
-                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalKirim());
+            if (!Helper.isNullOrEmpty(header.getTanggalkirim())) {
+                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalkirim());
                 txtTglKirim.setText(tglKirim);
             } else {
                 txtTglKirim.setText("-");
@@ -320,7 +315,7 @@ public class UnloadingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), StockRequestHeaderActivity.class);
+        Intent intent = new Intent(getApplicationContext(), StockRequestListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

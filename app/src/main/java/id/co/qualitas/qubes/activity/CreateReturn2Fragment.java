@@ -97,7 +97,7 @@ public class CreateReturn2Fragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_create_return, container, false);
 
         initialize();
-        init();
+        initProgress();
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();

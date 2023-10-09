@@ -16,7 +16,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
 import id.co.qualitas.qubes.activity.aspp.InvoiceVerificationActivity;
-import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -42,7 +42,7 @@ public class ActivityFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.activity));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
 
@@ -60,7 +60,7 @@ public class ActivityFragment extends BaseFragment {
         });
 
         llStockRequest.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), StockRequestHeaderActivity.class);
+            Intent intent = new Intent(getActivity(), StockRequestListActivity.class);
             startActivity(intent);
         });
 

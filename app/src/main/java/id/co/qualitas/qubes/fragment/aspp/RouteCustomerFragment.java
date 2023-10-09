@@ -64,7 +64,7 @@ public class RouteCustomerFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.routeCustomer));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         initData();

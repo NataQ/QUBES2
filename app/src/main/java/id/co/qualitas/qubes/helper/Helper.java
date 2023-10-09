@@ -29,6 +29,9 @@ import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.springframework.http.HttpEntity;
@@ -186,6 +189,7 @@ public class Helper extends BaseFragment {
         }
 //        return input != null ? input : placeHolder;
     }
+
     public static boolean isEmpty(Object obj) {
         if (obj != null)
             return false;
@@ -277,7 +281,7 @@ public class Helper extends BaseFragment {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
             } catch (Exception e) {
                 Helper.removeItemParam(Constants.ERROR_LOG);
-                if(e.getMessage() != null){
+                if (e.getMessage() != null) {
                     Helper.setItemParam(Constants.ERROR_LOG, e.getMessage());
                 }
                 if (e.getMessage().equals("401 Unauthorized"))
@@ -313,7 +317,7 @@ public class Helper extends BaseFragment {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
             } catch (Exception e) {
                 Helper.removeItemParam(Constants.ERROR_LOG);
-                if(e.getMessage() != null){
+                if (e.getMessage() != null) {
                     Helper.setItemParam(Constants.ERROR_LOG, e.getMessage());
                 }
                 if (e.getMessage().equals("401 Unauthorized"))
@@ -536,6 +540,34 @@ public class Helper extends BaseFragment {
         e.addTextChangedListener(w);
     }
 
+    public static String setDotCurrencyAmount(double amount) {
+        String part1 = "";
+        String part2 = "";
+        try {
+            String orig = String.valueOf(amount);
+            if (orig.contains(".")) {
+                String[] parts = orig.split("[.]");
+                part1 = parts[0];
+                part2 = parts[1];
+            }
+
+            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.getDefault());
+            formatter.applyPattern("#,###,###,###");
+            Long longval = Long.parseLong(part1);
+            String formattedString = formatter.format(longval);
+            return formattedString;
+        } catch (
+                NumberFormatException nfe) {
+            nfe.printStackTrace();
+            return "0";
+        }
+    }
+
+    public static <T> T ObjectToGSON(Object object, Class<T> responseType) {
+        final Gson gson = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
+        String json = gson.toJson(object);
+        return gson.fromJson(json, responseType);
+    }
 
     public static String convertDateToString(String format, Date temp) {
         String dateTimesheetString2 = new SimpleDateFormat(format).format(temp);
@@ -672,12 +704,12 @@ public class Helper extends BaseFragment {
     }
 
     public static String mixNumber(Date curDate) {
-        return new BigInteger(String.valueOf((int)Math.floor((1 + Math.random()) * 0x1000)))
+        return new BigInteger(String.valueOf((int) Math.floor((1 + Math.random()) * 0x1000)))
                 .toString(16)
                 .substring(1) + String.valueOf(curDate.getTime());
     }
 
-    public static String splitIdFailed(String input, int pos){
+    public static String splitIdFailed(String input, int pos) {
         return input.split(";")[pos];
     }
 
@@ -685,6 +717,7 @@ public class Helper extends BaseFragment {
         final Calendar cal = Calendar.getInstance();
         return cal.getTime();
     }
+
     public static String getTodayDate(String format) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 format, Locale.getDefault());

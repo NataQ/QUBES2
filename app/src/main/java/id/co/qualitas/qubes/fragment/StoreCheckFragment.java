@@ -77,7 +77,7 @@ public class StoreCheckFragment extends BaseFragment implements SearchView.OnQue
         rootView = inflater.inflate(R.layout.activity_store_check, container, false);
         initFragment();
         initialize();
-        init();
+        initProgress();
         setTodayDate();
 
         rootView.setFocusableInTouchMode(true);

@@ -1,8 +1,5 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
@@ -17,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -129,7 +125,7 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.edtPaid.setText(format.format(detail.getQty()));
 

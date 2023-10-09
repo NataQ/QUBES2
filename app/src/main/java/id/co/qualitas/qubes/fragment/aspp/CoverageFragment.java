@@ -90,7 +90,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         setMap();

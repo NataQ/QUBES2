@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 import java.util.List;
 public class Material implements Cloneable{
     private String idHeader;
-    private String materialId;
-    private String materialName;
+    private String materialid;
+    private String materialname;
     private String materialCode;
     private String materialQty;
-    private int qty;
-    private int qtySisa;
+    private double qty;
+    private double qtySisa;
     private double amount;
     private double amountPaid;
     private String desc;
@@ -21,36 +21,40 @@ public class Material implements Cloneable{
     private double price;
     private String uom;
     private String uomSisa;
-    private int totalDiscount;
+    private double totalDiscount;
     private double total;
     private Discount discount;
     private List<Discount> extra;
     private List<Material> extraItem;
     private boolean isChecked;
     private boolean isSync;
+    private String groupname;
+    private String loadnumber;
+    private int materialgroupid;
+    private int itemno;
 
     public Material() {
     }
 
-    public Material(String materialId, String materialName, int qty, String uom) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, double qty, String uom) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.qty = qty;
         this.uom = uom;
     }
 
-    public Material(String materialId, String materialName, int qty, String uom, double price, int totalDiscount) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, double qty, String uom, double price, double totalDiscount) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
         this.totalDiscount = totalDiscount;
     }
 
-    public Material(String materialId, String materialName, int qty, String uom, double price, int totalDiscount, List<Material> extraItem) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, double qty, String uom, double price, double totalDiscount, List<Material> extraItem) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
@@ -58,23 +62,23 @@ public class Material implements Cloneable{
         this.extraItem = extraItem;
     }
 
-    public Material(String materialId, String materialName, double price, double amount) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, double price, double amount) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.amount = amount;
         this.price = price;
     }
 
-    public Material(String klasifikasi, String materialName, int qty, double price, String uom) {
-        this.materialName = materialName;
+    public Material(String klasifikasi, String materialname, double qty, double price, String uom) {
+        this.materialname = materialname;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
         this.uom = uom;
     }
 
-    public Material(String klasifikasi, String materialName, int qty, double price, String uom, List<Material> extraItem) {
-        this.materialName = materialName;
+    public Material(String klasifikasi, String materialname, double qty, double price, String uom, List<Material> extraItem) {
+        this.materialname = materialname;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
@@ -82,22 +86,54 @@ public class Material implements Cloneable{
         this.extraItem = extraItem;
     }
 
-    public Material(String materialName, int qty) {
-        this.materialName = materialName;
+    public Material(String materialname, double qty) {
+        this.materialname = materialname;
         this.qty = qty;
     }
 
-    public Material(String materialId, String materialName, double price) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, double price) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.price = price;
     }
 
-    public Material(String materialId, String materialName, String materialQty, String uom) {
-        this.materialId = materialId;
-        this.materialName = materialName;
+    public Material(String materialid, String materialname, String materialQty, String uom) {
+        this.materialid = materialid;
+        this.materialname = materialname;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getGroupname() {
+        return groupname;
+    }
+
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+
+    public String getLoadnumber() {
+        return loadnumber;
+    }
+
+    public void setLoadnumber(String loadnumber) {
+        this.loadnumber = loadnumber;
+    }
+
+    public int getMaterialgroupid() {
+        return materialgroupid;
+    }
+
+    public void setMaterialgroupid(int materialgroupid) {
+        this.materialgroupid = materialgroupid;
+    }
+
+    public int getItemno() {
+        return itemno;
+    }
+
+    public void setItemno(int itemno) {
+        this.itemno = itemno;
     }
 
     public String getIdHeader() {
@@ -132,11 +168,11 @@ public class Material implements Cloneable{
         isSync = sync;
     }
 
-    public int getQtySisa() {
+    public double getQtySisa() {
         return qtySisa;
     }
 
-    public void setQtySisa(int qtySisa) {
+    public void setQtySisa(double qtySisa) {
         this.qtySisa = qtySisa;
     }
 
@@ -148,12 +184,12 @@ public class Material implements Cloneable{
         this.uomSisa = uomSisa;
     }
 
-    public String getMaterialName() {
-        return materialName;
+    public String getMaterialname() {
+        return materialname;
     }
 
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
+    public void setMaterialname(String materialname) {
+        this.materialname = materialname;
     }
 
     public boolean isChecked() {
@@ -164,11 +200,11 @@ public class Material implements Cloneable{
         isChecked = checked;
     }
 
-    public int getTotalDiscount() {
+    public double getTotalDiscount() {
         return totalDiscount;
     }
 
-    public void setTotalDiscount(int totalDiscount) {
+    public void setTotalDiscount(double totalDiscount) {
         this.totalDiscount = totalDiscount;
     }
 
@@ -236,12 +272,12 @@ public class Material implements Cloneable{
         DeliveryNumber = deliveryNumber;
     }
 
-    public String getMaterialId() {
-        return materialId;
+    public String getMaterialid() {
+        return materialid;
     }
 
-    public void setMaterialId(String materialId) {
-        this.materialId = materialId;
+    public void setMaterialid(String materialid) {
+        this.materialid = materialid;
     }
 
     public String getMaterialCode() {
@@ -252,11 +288,11 @@ public class Material implements Cloneable{
         this.materialCode = materialCode;
     }
 
-    public int getQty() {
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(double qty) {
         this.qty = qty;
     }
 
@@ -294,7 +330,7 @@ public class Material implements Cloneable{
 
     @NonNull
     @Override
-    protected Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
         return super.clone();
 
     }

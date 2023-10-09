@@ -791,7 +791,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            progressCircle.setVisibility(View.GONE);
+            progressCircleVisit.setVisibility(View.GONE);
             getData();
             mAdapterVisit.setData(mList);
         }

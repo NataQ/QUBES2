@@ -786,7 +786,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_MATERIAL, values, KEY_ID_MATERIAL + " = ?",
-                new String[]{String.valueOf((material).getMaterialId())});
+                new String[]{String.valueOf((material).getMaterialid())});
     }
 
     public void addMaterial(Material material) {
@@ -894,7 +894,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Material material = new Material();
         if (cursor.moveToFirst()) {
-            material.setMaterialId(cursor.getString(0));
+            material.setMaterialid(cursor.getString(0));
             material.setMaterialCode(cursor.getString(1));
             material.setQty(cursor.getInt(2));
             material.setDesc(cursor.getString(3));
@@ -917,7 +917,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material material = new Material();
-                material.setMaterialId(cursor.getString(0));
+                material.setMaterialid(cursor.getString(0));
                 material.setMaterialCode(cursor.getString(1));
                 material.setQty(cursor.getInt(2));
                 material.setDesc(cursor.getString(3));
@@ -2834,7 +2834,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material data = new Material();
-                data.setMaterialId(cursor.getString(0));
+                data.setMaterialid(cursor.getString(0));
                 data.setMaterialCode(cursor.getString(1));
                 material.add(data);
             } while (cursor.moveToNext());

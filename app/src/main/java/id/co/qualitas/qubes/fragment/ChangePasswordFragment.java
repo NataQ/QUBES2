@@ -41,7 +41,7 @@ public class ChangePasswordFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_change_password, container, false);
 
         initialize();
-        init();
+        initProgress();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

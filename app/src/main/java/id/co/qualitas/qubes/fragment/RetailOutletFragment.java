@@ -99,7 +99,7 @@ public class RetailOutletFragment extends BaseFragment implements OnMapReadyCall
 
         initialize();
         initFragment();
-        init();
+        initProgress();
         mMapView.onCreate(savedInstanceState);
 
         rootView.setFocusableInTouchMode(true);

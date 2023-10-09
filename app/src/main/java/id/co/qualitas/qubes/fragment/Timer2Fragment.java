@@ -92,7 +92,7 @@ public class Timer2Fragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.activity_timer, container, false);
 
         initialize();
-        init();
+        initProgress();
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();

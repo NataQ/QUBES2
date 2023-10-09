@@ -160,7 +160,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_create_order_detail, container, false);
 
-        init();
+        initProgress();
         initialize();
         scrollViewHacks();
 
@@ -1303,8 +1303,8 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                             if (material.getDesc() != null) {
                                 visitOrderDetailResponse.setMaterialName(material.getDesc());
                             }
-                            if (material.getMaterialId() != null) {
-                                visitOrderDetailResponse.setIdMaterial(material.getMaterialId());
+                            if (material.getMaterialid() != null) {
+                                visitOrderDetailResponse.setIdMaterial(material.getMaterialid());
                             }
                             if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
                                 visitOrderDetailResponseList = new ArrayList<>();

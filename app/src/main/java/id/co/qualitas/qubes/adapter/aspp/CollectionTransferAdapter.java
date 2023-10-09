@@ -4,12 +4,16 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -20,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
@@ -112,7 +118,8 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglTransfer, txtPrice;
-        LinearLayout llPayment, layout;
+        LinearLayout llPayment, layout, llDelete;
+        CardView card_view;
         ImageView imgView;
         EditText edtPayment;
         RecyclerView recyclerView;
@@ -120,6 +127,8 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            llDelete = itemView.findViewById(R.id.llDelete);
+            card_view = itemView.findViewById(R.id.card_view);
             layout = itemView.findViewById(R.id.layout);
             llPayment = itemView.findViewById(R.id.llPayment);
             imgView = itemView.findViewById(R.id.imgView);
@@ -153,8 +162,15 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         CollectionTransfer detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         materialList = detail.getMaterialList();
         todayDate = Helper.getTodayDate();
-//        todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
-//        holder.txtTglTransfer.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+        todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
+
+        if (!Helper.isNullOrEmpty(detail.getTglTransfer())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglTransfer());
+            holder.txtTglTransfer.setText(date);
+        } else {
+            holder.txtTglTransfer.setText(null);
+        }
+        holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
 
         holder.txtTglTransfer.setOnClickListener(v -> {
             mContext.hideKeyboard();
@@ -172,7 +188,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DATE, dayOfMonth);
 
-                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
+                    chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
                     detail.setTglTransfer(tglTf);
                     holder.txtTglTransfer.setText(chooseDateString);
@@ -202,11 +218,14 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     double qty = Double.parseDouble(s.toString().replace(",", ""));
                     if (qty < 0) {
                         Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                        holder.edtPayment.setText(s.toString().substring(0, s.toString().length() - 1));
                     } else {
                         totalPayment = qty;
+                        detail.setTotalPayment(totalPayment);
                     }
                 } else {
                     totalPayment = 0;
+                    detail.setTotalPayment(0);
                 }
                 setLeft();
             }
@@ -217,15 +236,47 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         });
         holder.recyclerView.setAdapter(mAdapter);
 
-        holder.layout.setOnClickListener(v -> {
+        holder.llDelete.setOnClickListener(v -> {
+            final Dialog dialog = new Dialog(mContext);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(dialogView);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+            TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+            Button btnNo = dialog.findViewById(R.id.btnNo);
+            Button btnYes = dialog.findViewById(R.id.btnYes);
+            txtTitle.setText("Hapus");
+            txtDialog.setText("Anda yakin?");
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    dialog.dismiss();
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        });
+
+        holder.card_view.setOnClickListener(v -> {
             if (visible) {
                 visible = false;
-                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
-                holder.llPayment.setVisibility(View.VISIBLE);
-            } else {
-                visible = true;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
                 holder.llPayment.setVisibility(View.GONE);
+            } else {
+                visible = true;
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
+                holder.llPayment.setVisibility(View.VISIBLE);
             }
         });
     }

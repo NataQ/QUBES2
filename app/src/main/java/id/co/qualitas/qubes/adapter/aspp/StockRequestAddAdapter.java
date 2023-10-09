@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.adapter.aspp;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -132,8 +130,8 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
         listSpinner.add("SLOP");
         listSpinner.add("KRT");
 
-        String productName = !Helper.isNullOrEmpty(detail.getMaterialName()) ? detail.getMaterialName() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getMaterialId()) ? detail.getMaterialId() : null;
+        String productName = !Helper.isNullOrEmpty(detail.getMaterialname()) ? detail.getMaterialname() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getMaterialid()) ? detail.getMaterialid() : null;
 
         holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);

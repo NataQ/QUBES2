@@ -5,39 +5,39 @@ import java.util.List;
 public class StockRequest {
     private String idHeader;
     private String id;
-    private String requestDate;
-    private String noDoc;
-    private String tanggalKirim;
-    private String suratJalan;
+    private String reqdate;
+    private String nodoc;
+    private String tanggalkirim;
+    private String nosuratjalan;
     private String status;
-    private boolean isUnloading;
+    private boolean isunloading;
     private boolean isSync;
     private boolean enabled;
-    private boolean isVerification;
+    private boolean isverif;
     private String signature;
     private List<Material> materialList;
 
     public StockRequest() {
     }
 
-    public StockRequest(String requestDate, String noDoc, String tanggalKirim, String suratJalan, String status, boolean isUnloading, boolean isSync, boolean enabled, boolean isVerification, String signature, List<Material> materialList) {
-        this.requestDate = requestDate;
-        this.noDoc = noDoc;
-        this.tanggalKirim = tanggalKirim;
-        this.suratJalan = suratJalan;
+    public StockRequest(String reqdate, String nodoc, String tanggalkirim, String nosuratjalan, String status, boolean isunloading, boolean isSync, boolean enabled, boolean isverif, String signature, List<Material> materialList) {
+        this.reqdate = reqdate;
+        this.nodoc = nodoc;
+        this.tanggalkirim = tanggalkirim;
+        this.nosuratjalan = nosuratjalan;
         this.status = status;
-        this.isUnloading = isUnloading;
+        this.isunloading = isunloading;
         this.isSync = isSync;
         this.enabled = enabled;
-        this.isVerification = isVerification;
+        this.isverif = isverif;
         this.signature = signature;
         this.materialList = materialList;
     }
 
-    public StockRequest(String requestDate, String noDoc, String tanggalKirim, String status) {
-        this.requestDate = requestDate;
-        this.noDoc = noDoc;
-        this.tanggalKirim = tanggalKirim;
+    public StockRequest(String reqdate, String nodoc, String tanggalkirim, String status) {
+        this.reqdate = reqdate;
+        this.nodoc = nodoc;
+        this.tanggalkirim = tanggalkirim;
         this.status = status;
     }
 
@@ -81,28 +81,28 @@ public class StockRequest {
         this.materialList = materialList;
     }
 
-    public String getSuratJalan() {
-        return suratJalan;
+    public String getNosuratjalan() {
+        return nosuratjalan;
     }
 
-    public void setSuratJalan(String suratJalan) {
-        this.suratJalan = suratJalan;
+    public void setNosuratjalan(String nosuratjalan) {
+        this.nosuratjalan = nosuratjalan;
     }
 
-    public boolean isUnloading() {
-        return isUnloading;
+    public boolean isIsunloading() {
+        return isunloading;
     }
 
-    public void setUnloading(boolean unloading) {
-        isUnloading = unloading;
+    public void setIsunloading(boolean isunloading) {
+        this.isunloading = isunloading;
     }
 
-    public boolean isVerification() {
-        return isVerification;
+    public boolean isIsverif() {
+        return isverif;
     }
 
-    public void setVerification(boolean verification) {
-        isVerification = verification;
+    public void setIsverif(boolean isverif) {
+        this.isverif = isverif;
     }
 
     public String getSignature() {
@@ -113,28 +113,28 @@ public class StockRequest {
         this.signature = signature;
     }
 
-    public String getRequestDate() {
-        return requestDate;
+    public String getReqdate() {
+        return reqdate;
     }
 
-    public void setRequestDate(String requestDate) {
-        this.requestDate = requestDate;
+    public void setReqdate(String reqdate) {
+        this.reqdate = reqdate;
     }
 
-    public String getNoDoc() {
-        return noDoc;
+    public String getNodoc() {
+        return nodoc;
     }
 
-    public void setNoDoc(String noDoc) {
-        this.noDoc = noDoc;
+    public void setNodoc(String nodoc) {
+        this.nodoc = nodoc;
     }
 
-    public String getTanggalKirim() {
-        return tanggalKirim;
+    public String getTanggalkirim() {
+        return tanggalkirim;
     }
 
-    public void setTanggalKirim(String tanggalKirim) {
-        this.tanggalKirim = tanggalKirim;
+    public void setTanggalkirim(String tanggalkirim) {
+        this.tanggalkirim = tanggalkirim;
     }
 
     public String getStatus() {

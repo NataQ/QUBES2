@@ -1,16 +1,8 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -21,17 +13,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
-import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
-import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.CollectionGiro;
 
 public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<CollectionGiroDetailAdapter.Holder> implements Filterable {
@@ -138,7 +124,7 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
         holder.txtTglGiro.setText(detail.getTglGiro());
         holder.txtTglCair.setText(detail.getTglCair());
-        holder.txtBankName.setText(detail.getIdBankName() + " - " + detail.getBankName());
+        holder.txtBankName.setText(detail.getIdBankASPP() + " - " + detail.getBankNameASPP());
         holder.txtBankCust.setText(detail.getIdBankCust() + " - " + detail.getBankCust());
         holder.txtNoGiro.setText(detail.getNoGiro());
 

@@ -36,7 +36,7 @@ public class PromotionFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.promotion));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         initData();

@@ -81,7 +81,7 @@ public class OrderSoldFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_create_order, container, false);
-        init();
+        initProgress();
         initialize();
 
         initFragment();

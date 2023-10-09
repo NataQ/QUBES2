@@ -112,8 +112,8 @@ public class StockRequestDetailAdapter extends RecyclerView.Adapter<StockRequest
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        String idMat = Helper.isEmpty(detail.getMaterialId(), "");
-        String nameMat = Helper.isEmpty(detail.getMaterialName(), "");
+        String idMat = Helper.isEmpty(detail.getMaterialid(), "");
+        String nameMat = Helper.isEmpty(detail.getMaterialname(), "");
         String uom = Helper.isEmpty(detail.getUom(), "");
 
         holder.txtNo.setText(format.format(position + 1) + ".");

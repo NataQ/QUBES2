@@ -45,7 +45,7 @@ public class OrderPlanFragment extends BaseFragment implements SearchView.OnQuer
         getActivity().setTitle(getString(R.string.navmenu3));
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(false);
 
-        init();
+        initProgress();
         initialize();
         removeFlag();
 

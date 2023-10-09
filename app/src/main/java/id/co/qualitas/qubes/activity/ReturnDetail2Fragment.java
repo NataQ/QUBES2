@@ -66,7 +66,7 @@ public class ReturnDetail2Fragment extends BaseFragment {
     }
 
     private void initialize() {
-        init();
+        initProgress();
         db = new DatabaseHelper(getContext());
 //        btnBack = rootView.findViewById(R.id.btnBack);
         imgBack = rootView.findViewById(R.id.imgBack);

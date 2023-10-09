@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
@@ -219,9 +218,10 @@ public class BaseActivity extends AppCompatActivity {
         format = new DecimalFormat("#,###,###,###.###", otherSymbols);
         format.setDecimalSeparatorAlwaysShown(false);
     }
+
     public void initBase() {
         if (SessionManagerQubes.getUserProfile() != null) {
-            Helper.setItemParam(Constants.USER_DETAIL,  SessionManagerQubes.getUserProfile());
+            Helper.setItemParam(Constants.USER_DETAIL, SessionManagerQubes.getUserProfile());
             user = (User) Helper.getItemParam(Constants.USER_DETAIL);
             if (user == null) {
                 setToast("Session telah habis. Silahkan login ulang.");
@@ -229,6 +229,16 @@ public class BaseActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
+
+            if (SessionManagerQubes.getUrl() != null) {
+                Helper.setItemParam(Constants.URL, SessionManagerQubes.getUrl());
+            }
+        } else {
+            setToast("Session habis");
+            clearAllSession();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     }
 
@@ -244,6 +254,27 @@ public class BaseActivity extends AppCompatActivity {
 
         return currentDateTime;
     }
+
+    public void showDialogInformation(Activity activity, String msg) {
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        final Dialog dialog = new Dialog(activity);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_information, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtMsg = dialog.findViewById(R.id.txtMsg);
+        Button btnOk = dialog.findViewById(R.id.btnOk);
+        txtMsg.setText(msg);
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
 
     public void logOut(Activity activity) {
         DisplayMetrics metrics = getResources().getDisplayMetrics();
@@ -288,6 +319,15 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearLoginSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
+
+        database.deleteStockRequestHeader();
+        database.deleteStockRequestDetail();
+        database.deleteInvoiceHeader();
+        database.deleteInvoiceDetail();
+        database.deleteCustomer();
+        database.deleteNoo();
+        database.deleteMasterBank();
+        database.deleteMasterReason();
     }
 
     public void snackBar(View rootView, int message) {
@@ -1328,7 +1368,7 @@ public class BaseActivity extends AppCompatActivity {
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setMaterialId(edtMaterialCode.getText().toString());
+                            material.setMaterialid(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -1373,7 +1413,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1395,7 +1435,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1417,7 +1457,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
                 }
 

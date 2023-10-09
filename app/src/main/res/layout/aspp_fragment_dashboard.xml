@@ -113,7 +113,7 @@
                     android:id="@+id/txtJabatanArea"
                     style="@style/TextView_Small"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="8dp"
                     android:text="SR TO JATINEGARA - KRAMAT JATI"
                     android:textColor="@color/black_aspp" />
@@ -215,7 +215,7 @@
                             android:id="@+id/txtAsset"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="16dp"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:text="23"
@@ -635,7 +635,7 @@
                             android:textColor="@color/black_aspp" />
 
                         <TextView
-                            android:id="@+id/txtNonViist"
+                            android:id="@+id/txtNonVisit"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

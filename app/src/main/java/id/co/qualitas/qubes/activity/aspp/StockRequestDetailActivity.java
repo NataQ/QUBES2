@@ -5,11 +5,9 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,14 +27,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.StockRequestDetailAdapter;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestHeaderAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -149,7 +145,7 @@ public class StockRequestDetailActivity extends BaseActivity {
 //            String signPath = Utils.saveImage(signaturePad.getTransparentSignatureBitmap()).getAbsolutePath();
 //            if (!signPath.equals("null")) {
             header.setSignature(Utils.encodeImageBase64Sign(signaturePad.getTransparentSignatureBitmap()));
-            header.setVerification(true);
+            header.setIsverif(true);
             header.setSync(false);
             header.setStatus(Constants.STATUS_VERIFICATION);
             database.updateStockRequestVerification(header, user.getUsername());
@@ -169,18 +165,18 @@ public class StockRequestDetailActivity extends BaseActivity {
             onBackPressed();
             setToast(getString(R.string.failedGetData));
         } else {
-            txtNoSuratJalan.setText(Helper.isEmpty(header.getSuratJalan(), "-"));
-            txtNoDoc.setText(Helper.isEmpty(header.getNoDoc(), "-"));
+            txtNoSuratJalan.setText(Helper.isEmpty(header.getNosuratjalan(), "-"));
+            txtNoDoc.setText(Helper.isEmpty(header.getNodoc(), "-"));
 
-            if (!Helper.isNullOrEmpty(header.getRequestDate())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getRequestDate());
+            if (!Helper.isNullOrEmpty(header.getReqdate())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReqdate());
                 txtDate.setText(requestDate);
             } else {
                 txtDate.setText("-");
             }
 
-            if (!Helper.isNullOrEmpty(header.getTanggalKirim())) {
-                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalKirim());
+            if (!Helper.isNullOrEmpty(header.getTanggalkirim())) {
+                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalkirim());
                 txtTglKirim.setText(tglKirim);
             } else {
                 txtTglKirim.setText("-");

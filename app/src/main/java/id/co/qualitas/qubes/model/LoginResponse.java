@@ -3,11 +3,9 @@ package id.co.qualitas.qubes.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class LoginResponse implements Serializable {
-
-    User user;
-
     @SerializedName("access_token")
     String access_token;
     @SerializedName("token_type")
@@ -22,6 +20,35 @@ public class LoginResponse implements Serializable {
     String error;
     @SerializedName("error_description")
     String error_description;
+
+    Object user;
+    List<Object> listReason;
+    List<Object> listBank;
+    float radius;
+
+    public List<Object> getListReason() {
+        return listReason;
+    }
+
+    public void setListReason(List<Object> listReason) {
+        this.listReason = listReason;
+    }
+
+    public List<Object> getListBank() {
+        return listBank;
+    }
+
+    public void setListBank(List<Object> listBank) {
+        this.listBank = listBank;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
 
     public String getError_description() {
         return error_description;
@@ -39,11 +66,11 @@ public class LoginResponse implements Serializable {
         this.error = error;
     }
 
-    public User getUser() {
+    public Object getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Object user) {
         this.user = user;
     }
 

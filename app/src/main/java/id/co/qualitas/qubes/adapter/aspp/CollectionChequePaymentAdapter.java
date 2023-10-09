@@ -1,8 +1,5 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
@@ -17,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -29,7 +25,6 @@ import java.util.Locale;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionCheque;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<CollectionChequePaymentAdapter.Holder> implements Filterable {
@@ -132,9 +127,9 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
-        holder.edtPaid.setText(format.format(detail.getQty()));
+        holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cb.setChecked(false);
@@ -144,6 +139,16 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
             holder.cb.setChecked(true);
             holder.edtPaid.setEnabled(true);
             holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+        }
+
+        if (detail.isChecked()) {
+            holder.cb.setChecked(true);
+            holder.edtPaid.setEnabled(true);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+        } else {
+            holder.cb.setChecked(false);
+            holder.edtPaid.setEnabled(false);
+            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
         }
 
         holder.cb.setOnClickListener(new View.OnClickListener() {

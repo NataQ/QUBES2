@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.StockRequestHeaderActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.StockRequest;
@@ -24,10 +24,10 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
     private List<StockRequest> mList;
     private List<StockRequest> mFilteredList;
     private LayoutInflater mInflater;
-    private StockRequestHeaderActivity mContext;
+    private StockRequestListActivity mContext;
     private OnAdapterListener onAdapterListener;
 
-    public StockRequestHeaderAdapter(StockRequestHeaderActivity mContext, List<StockRequest> mList, OnAdapterListener onAdapterListener) {
+    public StockRequestHeaderAdapter(StockRequestListActivity mContext, List<StockRequest> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -59,7 +59,7 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
                     for (StockRequest row : mList) {
 
                         /*filter by name*/
-                        if (row.getNoDoc().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNodoc().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -112,14 +112,14 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         StockRequest detail = mFilteredList.get(position);
-        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNoDoc(), ""));
-        holder.txtSuratJalan.setText(Helper.isEmpty(detail.getSuratJalan(), ""));
-        if (!Helper.isNullOrEmpty(detail.getRequestDate())) {
-            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getRequestDate());
+        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNodoc(), ""));
+        holder.txtSuratJalan.setText(Helper.isEmpty(detail.getNosuratjalan(), ""));
+        if (!Helper.isNullOrEmpty(detail.getReqdate())) {
+            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getReqdate());
             holder.txtTanggal.setText(requestDate);
         }
-        if (!Helper.isNullOrEmpty(detail.getTanggalKirim())) {
-            String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggalKirim());
+        if (!Helper.isNullOrEmpty(detail.getTanggalkirim())) {
+            String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggalkirim());
             holder.txtTglKirim.setText(tglKirim);
         }
         holder.txtStatus.setText(detail.getStatus());

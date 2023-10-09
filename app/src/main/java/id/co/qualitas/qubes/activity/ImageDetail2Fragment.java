@@ -27,7 +27,7 @@ public class ImageDetail2Fragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.activity_image_zoom, container, false);
-        init();
+        initProgress();
         initialize();
 
         rootView.setFocusableInTouchMode(true);

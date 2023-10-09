@@ -4,6 +4,7 @@ public class Constants {
     public static final double ZOOM_LEVEL = 13.0;
     public static final String FCM = "fcm";
     public static final String IMAGE_TYPE = "image_type";
+    public static final String NO_CONNECTION = "no connection";
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_APPROVE = "approve";
     public static final String STATUS_REJECTED = "rejected";
@@ -13,9 +14,10 @@ public class Constants {
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
     public static final String HTTP_HEADER_CONTENT_TYPE = "application/x-www-form-urlencoded";
-    public static final String OAUTH_TOKEN_PATH = "oauth/token";
-    public static final String GRANT_TYPE = "grant_type";
+    public static final String OAUTH_TOKEN_PATH = "/oauth/token";
+    public static final String GRANT_TYPE = "grant_type=password";
     public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
     public static final String EMPLOYEE_ID = "idEmployee";
     public static final String EQUALS = "=";
     public static final String QUESTION = "?";
@@ -110,15 +112,8 @@ public class Constants {
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    //    public static String URL = "http://14.102.154.108:8080/";
-//    public static String URL = "http://mobi.binasanprima.com:8080/";
-//    public static String URL = "http://52.187.124.235:9191/";
-    public static String URL = "http://192.168.1.10:9191";
-    //    public static String URL = "http://172.16.1.11:9191/";
-//    public static String IP = "mobi.binasanprima.com:8080";
-//    public static String IP = "52.187.124.235:9191";
-    public static String IP = "192.168.1.9:9191";
-    //    public static String IP = "172.16.1.11:9191";
+    public static String URL = "http://192.168.1.14:8282";
+    public static String IP = "192.168.1.14:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -496,4 +491,9 @@ public class Constants {
     public static final String DATE_FORMAT_4 = "dd-MMM-yy";
     public static final String DATE_FORMAT_5 = "E, dd MMMM yyyy";
     public static final String DATE_FORMAT_6 = "dd/MM/yyyy HH:mm:ss";
+
+    //new api qubes aspp
+    public static final String API_PREFIX = "/api/v1/";
+    public static final String API_GET_USER_DETAIL = "mobile/getDetailUser";
+    public static final String API_GET_STOCK_REQUEST = "mobile/getStockRequest";
 }

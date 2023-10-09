@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
@@ -20,14 +20,15 @@ import id.co.qualitas.qubes.adapter.aspp.StockRequestHeaderAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
-public class StockRequestHeaderActivity extends BaseActivity {
+public class StockRequestListActivity extends BaseActivity {
     private StockRequestHeaderAdapter mAdapter;
     private List<StockRequest> mList;
     private Button btnAdd;
@@ -35,7 +36,7 @@ public class StockRequestHeaderActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aspp_activity_stock_request_header);
+        setContentView(R.layout.aspp_activity_stock_request_list);
 
         initialize();
 
@@ -45,7 +46,7 @@ public class StockRequestHeaderActivity extends BaseActivity {
         });
 
         imgLogOut.setOnClickListener(v -> {
-            logOut(StockRequestHeaderActivity.this);
+            logOut(StockRequestListActivity.this);
         });
 
         imgBack.setOnClickListener(v -> {
@@ -131,7 +132,7 @@ public class StockRequestHeaderActivity extends BaseActivity {
 
         if (mList == null || mList.isEmpty()) {
             progressCircle.setVisibility(View.VISIBLE);
-            new AsyncLoading().execute();
+            new RequestUrl().execute();
         }
     }
 
@@ -140,18 +141,19 @@ public class StockRequestHeaderActivity extends BaseActivity {
         mList = database.getAllStockRequestHeader();
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected WSMessage doInBackground(Void... voids) {
             try {
-                initData();
-                return true;
+                String URL_ = Constants.API_GET_STOCK_REQUEST;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("stockRequest", ex.getMessage());
                 }
-                return false;
+                return null;
             }
         }
 
@@ -161,10 +163,28 @@ public class StockRequestHeaderActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(WSMessage WsMessage) {
             progressCircle.setVisibility(View.GONE);
-            getData();
-            mAdapter.setData(mList);
+            if (WsMessage != null) {
+                if (WsMessage.getIdMessage() == 1) {
+                    mList = new ArrayList<>();
+                    StockRequest[] paramArray = Helper.ObjectToGSON(WsMessage.getResult(), StockRequest[].class);
+                    Collections.addAll(mList, paramArray);
+                    for (StockRequest param : mList) {
+                        List<Material> listMat = new ArrayList<>();
+                        Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+                        Collections.addAll(listMat, matArray);
+                        param.setMaterialList(listMat);
+                    }
+                    getData();
+                    mAdapter.setData(mList);
+                } else {
+                    setToast(WsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.failedGetData));
+            }
+
         }
     }
 }

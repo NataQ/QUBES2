@@ -47,7 +47,6 @@ import id.co.qualitas.qubes.model.FreeGoods;
 import id.co.qualitas.qubes.model.GetPriceRequest;
 import id.co.qualitas.qubes.model.GetPriceResponse;
 import id.co.qualitas.qubes.model.JenisJualandTop;
-import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.MessageResponse;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.ToPrice;
@@ -165,7 +164,7 @@ public class OrderFragment extends BaseFragment implements SearchView.OnQueryTex
 //        ((MainActivityDrawer) getActivity()).setTitle(getString(R.string.navmenu5c));
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(true);
 
-        init();
+        initProgress();
         initialize();
         scrollViewHacks();
 
@@ -991,221 +990,221 @@ public class OrderFragment extends BaseFragment implements SearchView.OnQueryTex
     }
 
     private void getData() {
-        database = new DatabaseHelper(rootView.getContext());
-        if (Helper.getItemParam(Constants.GET_DETAIL_VISIT) != null) {//udah pernah isi
-            if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {//mau add materiall
-                Material material = (Material) Helper.getItemParam(Constants.ADD_MATERIAL);
-                idMaterial = material.getMaterialCode();
-                Helper.removeItemParam(Constants.GET_DETAIL_VISIT);
-                visitOrderDetailResponseList = new ArrayList<>();
-                visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
-
-                if (visitOrderDetailResponseList != null) {
-                    if (visitOrderDetailResponseList.size() != 0) {
-                        for (int i = 0; i < visitOrderDetailResponseList.size(); i++) {
-                            if (visitOrderDetailResponseList.get(i).getIdMaterial().equals(idMaterial)) {
-                                setMaterialData(visitOrderDetailResponseList);
-                                break;
-                            } else {//addMaterial
-                                if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {
-                                    VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
-                                    if (material.getMaterialCode() != null) {
-                                        visitOrderDetailResponse.setIdMaterial(material.getMaterialCode());
-                                    }
-                                    if (material.getDesc() != null) {
-                                        visitOrderDetailResponse.setMaterialName(material.getDesc());
-                                    }
-
-                                    if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
-                                        visitOrderDetailResponseList = new ArrayList<>();
-                                        visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
-                                        Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
-                                        visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                                    } else {
-                                        visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                                    }
-                                    setMaterialData(visitOrderDetailResponseList);
-
-                                    Helper.removeItemParam(Constants.ADD_MATERIAL);
-
-                                    scroll.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            scroll.fullScroll(ScrollView.FOCUS_DOWN);
-//                                            return null;
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    } else {
-                        if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {// addmaterial
-                            VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
-
-                            if (material.getDesc() != null) {
-                                visitOrderDetailResponse.setMaterialName(material.getDesc());
-                            }
-                            if (material.getMaterialId() != null) {
-                                visitOrderDetailResponse.setIdMaterial(material.getMaterialId());
-                            }
-                            if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
-                                visitOrderDetailResponseList = new ArrayList<>();
-                                visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
-                                Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
-                                visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                            } else {
-                                visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                            }
-                            setMaterialData(visitOrderDetailResponseList);
-
-                            Helper.removeItemParam(Constants.ADD_MATERIAL);
-                        }
-                    }
-                } else {
-                    if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {// addmaterial
-                        VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
-
-                        if (material.getMaterialCode() != null) {
-                            visitOrderDetailResponse.setIdMaterial(material.getMaterialCode());
-                        }
-
-                        if (material.getDesc() != null) {
-                            visitOrderDetailResponse.setMaterialName(material.getDesc());
-                        }
-                        if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
-                            visitOrderDetailResponseList = new ArrayList<>();
-                            visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
-                            Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
-                            visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                        } else {
-                            visitOrderDetailResponseList = new ArrayList<>();
-                            visitOrderDetailResponseList.add(visitOrderDetailResponse);
-                        }
-                        setMaterialData(visitOrderDetailResponseList);
-
-                        Helper.removeItemParam(Constants.ADD_MATERIAL);
-                    }
-                }
-            } else {
-                //dari summary
-                if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
-                    visitOrderDetailResponseList = new ArrayList<>();
-                    visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
-                    if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
-                        progress.show();//new
-                        setMaterialData(visitOrderDetailResponseList);
-                    }
-                }
-            }
-        } else {
-            if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
-                setMaterialData((ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL));
-            } else {
-                if (savedHeader != null) {//manggil ini pas kalo masuk ke halaman lewat detail list yang uda kesimpen
-                    visitOrderDetailResponseList = new ArrayList<>();
-                    if (savedHeader.getId() != null) {
-                        visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
-
-                        if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
-                            for (int i = 0; i < visitOrderDetailResponseList.size(); i++) {
-
-                                listToPrice = new ArrayList<>();
-                                if (visitOrderDetailResponseList.get(i).getId_price() != null) {
-                                    listToPrice = db.getToPricewithIdPrice(visitOrderDetailResponseList.get(i).getId_price());
-                                }
-
-                                int flagMwst = 1;
-                                if (listToPrice != null && !listToPrice.isEmpty()) {
-                                    visitOrderDetailResponseList.get(i).setListToPrice(listToPrice);
-                                    visitOrderDetailResponseList.get(i).setPriceBfr(listToPrice.get(0).getAmount());
-                                    for (int j = 0; j < listToPrice.size(); j++) {
-                                        if (j == listToPrice.size() - 1) {
-                                            visitOrderDetailResponseList.get(i).setPrice(listToPrice.get(j).getAmount());
-
-                                            for (int k = 0; k < listToPrice.size(); k++) {
-                                                if (listToPrice.get(k).getId_cond_type() != null) {
-                                                    if (listToPrice.get(k).getId_cond_type().equals(getString(R.string.cond_type_disc))) {
-                                                        if (visitOrderDetailResponseList.get(i).getPrice() != null
-                                                                && listToPrice.get(j).getAmount() != null
-                                                                && listToPrice.get(k).getDiscValueString() != null) {
-                                                            /*Total- pajak - Harga Awal */
-
-                                                            BigDecimal finalDisc =
-                                                                    listToPrice.get(j).getAmount()
-                                                                            .subtract(listToPrice.get(k).getAmount())
-                                                                            .subtract(listToPrice.get(0).getAmount());
-
-                                                            visitOrderDetailResponseList.get(i).setDisc(finalDisc.setScale(2, BigDecimal.ROUND_HALF_UP));
-
-                                                            visitOrderDetailResponseList.get(i).setTax(listToPrice.get(k).getDiscValueString());
-                                                            flagMwst = 1;
-                                                            break;
-                                                        }
-                                                    } else {
-                                                        flagMwst = 0;
-                                                    }
-
-                                                }
-                                            }
-
-                                            if (flagMwst == 0) {
-                                                if (visitOrderDetailResponseList.get(i).getPrice() != null
-                                                        && listToPrice.get(j).getAmount() != null) {
-                                                    /*Total- pajak - Harga Awal */
-                                                    BigDecimal tempDisc =
-                                                            visitOrderDetailResponseList.get(i).getPrice()
-                                                                    .subtract(listToPrice.get(j).getAmount().multiply(BigDecimal.ZERO))
-                                                                    .setScale(2, BigDecimal.ROUND_HALF_UP);
-
-
-                                                    visitOrderDetailResponseList.get(i).setDisc(BigDecimal.ZERO);
-
-                                                    visitOrderDetailResponseList.get(i).setTax(Constants.ZERO);
-                                                }
-                                                flagMwst = 1;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    visitOrderDetailResponseList.get(i).setPrice(new BigDecimal(0));
-                                }
-
-                            }
-                        }
-
-                        setMaterialData(visitOrderDetailResponseList);
-                    } else {//pertama kali manggil ini
-                        visitOrderDetailResponseList = new ArrayList<>();
-                        if (savedHeader != null) {
-                            if (savedHeader.getId() != null) {
-                                visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
-                                if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
-
-                                    setMaterialData(visitOrderDetailResponseList);
-                                }
-                            }
-                        }
-                    }
-
-
-                } else {//pertama kali manggil ini
-                    visitOrderDetailResponseList = new ArrayList<>();
-                    if (savedHeader != null) {
-                        if (savedHeader.getId() != null) {
-                            visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
-                            if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
-
-                                setMaterialData(visitOrderDetailResponseList);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
-                calculateTotal(visitOrderDetailResponseList);
-            }
-        }
+//        database = new DatabaseHelper(rootView.getContext());
+//        if (Helper.getItemParam(Constants.GET_DETAIL_VISIT) != null) {//udah pernah isi
+//            if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {//mau add materiall
+//                Material material = (Material) Helper.getItemParam(Constants.ADD_MATERIAL);
+//                idMaterial = material.getMaterialCode();
+//                Helper.removeItemParam(Constants.GET_DETAIL_VISIT);
+//                visitOrderDetailResponseList = new ArrayList<>();
+//                visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
+//
+//                if (visitOrderDetailResponseList != null) {
+//                    if (visitOrderDetailResponseList.size() != 0) {
+//                        for (int i = 0; i < visitOrderDetailResponseList.size(); i++) {
+//                            if (visitOrderDetailResponseList.get(i).getIdMaterial().equals(idMaterial)) {
+//                                setMaterialData(visitOrderDetailResponseList);
+//                                break;
+//                            } else {//addMaterial
+//                                if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {
+//                                    VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
+//                                    if (material.getMaterialCode() != null) {
+//                                        visitOrderDetailResponse.setIdMaterial(material.getMaterialCode());
+//                                    }
+//                                    if (material.getDesc() != null) {
+//                                        visitOrderDetailResponse.setMaterialName(material.getDesc());
+//                                    }
+//
+//                                    if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
+//                                        visitOrderDetailResponseList = new ArrayList<>();
+//                                        visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
+//                                        Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
+//                                        visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                                    } else {
+//                                        visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                                    }
+//                                    setMaterialData(visitOrderDetailResponseList);
+//
+//                                    Helper.removeItemParam(Constants.ADD_MATERIAL);
+//
+//                                    scroll.post(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//                                            scroll.fullScroll(ScrollView.FOCUS_DOWN);
+////                                            return null;
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        }
+//                    } else {
+//                        if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {// addmaterial
+//                            VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
+//
+//                            if (material.getDesc() != null) {
+//                                visitOrderDetailResponse.setMaterialName(material.getDesc());
+//                            }
+//                            if (material.getMaterialId() != null) {
+//                                visitOrderDetailResponse.setIdMaterial(material.getMaterialId());
+//                            }
+//                            if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
+//                                visitOrderDetailResponseList = new ArrayList<>();
+//                                visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
+//                                Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
+//                                visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                            } else {
+//                                visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                            }
+//                            setMaterialData(visitOrderDetailResponseList);
+//
+//                            Helper.removeItemParam(Constants.ADD_MATERIAL);
+//                        }
+//                    }
+//                } else {
+//                    if (Helper.getItemParam(Constants.ADD_MATERIAL) != null) {// addmaterial
+//                        VisitOrderDetailResponse visitOrderDetailResponse = new VisitOrderDetailResponse();
+//
+//                        if (material.getMaterialCode() != null) {
+//                            visitOrderDetailResponse.setIdMaterial(material.getMaterialCode());
+//                        }
+//
+//                        if (material.getDesc() != null) {
+//                            visitOrderDetailResponse.setMaterialName(material.getDesc());
+//                        }
+//                        if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
+//                            visitOrderDetailResponseList = new ArrayList<>();
+//                            visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
+//                            Helper.removeItemParam(Constants.VISIT_ORDER_DETAIL);
+//                            visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                        } else {
+//                            visitOrderDetailResponseList = new ArrayList<>();
+//                            visitOrderDetailResponseList.add(visitOrderDetailResponse);
+//                        }
+//                        setMaterialData(visitOrderDetailResponseList);
+//
+//                        Helper.removeItemParam(Constants.ADD_MATERIAL);
+//                    }
+//                }
+//            } else {
+//                //dari summary
+//                if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
+//                    visitOrderDetailResponseList = new ArrayList<>();
+//                    visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);
+//                    if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
+//                        progress.show();//new
+//                        setMaterialData(visitOrderDetailResponseList);
+//                    }
+//                }
+//            }
+//        } else {
+//            if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
+//                setMaterialData((ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL));
+//            } else {
+//                if (savedHeader != null) {//manggil ini pas kalo masuk ke halaman lewat detail list yang uda kesimpen
+//                    visitOrderDetailResponseList = new ArrayList<>();
+//                    if (savedHeader.getId() != null) {
+//                        visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
+//
+//                        if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
+//                            for (int i = 0; i < visitOrderDetailResponseList.size(); i++) {
+//
+//                                listToPrice = new ArrayList<>();
+//                                if (visitOrderDetailResponseList.get(i).getId_price() != null) {
+//                                    listToPrice = db.getToPricewithIdPrice(visitOrderDetailResponseList.get(i).getId_price());
+//                                }
+//
+//                                int flagMwst = 1;
+//                                if (listToPrice != null && !listToPrice.isEmpty()) {
+//                                    visitOrderDetailResponseList.get(i).setListToPrice(listToPrice);
+//                                    visitOrderDetailResponseList.get(i).setPriceBfr(listToPrice.get(0).getAmount());
+//                                    for (int j = 0; j < listToPrice.size(); j++) {
+//                                        if (j == listToPrice.size() - 1) {
+//                                            visitOrderDetailResponseList.get(i).setPrice(listToPrice.get(j).getAmount());
+//
+//                                            for (int k = 0; k < listToPrice.size(); k++) {
+//                                                if (listToPrice.get(k).getId_cond_type() != null) {
+//                                                    if (listToPrice.get(k).getId_cond_type().equals(getString(R.string.cond_type_disc))) {
+//                                                        if (visitOrderDetailResponseList.get(i).getPrice() != null
+//                                                                && listToPrice.get(j).getAmount() != null
+//                                                                && listToPrice.get(k).getDiscValueString() != null) {
+//                                                            /*Total- pajak - Harga Awal */
+//
+//                                                            BigDecimal finalDisc =
+//                                                                    listToPrice.get(j).getAmount()
+//                                                                            .subtract(listToPrice.get(k).getAmount())
+//                                                                            .subtract(listToPrice.get(0).getAmount());
+//
+//                                                            visitOrderDetailResponseList.get(i).setDisc(finalDisc.setScale(2, BigDecimal.ROUND_HALF_UP));
+//
+//                                                            visitOrderDetailResponseList.get(i).setTax(listToPrice.get(k).getDiscValueString());
+//                                                            flagMwst = 1;
+//                                                            break;
+//                                                        }
+//                                                    } else {
+//                                                        flagMwst = 0;
+//                                                    }
+//
+//                                                }
+//                                            }
+//
+//                                            if (flagMwst == 0) {
+//                                                if (visitOrderDetailResponseList.get(i).getPrice() != null
+//                                                        && listToPrice.get(j).getAmount() != null) {
+//                                                    /*Total- pajak - Harga Awal */
+//                                                    BigDecimal tempDisc =
+//                                                            visitOrderDetailResponseList.get(i).getPrice()
+//                                                                    .subtract(listToPrice.get(j).getAmount().multiply(BigDecimal.ZERO))
+//                                                                    .setScale(2, BigDecimal.ROUND_HALF_UP);
+//
+//
+//                                                    visitOrderDetailResponseList.get(i).setDisc(BigDecimal.ZERO);
+//
+//                                                    visitOrderDetailResponseList.get(i).setTax(Constants.ZERO);
+//                                                }
+//                                                flagMwst = 1;
+//                                            }
+//                                        }
+//                                    }
+//                                } else {
+//                                    visitOrderDetailResponseList.get(i).setPrice(new BigDecimal(0));
+//                                }
+//
+//                            }
+//                        }
+//
+//                        setMaterialData(visitOrderDetailResponseList);
+//                    } else {//pertama kali manggil ini
+//                        visitOrderDetailResponseList = new ArrayList<>();
+//                        if (savedHeader != null) {
+//                            if (savedHeader.getId() != null) {
+//                                visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
+//                                if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
+//
+//                                    setMaterialData(visitOrderDetailResponseList);
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//
+//                } else {//pertama kali manggil ini
+//                    visitOrderDetailResponseList = new ArrayList<>();
+//                    if (savedHeader != null) {
+//                        if (savedHeader.getId() != null) {
+//                            visitOrderDetailResponseList = db.getListOrderDetail(savedHeader.getId());
+//                            if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
+//
+//                                setMaterialData(visitOrderDetailResponseList);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//            if (visitOrderDetailResponseList != null && !visitOrderDetailResponseList.isEmpty()) {
+//                calculateTotal(visitOrderDetailResponseList);
+//            }
+//        }
     }
 
     @Override

@@ -1,10 +1,5 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +10,6 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -127,7 +121,7 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialName(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
 
         holder.edtPaid.setVisibility(View.GONE);

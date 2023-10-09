@@ -36,7 +36,7 @@ public class TargetFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.target));
 
-        init();
+        initProgress();
         initFragment();
         initialize();
         initData();

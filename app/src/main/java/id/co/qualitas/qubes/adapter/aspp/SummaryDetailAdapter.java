@@ -3,7 +3,6 @@ package id.co.qualitas.qubes.adapter.aspp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -21,10 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.OrderActivity;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
-import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
-import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Material;
 
 public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdapter.Holder> implements Filterable {

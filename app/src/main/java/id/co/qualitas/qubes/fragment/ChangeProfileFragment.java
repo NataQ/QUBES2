@@ -41,7 +41,7 @@ public class ChangeProfileFragment extends BaseFragment {
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(true);
 
         initialize();
-        init();
+        initProgress();
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

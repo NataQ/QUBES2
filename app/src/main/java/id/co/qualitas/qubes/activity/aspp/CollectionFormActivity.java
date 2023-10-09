@@ -1,54 +1,29 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -58,8 +33,6 @@ import id.co.qualitas.qubes.adapter.aspp.CollectionGiroAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionKreditAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
-import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -70,12 +43,8 @@ import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.printer.AbstractConnector;
-import id.co.qualitas.qubes.printer.BluetoothLeConnector;
-import id.co.qualitas.qubes.printer.BluetoothSppConnector;
 import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.printer.ConnectorAdapter;
-import id.co.qualitas.qubes.printer.NetworkConnector;
-import id.co.qualitas.qubes.printer.UsbDeviceConnector;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionFormActivity extends BaseActivity {
@@ -142,6 +111,7 @@ public class CollectionFormActivity extends BaseActivity {
                     startActivity(intent);
                 }
             } else {
+                validate();
                 onBackPressed();
             }
         });
@@ -153,6 +123,53 @@ public class CollectionFormActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(CollectionFormActivity.this);
         });
+    }
+
+    private void validate() {
+        List<Material> cashList = new ArrayList<>();
+        List<Material> tfList = new ArrayList<>();
+        List<Material> giroList = new ArrayList<>();
+        List<Material> chequeList = new ArrayList<>();
+        List<Material> lainList = new ArrayList<>();
+
+        for (Material material: mListCash){
+            if(material.isChecked() && material.getAmountPaid() != 0){
+                cashList.add(material);
+            }
+        }
+
+        for(CollectionTransfer collection : mListTransfer) {
+            for (Material material : collection.getMaterialList()) {
+                if (material.isChecked() && material.getAmountPaid() != 0) {
+                    tfList.add(material);
+                }
+            }
+            collection.setCheckedMaterialList(tfList);
+        }
+
+        for(CollectionGiro collection : mListGiro) {
+            for (Material material : collection.getMaterialList()) {
+                if (material.isChecked() && material.getAmountPaid() != 0) {
+                    giroList.add(material);
+                }
+            }
+            collection.setCheckedMaterialList(giroList);
+        }
+
+        for(CollectionCheque collection : mListCheque) {
+            for (Material material : collection.getMaterialList()) {
+                if (material.isChecked() && material.getAmountPaid() != 0) {
+                    chequeList.add(material);
+                }
+            }
+            collection.setCheckedMaterialList(chequeList);
+        }
+
+        for (Material material: mListLain){
+            if(material.isChecked() && material.getAmountPaid() != 0){
+                lainList.add(material);
+            }
+        }
     }
 
     private void setCashView() {
@@ -218,13 +235,30 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddTransfer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionTransfer detail = new CollectionTransfer(null, mListMaster);
-                mListTransfer.add(detail);
-
                 new CountDownTimer(1000, 1000) {
 
                     public void onTick(long millisUntilFinished) {
                         progress.show();
+                        List<Material> newList = new ArrayList<>();
+                        for (Material p : mListMaster) {
+                            Material cloneMat = null;
+                            try {
+                                cloneMat = (Material) p.clone();
+                                cloneMat.setAmountPaid(0);
+                                cloneMat.setChecked(false);
+                            } catch (CloneNotSupportedException e) {
+                                e.printStackTrace();
+                            }
+                            newList.add(cloneMat);
+                        }
+
+                        CollectionTransfer colLTf = new CollectionTransfer();
+                        colLTf.setTglTransfer(null);
+                        colLTf.setTotalPayment(0);
+                        colLTf.setLeft(0);
+                        colLTf.setMaterialList(newList);
+                        mListTransfer.add(colLTf);
+
                         mAdapterTransfer.notifyDataSetChanged();
                     }
 
@@ -250,13 +284,34 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddGiro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionGiro detail = new CollectionGiro(null, mListMaster);
-                mListGiro.add(detail);
-
                 new CountDownTimer(1000, 1000) {
-
                     public void onTick(long millisUntilFinished) {
                         progress.show();
+                        List<Material> newList = new ArrayList<>();
+                        for (Material p : mListMaster) {
+                            Material cloneMat = null;
+                            try {
+                                cloneMat = (Material) p.clone();
+                                cloneMat.setAmountPaid(0);
+                                cloneMat.setChecked(false);
+                            } catch (CloneNotSupportedException e) {
+                                e.printStackTrace();
+                            }
+                            newList.add(cloneMat);
+                        }
+
+                        CollectionGiro colLTf = new CollectionGiro();
+                        colLTf.setTglGiro(null);
+                        colLTf.setTglCair(null);
+                        colLTf.setIdBankCust(null);
+                        colLTf.setBankCust(null);
+                        colLTf.setIdBankASPP(null);
+                        colLTf.setBankNameASPP(null);
+                        colLTf.setTotalPayment(0);
+                        colLTf.setLeft(0);
+                        colLTf.setMaterialList(newList);
+                        mListGiro.add(colLTf);
+
                         mAdapterGiro.notifyDataSetChanged();
                     }
 
@@ -282,13 +337,34 @@ public class CollectionFormActivity extends BaseActivity {
         btnAddCheque.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CollectionCheque detail = new CollectionCheque(null, mListMaster);
-                mListCheque.add(detail);
-
                 new CountDownTimer(1000, 1000) {
-
                     public void onTick(long millisUntilFinished) {
                         progress.show();
+                        List<Material> newList = new ArrayList<>();
+                        for (Material p : mListMaster) {
+                            Material cloneMat = null;
+                            try {
+                                cloneMat = (Material) p.clone();
+                                cloneMat.setAmountPaid(0);
+                                cloneMat.setChecked(false);
+                            } catch (CloneNotSupportedException e) {
+                                e.printStackTrace();
+                            }
+                            newList.add(cloneMat);
+                        }
+
+                        CollectionCheque colLTf = new CollectionCheque();
+                        colLTf.setTglCheque(null);
+                        colLTf.setTglCair(null);
+                        colLTf.setIdBankCust(null);
+                        colLTf.setBankCust(null);
+                        colLTf.setIdBankASPP(null);
+                        colLTf.setBankNameASPP(null);
+                        colLTf.setTotalPayment(0);
+                        colLTf.setLeft(0);
+                        colLTf.setMaterialList(newList);
+                        mListCheque.add(colLTf);
+
                         mAdapterCheque.notifyDataSetChanged();
                     }
 

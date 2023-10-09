@@ -685,5 +685,5 @@
     <string name="camera_and_storage_permission_not_granted">Camera app cannot do anything without camera and storage permission.</string>
     <string name="picture_taken">Picture taken</string>
     <string name="failedGetData">Gagal mengambil data. Silahkan coba lagi</string>
-
+    <string name="noConnection">No connections are available</string>
 </resources>

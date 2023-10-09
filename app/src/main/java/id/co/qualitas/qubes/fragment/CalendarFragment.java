@@ -100,7 +100,7 @@ public class CalendarFragment extends BaseFragment {
            getActivity().setTitle(getString(R.string.navmenu1));
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(false);
 
-        init();
+        initProgress();
         initFragment();
         initialize();
 

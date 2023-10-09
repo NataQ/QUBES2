@@ -135,7 +135,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
 //        ((MainActivityDrawer) getActivity()).enableBackToolbar(true);
 
         initialize();
-        init();
+        initProgress();
         initFragment();
 
         rootView.setFocusableInTouchMode(true);

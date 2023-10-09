@@ -36,7 +36,7 @@ public class ImageDetailFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.navmenu11));
         ((MainActivityDrawer)getActivity()).enableBackToolbar(true);
-        init();
+        initProgress();
 
         initialize();
 

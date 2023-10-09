@@ -102,7 +102,7 @@ public class CreateNewReturnFragment extends BaseFragment {
         ((MainActivityDrawer)getActivity()).enableBackToolbar(true);
 
         initialize();
-        init();
+        initProgress();
 
         if(outletResponse != null){
             customerName.setText(Helper.validateResponseEmpty(outletResponse.getOutletName()));

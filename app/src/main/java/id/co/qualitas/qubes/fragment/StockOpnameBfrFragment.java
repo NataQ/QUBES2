@@ -71,7 +71,7 @@ public class StockOpnameBfrFragment extends BaseFragment implements SearchView.O
         (getActivity()).setTitle(getString(R.string.navmenu5b));
         initFragment();
         initialize();
-        init();
+        initProgress();
         setTodayDate();
 
         Helper.setItemParam(Constants.VIEW_STORE_CHECK, Constants.DONE_VIEW_STORE_CHECK);

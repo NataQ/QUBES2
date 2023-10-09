@@ -51,7 +51,7 @@ public class OrderHeaderFragment extends BaseFragment {
 
         initialize();
         initFragment();
-        init();
+        initProgress();
 
         btnNewOrder.setOnClickListener(new View.OnClickListener() {
             @Override

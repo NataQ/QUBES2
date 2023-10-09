@@ -1,33 +1,36 @@
 package id.co.qualitas.qubes.model;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.List;
 
-public class CollectionGiro implements Serializable {
+public class CollectionGiro implements Serializable, Cloneable {
     public String customerId;
     public String date;
     public double omzet;
     public String noGiro;
     public String tglCair;
     public String tglGiro;
-    public String idBankName;
-    public String bankName;
+    public String idBankASPP;
+    public String bankNameASPP;
     public String idBankCust;
     public String bankCust;
     public double totalPayment;
     public double left;
     public List<Material> materialList;
+    public List<Material> checkedMaterialList;
     private boolean isSync;
 
     public CollectionGiro() {
     }
 
-    public CollectionGiro(String noGiro, String tglCair, String tglGiro, String idBankName, String bankName, String idBankCust, String bankCust, List<Material> materialList) {
+    public CollectionGiro(String noGiro, String tglCair, String tglGiro, String idBankASPP, String bankNameASPP, String idBankCust, String bankCust, List<Material> materialList) {
         this.noGiro = noGiro;
         this.tglCair = tglCair;
         this.tglGiro = tglGiro;
-        this.idBankName = idBankName;
-        this.bankName = bankName;
+        this.idBankASPP = idBankASPP;
+        this.bankNameASPP = bankNameASPP;
         this.idBankCust = idBankCust;
         this.bankCust = bankCust;
         this.materialList = materialList;
@@ -36,6 +39,14 @@ public class CollectionGiro implements Serializable {
     public CollectionGiro(String noGiro, List<Material> materialList) {
         this.noGiro = noGiro;
         this.materialList = materialList;
+    }
+
+    public List<Material> getCheckedMaterialList() {
+        return checkedMaterialList;
+    }
+
+    public void setCheckedMaterialList(List<Material> checkedMaterialList) {
+        this.checkedMaterialList = checkedMaterialList;
     }
 
     public String getCustomerId() {
@@ -86,20 +97,20 @@ public class CollectionGiro implements Serializable {
         this.tglCair = tglCair;
     }
 
-    public String getIdBankName() {
-        return idBankName;
+    public String getIdBankASPP() {
+        return idBankASPP;
     }
 
-    public void setIdBankName(String idBankName) {
-        this.idBankName = idBankName;
+    public void setIdBankASPP(String idBankASPP) {
+        this.idBankASPP = idBankASPP;
     }
 
-    public String getBankName() {
-        return bankName;
+    public String getBankNameASPP() {
+        return bankNameASPP;
     }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public void setBankNameASPP(String bankNameASPP) {
+        this.bankNameASPP = bankNameASPP;
     }
 
     public String getIdBankCust() {
@@ -148,5 +159,11 @@ public class CollectionGiro implements Serializable {
 
     public void setMaterialList(List<Material> materialList) {
         this.materialList = materialList;
+    }
+
+    @NonNull
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

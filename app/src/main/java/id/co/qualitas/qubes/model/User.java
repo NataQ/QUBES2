@@ -5,10 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by Foo on 11/29/2016.
- */
-
 public class User implements Serializable {
     @SerializedName("client")
     String idClient;
@@ -61,6 +57,192 @@ public class User implements Serializable {
     private String dateTimeNow;
 
     private String idPlant;
+
+    //aspp qubes
+//    private String username;
+//    private List<Group> listGroup;
+//    private List<Authority> listAuthority;
+    private String id;
+    //    private String nik;
+    private String fullname;
+    private String imei;
+    private String regis_id;
+    private String tipe;
+    private boolean ruteinap;
+    private String idsalesgroup;
+    private String salesgroupname;
+    private String iddriver;
+    private String drivername;
+    private String idposition;
+    private String userLogin;
+    private String positionname;
+    private String iddepo;
+    private String deponame;
+    private String idregion;
+    private String regionname;
+    private String token;
+    private float radius;
+    private int maxvisit;
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getIdposition() {
+        return idposition;
+    }
+
+    public void setIdposition(String idposition) {
+        this.idposition = idposition;
+    }
+
+    public int getMaxvisit() {
+        return maxvisit;
+    }
+
+    public void setMaxvisit(int maxvisit) {
+        this.maxvisit = maxvisit;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
+    }
+
+    public String getRegis_id() {
+        return regis_id;
+    }
+
+    public void setRegis_id(String regis_id) {
+        this.regis_id = regis_id;
+    }
+
+    public String getTipe() {
+        return tipe;
+    }
+
+    public void setTipe(String tipe) {
+        this.tipe = tipe;
+    }
+
+    public boolean isRuteinap() {
+        return ruteinap;
+    }
+
+    public void setRuteinap(boolean ruteinap) {
+        this.ruteinap = ruteinap;
+    }
+
+    public String getIdsalesgroup() {
+        return idsalesgroup;
+    }
+
+    public void setIdsalesgroup(String idsalesgroup) {
+        this.idsalesgroup = idsalesgroup;
+    }
+
+    public String getSalesgroupname() {
+        return salesgroupname;
+    }
+
+    public void setSalesgroupname(String salesgroupname) {
+        this.salesgroupname = salesgroupname;
+    }
+
+    public String getIddriver() {
+        return iddriver;
+    }
+
+    public void setIddriver(String iddriver) {
+        this.iddriver = iddriver;
+    }
+
+    public String getDrivername() {
+        return drivername;
+    }
+
+    public void setDrivername(String drivername) {
+        this.drivername = drivername;
+    }
+
+    public String getPositionname() {
+        return positionname;
+    }
+
+    public void setPositionname(String positionname) {
+        this.positionname = positionname;
+    }
+
+    public String getIddepo() {
+        return iddepo;
+    }
+
+    public void setIddepo(String iddepo) {
+        this.iddepo = iddepo;
+    }
+
+    public String getDeponame() {
+        return deponame;
+    }
+
+    public void setDeponame(String deponame) {
+        this.deponame = deponame;
+    }
+
+    public String getIdregion() {
+        return idregion;
+    }
+
+    public void setIdregion(String idregion) {
+        this.idregion = idregion;
+    }
+
+    public String getRegionname() {
+        return regionname;
+    }
+
+    public void setRegionname(String regionname) {
+        this.regionname = regionname;
+    }
 
     public String getIdPlant() {
         return idPlant;

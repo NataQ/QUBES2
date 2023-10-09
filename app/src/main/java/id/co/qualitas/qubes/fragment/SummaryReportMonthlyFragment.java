@@ -90,7 +90,7 @@ public class SummaryReportMonthlyFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_summary_report_tab_2, container, false);
 
-        init();
+        initProgress();
         initialize();
 
         btnMonthly.setOnClickListener(new View.OnClickListener() {
@@ -583,14 +583,6 @@ public class SummaryReportMonthlyFragment extends BaseFragment {
             setDataSales(txtBalanceEADaily, "EA", balanceEAString, chartDailyEA);
             setDataSales(txtBalanceECDaily, "EC", balanceECString, chartDailyEC);
         }
-    }
-
-    private void setFormatSeparator() {
-        otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        otherSymbols.setDecimalSeparator('.');
-        otherSymbols.setGroupingSeparator(',');
-        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
-        format.setDecimalSeparatorAlwaysShown(false);
     }
 
     private void setDataSales(TextView title, String type, String balance, BarChart chart) {

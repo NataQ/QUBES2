@@ -40,7 +40,7 @@ public class SummaryFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.summary));
 
-        init();
+        initProgress();
         initialize();
         initData();
 

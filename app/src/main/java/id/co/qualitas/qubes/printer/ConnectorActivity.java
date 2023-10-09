@@ -16,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.provider.Contacts;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -30,24 +29,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.datecs.printer.Printer;
 import com.datecs.printer.ProtocolAdapter;
 
-import org.checkerframework.checker.units.qual.C;
-
-import java.io.Console;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
-import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ConnectorAdapter.OnItemClickListener {

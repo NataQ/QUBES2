@@ -279,7 +279,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         reasonList.addAll(Helper.getDataReason());
 
         String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getMaterialId()) ? detail.getMaterialId() : null;
+        String productId = !Helper.isNullOrEmpty(detail.getMaterialid()) ? detail.getMaterialid() : null;
         holder.edtProduct.setText(productId + " - " + productName);
 
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {

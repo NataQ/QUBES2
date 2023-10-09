@@ -50,7 +50,7 @@ public class ReturnSalesDetailFragment extends BaseFragment {
     }
 
     private void initialize() {
-        init();
+        initProgress();
         db = new DatabaseHelper(getContext());
 //        btnBack = rootView.findViewById(R.id.btnBack);
         txtHeader = rootView.findViewById(R.id.txtHeader);

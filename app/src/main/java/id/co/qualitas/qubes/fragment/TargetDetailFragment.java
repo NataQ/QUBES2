@@ -39,7 +39,7 @@ public class TargetDetailFragment extends BaseFragment {
 //        ((MainActivityDrawer)getActivity()).setTitle(getString(R.string.navmenu2z));
 //        ((MainActivityDrawer)getActivity()).enableBackToolbar(true);
 
-        init();
+        initProgress();
         initialize();
 
         setData();

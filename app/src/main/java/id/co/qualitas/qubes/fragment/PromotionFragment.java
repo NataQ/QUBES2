@@ -97,7 +97,7 @@ public class PromotionFragment extends BaseFragment implements SearchView.OnQuer
         rootView = inflater.inflate(R.layout.fragment_all_promotion, container, false);
 
         initialize();
-        init();
+        initProgress();
 
         getDataAll();
 

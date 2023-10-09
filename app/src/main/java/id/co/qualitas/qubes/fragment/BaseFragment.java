@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.SpannableString;
@@ -86,10 +85,12 @@ import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.AddNewOutletListAdapter;
 import id.co.qualitas.qubes.adapter.ShowPriceAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.database.SecondDatabaseHelper;
 import id.co.qualitas.qubes.helper.CalendarUtils;
@@ -113,6 +114,7 @@ import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
 import id.co.qualitas.qubes.model.VisitOrderRequest;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class BaseFragment extends Fragment implements SearchView.OnQueryTextListener {
     public int flagCode = 0, flagName = 0;
@@ -163,7 +165,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     final protected static int DIALOG_VIEW_PRICE = 22;
     final protected static int DIALOG_FILTER = 23;
 
-    protected static DatabaseHelper database;
+    protected static Database database;
     protected TextView txtViewEmpty, txtTitle;
     private SignaturePad mSignaturePad;
 
@@ -284,10 +286,93 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         initFragment();
-        init();
+        Helper.trustSSL();
+        initProgress();
+        setFormatSeparator();
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    public void initFragment() {
+        database = new Database(getContext());
+        if (SessionManagerQubes.getUserProfile() != null) {
+            Helper.setItemParam(Constants.USER_DETAIL, SessionManagerQubes.getUserProfile());
+            user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+            if (user == null) {
+                setToast("Session telah habis. Silahkan login ulang.");
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            if (SessionManagerQubes.getUrl() != null) {
+                Helper.setItemParam(Constants.URL, SessionManagerQubes.getUrl());
+            }
+        } else {
+            setToast("Session telah habis. Silahkan login ulang.");
+            clearAllSession();
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+        /*db = new DatabaseHelper(getContext());
+        sdb = new SecondDatabaseHelper(getContext());
+
+        attendances = db.getAttendance();
+        int ATZchecked = 0;
+        int ATchecked = 0;
+        try {
+            ATZchecked = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME_ZONE);
+            ATchecked = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        SecureDate.getInstance().initAttend(attendances, ATZchecked, ATchecked);
+        curDate = SecureDate.getInstance().getDate();
+        if (curDate == null) {
+            PARAM = 5;
+            new RequestUrl().execute();
+        }
+        user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        if (user != null) {
+            if (user.getIdEmployee() != null) {
+                idEmployee = user.getIdEmployee();
+            }
+        }*/
+    }
+
+    public void initProgress() {
+        progress = new ProgressDialog(getActivity());
+        progress.setMessage(Constants.STR_WAIT);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setCancelable(false);
+        progress.setCanceledOnTouchOutside(false);
+    }
+
+    private void clearAllSession() {
+        SessionManagerQubes.clearLoginSession();
+        SessionManagerQubes.clearStockRequestHeaderSession();
+        SessionManagerQubes.clearInvoiceHeaderSession();
+
+        database.deleteStockRequestHeader();
+        database.deleteStockRequestDetail();
+        database.deleteInvoiceHeader();
+        database.deleteInvoiceDetail();
+        database.deleteCustomer();
+        database.deleteNoo();
+        database.deleteMasterBank();
+        database.deleteMasterReason();
+    }
+
+    public void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 
     @SuppressLint("InflateParams")
@@ -434,7 +519,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 alertDialog.show();
                 break;
             case DIALOG_ATTACH_PHOTO:
-                init();
+                initProgress();
                 db = new DatabaseHelper(getContext());
                 initDialog(R.layout.custom_dialog_photo_new);
 
@@ -950,7 +1035,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setMaterialId(edtMaterialCode.getText().toString());
+                            material.setMaterialid(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -1032,7 +1117,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 alertDialog.show();
                 break;
             case DIALOG_ACHIEVEMENT:
-                init();
+                initProgress();
                 initDialog(R.layout.custom_dialog_achievement);
 
                 btnSave = alertDialog.findViewById(R.id.btnSave);
@@ -2893,15 +2978,6 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         }
     }
 
-    public void init() {
-        progress = new ProgressDialog(getActivity());
-        progress.setMessage(Constants.STR_WAIT);
-        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progress.setIndeterminate(true);
-        progress.setCancelable(false);
-        progress.setCanceledOnTouchOutside(false);
-    }
-
     public static Bitmap scaleDown(Bitmap realImage, float maxImageSize, boolean filter) {
         float ratio = Math.min(
                 maxImageSize / realImage.getWidth(),
@@ -2927,35 +3003,6 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void initFragment() {
-        db = new DatabaseHelper(getContext());
-        sdb = new SecondDatabaseHelper(getContext());
-
-        attendances = db.getAttendance();
-        int ATZchecked = 0;
-        int ATchecked = 0;
-        try {
-            ATZchecked = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME_ZONE);
-            ATchecked = Settings.Global.getInt(getContext().getContentResolver(), Settings.Global.AUTO_TIME);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        SecureDate.getInstance().initAttend(attendances, ATZchecked, ATchecked);
-        curDate = SecureDate.getInstance().getDate();
-        if (curDate == null) {
-            PARAM = 5;
-            new RequestUrl().execute();
-        }
-        user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-        if (user != null) {
-            if (user.getIdEmployee() != null) {
-                idEmployee = user.getIdEmployee();
-            }
-        }
-
-    }
-
     private class LoadMaterial extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -2976,7 +3023,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -2999,7 +3046,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -3021,7 +3068,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialId());
+                        listMaterialCode.add(data.getMaterialid());
                     }
                 }
 
@@ -3039,7 +3086,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
             super.onPreExecute();
 
             /*32019 beta update*/
-            init();
+            initProgress();
             progress.show();
 
             /**/

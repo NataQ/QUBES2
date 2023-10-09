@@ -37,7 +37,6 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class StockRequestAddActivity extends BaseActivity {
     private StockRequestAddAdapter mAdapter;
@@ -109,7 +108,7 @@ public class StockRequestAddActivity extends BaseActivity {
     private void setSaveData() {
         StockRequest header = new StockRequest();
         String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
-        header.setRequestDate(date);
+        header.setReqdate(date);
         header.setStatus(Constants.STATUS_PENDING);
         header.setEnabled(true);
         header.setSync(false);
@@ -304,7 +303,7 @@ public class StockRequestAddActivity extends BaseActivity {
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {
-                if (param.getMaterialId().equals(param1.getMaterialId())) {
+                if (param.getMaterialid().equals(param1.getMaterialid())) {
                     exist++;
                 }
             }

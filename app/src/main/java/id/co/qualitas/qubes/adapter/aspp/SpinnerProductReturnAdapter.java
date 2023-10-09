@@ -55,7 +55,7 @@ public class SpinnerProductReturnAdapter extends RecyclerView.Adapter<SpinnerPro
                 } else {
                     List<Material> filteredList = new ArrayList<>();
                     for (Material row : mList) {
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase()) || row.getMaterialId().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase()) || row.getMaterialid().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -107,7 +107,7 @@ public class SpinnerProductReturnAdapter extends RecyclerView.Adapter<SpinnerPro
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.text.setText(detail.getMaterialId() + " - " + detail.getMaterialCode());
+        holder.text.setText(detail.getMaterialid() + " - " + detail.getMaterialCode());
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);
