@@ -91,7 +91,7 @@ public class VisitOrderDetailResponse implements Serializable {
     private String top_sap;
 
     @SerializedName("listUom")
-    private List<UnitOfMeasure> listUom;
+    private List<Uom> listUom;
 
     @SerializedName("jenisJualandTop")
     private List<JenisJualandTop> jenisJualandTop;
@@ -386,11 +386,11 @@ public class VisitOrderDetailResponse implements Serializable {
         this.posQ2Type = posQ2Type;
     }
 
-    public List<UnitOfMeasure> getListUom() {
+    public List<Uom> getListUom() {
         return listUom;
     }
 
-    public void setListUom(List<UnitOfMeasure> listUom) {
+    public void setListUom(List<Uom> listUom) {
         this.listUom = listUom;
     }
 

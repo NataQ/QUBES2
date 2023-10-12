@@ -4,14 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 public class User implements Serializable {
     @SerializedName("client")
     String idClient;
     @SerializedName("idEmployee")
     String idEmployee;
-    @SerializedName("nik")
-    String nik;
     @SerializedName("fullName")
     String fullName;
     @SerializedName("division")
@@ -20,8 +19,6 @@ public class User implements Serializable {
     String position;
     @SerializedName("idSupervisor")
     String idSupervisor;
-    @SerializedName("username")
-    String username;
     @SerializedName("photoString")
     String photoString;
     @SerializedName("idDivision")
@@ -34,376 +31,50 @@ public class User implements Serializable {
     String[] listOutlet;
     @SerializedName("idOutlet")
     String idOutlet;
-
     @SerializedName("listReasonReturn")
     private ArrayList<Reason> reasonArrayList;
-
     int reason = 2;
-
     String dateString;
-
     String supervisorNik;
     String supervisorName;
     String supervisorPosition;
-
     @SerializedName("currentDate")
     private String currentDate;
-
     private String idSalesman;
-
     private String id_sales_office;
-
     private Long mElapsedRealTime;
     private String dateTimeNow;
-
     private String idPlant;
 
-    //aspp qubes
-//    private String username;
+    //aspp qubes=========================================================================================
+    private String username;
 //    private List<Group> listGroup;
 //    private List<Authority> listAuthority;
     private String id;
-    //    private String nik;
-    private String fullname;
+    private String nik;
+    private String full_name;
     private String imei;
     private String regis_id;
     private String tipe;
-    private boolean ruteinap;
-    private String idsalesgroup;
-    private String salesgroupname;
-    private String iddriver;
-    private String drivername;
-    private String idposition;
+    private int rute_inap;
+    private String id_sales_group;
+    private String sales_group_name;
+    private String id_driver;
+    private String driver_name;
+    private int id_position;
     private String userLogin;
-    private String positionname;
-    private String iddepo;
-    private String deponame;
-    private String idregion;
-    private String regionname;
+    private String position_name;
     private String token;
     private float radius;
-    private int maxvisit;
+    private int max_visit;
+    private List<DepoRegion> depoRegionList;
 
-    public String getFullname() {
-        return fullname;
+    public List<DepoRegion> getDepoRegionList() {
+        return depoRegionList;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getIdposition() {
-        return idposition;
-    }
-
-    public void setIdposition(String idposition) {
-        this.idposition = idposition;
-    }
-
-    public int getMaxvisit() {
-        return maxvisit;
-    }
-
-    public void setMaxvisit(int maxvisit) {
-        this.maxvisit = maxvisit;
-    }
-
-    public String getUserLogin() {
-        return userLogin;
-    }
-
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
-    }
-
-    public float getRadius() {
-        return radius;
-    }
-
-    public void setRadius(float radius) {
-        this.radius = radius;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getImei() {
-        return imei;
-    }
-
-    public void setImei(String imei) {
-        this.imei = imei;
-    }
-
-    public String getRegis_id() {
-        return regis_id;
-    }
-
-    public void setRegis_id(String regis_id) {
-        this.regis_id = regis_id;
-    }
-
-    public String getTipe() {
-        return tipe;
-    }
-
-    public void setTipe(String tipe) {
-        this.tipe = tipe;
-    }
-
-    public boolean isRuteinap() {
-        return ruteinap;
-    }
-
-    public void setRuteinap(boolean ruteinap) {
-        this.ruteinap = ruteinap;
-    }
-
-    public String getIdsalesgroup() {
-        return idsalesgroup;
-    }
-
-    public void setIdsalesgroup(String idsalesgroup) {
-        this.idsalesgroup = idsalesgroup;
-    }
-
-    public String getSalesgroupname() {
-        return salesgroupname;
-    }
-
-    public void setSalesgroupname(String salesgroupname) {
-        this.salesgroupname = salesgroupname;
-    }
-
-    public String getIddriver() {
-        return iddriver;
-    }
-
-    public void setIddriver(String iddriver) {
-        this.iddriver = iddriver;
-    }
-
-    public String getDrivername() {
-        return drivername;
-    }
-
-    public void setDrivername(String drivername) {
-        this.drivername = drivername;
-    }
-
-    public String getPositionname() {
-        return positionname;
-    }
-
-    public void setPositionname(String positionname) {
-        this.positionname = positionname;
-    }
-
-    public String getIddepo() {
-        return iddepo;
-    }
-
-    public void setIddepo(String iddepo) {
-        this.iddepo = iddepo;
-    }
-
-    public String getDeponame() {
-        return deponame;
-    }
-
-    public void setDeponame(String deponame) {
-        this.deponame = deponame;
-    }
-
-    public String getIdregion() {
-        return idregion;
-    }
-
-    public void setIdregion(String idregion) {
-        this.idregion = idregion;
-    }
-
-    public String getRegionname() {
-        return regionname;
-    }
-
-    public void setRegionname(String regionname) {
-        this.regionname = regionname;
-    }
-
-    public String getIdPlant() {
-        return idPlant;
-    }
-
-    public void setIdPlant(String idPlant) {
-        this.idPlant = idPlant;
-    }
-
-    public AdditionalInfo getAdditionalInfo() {
-        return additionalInfo;
-    }
-
-    public void setAdditionalInfo(AdditionalInfo additionalInfo) {
-        this.additionalInfo = additionalInfo;
-    }
-
-    private AdditionalInfo additionalInfo;
-
-    public String getDateTimeNow() {
-        return dateTimeNow;
-    }
-
-    public void setDateTimeNow(String dateTimeNow) {
-        this.dateTimeNow = dateTimeNow;
-    }
-
-    private ArrayList<CreditInfoResponse> listCredit;
-
-    private ArrayList<MaterialResponse> listMaterial;
-
-    public Long getmElapsedRealTime() {
-        return mElapsedRealTime;
-    }
-
-    public void setmElapsedRealTime(Long mElapsedRealTime) {
-        this.mElapsedRealTime = mElapsedRealTime;
-    }
-
-    private ArrayList<MaterialResponse> listStoreCheck;
-
-    private ArrayList<VisitOrderDetailResponse> listOrderDetail;
-
-    private ArrayList<VisitOrderHeader> listOrderHeaderCanvas;
-
-    private ArrayList<VisitOrderHeader> listOrderHeaderTaking;
-
-    private VisitOrderHeaderDropDownResponse listSalesAndKlasifikasi;
-
-    private ArrayList<ReturnResponse> listReturnHeader;
-
-    public ArrayList<ReturnResponse> getListReturnHeader() {
-        return listReturnHeader;
-    }
-
-    public void setListReturnHeader(ArrayList<ReturnResponse> listReturnHeader) {
-        this.listReturnHeader = listReturnHeader;
-    }
-
-    public ArrayList<VisitOrderHeader> getListOrderHeaderCanvas() {
-        return listOrderHeaderCanvas;
-    }
-
-    public void setListOrderHeaderCanvas(ArrayList<VisitOrderHeader> listOrderHeaderCanvas) {
-        this.listOrderHeaderCanvas = listOrderHeaderCanvas;
-    }
-
-    public ArrayList<VisitOrderHeader> getListOrderHeaderTaking() {
-        return listOrderHeaderTaking;
-    }
-
-    public void setListOrderHeaderTaking(ArrayList<VisitOrderHeader> listOrderHeaderTaking) {
-        this.listOrderHeaderTaking = listOrderHeaderTaking;
-    }
-
-    public VisitOrderHeaderDropDownResponse getListSalesAndKlasfikasi() {
-        return listSalesAndKlasifikasi;
-    }
-
-    public void setListSalesAndKlasfikasi(VisitOrderHeaderDropDownResponse listSalesAndKlasfikasi) {
-        this.listSalesAndKlasifikasi = listSalesAndKlasfikasi;
-    }
-
-    public ArrayList<VisitOrderDetailResponse> getListOrderDetail() {
-        return listOrderDetail;
-    }
-
-    public void setListOrderDetail(ArrayList<VisitOrderDetailResponse> listOrderDetail) {
-        this.listOrderDetail = listOrderDetail;
-    }
-
-    public ArrayList<CreditInfoResponse> getListCredit() {
-        return listCredit;
-    }
-
-    public void setListCredit(ArrayList<CreditInfoResponse> listCredit) {
-        this.listCredit = listCredit;
-    }
-
-    public ArrayList<MaterialResponse> getListStoreCheck() {
-        return listStoreCheck;
-    }
-
-    public void setListStoreCheck(ArrayList<MaterialResponse> listStoreCheck) {
-        this.listStoreCheck = listStoreCheck;
-    }
-
-    public ArrayList<MaterialResponse> getListMaterial() {
-        return listMaterial;
-    }
-
-    public void setListMaterial(ArrayList<MaterialResponse> listMaterial) {
-        this.listMaterial = listMaterial;
-    }
-
-    public String getId_sales_office() {
-        return id_sales_office;
-    }
-
-    public void setId_sales_office(String id_sales_office) {
-        this.id_sales_office = id_sales_office;
-    }
-
-    public String getIdSalesman() {
-        return idSalesman;
-    }
-
-    public void setIdSalesman(String idSalesman) {
-        this.idSalesman = idSalesman;
-    }
-
-    public String getSupervisorNik() {
-        return supervisorNik;
-    }
-
-    public void setSupervisorNik(String supervisorNik) {
-        this.supervisorNik = supervisorNik;
-    }
-
-    public String getSupervisorName() {
-        return supervisorName;
-    }
-
-    public void setSupervisorName(String supervisorName) {
-        this.supervisorName = supervisorName;
-    }
-
-    public String getSupervisorPosition() {
-        return supervisorPosition;
-    }
-
-    public void setSupervisorPosition(String supervisorPosition) {
-        this.supervisorPosition = supervisorPosition;
-    }
-
-    public String getIdOutlet() {
-        return idOutlet;
-    }
-
-    public void setIdOutlet(String idOutlet) {
-        this.idOutlet = idOutlet;
+    public void setDepoRegionList(List<DepoRegion> depoRegionList) {
+        this.depoRegionList = depoRegionList;
     }
 
     public String getIdClient() {
@@ -420,14 +91,6 @@ public class User implements Serializable {
 
     public void setIdEmployee(String idEmployee) {
         this.idEmployee = idEmployee;
-    }
-
-    public String getNik() {
-        return nik;
-    }
-
-    public void setNik(String nik) {
-        this.nik = nik;
     }
 
     public String getFullName() {
@@ -460,14 +123,6 @@ public class User implements Serializable {
 
     public void setIdSupervisor(String idSupervisor) {
         this.idSupervisor = idSupervisor;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPhotoString() {
@@ -510,6 +165,22 @@ public class User implements Serializable {
         this.listOutlet = listOutlet;
     }
 
+    public String getIdOutlet() {
+        return idOutlet;
+    }
+
+    public void setIdOutlet(String idOutlet) {
+        this.idOutlet = idOutlet;
+    }
+
+    public ArrayList<Reason> getReasonArrayList() {
+        return reasonArrayList;
+    }
+
+    public void setReasonArrayList(ArrayList<Reason> reasonArrayList) {
+        this.reasonArrayList = reasonArrayList;
+    }
+
     public int getReason() {
         return reason;
     }
@@ -526,12 +197,28 @@ public class User implements Serializable {
         this.dateString = dateString;
     }
 
-    public ArrayList<Reason> getReasonArrayList() {
-        return reasonArrayList;
+    public String getSupervisorNik() {
+        return supervisorNik;
     }
 
-    public void setReasonArrayList(ArrayList<Reason> reasonArrayList) {
-        this.reasonArrayList = reasonArrayList;
+    public void setSupervisorNik(String supervisorNik) {
+        this.supervisorNik = supervisorNik;
+    }
+
+    public String getSupervisorName() {
+        return supervisorName;
+    }
+
+    public void setSupervisorName(String supervisorName) {
+        this.supervisorName = supervisorName;
+    }
+
+    public String getSupervisorPosition() {
+        return supervisorPosition;
+    }
+
+    public void setSupervisorPosition(String supervisorPosition) {
+        this.supervisorPosition = supervisorPosition;
     }
 
     public String getCurrentDate() {
@@ -540,5 +227,189 @@ public class User implements Serializable {
 
     public void setCurrentDate(String currentDate) {
         this.currentDate = currentDate;
+    }
+
+    public String getIdSalesman() {
+        return idSalesman;
+    }
+
+    public void setIdSalesman(String idSalesman) {
+        this.idSalesman = idSalesman;
+    }
+
+    public String getId_sales_office() {
+        return id_sales_office;
+    }
+
+    public void setId_sales_office(String id_sales_office) {
+        this.id_sales_office = id_sales_office;
+    }
+
+    public Long getmElapsedRealTime() {
+        return mElapsedRealTime;
+    }
+
+    public void setmElapsedRealTime(Long mElapsedRealTime) {
+        this.mElapsedRealTime = mElapsedRealTime;
+    }
+
+    public String getDateTimeNow() {
+        return dateTimeNow;
+    }
+
+    public void setDateTimeNow(String dateTimeNow) {
+        this.dateTimeNow = dateTimeNow;
+    }
+
+    public String getIdPlant() {
+        return idPlant;
+    }
+
+    public void setIdPlant(String idPlant) {
+        this.idPlant = idPlant;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNik() {
+        return nik;
+    }
+
+    public void setNik(String nik) {
+        this.nik = nik;
+    }
+
+    public String getFull_name() {
+        return full_name;
+    }
+
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
+    }
+
+    public String getImei() {
+        return imei;
+    }
+
+    public void setImei(String imei) {
+        this.imei = imei;
+    }
+
+    public String getRegis_id() {
+        return regis_id;
+    }
+
+    public void setRegis_id(String regis_id) {
+        this.regis_id = regis_id;
+    }
+
+    public String getTipe() {
+        return tipe;
+    }
+
+    public void setTipe(String tipe) {
+        this.tipe = tipe;
+    }
+
+    public int getRute_inap() {
+        return rute_inap;
+    }
+
+    public void setRute_inap(int rute_inap) {
+        this.rute_inap = rute_inap;
+    }
+
+    public String getId_sales_group() {
+        return id_sales_group;
+    }
+
+    public void setId_sales_group(String id_sales_group) {
+        this.id_sales_group = id_sales_group;
+    }
+
+    public String getSales_group_name() {
+        return sales_group_name;
+    }
+
+    public void setSales_group_name(String sales_group_name) {
+        this.sales_group_name = sales_group_name;
+    }
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
+    }
+
+    public String getDriver_name() {
+        return driver_name;
+    }
+
+    public void setDriver_name(String driver_name) {
+        this.driver_name = driver_name;
+    }
+
+    public int getId_position() {
+        return id_position;
+    }
+
+    public void setId_position(int id_position) {
+        this.id_position = id_position;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public String getPosition_name() {
+        return position_name;
+    }
+
+    public void setPosition_name(String position_name) {
+        this.position_name = position_name;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
+    public int getMax_visit() {
+        return max_visit;
+    }
+
+    public void setMax_visit(int max_visit) {
+        this.max_visit = max_visit;
     }
 }

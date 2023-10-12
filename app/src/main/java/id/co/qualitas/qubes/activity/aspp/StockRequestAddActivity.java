@@ -25,7 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -34,9 +36,11 @@ import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 
 public class StockRequestAddActivity extends BaseActivity {
     private StockRequestAddAdapter mAdapter;
@@ -50,6 +54,8 @@ public class StockRequestAddActivity extends BaseActivity {
     Date fromDate;
     String fromDateString, paramFromDate;
     Calendar todayDate;
+    private StockRequest headerRequest;
+    private boolean saveDataSuccess = false;
 
 
     @Override
@@ -100,20 +106,24 @@ public class StockRequestAddActivity extends BaseActivity {
         }
 
         if (param == 0) {
+            PARAM = 1;
             progress.show();
-            new AsyncLoading().execute();
+            new RequestUrl().execute();//1
         }
     }
 
-    private void setSaveData() {
-        StockRequest header = new StockRequest();
+    private void prepareData() {
+        headerRequest = new StockRequest();
         String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
-        header.setReqdate(date);
-        header.setStatus(Constants.STATUS_PENDING);
-        header.setEnabled(true);
-        header.setSync(false);
+        headerRequest.setReq_date(date);
+        headerRequest.setStatus(Constants.STATUS_PENDING);
+        headerRequest.setEnabled(1);
+        headerRequest.setSync(0);
+        headerRequest.setMaterialList(mList);
+    }
 
-        int idHeader = database.addStockRequestHeader(header, user.getUsername());
+    private void saveDataToDatabase() {
+        int idHeader = database.addStockRequestHeader(headerRequest, user.getUsername());
 
         for (Material param : mList) {
             database.addStockRequestDetail(param, String.valueOf(idHeader), user.getUsername());
@@ -295,15 +305,12 @@ public class StockRequestAddActivity extends BaseActivity {
     private List<Material> initDataMaterial() {
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
-        listMat.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
-        listMat.add(new Material("11030", "Redbull", 2000000, 2000000));
-        listMat.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
-
+        listMat.addAll(database.getAllMasterMaterial());
 
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {
-                if (param.getMaterialid().equals(param1.getMaterialid())) {
+                if (param.getId() == param1.getId()) {
                     exist++;
                 }
             }
@@ -363,18 +370,30 @@ public class StockRequestAddActivity extends BaseActivity {
         }
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
-
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected WSMessage doInBackground(Void... voids) {
             try {
-                setSaveData();
-                return true;
+                if (PARAM == 1) {
+                    prepareData();
+                    String URL_ = Constants.API_STOCK_REQUEST_INSERT;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    Map request = new HashMap();
+                    request.put("header", headerRequest);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                } else {
+                    saveDataToDatabase();
+                    saveDataSuccess = true;
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("stockRequestAdd", ex.getMessage());
                 }
-                return false;
+                if (PARAM == 2) {
+                    saveDataSuccess = false;
+                }
+                return null;
             }
         }
 
@@ -384,14 +403,28 @@ public class StockRequestAddActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
-            progress.dismiss();
-
-            if (result) {
-                setToast("Save Success");
-                onBackPressed();
+        protected void onPostExecute(WSMessage messageResponse) {
+            if (PARAM == 1) {
+                if (messageResponse != null) {
+                    if (messageResponse.getIdMessage() == 1) {
+                        PARAM = 2;
+                        new RequestUrl().execute();//2
+                    } else {
+                        progress.dismiss();
+                        setToast(getString(R.string.failedSaveData));
+                    }
+                } else {
+                    progress.dismiss();
+                    setToast(getString(R.string.failedSaveData));
+                }
             } else {
-                setToast("Save Failed");
+                progress.dismiss();
+                if (saveDataSuccess) {
+                    setToast("Stock Request Success");
+                    onBackPressed();
+                } else {
+                    setToast("Save Failed");
+                }
             }
         }
     }

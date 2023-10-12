@@ -14,13 +14,32 @@ public class StoreCheck {
     private String materialName;
     private double qty;
     private String uom;
-    private boolean isSync;
+    private int isSync;
 
-    public boolean isSync() {
+    private String groupname;
+    private int materialgroupid;
+
+    public String getGroupname() {
+        return groupname;
+    }
+
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+
+    public int getMaterialgroupid() {
+        return materialgroupid;
+    }
+
+    public void setMaterialgroupid(int materialgroupid) {
+        this.materialgroupid = materialgroupid;
+    }
+
+    public int isSync() {
         return isSync;
     }
 
-    public void setSync(boolean sync) {
+    public void setSync(int sync) {
         isSync = sync;
     }
 

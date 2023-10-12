@@ -8,7 +8,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.OutletNooFragment;
-import id.co.qualitas.qubes.fragment.aspp.OutletVisitFragment;
 import id.co.qualitas.qubes.model.Customer;
 
 public class OutletNooAdapter extends RecyclerView.Adapter<OutletNooAdapter.Holder> implements Filterable {
@@ -58,7 +56,7 @@ public class OutletNooAdapter extends RecyclerView.Adapter<OutletNooAdapter.Hold
                     for (Customer row : mList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -114,7 +112,7 @@ public class OutletNooAdapter extends RecyclerView.Adapter<OutletNooAdapter.Hold
         Customer detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
+        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
 //        holder.txtRoute.setText(detail.isRoute() ? "Route" : "Non Route");
 
         if (position == 1) {

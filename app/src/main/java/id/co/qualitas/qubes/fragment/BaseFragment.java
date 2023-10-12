@@ -62,6 +62,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
@@ -125,6 +126,8 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     private Button btnSubmit;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    protected SwipeRefreshLayout swipeLayout;
+    protected ProgressBar progressCircle;
 
     public View getRootView() {
         return rootView;
@@ -356,6 +359,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         SessionManagerQubes.clearLoginSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
+        SessionManagerQubes.clearRouteCustomerHeaderSession();
 
         database.deleteStockRequestHeader();
         database.deleteStockRequestDetail();
@@ -1035,7 +1039,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setMaterialid(edtMaterialCode.getText().toString());
+//                            material.setMaterialid(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -3023,7 +3027,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+//                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -3046,7 +3050,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+//                        listMaterialCode.add(data.getMaterialid());
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -3068,7 +3072,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+//                        listMaterialCode.add(data.getMaterialid());
                     }
                 }
 

@@ -13,8 +13,8 @@ public class OfflineLoginData implements Serializable {
 
     private String idSalesman;
     private List<MaterialResponse> listMaterial;
-    private List<UnitOfMeasure> listUom;
-    private List<UnitOfMeasure> listMasterUom;
+    private List<Uom> listUom;
+    private List<Uom> listMasterUom;
     private List<OutletResponse> listOutlet;
     private List<JenisJualandTop> listTop;
     private List<JenisJualandTop> listJenisJual;
@@ -77,11 +77,11 @@ public class OfflineLoginData implements Serializable {
         this.additionalInfo = additionalInfo;
     }
 
-    public List<UnitOfMeasure> getListMasterUom() {
+    public List<Uom> getListMasterUom() {
         return listMasterUom;
     }
 
-    public void setListMasterUom(List<UnitOfMeasure> listMasterUom) {
+    public void setListMasterUom(List<Uom> listMasterUom) {
         this.listMasterUom = listMasterUom;
     }
 
@@ -189,11 +189,11 @@ public class OfflineLoginData implements Serializable {
         this.listMaterial = listMaterial;
     }
 
-    public List<UnitOfMeasure> getListUOm() {
+    public List<Uom> getListUOm() {
         return listUom;
     }
 
-    public void setListUOm(List<UnitOfMeasure> listUOm) {
+    public void setListUOm(List<Uom> listUOm) {
         this.listUom = listUOm;
     }
 

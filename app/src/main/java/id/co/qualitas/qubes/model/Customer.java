@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class Customer {
     private String idHeader;
     private String idCustomer;
-    private String nameCustomer;
+    private String nama;
     private String address;
     private String phone;
     private double sisaCreditLimit;
@@ -27,10 +27,10 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String idCustomer, String nameCustomer, String namaPemilik, String address, String phone, double creditLimit, String noKtp, String noNpwp, boolean route, double latitude, double longitude, boolean isSync) {
+    public Customer(String idCustomer, String nama, String namaPemilik, String address, String phone, double creditLimit, String noKtp, String noNpwp, boolean route, double latitude, double longitude, boolean isSync) {
         this.idCustomer = idCustomer;
         this.namaPemilik = namaPemilik;
-        this.nameCustomer = nameCustomer;
+        this.nama = nama;
         this.address = address;
         this.phone = phone;
         this.creditLimit = creditLimit;
@@ -42,24 +42,24 @@ public class Customer {
         this.isSync = isSync;
     }
 
-    public Customer(String idCustomer, String nameCustomer, String address, boolean route, double latitude, double longitude) {
+    public Customer(String idCustomer, String nama, String address, boolean route, double latitude, double longitude) {
         this.idCustomer = idCustomer;
-        this.nameCustomer = nameCustomer;
+        this.nama = nama;
         this.address = address;
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public Customer(String idCustomer, String nameCustomer, String address, boolean route, LatLng position) {
+    public Customer(String idCustomer, String nama, String address, boolean route, LatLng position) {
         this.idCustomer = idCustomer;
-        this.nameCustomer = nameCustomer;
+        this.nama = nama;
         this.address = address;
         this.route = route;
         this.position = position;
     }
-    public Customer(String idCustomer, String nameCustomer, String address, boolean route, LatLng position, int status) {
+    public Customer(String idCustomer, String nama, String address, boolean route, LatLng position, int status) {
         this.idCustomer = idCustomer;
-        this.nameCustomer = nameCustomer;
+        this.nama = nama;
         this.address = address;
         this.route = route;
         this.position = position;
@@ -192,12 +192,12 @@ public class Customer {
         this.idCustomer = idCustomer;
     }
 
-    public String getNameCustomer() {
-        return nameCustomer;
+    public String getNama() {
+        return nama;
     }
 
-    public void setNameCustomer(String nameCustomer) {
-        this.nameCustomer = nameCustomer;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public String getAddress() {

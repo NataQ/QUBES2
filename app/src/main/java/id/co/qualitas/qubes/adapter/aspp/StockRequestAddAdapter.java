@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
@@ -125,13 +126,15 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
 
-        List<String> listSpinner = new ArrayList<>();
-        listSpinner.add("BTL");
-        listSpinner.add("SLOP");
-        listSpinner.add("KRT");
+        List<String> listSpinner = new Database(mContext).getUom(detail.getId());
+        if (listSpinner == null || listSpinner.size() == 0) {
+            listSpinner.add("BTL");
+            listSpinner.add("SLOP");
+            listSpinner.add("KRT");
+        }
 
-        String productName = !Helper.isNullOrEmpty(detail.getMaterialname()) ? detail.getMaterialname() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getMaterialid()) ? detail.getMaterialid() : null;
+        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
+        String productId = String.valueOf(detail.getId());
 
         holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);

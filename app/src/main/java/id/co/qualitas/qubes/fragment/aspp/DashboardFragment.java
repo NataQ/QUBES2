@@ -37,7 +37,6 @@ public class DashboardFragment extends BaseFragment {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         txtName = rootView.findViewById(R.id.txtName);
         txtDriver = rootView.findViewById(R.id.txtDriver);
@@ -74,9 +73,17 @@ public class DashboardFragment extends BaseFragment {
     }
 
     private void setData() {
+        setFormatSeparator();
         txtTodayDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
-        txtName.setText(Helper.isEmpty(user.getFullname(),"-"));
-        txtDriver.setText(Helper.isEmpty(user.getDrivername(),"-"));
-        txtJabatanArea.setText(Helper.isEmpty(user.getRegionname(),"") + " - " + Helper.isEmpty(user.getDeponame(),""));
+        txtRoute.setText(Helper.getTodayRoute());
+        txtName.setText(Helper.isEmpty(user.getFull_name(), "-"));
+        txtDriver.setText(Helper.isEmpty(user.getDriver_name(), "-"));
+        txtJabatanArea.setText("");
+
+        txtAsset.setText(format.format(database.getCountRouteCustomer(true)));//all
+        txtAssetRoute.setText(format.format(database.getCountRouteCustomer(false)));//route
+        txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
+
+
     }
 }

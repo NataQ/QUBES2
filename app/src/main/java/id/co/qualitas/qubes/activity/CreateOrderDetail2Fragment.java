@@ -55,7 +55,7 @@ import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.MessageResponse;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.ToPrice;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
@@ -65,7 +65,7 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
     private ArrayList<VisitOrderDetailResponse> visitOrderDetailResponseList, visitOrderDetailResponseListNew = new ArrayList<>();
     private ArrayList<ToPrice> listToPrice = new ArrayList<>();
     private ArrayList<ToPrice> listOneTimeDiscount = new ArrayList<>();
-    private ArrayList<UnitOfMeasure> listUom = new ArrayList<>();
+    private ArrayList<Uom> listUom = new ArrayList<>();
     private ArrayList<JenisJualandTop> listJenisJual = new ArrayList<>();
     private ArrayList<ArrayList<ToPrice>> allListToPrice = new ArrayList<>();
 
@@ -1303,9 +1303,9 @@ public class CreateOrderDetail2Fragment extends BaseFragment implements SearchVi
                             if (material.getDesc() != null) {
                                 visitOrderDetailResponse.setMaterialName(material.getDesc());
                             }
-                            if (material.getMaterialid() != null) {
-                                visitOrderDetailResponse.setIdMaterial(material.getMaterialid());
-                            }
+//                            if (material.getMaterialid() != null) {
+//                                visitOrderDetailResponse.setIdMaterial(material.getMaterialid());
+//                            }
                             if (Helper.getItemParam(Constants.VISIT_ORDER_DETAIL) != null) {
                                 visitOrderDetailResponseList = new ArrayList<>();
                                 visitOrderDetailResponseList = (ArrayList<VisitOrderDetailResponse>) Helper.getItemParam(Constants.VISIT_ORDER_DETAIL);

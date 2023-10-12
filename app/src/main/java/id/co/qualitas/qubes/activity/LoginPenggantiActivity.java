@@ -383,7 +383,7 @@ public class LoginPenggantiActivity extends BaseActivity {
                         for (Return returnDetail:offlineData.getListReturnDetail()) {
                             if(returnDetail.getReason() != null){
                                 String idReason = returnDetail.getReason();
-                                returnDetail.setReason(db.getReasonById(idReason).getDesc());
+                                returnDetail.setReason(db.getReasonById(idReason).getDescription());
                                 returnDetail.setCategory(db.getReasonById(idReason).getType());
                             }
                             db.addReturnDetail(returnDetail);

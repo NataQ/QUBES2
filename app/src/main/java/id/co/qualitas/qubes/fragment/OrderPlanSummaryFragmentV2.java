@@ -45,12 +45,12 @@ import id.co.qualitas.qubes.model.OrderPlanDetailRequest;
 import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.TargetResponse;
 import id.co.qualitas.qubes.model.TargetSummaryRequest;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 
 public class OrderPlanSummaryFragmentV2 extends BaseFragment implements SearchView.OnQueryTextListener {
     private List<MaterialResponse> listMaterial, listMaterialNew, filteredList, listUnfilteredMaterial;
     private List<OrderPlanHeader> listOrderPlan;
-    private ArrayList<UnitOfMeasure> listUom;
+    private ArrayList<Uom> listUom;
     private OrderPlanSummaryAdapterV2 mAdapter;
 
     private OrderPlanHeader orderPlanHeader;

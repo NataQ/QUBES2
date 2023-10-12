@@ -70,7 +70,7 @@ public class MaterialResponse implements Serializable {
     private String uomName;
 
     @SerializedName("listUomName")
-    private ArrayList<UnitOfMeasure> listUomName;
+    private ArrayList<Uom> listUomName;
 
     @SerializedName("qty1StoreCheck")
     private BigDecimal qty1StoreCheck;
@@ -101,8 +101,8 @@ public class MaterialResponse implements Serializable {
     private int q1TypePos;
     private int q2TypePos;
 
-    private ArrayList<UnitOfMeasure> listUomOrder;
-    private ArrayList<UnitOfMeasure> listUomReturn;
+    private ArrayList<Uom> listUomOrder;
+    private ArrayList<Uom> listUomReturn;
     private ArrayList<JenisJualandTop> listTop;
 
     private String isLastTO;
@@ -305,19 +305,19 @@ public class MaterialResponse implements Serializable {
         this.listTop = listTop;
     }
 
-    public ArrayList<UnitOfMeasure> getListUomOrder() {
+    public ArrayList<Uom> getListUomOrder() {
         return listUomOrder;
     }
 
-    public void setListUomOrder(ArrayList<UnitOfMeasure> listUomOrder) {
+    public void setListUomOrder(ArrayList<Uom> listUomOrder) {
         this.listUomOrder = listUomOrder;
     }
 
-    public ArrayList<UnitOfMeasure> getListUomReturn() {
+    public ArrayList<Uom> getListUomReturn() {
         return listUomReturn;
     }
 
-    public void setListUomReturn(ArrayList<UnitOfMeasure> listUomReturn) {
+    public void setListUomReturn(ArrayList<Uom> listUomReturn) {
         this.listUomReturn = listUomReturn;
     }
 
@@ -353,11 +353,11 @@ public class MaterialResponse implements Serializable {
         this.uomName = uomName;
     }
 
-    public ArrayList<UnitOfMeasure> getListUomName() {
+    public ArrayList<Uom> getListUomName() {
         return listUomName;
     }
 
-    public void setListUomName(ArrayList<UnitOfMeasure> listUomName) {
+    public void setListUomName(ArrayList<Uom> listUomName) {
         this.listUomName = listUomName;
     }
 

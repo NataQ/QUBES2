@@ -1397,7 +1397,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
                             for (Return data : msg.getResult().getListReturnDetail()) {
                                 if (data.getReason() != null) {
                                     String idReason = data.getReason();
-                                    data.setReason(db.getReasonById(idReason).getDesc());
+                                    data.setReason(db.getReasonById(idReason).getDescription());
                                     data.setCategory(db.getReasonById(idReason).getType());
                                 }
                                 db.addReturnDetail(data);
@@ -1871,7 +1871,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
                         for (Return data : offlineData.getListReturnDetail()) {
                             if (data.getReason() != null) {
                                 String idReason = data.getReason();
-                                data.setReason(db.getReasonById(idReason).getDesc());
+                                data.setReason(db.getReasonById(idReason).getDescription());
                                 data.setCategory(db.getReasonById(idReason).getType());
                             }
                             db.addReturnDetail(data);

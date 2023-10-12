@@ -20,14 +20,14 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.StockRequest;
 
-public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequestHeaderAdapter.Holder> implements Filterable {
+public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestListAdapter.Holder> implements Filterable {
     private List<StockRequest> mList;
     private List<StockRequest> mFilteredList;
     private LayoutInflater mInflater;
     private StockRequestListActivity mContext;
     private OnAdapterListener onAdapterListener;
 
-    public StockRequestHeaderAdapter(StockRequestListActivity mContext, List<StockRequest> mList, OnAdapterListener onAdapterListener) {
+    public StockRequestListAdapter(StockRequestListActivity mContext, List<StockRequest> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -59,7 +59,7 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
                     for (StockRequest row : mList) {
 
                         /*filter by name*/
-                        if (row.getNodoc().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo_doc().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -105,22 +105,26 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_stock_request_header, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_stock_request_list, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         StockRequest detail = mFilteredList.get(position);
-        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNodoc(), ""));
-        holder.txtSuratJalan.setText(Helper.isEmpty(detail.getNosuratjalan(), ""));
-        if (!Helper.isNullOrEmpty(detail.getReqdate())) {
-            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getReqdate());
+        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNo_doc(), ""));
+        holder.txtSuratJalan.setText(Helper.isEmpty(detail.getNo_surat_jalan(), ""));
+        if (!Helper.isNullOrEmpty(detail.getReq_date())) {
+            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getReq_date());
             holder.txtTanggal.setText(requestDate);
+        } else {
+            holder.txtTanggal.setText("");
         }
-        if (!Helper.isNullOrEmpty(detail.getTanggalkirim())) {
-            String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggalkirim());
+        if (!Helper.isNullOrEmpty(detail.getTanggal_kirim())) {
+            String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggal_kirim());
             holder.txtTglKirim.setText(tglKirim);
+        } else {
+            holder.txtTglKirim.setText("");
         }
         holder.txtStatus.setText(detail.getStatus());
 
@@ -140,6 +144,12 @@ public class StockRequestHeaderAdapter extends RecyclerView.Adapter<StockRequest
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.green2_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
+                    if (detail.isIsverif() == 1) {
+                        holder.txtStatus.setText("Verification");
+                    }
+                    if (detail.isIsunloading() == 1) {
+                        holder.txtStatus.setText("Unloading");
+                    }
                     break;
                 default:
                     holder.llStatus.setVisibility(View.VISIBLE);

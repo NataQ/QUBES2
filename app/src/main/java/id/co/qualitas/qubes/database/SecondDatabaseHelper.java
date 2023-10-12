@@ -59,8 +59,8 @@ public class SecondDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Reason reason = new Reason();
-                reason.setId(cursor.getString(0));
-                reason.setDesc(cursor.getString(1));
+                reason.setId(cursor.getInt(0));
+                reason.setDescription(cursor.getString(1));
                 reason.setType(cursor.getString(2));
 
                 listReason.add(reason);
@@ -75,7 +75,7 @@ public class SecondDatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_REASON, reason.getId());
-        values.put(KEY_REASON_DESC, reason.getDesc());
+        values.put(KEY_REASON_DESC, reason.getDescription());
         values.put(KEY_TYPE, reason.getType());
 
         db.insert(TABLE_REASON, null, values);

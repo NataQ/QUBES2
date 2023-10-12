@@ -33,7 +33,7 @@ public class Return {
     private String noRr;
 
     @SerializedName("listUomName")
-    private ArrayList<UnitOfMeasure> listUomName;
+    private ArrayList<Uom> listUomName;
 
     private String expiredDate;
 
@@ -47,11 +47,30 @@ public class Return {
     private String nameReason;
     private String descReason;
     private String photoReason;
-    private boolean isSync;
+    private int isSync;
+
+    private String groupname;
+    private int materialgroupid;
 
     public Return(String idReturn, String expiredDate) {
         this.idReturn = idReturn;
         this.expiredDate = expiredDate;
+    }
+
+    public String getGroupname() {
+        return groupname;
+    }
+
+    public void setGroupname(String groupname) {
+        this.groupname = groupname;
+    }
+
+    public int getMaterialgroupid() {
+        return materialgroupid;
+    }
+
+    public void setMaterialgroupid(int materialgroupid) {
+        this.materialgroupid = materialgroupid;
     }
 
     public String getIdReason() {
@@ -94,11 +113,11 @@ public class Return {
         this.condition = condition;
     }
 
-    public boolean isSync() {
+    public int isSync() {
         return isSync;
     }
 
-    public void setSync(boolean sync) {
+    public void setSync(int sync) {
         isSync = sync;
     }
 
@@ -198,11 +217,11 @@ public class Return {
         this.expiredDateString = expiredDateString;
     }
 
-    public ArrayList<UnitOfMeasure> getListUomName() {
+    public ArrayList<Uom> getListUomName() {
         return listUomName;
     }
 
-    public void setListUomName(ArrayList<UnitOfMeasure> listUomName) {
+    public void setListUomName(ArrayList<Uom> listUomName) {
         this.listUomName = listUomName;
     }
 

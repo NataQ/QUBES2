@@ -1,34 +1,16 @@
 package id.co.qualitas.qubes.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 
 public class Bank implements Serializable {
     private String id;
     private String name;
-    private String id_depo;
+    private int id_depo;
     private String category;
-    private String noRekening;
-    private boolean isSync;
+    private String no_rek;
+    private int is_sync;
 
     public Bank() {
-    }
-
-    public Bank(String id, String name, String category, String noRekening, boolean isSync) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.noRekening = noRekening;
-        this.isSync = isSync;
-    }
-
-    public String getId_depo() {
-        return id_depo;
-    }
-
-    public void setId_depo(String id_depo) {
-        this.id_depo = id_depo;
     }
 
     public String getId() {
@@ -47,6 +29,14 @@ public class Bank implements Serializable {
         this.name = name;
     }
 
+    public int getId_depo() {
+        return id_depo;
+    }
+
+    public void setId_depo(int id_depo) {
+        this.id_depo = id_depo;
+    }
+
     public String getCategory() {
         return category;
     }
@@ -55,19 +45,19 @@ public class Bank implements Serializable {
         this.category = category;
     }
 
-    public String getNoRekening() {
-        return noRekening;
+    public String getNo_rek() {
+        return no_rek;
     }
 
-    public void setNoRekening(String noRekening) {
-        this.noRekening = noRekening;
+    public void setNo_rek(String no_rek) {
+        this.no_rek = no_rek;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public int getIs_sync() {
+        return is_sync;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
     }
 }

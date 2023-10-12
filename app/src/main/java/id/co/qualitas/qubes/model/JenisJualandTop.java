@@ -25,7 +25,7 @@ public class JenisJualandTop implements Serializable {
     private String top_sap;
 
     @SerializedName("uomPrice")
-    private List<UnitOfMeasure> uomPrice;
+    private List<Uom> uomPrice;
 
     @SerializedName("top")
     private String top;
@@ -77,11 +77,11 @@ public class JenisJualandTop implements Serializable {
         this.top_sap = top_sap;
     }
 
-    public List<UnitOfMeasure> getUomPrice() {
+    public List<Uom> getUomPrice() {
         return uomPrice;
     }
 
-    public void setUomPrice(List<UnitOfMeasure> uomPrice) {
+    public void setUomPrice(List<Uom> uomPrice) {
         this.uomPrice = uomPrice;
     }
 

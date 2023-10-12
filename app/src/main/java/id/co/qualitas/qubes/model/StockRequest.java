@@ -4,48 +4,36 @@ import java.util.List;
 
 public class StockRequest {
     private String idHeader;
-    private String id;
-    private String reqdate;
-    private String nodoc;
-    private String tanggalkirim;
-    private String nosuratjalan;
+    private int id;
+    private String id_salesman;
+    private String req_date;
+    private String no_doc;
+    private String tanggal_kirim;
+    private String no_surat_jalan;
     private String status;
-    private boolean isunloading;
-    private boolean isSync;
-    private boolean enabled;
-    private boolean isverif;
+    private int is_unloading;
+    private int is_sync;
+    private int enabled;
+    private int is_verif;
     private String signature;
     private List<Material> materialList;
 
     public StockRequest() {
     }
 
-    public StockRequest(String reqdate, String nodoc, String tanggalkirim, String nosuratjalan, String status, boolean isunloading, boolean isSync, boolean enabled, boolean isverif, String signature, List<Material> materialList) {
-        this.reqdate = reqdate;
-        this.nodoc = nodoc;
-        this.tanggalkirim = tanggalkirim;
-        this.nosuratjalan = nosuratjalan;
-        this.status = status;
-        this.isunloading = isunloading;
-        this.isSync = isSync;
-        this.enabled = enabled;
-        this.isverif = isverif;
-        this.signature = signature;
-        this.materialList = materialList;
+    public String getId_salesman() {
+        return id_salesman;
     }
 
-    public StockRequest(String reqdate, String nodoc, String tanggalkirim, String status) {
-        this.reqdate = reqdate;
-        this.nodoc = nodoc;
-        this.tanggalkirim = tanggalkirim;
-        this.status = status;
+    public void setId_salesman(String id_salesman) {
+        this.id_salesman = id_salesman;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -57,19 +45,19 @@ public class StockRequest {
         this.idHeader = idHeader;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public int isSync() {
+        return is_sync;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setSync(int sync) {
+        is_sync = sync;
     }
 
-    public boolean isEnabled() {
+    public int isEnabled() {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
+    public void setEnabled(int enabled) {
         this.enabled = enabled;
     }
 
@@ -81,28 +69,28 @@ public class StockRequest {
         this.materialList = materialList;
     }
 
-    public String getNosuratjalan() {
-        return nosuratjalan;
+    public String getNo_surat_jalan() {
+        return no_surat_jalan;
     }
 
-    public void setNosuratjalan(String nosuratjalan) {
-        this.nosuratjalan = nosuratjalan;
+    public void setNo_surat_jalan(String no_surat_jalan) {
+        this.no_surat_jalan = no_surat_jalan;
     }
 
-    public boolean isIsunloading() {
-        return isunloading;
+    public int isIsunloading() {
+        return is_unloading;
     }
 
-    public void setIsunloading(boolean isunloading) {
-        this.isunloading = isunloading;
+    public void setIs_unloading(int is_unloading) {
+        this.is_unloading = is_unloading;
     }
 
-    public boolean isIsverif() {
-        return isverif;
+    public int isIsverif() {
+        return is_verif;
     }
 
-    public void setIsverif(boolean isverif) {
-        this.isverif = isverif;
+    public void setIs_verif(int is_verif) {
+        this.is_verif = is_verif;
     }
 
     public String getSignature() {
@@ -113,28 +101,28 @@ public class StockRequest {
         this.signature = signature;
     }
 
-    public String getReqdate() {
-        return reqdate;
+    public String getReq_date() {
+        return req_date;
     }
 
-    public void setReqdate(String reqdate) {
-        this.reqdate = reqdate;
+    public void setReq_date(String req_date) {
+        this.req_date = req_date;
     }
 
-    public String getNodoc() {
-        return nodoc;
+    public String getNo_doc() {
+        return no_doc;
     }
 
-    public void setNodoc(String nodoc) {
-        this.nodoc = nodoc;
+    public void setNo_doc(String no_doc) {
+        this.no_doc = no_doc;
     }
 
-    public String getTanggalkirim() {
-        return tanggalkirim;
+    public String getTanggal_kirim() {
+        return tanggal_kirim;
     }
 
-    public void setTanggalkirim(String tanggalkirim) {
-        this.tanggalkirim = tanggalkirim;
+    public void setTanggal_kirim(String tanggal_kirim) {
+        this.tanggal_kirim = tanggal_kirim;
     }
 
     public String getStatus() {

@@ -1,22 +1,81 @@
 package id.co.qualitas.qubes.model;
 
-public class RouteCustomer {
-    private String idCustomer;
-    private String nameCustomer;
-    private String addressCustomer;
+import java.io.Serializable;
+
+public class RouteCustomer implements Serializable {
+    private String idHeader;
+    private String id;
+    private String nama;
+    private String rute;
+    private String address;
+    private String kode_pos;
+    private String kota;
     private String mileage;
     private boolean route;
     private double latitude;
     private double longitude;
+    private int isSync;
 
-    public RouteCustomer(String idCustomer, String nameCustomer, String addressCustomer, String mileage, double latitude, double longitude, boolean route) {
-        this.idCustomer = idCustomer;
-        this.nameCustomer = nameCustomer;
-        this.addressCustomer = addressCustomer;
+    public RouteCustomer(String id, String nama, String address, boolean route, double latitude, double longitude) {
+        this.id = id;
+        this.nama = nama;
+        this.address = address;
+        this.route = route;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public RouteCustomer(String id, String nama, String address, String mileage, double latitude, double longitude, boolean route) {
+        this.id = id;
+        this.nama = nama;
+        this.address = address;
         this.mileage = mileage;
         this.latitude = latitude;
         this.longitude = longitude;
         this.route = route;
+    }
+
+    public RouteCustomer() {
+    }
+
+    public String getRute() {
+        return rute;
+    }
+
+    public void setRute(String rute) {
+        this.rute = rute;
+    }
+
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
+    }
+
+    public int getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
+    }
+
+    public String getKode_pos() {
+        return kode_pos;
+    }
+
+    public void setKode_pos(String kode_pos) {
+        this.kode_pos = kode_pos;
+    }
+
+    public String getKota() {
+        return kota;
+    }
+
+    public void setKota(String kota) {
+        this.kota = kota;
     }
 
     public boolean isRoute() {
@@ -43,28 +102,28 @@ public class RouteCustomer {
         this.longitude = longitude;
     }
 
-    public String getIdCustomer() {
-        return idCustomer;
+    public String getId() {
+        return id;
     }
 
-    public void setIdCustomer(String idCustomer) {
-        this.idCustomer = idCustomer;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getNameCustomer() {
-        return nameCustomer;
+    public String getNama() {
+        return nama;
     }
 
-    public void setNameCustomer(String nameCustomer) {
-        this.nameCustomer = nameCustomer;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
-    public String getAddressCustomer() {
-        return addressCustomer;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAddressCustomer(String addressCustomer) {
-        this.addressCustomer = addressCustomer;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getMileage() {

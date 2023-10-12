@@ -1,16 +1,16 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
-import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.os.Build;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,39 +18,50 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.google.android.material.button.MaterialButton;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
+import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.RouteCustomer;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class RouteCustomerFragment extends BaseFragment {
-    private static final int LOCATION_PERMISSION_REQUEST = 7;
+public class RouteCustomerFragment extends BaseFragment implements LocationListener {
     private RouteCustomerAdapter mAdapter;
     private List<RouteCustomer> mList, mListFiltered;
-    private ArrayAdapter<String> spn1Adapter, spn2Adapter, spnRouteCustAdapter;
     private Button btnCoverage;
     private EditText edtSearch;
     private Spinner spinnerRouteCustomer;
+    private WSMessage resultWsMessage;
+    private boolean saveDataSuccess = false;
+
+    private boolean isLocationPermissionGranted = false;
+    private LocationManager lm;
+    private Location currentLocation = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,10 +75,13 @@ public class RouteCustomerFragment extends BaseFragment {
 
         getActivity().setTitle(getString(R.string.routeCustomer));
 
-        initProgress();
-        initFragment();
         initialize();
-        initData();
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
+        checkLocationPermission();
 
         btnCoverage.setOnClickListener(v -> {
             ((MainActivity) getActivity()).changePage(23);
@@ -105,23 +119,58 @@ public class RouteCustomerFragment extends BaseFragment {
             }
         });
 
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
+                filterData(false);//swipe
+//                mAdapter.setData(mListFiltered);
+                swipeLayout.setRefreshing(false);
+            }
+        });
+
+        List<String> listSpinner = new ArrayList<>();
+        listSpinner.add("Route");
+        listSpinner.add("All");
+        setSpinnerAdapter3(listSpinner, spinnerRouteCustomer);
+
+//        spnRouteCustAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, listSpinner);
+//        spnRouteCustAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinnerRouteCustomer.setAdapter(spnRouteCustAdapter);
+        spinnerRouteCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                edtSearch.setText(null);
+                if (mList != null) {
+                    if (position == 0) {
+                        filterData(false);//spinner false
+                    } else {
+                        filterData(true);//spinner true
+                    }
+//                    mAdapter.setData(mListFiltered);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         return rootView;
     }
 
     public void moveDirection(RouteCustomer headerCustomer) {
         if (Utils.isGPSOn(getContext())) {
-            Helper.setItemParam(Constants.ROUTE_CUSTOMER_HEADER, headerCustomer);
+            SessionManagerQubes.setRouteCustomerHeader(headerCustomer);
             ((MainActivity) getActivity()).changePage(24);
         } else {
             Utils.turnOnGPS(getActivity());
         }
-    }
-
-    private void initData() {
-        mList = new ArrayList<>();
-        mList.add(new RouteCustomer("0EM44", "ECA", "JL. RAYA HALIM NO.8 SAMPING TK. MELLY KEBUN PALA KP. MAKASSAR", "5.41 KM", -6.090263984566263, 106.74593288657607, true));
-        mList.add(new RouteCustomer("0DP90", "BAGUS CAR WASH (CAHAYA MADURA)", "JL. SQUADRON 26 HALIM PERDANAKUSUMA KEBON PALA MAKASSAR", "5.80 KM", -6.09047339393416, 106.74535959301855, false));
-        mList.add(new RouteCustomer("0GT55", "TOKO LOLITA (PAK YUSUF)", "JL. MESJID AL MUNIR NO. 7 DEPAN PUSKESMAS MAKASSAR 0", "5.91 KM", -6.089065696336256, 106.74676357552187, true));
     }
 
     private void initialize() {
@@ -131,35 +180,11 @@ public class RouteCustomerFragment extends BaseFragment {
         spinnerRouteCustomer = rootView.findViewById(R.id.spinnerRouteCustomer);
         edtSearch = rootView.findViewById(R.id.edtSearch);
         btnCoverage = rootView.findViewById(R.id.btnCoverage);
-
+        swipeLayout = rootView.findViewById(R.id.swipeLayout);
+        progressCircle = rootView.findViewById(R.id.progressCircle);
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         recyclerView.setHasFixedSize(true);
-
-        List<String> listSpinner = new ArrayList<>();
-        listSpinner.add("All");
-        listSpinner.add("Route");
-
-        spnRouteCustAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, listSpinner);
-        spnRouteCustAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerRouteCustomer.setAdapter(spnRouteCustAdapter);
-        spinnerRouteCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                edtSearch.setText(null);
-                if (position == 0) {
-                    filterData(true);
-                } else {
-                    filterData(false);
-                }
-                setDataFilter();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
     }
 
     private void filterData(boolean all) {
@@ -174,9 +199,22 @@ public class RouteCustomerFragment extends BaseFragment {
                 }
             }
         }
+        setAdapter();
     }
 
-    private void setDataFilter() {
+    private void getFirstDataOffline() {
+        getData();
+        if (mList == null || mList.isEmpty()) {
+            progressCircle.setVisibility(View.VISIBLE);
+            PARAM = 1;
+            new RequestUrl().execute();
+        } else {
+            filterData(false);//getFirstDataOffline
+//            mAdapter.setData(mListFiltered);
+        }
+    }
+
+    private void setAdapter() {
         mAdapter = new RouteCustomerAdapter(this, mListFiltered);
         recyclerView.setAdapter(mAdapter);
     }
@@ -184,70 +222,101 @@ public class RouteCustomerFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getFirstDataOffline();
         Helper.setItemParam(Constants.CURRENTPAGE, "2");
     }
 
-    public void openDialogDirections(RouteCustomer detail) {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
 
-        dialogview = inflater.inflate(R.layout.aspp_dialog_directions, null);
-        alertDialog = new Dialog(getActivity());
-        alertDialog.setContentView(dialogview);
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        alertDialog.getWindow().setLayout((6 * width) / 7, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
-
-        Spinner spn1 = dialogview.findViewById(R.id.spn1);
-        Spinner spn2 = dialogview.findViewById(R.id.spn2);
-
-        ImageView imgClose = dialogview.findViewById(R.id.imgClose);
-        MaterialButton btnDirections = dialogview.findViewById(R.id.btnDirections);
-
-        List<String> listSpinner = new ArrayList<>();
-        listSpinner.add("Your Location");
-        for (RouteCustomer routeCustomer : mList) {
-            listSpinner.add(routeCustomer.getNameCustomer());
-        }
-
-        spn1Adapter = new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, listSpinner);
-        spn1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn1.setAdapter(spn1Adapter);
-
-        spn2Adapter = new ArrayAdapter<>(this.getContext(), R.layout.spinner_item, listSpinner);
-        spn2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spn2.setAdapter(spn2Adapter);
-
-        for (int i = 0; i < listSpinner.size(); i++) {
-            String name = listSpinner.get(i);
-            if (detail.getNameCustomer().contains(name)) {
-                spn2.setSelection(i);
-                break;
-            }
-        }
-
-        imgClose.setOnClickListener(v -> {
-            alertDialog.dismiss();
-        });
-
-        btnDirections.setOnClickListener(v -> {
-            alertDialog.dismiss();
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?saddr=" + -6.090263984566263 + "," + 106.74593288657607 + "&daddr=" + -6.088542162422348 + "," + 106.74239952686823));
-                startActivity(intent);
-            } catch (ActivityNotFoundException ane) {
-                Toast.makeText(getActivity(), "Please Install Google Maps ", Toast.LENGTH_LONG).show();
+                if (PARAM == 1) {
+                    String URL_ = Constants.API_ROUTE_CUSTOMER_LIST;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                } else {
+                    mList = new ArrayList<>();
+                    RouteCustomer[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), RouteCustomer[].class);
+                    Collections.addAll(mList, paramArray);
+                    database.deleteMasterRouteCustomer();
+                    for (RouteCustomer param : mList) {
+                        int idHeader = database.addRouteCustomer(param, user.getUserLogin());
+                    }
+                    getData();
+                    filterData(false);//request url
+                    saveDataSuccess = true;
+                    return null;
+                }
             } catch (Exception ex) {
-                ex.getMessage();
+                if (ex.getMessage() != null) {
+                    Log.e("routeCustomer", ex.getMessage());
+                }
+                if (PARAM == 2) {
+                    saveDataSuccess = false;
+                }
+                return null;
             }
-        });
+        }
 
-        alertDialog.show();
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage WsMessage) {
+            if (PARAM == 1) {
+                if (WsMessage != null) {
+                    if (WsMessage.getIdMessage() == 1) {
+                        resultWsMessage = WsMessage;
+                        PARAM = 2;
+                        new RequestUrl().execute();
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
+                        setToast(WsMessage.getMessage());
+                    }
+                } else {
+                    progressCircle.setVisibility(View.GONE);
+                    setToast(getString(R.string.failedGetData));
+                }
+            } else {
+                if (saveDataSuccess) {
+                    progressCircle.setVisibility(View.GONE);
+//                    mAdapter.setData(mListFiltered);
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
+            }
+        }
+    }
+
+    private void getData() {
+        mList = new ArrayList<>();
+        mList = database.getAllRouteCustomer(currentLocation);
+    }
+
+    private void checkLocationPermission() {
+        List<String> permissionRequest = new ArrayList<>();
+        isLocationPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (!isLocationPermissionGranted)
+            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (isLocationPermissionGranted) {
+            if (!Helper.isGPSOn(getActivity())) {
+                setToast("Please turn on GPS");
+                Helper.turnOnGPS(getActivity());
+            } else {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
+                if (currentLocation == null) {
+//                    setToast("Can't get your location.. Please try again..");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
     }
 }

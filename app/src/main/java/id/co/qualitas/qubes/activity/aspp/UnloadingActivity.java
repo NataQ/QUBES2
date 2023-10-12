@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +37,11 @@ import id.co.qualitas.qubes.adapter.aspp.UnloadingAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.UnloadingPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
@@ -119,8 +122,7 @@ public class UnloadingActivity extends BaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 if (checkPermission()) {
-                    progress.show();
-                    new AsyncTaskGeneratePDF().execute();
+                    callAPI();
                 } else {
                     setToast(getString(R.string.pleaseEnablePermission));
                     requestPermission();
@@ -129,6 +131,11 @@ public class UnloadingActivity extends BaseActivity {
         });
 
         dialog.show();
+    }
+
+    private void callAPI() {
+        progress.show();
+        new RequestUrl().execute();
     }
 
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
@@ -159,11 +166,6 @@ public class UnloadingActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
-                    header.setIsunloading(true);
-                    header.setSync(false);
-                    header.setStatus(Constants.STATUS_UNLOADING);
-                    database.updateUnloading(header, user.getUsername());
-                    setToast("Unloading sukses");
                     onBackPressed();
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi..");
@@ -178,18 +180,18 @@ public class UnloadingActivity extends BaseActivity {
             onBackPressed();
             setToast(getString(R.string.failedGetData));
         } else {
-            txtNoSuratJalan.setText(Helper.isEmpty(header.getNosuratjalan(), "-"));
-            txtNoDoc.setText(Helper.isEmpty(header.getNodoc(), "-"));
+            txtNoSuratJalan.setText(Helper.isEmpty(header.getNo_surat_jalan(), "-"));
+            txtNoDoc.setText(Helper.isEmpty(header.getNo_doc(), "-"));
 
-            if (!Helper.isNullOrEmpty(header.getReqdate())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReqdate());
+            if (!Helper.isNullOrEmpty(header.getReq_date())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReq_date());
                 txtDate.setText(requestDate);
             } else {
                 txtDate.setText("-");
             }
 
-            if (!Helper.isNullOrEmpty(header.getTanggalkirim())) {
-                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalkirim());
+            if (!Helper.isNullOrEmpty(header.getTanggal_kirim())) {
+                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggal_kirim());
                 txtTglKirim.setText(tglKirim);
             } else {
                 txtTglKirim.setText("-");
@@ -286,7 +288,7 @@ public class UnloadingActivity extends BaseActivity {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    new AsyncTaskGeneratePDF().execute();
+                    callAPI();
                 } else {
                     setToast(getString(R.string.pleaseEnablePermission));
                 }
@@ -318,5 +320,47 @@ public class UnloadingActivity extends BaseActivity {
         Intent intent = new Intent(getApplicationContext(), StockRequestListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_STOCK_REQUEST_UNLOADING;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("unloading", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage WsMessage) {
+            progress.dismiss();
+            if (WsMessage != null) {
+                if (WsMessage.getIdMessage() == 1) {
+                    header.setIs_unloading(1);
+//                    header.setSync(0);
+//                    header.setStatus(Constants.STATUS_UNLOADING);
+                    database.updateUnloading(header, user.getUsername());
+                    setToast("Unloading sukses");
+                    progress.show();
+                    new AsyncTaskGeneratePDF().execute();
+                } else {
+                    setToast(WsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.serverError));
+            }
+        }
     }
 }

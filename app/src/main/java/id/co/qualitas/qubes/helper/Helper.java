@@ -64,9 +64,10 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -86,8 +87,9 @@ import id.co.qualitas.qubes.activity.aspp.CameraActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
+import okhttp3.Route;
 
 public class Helper extends BaseFragment {
     public static int totalItem;
@@ -735,6 +737,19 @@ public class Helper extends BaseFragment {
         activity.startActivity(gpsOptionsIntent);
     }
 
+    public static GeoPoint computeCentroidCoverage(List<RouteCustomer> points) {
+        double latitude = 0;
+        double longitude = 0;
+        int n = points.size();
+
+        for (RouteCustomer point : points) {
+            latitude += point.getLatitude();
+            longitude += point.getLongitude();
+        }
+
+        return new GeoPoint(latitude / n, longitude / n);
+    }
+
     public static GeoPoint computeCentroid(List<Customer> points) {
         double latitude = 0;
         double longitude = 0;
@@ -748,13 +763,13 @@ public class Helper extends BaseFragment {
         return new GeoPoint(latitude / n, longitude / n);
     }
 
-    public static ArrayList<OverlayItem> setOverLayItems(List<Customer> customers, Activity activity) {
+    public static ArrayList<OverlayItem> setOverLayItemsCoverage(List<RouteCustomer> customers, Activity activity) {
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
 
         List<GeoPoint> geoPointList = new ArrayList<>();
 
-        for (Customer cust : customers) {
-            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNameCustomer(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+        for (RouteCustomer cust : customers) {
+            OverlayItem ov = new OverlayItem(cust.getId() + "-" + cust.getNama(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
             ov.setMarker(new BitmapDrawable(activity.getResources(), getMarkerBitmapFromView(cust, activity)));
             items.add(ov);
 
@@ -763,7 +778,22 @@ public class Helper extends BaseFragment {
         return items;
     }
 
-    public static Bitmap getMarkerBitmapFromView(Customer cust, Activity activity) {
+    public static ArrayList<OverlayItem> setOverLayItems(List<Customer> customers, Activity activity) {
+        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+
+        List<GeoPoint> geoPointList = new ArrayList<>();
+
+        for (Customer cust : customers) {
+            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNama(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+            ov.setMarker(new BitmapDrawable(activity.getResources(), getMarkerBitmapFromView(cust, activity)));
+            items.add(ov);
+
+            geoPointList.add(new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+        }
+        return items;
+    }
+
+    public static Bitmap getMarkerBitmapFromView(RouteCustomer cust, Activity activity) {
         //HERE YOU CAN ADD YOUR CUSTOM VIEW
         View customMarkerView = ((LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
 
@@ -772,7 +802,7 @@ public class Helper extends BaseFragment {
         TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
         ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
 
-        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
+        txt_name.setText(cust.getId() + " - " + cust.getNama());
 //        txt_add.setText(cust.getAddress());
         if (cust.isRoute()) {
             imgStore.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_marker_blue));
@@ -792,15 +822,33 @@ public class Helper extends BaseFragment {
         return returnedBitmap;
     }
 
-    public static List<Reason> getDataReason() {
-        List<Reason> reasonList = new ArrayList<>();
-        reasonList.add(new Reason("N1", "Waktu Habis", false, false));
-        reasonList.add(new Reason("N2", "Pindah", true, false));
-        reasonList.add(new Reason("N3", "Banjir", false, true));
-        reasonList.add(new Reason("N4", "Tidak Ketemu", true, true));
-        reasonList.add(new Reason("N5", "Tutup", false, true));
-        reasonList.add(new Reason("N6", "Other", true, false));
-        return reasonList;
+    public static Bitmap getMarkerBitmapFromView(Customer cust, Activity activity) {
+        //HERE YOU CAN ADD YOUR CUSTOM VIEW
+        View customMarkerView = ((LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
+
+        //IN THIS EXAMPLE WE ARE TAKING TEXTVIEW BUT YOU CAN ALSO TAKE ANY KIND OF VIEW LIKE IMAGEVIEW, BUTTON ETC.
+        TextView txt_name = customMarkerView.findViewById(R.id.txt_name);
+        TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
+        ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
+
+        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNama());
+//        txt_add.setText(cust.getAddress());
+        if (cust.isRoute()) {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_marker_blue));
+        } else {
+            imgStore.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_marker_red));
+        }
+
+        customMarkerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        customMarkerView.layout(0, 0, customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight());
+        customMarkerView.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(customMarkerView.getMeasuredWidth(), customMarkerView.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Drawable drawable = customMarkerView.getBackground();
+        if (drawable != null) drawable.draw(canvas);
+        customMarkerView.draw(canvas);
+        return returnedBitmap;
     }
 
     public static String getMimeType(Context context, Uri uri) {
@@ -832,5 +880,68 @@ public class Helper extends BaseFragment {
         } catch (Exception e) {
             Log.e("Delete img : ", e.getMessage());
         }
+    }
+
+    public static String getTodayRoute() {
+        String result = "";
+//        String tempDate = getTodayDate(Constants.DATE_FORMAT_3);
+//        LocalDate date = LocalDate.parse(tempDate);
+//        DayOfWeek day = date.getDayOfWeek();
+
+        int weekYear = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) % 4;
+        int dayWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+//        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
+        result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
+        return result;
+    }
+
+    public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+        if (unit.equals("K")) {
+            dist = dist * 1.609344;
+        } else if (unit.equals("N")) {
+            dist = dist * 0.8684;
+        }
+        return (dist);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::  This function converts decimal degrees to radians             :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    public static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    /*::  This function converts radians to decimal degrees             :*/
+    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
+    public static double rad2deg(double rad) {
+        return (rad * 180.0 / Math.PI);
+    }
+
+    public static String getImei(Context context) {
+        String imei = null;
+        try {
+            imei = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return imei;
+    }
+
+    public static boolean checkTodayRoute(String rute) {
+        String todayRute = getTodayRoute();
+        if (rute != null) {
+            if (rute.contains(todayRute)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -46,6 +46,7 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
 
 public class CoverageFragment extends BaseFragment implements LocationListener {
@@ -60,7 +61,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
     private RotationGestureOverlay mRotationGestureOverlay;
     private BoundingBox boundingBox;
     private List<GeoPoint> geoPointList;
-    private List<Customer> custList;
+    private List<RouteCustomer> custList;
     private LocationManager lm;
     private Location currentLocation = null;
 
@@ -79,19 +80,10 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return null;
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
 
-        initProgress();
-        initFragment();
         initialize();
         setMap();
 
@@ -146,16 +138,11 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
 
         //your items
         custList = new ArrayList<>();
-        custList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, -6.090263984566263, 106.74593288657607));
-        custList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, -6.09047339393416, 106.74535959301855));
-        custList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, -6.09102018270127, 106.74661148098058));
-        custList.add(new Customer("CHGI", "Cluster Harmony, Golf Island", "WP6W+7JR, Pantai Indah Kapuk St, Kamal Muara, Penjaringan, North Jakarta City, Jakarta 14460", false, -6.089065696336256, 106.74676357552187));
-        custList.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, -6.09032214182743, 106.74191982249332));
-        custList.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, -6.088542162422348, 106.74239952686823));
+        custList = database.getRouteCustomerCoverage();
 
 //        zoomToBounds(custList);
 
-        ArrayList<OverlayItem> items = Helper.setOverLayItems(custList, getActivity());
+        ArrayList<OverlayItem> items = Helper.setOverLayItemsCoverage(custList, getActivity());
 
         //the overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
@@ -181,7 +168,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         });
 
         mMapView.getOverlays().add(mOverlay);
-        mapController.setCenter(Helper.computeCentroid(custList));
+        mapController.setCenter(Helper.computeCentroidCoverage(custList));
 
 //        double minLat = Integer.MAX_VALUE;
 //        double maxLat = Integer.MIN_VALUE;
@@ -222,7 +209,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
             Log.d(TAG, String.format("North %f, south %f, west %f, east %f", north, south, west, east));
             BoundingBox boundingBox = new BoundingBox(north, west, south, east);
             mMapView.zoomToBoundingBox(boundingBox, false);
-            mapController.setCenter(Helper.computeCentroid(custList));
+            mapController.setCenter(Helper.computeCentroidCoverage(custList));
             mMapView.invalidate();
         }
     }

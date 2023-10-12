@@ -16,6 +16,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.RouteCustomer;
 
 public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdapter.Holder> implements Filterable {
@@ -60,7 +61,7 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
                     for (RouteCustomer row : dataList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -110,9 +111,10 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         RouteCustomer detail = dataFilteredList.get(position);
-        holder.txtStore.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer() + " (" + detail.getMileage() + ")");
-        holder.txtAddress.setText(detail.getAddressCustomer());
-        holder.txtRoute.setText("P1H1-P3H1");
+        String mileage = " (" + Helper.isEmpty(detail.getMileage(), "0") + " KM)";
+        holder.txtStore.setText(Helper.isEmpty(detail.getId(), "") + " - " + Helper.isEmpty(detail.getNama(), "") + mileage);
+        holder.txtAddress.setText(Helper.isEmpty(detail.getAddress(), ""));
+        holder.txtRoute.setText(Helper.isEmpty(detail.getRute(), ""));
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");
             holder.txtLabelRoute.setBackground(ContextCompat.getDrawable(mContext.getContext(), R.drawable.bg_label_route));

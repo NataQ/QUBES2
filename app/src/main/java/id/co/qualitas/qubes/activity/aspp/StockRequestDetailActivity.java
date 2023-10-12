@@ -8,10 +8,12 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -36,9 +38,11 @@ import id.co.qualitas.qubes.adapter.aspp.StockRequestDetailAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
@@ -145,13 +149,14 @@ public class StockRequestDetailActivity extends BaseActivity {
 //            String signPath = Utils.saveImage(signaturePad.getTransparentSignatureBitmap()).getAbsolutePath();
 //            if (!signPath.equals("null")) {
             header.setSignature(Utils.encodeImageBase64Sign(signaturePad.getTransparentSignatureBitmap()));
-            header.setIsverif(true);
-            header.setSync(false);
-            header.setStatus(Constants.STATUS_VERIFICATION);
-            database.updateStockRequestVerification(header, user.getUsername());
-            setToast("Verifikasi sukses");
+            header.setIs_verif(1);
+//            header.setSync(0);
+//            header.setStatus(Constants.STATUS_VERIFICATION);
             dialog.dismiss();
-            onBackPressed();
+
+            progress.show();
+            new RequestUrl().execute();
+
 //            } else {
 //                setToast("Gagal menyimpan ttd");
 //            }
@@ -165,18 +170,18 @@ public class StockRequestDetailActivity extends BaseActivity {
             onBackPressed();
             setToast(getString(R.string.failedGetData));
         } else {
-            txtNoSuratJalan.setText(Helper.isEmpty(header.getNosuratjalan(), "-"));
-            txtNoDoc.setText(Helper.isEmpty(header.getNodoc(), "-"));
+            txtNoSuratJalan.setText(Helper.isEmpty(header.getNo_surat_jalan(), "-"));
+            txtNoDoc.setText(Helper.isEmpty(header.getNo_doc(), "-"));
 
-            if (!Helper.isNullOrEmpty(header.getReqdate())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReqdate());
+            if (!Helper.isNullOrEmpty(header.getReq_date())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getReq_date());
                 txtDate.setText(requestDate);
             } else {
                 txtDate.setText("-");
             }
 
-            if (!Helper.isNullOrEmpty(header.getTanggalkirim())) {
-                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggalkirim());
+            if (!Helper.isNullOrEmpty(header.getTanggal_kirim())) {
+                String tglKirim = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getTanggal_kirim());
                 txtTglKirim.setText(tglKirim);
             } else {
                 txtTglKirim.setText("-");
@@ -193,23 +198,23 @@ public class StockRequestDetailActivity extends BaseActivity {
                     case Constants.STATUS_APPROVE:
                         btnVerification.setVisibility(View.VISIBLE);
                         btnUnloading.setVisibility(View.GONE);
-//                        if (header.isVerification()) {
-//                            if (header.isUnloading()) {
-//                                btnUnloading.setVisibility(View.GONE);
-//                                btnVerification.setVisibility(View.GONE);
-//                            } else {
-//                                btnUnloading.setVisibility(View.VISIBLE);
-//                                btnVerification.setVisibility(View.GONE);
-//                            }
-//                        } else {
-//                            btnUnloading.setVisibility(View.GONE);
-//                            btnVerification.setVisibility(View.VISIBLE);
-//                        }
+                        if (header.isIsverif() == 1) {
+                            if (header.isIsunloading() == 1) {
+                                btnUnloading.setVisibility(View.GONE);
+                                btnVerification.setVisibility(View.GONE);
+                            } else {
+                                btnUnloading.setVisibility(View.VISIBLE);
+                                btnVerification.setVisibility(View.GONE);
+                            }
+                        } else {
+                            btnUnloading.setVisibility(View.GONE);
+                            btnVerification.setVisibility(View.VISIBLE);
+                        }
                         break;
-                    case Constants.STATUS_VERIFICATION:
-                        btnUnloading.setVisibility(View.VISIBLE);
-                        btnVerification.setVisibility(View.GONE);
-                        break;
+//                    case Constants.STATUS_VERIFICATION:
+//                        btnUnloading.setVisibility(View.VISIBLE);
+//                        btnVerification.setVisibility(View.GONE);
+//                        break;
                     default:
                         btnUnloading.setVisibility(View.GONE);
                         btnVerification.setVisibility(View.GONE);
@@ -336,6 +341,44 @@ public class StockRequestDetailActivity extends BaseActivity {
                     setToast(getString(R.string.pleaseEnablePermission));
                 }
                 break;
+        }
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_STOCK_REQUEST_VERIFICATION;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("verification", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage WsMessage) {
+            progress.dismiss();
+            if (WsMessage != null) {
+                if (WsMessage.getIdMessage() == 1) {
+                    database.updateStockRequestVerification(header, user.getUsername());
+                    setToast("Verifikasi sukses");
+                    onBackPressed();
+                } else {
+                    setToast(WsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.serverError));
+            }
         }
     }
 }

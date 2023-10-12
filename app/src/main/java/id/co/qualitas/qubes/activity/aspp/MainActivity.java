@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.Map;
@@ -61,7 +62,6 @@ public class MainActivity extends BaseActivity {
     // The BroadcastReceiver used to listen from broadcasts from the service.
     private MyReceiver myReceiver;
     private static LocationUpdatesService mServiceFusedLocation = null;
-
     HomeFragment homeFragment = new HomeFragment();
     RouteCustomerFragment routeCustomerFragment = new RouteCustomerFragment();
     ActivityFragment activityFragment = new ActivityFragment();
@@ -69,6 +69,9 @@ public class MainActivity extends BaseActivity {
     AccountFragment accountFragment = new AccountFragment();
     CoverageFragment coverageFragment = new CoverageFragment();
     DirectionFragment directionFragment = new DirectionFragment();
+
+    FragmentManager fm = getSupportFragmentManager();
+    Fragment active = activityFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +191,8 @@ public class MainActivity extends BaseActivity {
         imgLogOut = findViewById(R.id.imgLogOut);
         bottomNavigationView = findViewById(R.id.navigation);
         fragmentManager = getSupportFragmentManager();
+        Helper.setItemParam(Constants.CURRENTPAGE, "1");
+        setContent(homeFragment);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
             if (currentpage == null) {
@@ -197,38 +202,37 @@ public class MainActivity extends BaseActivity {
                 case R.id.navigation_home:
                     if (!currentpage.equals("1")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, homeFragment).commit();
-//                        fragment = new HomeFragment();
+                        setContent(homeFragment);
+                        return true;
                     }
                     return true;
                 case R.id.navigation_route_customer:
                     if (!currentpage.equals("2")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, routeCustomerFragment).commit();
-//                        fragment = new RouteCustomerFragment();
+                        setContent(routeCustomerFragment);
+                        return true;
                     }
                     return true;
                 case R.id.navigation_activity:
                     if (!currentpage.equals("3")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, activityFragment).commit();
-//                        fragment = new ActivityFragment();
+                        setContent(activityFragment);
+                        return true;
                     }
                     return true;
                 case R.id.navigation_summary:
                     if (!currentpage.equals("4")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "4");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, summaryFragment).commit();
-//                        fragment = new SummaryFragment();
+                        setContent(summaryFragment);
+                        return true;
                     }
                     return true;
                 case R.id.navigation_account:
                     if (!currentpage.equals("5")) {
                         Helper.setItemParam(Constants.CURRENTPAGE, "5");
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, accountFragment).commit();
-//                        fragment = new AccountFragment();
+                        setContent(accountFragment);
+                        return true;
                     }
-                    return true;
             }
 //            setContent(fragment);
             return false;
@@ -236,7 +240,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void setContent(Fragment fragment) {
-        fm = this.getSupportFragmentManager();
+        fm = getSupportFragmentManager();
         ft = fm.beginTransaction();
         ft.replace(R.id.main_container, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -253,192 +257,47 @@ public class MainActivity extends BaseActivity {
             case 1:
                 if (!currentpage.equals("1")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "1");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, homeFragment).commit();
-//                    fragment = new HomeFragment();
-//                    setContent(fragment);
-//                    bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+                    setContent(homeFragment);
                 }
                 break;
             case 2:
                 if (!currentpage.equals("2")) {
-//                    if (getMenu(124) || getMenu(127)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "2");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, routeCustomerFragment).commit();
-
-//                    fragment = new RouteCustomerFragment();
-//                    setContent(fragment);
-//                    bottomNavigationView.setSelectedItemId(R.id.navigation_route_customer);
-//                    } else {
-//                        setToast("You don't have access to this menu");
-//                    }
+                    setContent(routeCustomerFragment);
                 }
                 break;
             case 3:
                 if (!currentpage.equals("3")) {
 //                    if (getMenu(88) || getMenu(92)) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "3");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, activityFragment).commit();
-//                    fragment = new NewVisitHomeFragment();
-//                    fragment = new ActivityFragment();
-//                    setContent(fragment);
-//                    bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
-//                    }
+                    setContent(activityFragment);
                 }
                 break;
             case 4:
                 if (!currentpage.equals("4")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "4");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, summaryFragment).commit();
-//                    fragment = new SummaryFragment();
-////                    setContent(fragment);
-//                    bottomNavigationView.setSelectedItemId(R.id.navigation_summary);
+                    setContent(summaryFragment);
                 }
                 break;
             case 5:
                 if (!currentpage.equals("5")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "5");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, accountFragment).commit();
-////                    setContent(fragment);
-//                    bottomNavigationView.setSelectedItemId(R.id.navigation_account);
+                    setContent(accountFragment);
                 }
                 break;
-/*            case 6:
-                if (!currentpage.equals("6")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "6");
-                    fragment = new Profile2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 7:
-                if (!currentpage.equals("7")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "7");
-                    fragment = new ChangePasswordFragment();
-                    setContent(fragment);
-                }
-                break;
-            case 8:
-                if (!currentpage.equals("8")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "8");
-                    fragment = new Timer2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 9:
-                if (!currentpage.equals("9")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "9");
-                    fragment = new CreditInfo2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 10:
-                if (!currentpage.equals("10")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "10");
-                    fragment = new StoreCheckFragment();
-                    setContent(fragment);
-                }
-                break;
-            case 11:
-                if (!currentpage.equals("11")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "11");
-                    fragment = new Order2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 12:
-                if (!currentpage.equals("12")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "12");
-                    fragment = new CreateOrder2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 13:
-                if (!currentpage.equals("13")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "13");
-                    fragment = new CreateOrderDetail2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 14:
-                if (!currentpage.equals("14")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "14");
-                    fragment = new OrderSummary2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 15:
-                if (!currentpage.equals("15")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "15");
-                    fragment = new OrderSummaryDetail2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 16:
-                if (!currentpage.equals("16")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "16");
-                    fragment = new ImageDetail2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 17:
-                if (!currentpage.equals("17")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "17");
-                    fragment = new Return2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 18:
-                if (!currentpage.equals("18")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "18");
-                    fragment = new CreateReturn2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 19:
-                if (!currentpage.equals("19")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "19");
-                    fragment = new ReturnDetail2Fragment();
-                    setContent(fragment);
-                }
-                break;
-            case 20:
-                if (!currentpage.equals("20")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "20");
-                    fragment = new OrderPlanDetailFragmentV2();
-                    setContent(fragment);
-                }
-                break;
-            case 21:
-                if (!currentpage.equals("21")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "21");
-                    fragment = new OrderPlanSummaryFragmentV2();
-                    setContent(fragment);
-                }
-                break;
-            case 22:
-                if (!currentpage.equals("22")) {
-                    Helper.setItemParam(Constants.CURRENTPAGE, "22");
-                    fragment = new TargetDetailFragment();
-                    setContent(fragment);
-                }
-                break;*/
             case 23:
                 if (!currentpage.equals("23")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "23");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, coverageFragment).commit();
-//                    fragment = new CoverageFragment();
-//                    setContent(fragment);
+                    setContent(coverageFragment);
                 }
                 break;
             case 24:
                 if (!currentpage.equals("24")) {
                     Helper.setItemParam(Constants.CURRENTPAGE, "24");
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_container, directionFragment).commit();
-//                    fragment = new DirectionFragment();
-//                    setContent(fragment);
+                    setContent(directionFragment);
                 }
                 break;
         }
-//        setContent(fragment);
     }
 
     @Override
@@ -446,15 +305,12 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         initProgress();
         registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
-        setPage();
+//        setPage();
     }
 
     private void setPage() {
         currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
         if (currentpage != null) {//&& session != null
-            if (currentpage.equals(0)) {
-                currentpage = "1";
-            }
             changePage(Integer.parseInt(currentpage));
         } else {
             changePage(1);
@@ -490,8 +346,8 @@ public class MainActivity extends BaseActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Helper.setItemParam(Constants.CURRENTPAGE, savedInstanceState.getString("page_helper"));
-        initProgress();
-        setPage();
+//        initProgress();
+//        setPage();
     }
 
     @Override

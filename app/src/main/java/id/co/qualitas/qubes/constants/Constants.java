@@ -105,15 +105,14 @@ public class Constants {
     public static final String INFO_KIKI = "info kiki";
     public static final String CURRENTPAGE = "current page";
     public static final String FROM_SALES_ORDER = "from sales order";
-    public static final String ROUTE_CUSTOMER_HEADER = "route customer header";
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
     public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
     public static final String LOCATION_DATA_EXTRA = PACKAGE_NAME + ".LOCATION_DATA_EXTRA";
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    public static String URL = "http://192.168.1.14:8282";
-    public static String IP = "192.168.1.14:8282";
+    public static String URL = "http://192.168.1.12:8282";
+    public static String IP = "192.168.1.12:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -493,7 +492,12 @@ public class Constants {
     public static final String DATE_FORMAT_6 = "dd/MM/yyyy HH:mm:ss";
 
     //new api qubes aspp
-    public static final String API_PREFIX = "/api/v1/";
-    public static final String API_GET_USER_DETAIL = "mobile/getDetailUser";
-    public static final String API_GET_STOCK_REQUEST = "mobile/getStockRequest";
+    public static final String API_PREFIX = "/api/v1/mobile/";
+    public static final String API_USER_DETAIL_GET = "getDetailUser";
+    public static final String API_MASTER_DATA_GET = "getMasterData";
+    public static final String API_STOCK_REQUEST_LIST = "getStockRequest";
+    public static final String API_STOCK_REQUEST_INSERT = "addStockRequest";
+    public static final String API_STOCK_REQUEST_VERIFICATION = "updateVerification";
+    public static final String API_STOCK_REQUEST_UNLOADING = "updateUnloading";
+    public static final String API_ROUTE_CUSTOMER_LIST = "getAllCustomer";
 }

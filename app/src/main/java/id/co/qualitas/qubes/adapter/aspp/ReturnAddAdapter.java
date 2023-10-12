@@ -23,6 +23,7 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Reason;
@@ -276,10 +277,10 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         conditionList.add("Bad");
 
         List<Reason> reasonList = new ArrayList<>();
-        reasonList.addAll(Helper.getDataReason());
+        reasonList.addAll(new Database(mContext).getAllReason("Return"));
 
         String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getMaterialid()) ? detail.getMaterialid() : null;
+        String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);
 
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {

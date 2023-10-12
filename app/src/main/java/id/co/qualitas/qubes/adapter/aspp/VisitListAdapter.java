@@ -17,7 +17,6 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
-import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 
 public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Holder> implements Filterable {
@@ -59,7 +58,7 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
                     for (Customer row : mList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -116,7 +115,7 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
         Customer detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
+        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
 
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");

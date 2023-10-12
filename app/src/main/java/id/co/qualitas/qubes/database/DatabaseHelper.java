@@ -30,7 +30,7 @@ import id.co.qualitas.qubes.model.ReturnResponse;
 import id.co.qualitas.qubes.model.SalesOffice;
 import id.co.qualitas.qubes.model.StandardDeliveryOrder;
 import id.co.qualitas.qubes.model.ToPrice;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitDateResponse;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
@@ -786,7 +786,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_MATERIAL, values, KEY_ID_MATERIAL + " = ?",
-                new String[]{String.valueOf((material).getMaterialid())});
+                new String[]{String.valueOf((material).getId())});
     }
 
     public void addMaterial(Material material) {
@@ -894,7 +894,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Material material = new Material();
         if (cursor.moveToFirst()) {
-            material.setMaterialid(cursor.getString(0));
+//            material.setMaterialid(cursor.getString(0));
             material.setMaterialCode(cursor.getString(1));
             material.setQty(cursor.getInt(2));
             material.setDesc(cursor.getString(3));
@@ -917,7 +917,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material material = new Material();
-                material.setMaterialid(cursor.getString(0));
+//                material.setMaterialid(cursor.getString(0));
                 material.setMaterialCode(cursor.getString(1));
                 material.setQty(cursor.getInt(2));
                 material.setDesc(cursor.getString(3));
@@ -1314,8 +1314,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //N
-    public ArrayList<UnitOfMeasure> getListUomByIdMat(String idMaterial, String type) {
-        ArrayList<UnitOfMeasure> uomList = new ArrayList<>();
+    public ArrayList<Uom> getListUomByIdMat(String idMaterial, String type) {
+        ArrayList<Uom> uomList = new ArrayList<>();
         String selectQuery = null;
 
         if (type.equals(Constants.IS_ORDER)) {
@@ -1341,7 +1341,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             if (cursor.moveToFirst()) {
                 do {
-                    UnitOfMeasure uom = new UnitOfMeasure();
+                    Uom uom = new Uom();
                     uom.setId(cursor.getString(0));
                     uom.setUomName(cursor.getString(1));
                     uom.setConversion(cursor.getInt(2));
@@ -2834,7 +2834,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Material data = new Material();
-                data.setMaterialid(cursor.getString(0));
+//                data.setMaterialid(cursor.getString(0));
                 data.setMaterialCode(cursor.getString(1));
                 material.add(data);
             } while (cursor.moveToNext());
@@ -2980,22 +2980,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //    UOM,insert,delete all
-    public void addUOM(UnitOfMeasure unitOfMeasure) {
+    public void addUOM(Uom uom) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID_MATERIAL, unitOfMeasure.getIdMaterial());
-        values.put(KEY_ID_UOM, unitOfMeasure.getId());
-        values.put(KEY_UOM_NAME, unitOfMeasure.getUomName());
-        values.put(KEY_CONVERSION, unitOfMeasure.getConversion());
-        values.put(KEY_IS_ORDER, unitOfMeasure.is_order());
-        values.put(KEY_IS_RETURN, unitOfMeasure.is_return());
+        values.put(KEY_ID_MATERIAL, uom.getIdMaterial());
+        values.put(KEY_ID_UOM, uom.getId());
+        values.put(KEY_UOM_NAME, uom.getUomName());
+        values.put(KEY_CONVERSION, uom.getConversion());
+        values.put(KEY_IS_ORDER, uom.is_order());
+        values.put(KEY_IS_RETURN, uom.is_return());
 
         db.insert(TABLE_UOM, null, values);
         db.close();
     }
 
-    public void addUOMN(List<UnitOfMeasure> list) {
+    public void addUOMN(List<Uom> list) {
         SQLiteDatabase db = this.getWritableDatabase();
 //        dropTable(db, TABLE_UOM, CREATE_TABLE_UOM);
         deleteTable(db, TABLE_UOM);
@@ -3050,7 +3050,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addMasterUomN(List<UnitOfMeasure> listUom) {
+    public void addMasterUomN(List<Uom> listUom) {
         SQLiteDatabase db = this.getWritableDatabase();
 //        dropTable(db, TABLE_MASTER_UOM, CREATE_TABLE_MASTER_UOM);
         deleteTable(db, TABLE_MASTER_UOM);
@@ -3088,8 +3088,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<UnitOfMeasure> getAllUOMReturn(String idMaterial) {
-        ArrayList<UnitOfMeasure> listUom = new ArrayList<UnitOfMeasure>();
+    public ArrayList<Uom> getAllUOMReturn(String idMaterial) {
+        ArrayList<Uom> listUom = new ArrayList<Uom>();
 
         String selectQuery = "SELECT * FROM " + TABLE_UOM +
                 " WHERE " + KEY_ID_MATERIAL + " = ? AND " + KEY_IS_RETURN + " = '1'";
@@ -3099,10 +3099,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 boolean isOrder = false, isReturn = false;
-                UnitOfMeasure uom = new UnitOfMeasure();
+                Uom uom = new Uom();
                 uom.setIdMaterial(cursor.getString(0));
                 uom.setUomName(cursor.getString(1));
-                uom.setConversion(new Double(cursor.getString(2)));
+                uom.setConversion(Integer.parseInt(cursor.getString(2)));
                 if (cursor.getString(3).toLowerCase().equals("true")) {
                     isOrder = true;
                 } else {
@@ -3123,8 +3123,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return listUom;
     }
 
-    public ArrayList<UnitOfMeasure> getAllUOMorder(String idMaterial) {
-        ArrayList<UnitOfMeasure> listUom = new ArrayList<UnitOfMeasure>();
+    public ArrayList<Uom> getAllUOMorder(String idMaterial) {
+        ArrayList<Uom> listUom = new ArrayList<Uom>();
 
         String selectQuery = "SELECT * FROM " + TABLE_UOM +
                 " WHERE " + KEY_ID_MATERIAL + " = ? AND " + KEY_IS_ORDER + " = '1'";
@@ -3134,11 +3134,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 boolean isOrder = false, isReturn = false;
-                UnitOfMeasure uom = new UnitOfMeasure();
+                Uom uom = new Uom();
                 uom.setIdMaterial(cursor.getString(0));
                 uom.setId(cursor.getString(1));
                 uom.setUomName(cursor.getString(2));
-                uom.setConversion(new Double(cursor.getString(3)));
+                uom.setConversion(Integer.parseInt(cursor.getString(3)));
                 if (cursor.getString(4).toLowerCase().equals("true")) {
                     isOrder = true;
                 } else {
@@ -3166,7 +3166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{uomName});
 
-        UnitOfMeasure uom = new UnitOfMeasure();
+        Uom uom = new Uom();
 
         if (cursor.moveToFirst()) {
             uom.setId(cursor.getString(0));
@@ -3184,7 +3184,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idUom});
 
-        UnitOfMeasure uom = new UnitOfMeasure();
+        Uom uom = new Uom();
 
         if (cursor.moveToFirst()) {
             uom.setUomName(cursor.getString(0));
@@ -4952,7 +4952,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_REASON, reason.getId());
-        values.put(KEY_REASON_DESC, reason.getDesc());
+        values.put(KEY_REASON_DESC, reason.getDescription());
         values.put(KEY_TYPE, reason.getType());
 
         db.insert(TABLE_REASON, null, values);
@@ -4969,8 +4969,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Reason reason = new Reason();
-                reason.setId(cursor.getString(0));
-                reason.setDesc(cursor.getString(1));
+//                reason.setId(cursor.getInt(0));
+                reason.setDescription(cursor.getString(1));
                 reason.setType(cursor.getString(2));
 
                 listReason.add(reason);
@@ -4989,13 +4989,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Reason jj = new Reason();
 
-        if (cursor.moveToFirst()) {
-            jj.setId(cursor.getString(0));
-            return jj.getId();
-        } else {
-            jj.setId(null);
-        }
-        return jj.getId();
+//        if (cursor.moveToFirst()) {
+//            jj.setId(cursor.getString(0));
+//            return jj.getId();
+//        } else {
+//            jj.setId(null);
+//        }
+        return String.valueOf(jj.getId());
     }
 
     public void deleteReason() {
@@ -6119,7 +6119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Reason reason = new Reason();
         if (cursor.moveToFirst()) {
             if (cursor.getString(0) != null) {
-                reason.setDesc(cursor.getString(0));
+                reason.setDescription(cursor.getString(0));
             }
 
             if (cursor.getString(1) != null) {

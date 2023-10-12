@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
-import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Reason;
 
@@ -65,7 +63,7 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
                     for (Customer row : mList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -123,14 +121,10 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
     public void onBindViewHolder(Holder holder, int position) {
         Customer detail = mFilteredList.get(position);
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
+        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
+
         List<Reason> reasonList = new ArrayList<>();
-        reasonList.add(new Reason("N1", "Waktu Habis", false, false));
-        reasonList.add(new Reason("N2", "Pindah", true, false));
-        reasonList.add(new Reason("N3", "Banjir", false, true));
-        reasonList.add(new Reason("N4", "Tidak Ketemu", true, true));
-        reasonList.add(new Reason("N5", "Tutup", false, true));
-        reasonList.add(new Reason("N6", "Other", true, false));
+        reasonList.addAll(new Database(mContext).getAllReason("Not Visit"));
 
         final ArrayAdapter<Reason> arrayAdapter = new ArrayAdapter<Reason>(mContext, android.R.layout.simple_dropdown_item_1line, reasonList);
         holder.txtReason.setAdapter(arrayAdapter);
@@ -146,13 +140,13 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Reason temp = arrayAdapter.getItem(i);
-                if (temp.isPhoto()) {
+                if (temp.getIs_photo() == 1) {
                     holder.llImg.setVisibility(View.VISIBLE);
                 } else {
                     holder.llImg.setVisibility(View.GONE);
                 }
 
-                if (temp.isFreeText()) {
+                if (temp.getIs_freetext() == 1) {
                     holder.edtTxtOther.setVisibility(View.VISIBLE);
                 } else {
                     holder.edtTxtOther.setVisibility(View.GONE);

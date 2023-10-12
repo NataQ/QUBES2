@@ -172,7 +172,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
         holder.spinnerUom.setAdapter(spn1Adapter);
 
         String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
-        String productId = !Helper.isNullOrEmpty(detail.getMaterialid()) ? detail.getMaterialid() : null;
+        String productId = String.valueOf(detail.getId());
 
         holder.txtNo.setText(String.valueOf(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);

@@ -21,57 +21,57 @@ public class LoginResponse implements Serializable {
     @SerializedName("error_description")
     String error_description;
 
-    Object user;
+    Object userDetail;
+    List<Object> depoRegion;
+
+    //master data
     List<Object> listReason;
     List<Object> listBank;
+    List<Object> listUom;
+    List<Object> listDaerahTingkat;
+    List<Object> listMaterial;
+    List<Object> listCustomer;
     float radius;
+    int max_visit;
 
-    public List<Object> getListReason() {
-        return listReason;
+    public int getMax_visit() {
+        return max_visit;
     }
 
-    public void setListReason(List<Object> listReason) {
-        this.listReason = listReason;
+    public void setMax_visit(int max_visit) {
+        this.max_visit = max_visit;
     }
 
-    public List<Object> getListBank() {
-        return listBank;
+    public List<Object> getListUom() {
+        return listUom;
     }
 
-    public void setListBank(List<Object> listBank) {
-        this.listBank = listBank;
+    public void setListUom(List<Object> listUom) {
+        this.listUom = listUom;
     }
 
-    public float getRadius() {
-        return radius;
+    public List<Object> getListDaerahTingkat() {
+        return listDaerahTingkat;
     }
 
-    public void setRadius(float radius) {
-        this.radius = radius;
+    public void setListDaerahTingkat(List<Object> listDaerahTingkat) {
+        this.listDaerahTingkat = listDaerahTingkat;
     }
 
-    public String getError_description() {
-        return error_description;
+    public List<Object> getListMaterial() {
+        return listMaterial;
     }
 
-    public void setError_description(String error_description) {
-        this.error_description = error_description;
+    public void setListMaterial(List<Object> listMaterial) {
+        this.listMaterial = listMaterial;
     }
 
-    public String getError() {
-        return error;
+    public List<Object> getListCustomer() {
+        return listCustomer;
     }
 
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public Object getUser() {
-        return user;
-    }
-
-    public void setUser(Object user) {
-        this.user = user;
+    public void setListCustomer(List<Object> listCustomer) {
+        this.listCustomer = listCustomer;
     }
 
     public String getAccess_token() {
@@ -112,5 +112,61 @@ public class LoginResponse implements Serializable {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getError_description() {
+        return error_description;
+    }
+
+    public void setError_description(String error_description) {
+        this.error_description = error_description;
+    }
+
+    public Object getUserDetail() {
+        return userDetail;
+    }
+
+    public void setUserDetail(Object userDetail) {
+        this.userDetail = userDetail;
+    }
+
+    public List<Object> getDepoRegion() {
+        return depoRegion;
+    }
+
+    public void setDepoRegion(List<Object> depoRegion) {
+        this.depoRegion = depoRegion;
+    }
+
+    public List<Object> getListReason() {
+        return listReason;
+    }
+
+    public void setListReason(List<Object> listReason) {
+        this.listReason = listReason;
+    }
+
+    public List<Object> getListBank() {
+        return listBank;
+    }
+
+    public void setListBank(List<Object> listBank) {
+        this.listBank = listBank;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 }

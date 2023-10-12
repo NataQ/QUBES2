@@ -34,13 +34,13 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.MaterialResponse;
 import id.co.qualitas.qubes.model.OutletResponse;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 
 public class StockOpnameBfrFragment extends BaseFragment implements SearchView.OnQueryTextListener {
 
     private ArrayList<MaterialResponse> materialResponseArrayList = new ArrayList<>();
     private ArrayList<MaterialResponse> listDelete = new ArrayList<>();
-    private ArrayList<UnitOfMeasure> listUom = new ArrayList<>();
+    private ArrayList<Uom> listUom = new ArrayList<>();
     private ArrayList<MaterialResponse> listMaterialStore = new ArrayList<>();
 
     private CreateStoreCheckAdapter mAdapter;

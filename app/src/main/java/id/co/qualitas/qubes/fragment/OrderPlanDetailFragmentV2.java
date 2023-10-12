@@ -59,7 +59,7 @@ import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.TargetResponse;
 import id.co.qualitas.qubes.model.TargetSummaryRequest;
 import id.co.qualitas.qubes.model.ToPrice;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 
 public class OrderPlanDetailFragmentV2 extends BaseFragment {
@@ -594,7 +594,7 @@ public class OrderPlanDetailFragmentV2 extends BaseFragment {
 
             }
 
-            ArrayList<UnitOfMeasure> listUom;
+            ArrayList<Uom> listUom;
             if (listMaterial != null && !listMaterial.isEmpty()) {
                 for (MaterialResponse material : listMaterial) {
                     listUom = db.getListUomByIdMat(material.getIdMaterial(), Constants.IS_ORDER);

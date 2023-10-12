@@ -10,22 +10,22 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
  */
 
 public class Thread extends java.lang.Thread{
-    private List<UnitOfMeasure> uomList;
+    private List<Uom> uomList;
     private DatabaseHelper db;
 
-    public Thread(List<UnitOfMeasure> uomList, DatabaseHelper db) {
+    public Thread(List<Uom> uomList, DatabaseHelper db) {
         this.uomList = uomList;
         this.db = db;
     }
 
     public void run(){
         if(uomList != null && !uomList.isEmpty()){
-            List<UnitOfMeasure> tempUom = new ArrayList<>();
+            List<Uom> tempUom = new ArrayList<>();
             for(int i = 0; i < uomList.size(); i++){
 //                tempUom = new ArrayList<>(uomList);
 
-                UnitOfMeasure uom = uomList.get(i);
-                UnitOfMeasure temp = new UnitOfMeasure();
+                Uom uom = uomList.get(i);
+                Uom temp = new Uom();
 
                 if(uom.getId() != null){
                     temp.setId(uom.getId());

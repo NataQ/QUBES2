@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -35,9 +33,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -45,8 +40,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -64,11 +57,9 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.activity.SplashScreenActivity;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
@@ -83,7 +74,6 @@ import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
-import id.co.qualitas.qubes.utils.UnloadingPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class VisitActivity extends BaseActivity implements LocationListener {
@@ -271,7 +261,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         mapView.getOverlays().add(mCompassOverlay);
 
         final List<Customer>[] custList = new List[]{new ArrayList<>()};
-        custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNameCustomer(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+        custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
         if (currentLocation != null) {
             GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
@@ -313,7 +303,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     mapView.getController().animateTo(myPosition);
 
                     custList[0].clear();
-                    custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNameCustomer(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+                    custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
                     custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
 
                     items[0] = Helper.setOverLayItems(custList[0], VisitActivity.this);
@@ -433,7 +423,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         recyclerView.setHasFixedSize(true);
 
         List<Reason> reasonList = new ArrayList<>();
-        reasonList.addAll(Helper.getDataReason());
+        reasonList.addAll(database.getAllReason("Not Visit"));
 
         final ArrayAdapter<Reason> arrayAdapter = new ArrayAdapter<Reason>(VisitActivity.this, android.R.layout.simple_dropdown_item_1line, reasonList);
         txtReasonAll.setAdapter(arrayAdapter);

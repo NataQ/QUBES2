@@ -125,7 +125,7 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.edtPaid.setText(format.format(detail.getQty()));
 

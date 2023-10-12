@@ -138,7 +138,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_stock_request_header" />
+                    tools:listitem="@layout/aspp_row_view_stock_request_list" />
 
             </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

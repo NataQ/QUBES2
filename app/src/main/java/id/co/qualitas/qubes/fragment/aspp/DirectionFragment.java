@@ -62,6 +62,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class DirectionFragment extends BaseFragment {
@@ -77,13 +78,13 @@ public class DirectionFragment extends BaseFragment {
     private RotationGestureOverlay mRotationGestureOverlay;
     private BoundingBox boundingBox;
     //    private List<GeoPoint> geoPointList;
-    private List<Customer> custList;
+    private List<RouteCustomer> custList;
     private AutoCompleteTextView edtStartPoint, edtEndPoint;
     private ImageView imgCurrentStartingPoint, imgCurrentEndPoint, imgBack;
     private TextView txtStore, txtAddress, txtRoute;
     private Button btnMaps;
     private AutoCompleteRouteAdapter startPointAdapter, endPointAdapter;
-    private Customer startPointCustomer, currLocation, endPointCustomer;
+    private RouteCustomer startPointCustomer, currLocation, endPointCustomer;
 
     final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -108,8 +109,6 @@ public class DirectionFragment extends BaseFragment {
         Context ctx = getContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
 
-        initProgress();
-        initFragment();
         initialize();
         setData();
 
@@ -119,7 +118,7 @@ public class DirectionFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 //this is the way to find selected object/item
-                startPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
+                startPointCustomer = (RouteCustomer) adapterView.getItemAtPosition(pos);
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -131,7 +130,7 @@ public class DirectionFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 //this is the way to find selected object/item
-                endPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
+                endPointCustomer = (RouteCustomer) adapterView.getItemAtPosition(pos);
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -155,7 +154,7 @@ public class DirectionFragment extends BaseFragment {
             public void onClick(View view) {
                 getMyLocation();
                 edtStartPoint.setText("Current Location");
-                startPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+                startPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -166,7 +165,7 @@ public class DirectionFragment extends BaseFragment {
             public void onClick(View view) {
                 getMyLocation();
                 edtEndPoint.setText("Current Location");
-                endPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+                endPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -203,33 +202,28 @@ public class DirectionFragment extends BaseFragment {
     }
 
     private void setData() {
-        if (Helper.getItemParam(Constants.ROUTE_CUSTOMER_HEADER) != null) {
-            routeCustHeader = (RouteCustomer) Helper.getItemParam(Constants.ROUTE_CUSTOMER_HEADER);
+        if (SessionManagerQubes.getRouteCustomerHeader() != null) {
+            routeCustHeader = SessionManagerQubes.getRouteCustomerHeader();
 
-            txtStore.setText(routeCustHeader.getIdCustomer() + " - " + routeCustHeader.getNameCustomer());
-            txtAddress.setText(routeCustHeader.getAddressCustomer());
-            edtEndPoint.setText(routeCustHeader.getNameCustomer());
+            txtStore.setText(routeCustHeader.getId() + " - " + routeCustHeader.getNama());
+            txtAddress.setText(routeCustHeader.getAddress());
+            edtEndPoint.setText(routeCustHeader.getNama());
             txtRoute.setText("P1H1-P3H1");
 
             getMyLocation();
 
             edtStartPoint.setText("Current Location");
-            startPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
-            endPointCustomer = new Customer(routeCustHeader.getIdCustomer(), routeCustHeader.getNameCustomer(), routeCustHeader.getAddressCustomer(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
+            startPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+            endPointCustomer = new RouteCustomer(routeCustHeader.getId(), routeCustHeader.getNama(), routeCustHeader.getAddress(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
             if (startPointCustomer != null && endPointCustomer != null)
                 setMap(startPointCustomer, endPointCustomer);
         }
 
         custList = new ArrayList<>();
-        custList.add(new Customer("BO", "Black Owl", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", true, -6.090263984566263, 106.74593288657607));
-        custList.add(new Customer("PCP", "Pantjoran Chinatown PIK", "Unnamed Road, 14460", false, -6.09047339393416, 106.74535959301855));
-        custList.add(new Customer("CMP", "Central Market PIK", "Golf Island, Kawasan Pantai Maju, Jl, Jl. Boulevard Raya, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14470", true, -6.09102018270127, 106.74661148098058));
-        custList.add(new Customer("CHGI", "Cluster Harmony, Golf Island", "WP6W+7JR, Pantai Indah Kapuk St, Kamal Muara, Penjaringan, North Jakarta City, Jakarta 14460", false, -6.089065696336256, 106.74676357552187));
-        custList.add(new Customer("MSGIP", "Monsieur Spoon Golf Island PIK", "Urban Farm, Unit 5, Kawasan Pantai Maju Jl. The Golf Island Boulevard, Kel, Kamal Muara, Kec. Penjaringan, Daerah Khusus Ibukota Jakarta 14460", true, -6.09032214182743, 106.74191982249332));
-        custList.add(new Customer("KMPP", "K3 Mart PIK Pantjoran", "Golf Island, Ruko Blok D No.02A, Kamal Muara, Jkt Utara, Daerah Khusus Ibukota Jakarta 11447", false, -6.088542162422348, 106.74239952686823));
+        custList = database.getAllRouteCustomer(null);
     }
 
-    private void setMap(Customer startPointCustomer, Customer endPointCustomer) {
+    private void setMap(RouteCustomer startPointCustomer, RouteCustomer endPointCustomer) {
 //        zoomToBounds(custList)
 
         if (mOverlay != null) {
@@ -239,11 +233,11 @@ public class DirectionFragment extends BaseFragment {
         }
 
         items = new ArrayList<>();
-        ov = new OverlayItem(startPointCustomer.getIdCustomer() + "" + startPointCustomer.getNameCustomer(), startPointCustomer.getAddress(), new GeoPoint(startPointCustomer.getLatitude(), startPointCustomer.getLongitude()));
+        ov = new OverlayItem(startPointCustomer.getId() + "" + startPointCustomer.getNama(), startPointCustomer.getAddress(), new GeoPoint(startPointCustomer.getLatitude(), startPointCustomer.getLongitude()));
         ov.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(startPointCustomer, true)));
         items.add(ov);
 
-        ov1 = new OverlayItem(endPointCustomer.getIdCustomer() + "" + endPointCustomer.getNameCustomer(), endPointCustomer.getAddress(), new GeoPoint(endPointCustomer.getLatitude(), endPointCustomer.getLongitude()));
+        ov1 = new OverlayItem(endPointCustomer.getId() + "" + endPointCustomer.getNama(), endPointCustomer.getAddress(), new GeoPoint(endPointCustomer.getLatitude(), endPointCustomer.getLongitude()));
         ov1.setMarker(new BitmapDrawable(getResources(), getMarkerBitmapFromView(endPointCustomer, false)));
         items.add(ov1);
 
@@ -308,7 +302,7 @@ public class DirectionFragment extends BaseFragment {
         mMapView.getOverlays().add(mCompassOverlay);
     }
 
-    private Bitmap getMarkerBitmapFromView(Customer cust, boolean start) {
+    private Bitmap getMarkerBitmapFromView(RouteCustomer cust, boolean start) {
         //HERE YOU CAN ADD YOUR CUSTOM VIEW
         View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
 
@@ -317,7 +311,7 @@ public class DirectionFragment extends BaseFragment {
         TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
         ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
 
-        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNameCustomer());
+        txt_name.setText(cust.getId() + " - " + cust.getNama());
 //        txt_add.setText(cust.getAddress());
         if (start) {
             imgStore.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_marker_blue));
@@ -337,7 +331,7 @@ public class DirectionFragment extends BaseFragment {
         return returnedBitmap;
     }
 
-    private GeoPoint computeCentroid(Customer startPoint, Customer endPoint) {
+    private GeoPoint computeCentroid(RouteCustomer startPoint, RouteCustomer endPoint) {
         double latitude = 0;
         double longitude = 0;
 

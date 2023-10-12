@@ -1,7 +1,6 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -26,16 +25,12 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.InvoiceVerificationAdapter;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestHeaderAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class InvoiceVerificationActivity extends BaseActivity {

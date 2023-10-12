@@ -103,6 +103,7 @@ import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.Return;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
@@ -223,18 +224,23 @@ public class BaseActivity extends AppCompatActivity {
         if (SessionManagerQubes.getUserProfile() != null) {
             Helper.setItemParam(Constants.USER_DETAIL, SessionManagerQubes.getUserProfile());
             user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-            if (user == null) {
-                setToast("Session telah habis. Silahkan login ulang.");
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-
             if (SessionManagerQubes.getUrl() != null) {
                 Helper.setItemParam(Constants.URL, SessionManagerQubes.getUrl());
             }
+            if (user == null) {
+                setToast("Session telah habis. Silahkan login ulang.");
+                clearAllSession();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } else {
+                if (SessionManagerQubes.getToken() != null) {
+                    Helper.setItemParam(Constants.TOKEN, SessionManagerQubes.getToken());
+                }
+            }
+
         } else {
-            setToast("Session habis");
+            setToast("Session telah habis. Silahkan login ulang.");
             clearAllSession();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -319,6 +325,7 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearLoginSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
+        SessionManagerQubes.clearRouteCustomerHeaderSession();
 
         database.deleteStockRequestHeader();
         database.deleteStockRequestDetail();
@@ -1368,7 +1375,7 @@ public class BaseActivity extends AppCompatActivity {
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setMaterialid(edtMaterialCode.getText().toString());
+                            material.setId(Integer.parseInt(edtMaterialCode.getText().toString()));
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 
@@ -1413,7 +1420,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+                        listMaterialCode.add(String.valueOf(data.getId()));
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1435,7 +1442,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+                        listMaterialCode.add(String.valueOf(data.getId()));
                     }
 
                     if (!listMaterialName.isEmpty() && !listMaterialCode.isEmpty()) {
@@ -1457,7 +1464,7 @@ public class BaseActivity extends AppCompatActivity {
                     listMaterialNew = db.getMasterMaterialNameCodeForOrder();
                     for (Material data : listMaterialNew) {
                         listMaterialName.add(data.getMaterialCode());
-                        listMaterialCode.add(data.getMaterialid());
+                        listMaterialCode.add(String.valueOf(data.getId()));
                     }
                 }
 

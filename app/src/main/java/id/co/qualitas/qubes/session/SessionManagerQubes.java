@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 
@@ -20,9 +21,11 @@ public abstract class SessionManagerQubes {
     private static final String PREF_LOGIN = "pref_login";
     private static final String PREF_STOCK_REQUEST_HEADER = "pref_stock_request_header";
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
+    private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
     private static final String PREF_COLLECTION_SOURCE = "pref_collection_source";
     private static final String KEY_USER_PROFILE = "key_user_profile";
     private static final String KEY_STOCK_REQUEST_HEADER = "key_stock_request_header";
+    private static final String KEY_ROUTE_CUSTOMER_HEADER = "key_route_customer_header";
     private static final String KEY_COLLECTION_HEADER = "key_collection_header";
     private static final String KEY_COLLECTION_SOURCE = "key_collection_source";
     private static final String KEY_TOKEN = "key_token";
@@ -34,6 +37,7 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences stockRequestHeaderPrefs;
     private static SharedPreferences collectionHeaderPrefs;
     private static SharedPreferences collectionSourcePrefs;
+    private static SharedPreferences routeCustomerHeaderPrefs;
 
     public static void init(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -41,6 +45,7 @@ public abstract class SessionManagerQubes {
         stockRequestHeaderPrefs = context.getSharedPreferences(PREF_STOCK_REQUEST_HEADER, Context.MODE_PRIVATE);
         collectionHeaderPrefs = context.getSharedPreferences(PREF_COLLECTION_HEADER, Context.MODE_PRIVATE);
         collectionSourcePrefs = context.getSharedPreferences(PREF_COLLECTION_SOURCE, Context.MODE_PRIVATE);
+        routeCustomerHeaderPrefs = context.getSharedPreferences(PREF_ROUTE_CUSTOMER_HEADER, Context.MODE_PRIVATE);
     }
 
     public static void setUrl(String url) {
@@ -61,6 +66,14 @@ public abstract class SessionManagerQubes {
         if (param != null) {
             synchronized (sync) {
                 stockRequestHeaderPrefs.edit().putString(KEY_STOCK_REQUEST_HEADER, gson.toJson(param)).apply();
+            }
+        }
+    }
+
+    public static void setRouteCustomerHeader(RouteCustomer param) {
+        if (param != null) {
+            synchronized (sync) {
+                routeCustomerHeaderPrefs.edit().putString(KEY_ROUTE_CUSTOMER_HEADER, gson.toJson(param)).apply();
             }
         }
     }
@@ -101,6 +114,10 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(stockRequestHeaderPrefs.getString(KEY_STOCK_REQUEST_HEADER, null), StockRequest.class);
     }
 
+    public static RouteCustomer getRouteCustomerHeader() {
+        return gson.fromJson(routeCustomerHeaderPrefs.getString(KEY_ROUTE_CUSTOMER_HEADER, null), RouteCustomer.class);
+    }
+
     public static String getToken() {
         return loginPrefs.getString(KEY_TOKEN, null);
     }
@@ -133,5 +150,9 @@ public abstract class SessionManagerQubes {
 
     public static void clearInvoiceHeaderSession() {
         collectionHeaderPrefs.edit().clear().apply();
+    }
+
+    public static void clearRouteCustomerHeaderSession() {
+        routeCustomerHeaderPrefs.edit().clear().apply();
     }
 }

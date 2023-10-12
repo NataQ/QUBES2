@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -446,7 +445,7 @@ public class CreateNewReturnAdapter extends BaseAdapter {
                     if (context.getReasonArrayList() != null && !context.getReasonArrayList().isEmpty()) {
                         List<String> temp = new ArrayList<>();
                         for (int a = 0; a < context.getReasonArrayList().size(); a++) {
-                            if (aReturn.getItemsReason()[i].equals(context.getReasonArrayList().get(a).getDesc())) {
+                            if (aReturn.getItemsReason()[i].equals(context.getReasonArrayList().get(a).getDescription())) {
                                 holder.catReturn.setText(context.getReasonArrayList().get(a).getType());
                                 aReturn.setCategory(context.getReasonArrayList().get(a).getType());
                             }

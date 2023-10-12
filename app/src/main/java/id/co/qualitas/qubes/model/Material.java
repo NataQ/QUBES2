@@ -4,11 +4,12 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 public class Material implements Cloneable{
-    private String idHeader;
-    private String materialid;
-    private String materialname;
+    private String idHeader;//aspp
+    private int id;//aspp
+    private String nama;//aspp
     private String materialCode;
     private String materialQty;
+    //aspp
     private double qty;
     private double qtySisa;
     private double amount;
@@ -27,34 +28,34 @@ public class Material implements Cloneable{
     private List<Discount> extra;
     private List<Material> extraItem;
     private boolean isChecked;
-    private boolean isSync;
-    private String groupname;
-    private String loadnumber;
-    private int materialgroupid;
-    private int itemno;
+    private int is_sync;
+    private String material_sales;
+    private String material_group_name;
+    private String load_number;
+    private int id_material_group;
 
     public Material() {
     }
 
-    public Material(String materialid, String materialname, double qty, String uom) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, double qty, String uom) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.qty = qty;
         this.uom = uom;
     }
 
-    public Material(String materialid, String materialname, double qty, String uom, double price, double totalDiscount) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, double qty, String uom, double price, double totalDiscount) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
         this.totalDiscount = totalDiscount;
     }
 
-    public Material(String materialid, String materialname, double qty, String uom, double price, double totalDiscount, List<Material> extraItem) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, double qty, String uom, double price, double totalDiscount, List<Material> extraItem) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.qty = qty;
         this.price = price;
         this.uom = uom;
@@ -62,23 +63,23 @@ public class Material implements Cloneable{
         this.extraItem = extraItem;
     }
 
-    public Material(String materialid, String materialname, double price, double amount) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, double price, double amount) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.amount = amount;
         this.price = price;
     }
 
-    public Material(String klasifikasi, String materialname, double qty, double price, String uom) {
-        this.materialname = materialname;
+    public Material(String klasifikasi, String nama, double qty, double price, String uom) {
+        this.nama = nama;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
         this.uom = uom;
     }
 
-    public Material(String klasifikasi, String materialname, double qty, double price, String uom, List<Material> extraItem) {
-        this.materialname = materialname;
+    public Material(String klasifikasi, String nama, double qty, double price, String uom, List<Material> extraItem) {
+        this.nama = nama;
         this.qty = qty;
         this.klasifikasi = klasifikasi;
         this.price = price;
@@ -86,54 +87,22 @@ public class Material implements Cloneable{
         this.extraItem = extraItem;
     }
 
-    public Material(String materialname, double qty) {
-        this.materialname = materialname;
+    public Material(String nama, double qty) {
+        this.nama = nama;
         this.qty = qty;
     }
 
-    public Material(String materialid, String materialname, double price) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, double price) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.price = price;
     }
 
-    public Material(String materialid, String materialname, String materialQty, String uom) {
-        this.materialid = materialid;
-        this.materialname = materialname;
+    public Material(String id, String nama, String materialQty, String uom) {
+        this.id = Integer.parseInt(id);
+        this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
-    }
-
-    public String getGroupname() {
-        return groupname;
-    }
-
-    public void setGroupname(String groupname) {
-        this.groupname = groupname;
-    }
-
-    public String getLoadnumber() {
-        return loadnumber;
-    }
-
-    public void setLoadnumber(String loadnumber) {
-        this.loadnumber = loadnumber;
-    }
-
-    public int getMaterialgroupid() {
-        return materialgroupid;
-    }
-
-    public void setMaterialgroupid(int materialgroupid) {
-        this.materialgroupid = materialgroupid;
-    }
-
-    public int getItemno() {
-        return itemno;
-    }
-
-    public void setItemno(int itemno) {
-        this.itemno = itemno;
     }
 
     public String getIdHeader() {
@@ -144,140 +113,20 @@ public class Material implements Cloneable{
         this.idHeader = idHeader;
     }
 
-    public double getAmountPaid() {
-        return amountPaid;
+    public int getId() {
+        return id;
     }
 
-    public void setAmountPaid(double amountPaid) {
-        this.amountPaid = amountPaid;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public double getTotal() {
-        return total;
+    public String getNama() {
+        return nama;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public boolean isSync() {
-        return isSync;
-    }
-
-    public void setSync(boolean sync) {
-        isSync = sync;
-    }
-
-    public double getQtySisa() {
-        return qtySisa;
-    }
-
-    public void setQtySisa(double qtySisa) {
-        this.qtySisa = qtySisa;
-    }
-
-    public String getUomSisa() {
-        return uomSisa;
-    }
-
-    public void setUomSisa(String uomSisa) {
-        this.uomSisa = uomSisa;
-    }
-
-    public String getMaterialname() {
-        return materialname;
-    }
-
-    public void setMaterialname(String materialname) {
-        this.materialname = materialname;
-    }
-
-    public boolean isChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(boolean checked) {
-        isChecked = checked;
-    }
-
-    public double getTotalDiscount() {
-        return totalDiscount;
-    }
-
-    public void setTotalDiscount(double totalDiscount) {
-        this.totalDiscount = totalDiscount;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public List<Material> getExtraItem() {
-        return extraItem;
-    }
-
-    public void setExtraItem(List<Material> extraItem) {
-        this.extraItem = extraItem;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
-    }
-
-    public List<Discount> getExtra() {
-        return extra;
-    }
-
-    public void setExtra(List<Discount> extra) {
-        this.extra = extra;
-    }
-
-    public String getUom() {
-        return uom;
-    }
-
-    public void setUom(String uom) {
-        this.uom = uom;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getMaterialQty() {
-        return materialQty;
-    }
-
-    public void setMaterialQty(String materialQty) {
-        this.materialQty = materialQty;
-    }
-
-    public String getDeliveryNumber() {
-        return DeliveryNumber;
-    }
-
-    public void setDeliveryNumber(String deliveryNumber) {
-        DeliveryNumber = deliveryNumber;
-    }
-
-    public String getMaterialid() {
-        return materialid;
-    }
-
-    public void setMaterialid(String materialid) {
-        this.materialid = materialid;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public String getMaterialCode() {
@@ -288,12 +137,44 @@ public class Material implements Cloneable{
         this.materialCode = materialCode;
     }
 
+    public String getMaterialQty() {
+        return materialQty;
+    }
+
+    public void setMaterialQty(String materialQty) {
+        this.materialQty = materialQty;
+    }
+
     public double getQty() {
         return qty;
     }
 
     public void setQty(double qty) {
         this.qty = qty;
+    }
+
+    public double getQtySisa() {
+        return qtySisa;
+    }
+
+    public void setQtySisa(double qtySisa) {
+        this.qtySisa = qtySisa;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     public String getDesc() {
@@ -320,12 +201,132 @@ public class Material implements Cloneable{
         this.attachment = attachment;
     }
 
+    public String getDeliveryNumber() {
+        return DeliveryNumber;
+    }
+
+    public void setDeliveryNumber(String deliveryNumber) {
+        DeliveryNumber = deliveryNumber;
+    }
+
     public String getKlasifikasi() {
         return klasifikasi;
     }
 
     public void setKlasifikasi(String klasifikasi) {
         this.klasifikasi = klasifikasi;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
+
+    public String getUomSisa() {
+        return uomSisa;
+    }
+
+    public void setUomSisa(String uomSisa) {
+        this.uomSisa = uomSisa;
+    }
+
+    public double getTotalDiscount() {
+        return totalDiscount;
+    }
+
+    public void setTotalDiscount(double totalDiscount) {
+        this.totalDiscount = totalDiscount;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public Discount getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
+    }
+
+    public List<Discount> getExtra() {
+        return extra;
+    }
+
+    public void setExtra(List<Discount> extra) {
+        this.extra = extra;
+    }
+
+    public List<Material> getExtraItem() {
+        return extraItem;
+    }
+
+    public void setExtraItem(List<Material> extraItem) {
+        this.extraItem = extraItem;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public int getIs_sync() {
+        return is_sync;
+    }
+
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
+    }
+
+    public String getMaterial_sales() {
+        return material_sales;
+    }
+
+    public void setMaterial_sales(String material_sales) {
+        this.material_sales = material_sales;
+    }
+
+    public String getMaterial_group_name() {
+        return material_group_name;
+    }
+
+    public void setMaterial_group_name(String material_group_name) {
+        this.material_group_name = material_group_name;
+    }
+
+    public String getLoad_number() {
+        return load_number;
+    }
+
+    public void setLoad_number(String load_number) {
+        this.load_number = load_number;
+    }
+
+    public int getId_material_group() {
+        return id_material_group;
+    }
+
+    public void setId_material_group(int id_material_group) {
+        this.id_material_group = id_material_group;
     }
 
     @NonNull

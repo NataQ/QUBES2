@@ -57,7 +57,7 @@ public class OutletVisitAdapter extends RecyclerView.Adapter<OutletVisitAdapter.
                     for (Customer row : mList) {
 
                         /*filter by name*/
-                        if (row.getNameCustomer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -113,7 +113,7 @@ public class OutletVisitAdapter extends RecyclerView.Adapter<OutletVisitAdapter.
         Customer detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNameCustomer());
+        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
         holder.txtRoute.setText(detail.isRoute() ? "Route" : "Non Route");
 
         if (position == 1) {

@@ -121,7 +121,7 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(Helper.isEmpty(detail.getMaterialname(), ""));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
 
         holder.edtPaid.setVisibility(View.GONE);

@@ -43,7 +43,7 @@ import id.co.qualitas.qubes.model.Return;
 import id.co.qualitas.qubes.model.ReturnHeader;
 import id.co.qualitas.qubes.model.ReturnRequest;
 import id.co.qualitas.qubes.model.ReturnResponse;
-import id.co.qualitas.qubes.model.UnitOfMeasure;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 
 public class CreateNewReturnFragment extends BaseFragment {
@@ -52,7 +52,7 @@ public class CreateNewReturnFragment extends BaseFragment {
     private ArrayList<Return> returnList = new ArrayList<>();
     private ArrayList<String> listSavedBrb = new ArrayList<>();
     private List<ReturnRequest> returnHeaderList = new ArrayList<>();
-    private ArrayList<UnitOfMeasure> listUom = new ArrayList<>();
+    private ArrayList<Uom> listUom = new ArrayList<>();
     private LinearLayout mLinearLayout;
     private Return returns;
     private ReturnHeader returnHeader = null;
@@ -409,7 +409,7 @@ public class CreateNewReturnFragment extends BaseFragment {
 
                 if (reasonArrayList != null && !reasonArrayList.isEmpty()) {
                     for (int a = 0; a < reasonArrayList.size(); a++) {
-                        selectedReason.add(reasonArrayList.get(a).getDesc());
+                        selectedReason.add(reasonArrayList.get(a).getDescription());
                     }
 
                     selectedReason.add(selectedReason.size(), Constants.REASON);

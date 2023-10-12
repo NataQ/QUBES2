@@ -16,22 +16,23 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.adapter.aspp.StockRequestHeaderAdapter;
+import id.co.qualitas.qubes.adapter.aspp.StockRequestListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class StockRequestListActivity extends BaseActivity {
-    private StockRequestHeaderAdapter mAdapter;
+    private StockRequestListAdapter mAdapter;
     private List<StockRequest> mList;
     private Button btnAdd;
+    private WSMessage resultWsMessage;
+    private boolean saveDataSuccess = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,36 +74,13 @@ public class StockRequestListActivity extends BaseActivity {
     }
 
     private void setAdapter() {
-        mAdapter = new StockRequestHeaderAdapter(this, mList, header -> {
+        mAdapter = new StockRequestListAdapter(this, mList, header -> {
             SessionManagerQubes.setStockRequestHeader(header);
             intent = new Intent(this, StockRequestDetailActivity.class);
             startActivity(intent);
         });
 
         recyclerView.setAdapter(mAdapter);
-    }
-
-    private void initData() {
-        List<StockRequest> mList = new ArrayList<>();
-        mList.add(new StockRequest("2023-05-01", "2023050101000010001", "2023-05-01", "SJ0001", "approve", false, false, true, false, null, initDataMaterial()));
-        mList.add(new StockRequest("2023-05-01", "2023050201000010001", "2023-05-01", "SJ0001", "approve", false, false, true, false, null, initDataMaterial()));
-        mList.add(new StockRequest("2023-05-01", "2023050301000010001", "2023-05-01", "SJ0001", "approve", false, false, true, false, null, initDataMaterial()));
-
-        for (StockRequest param : mList) {
-            int idHeader = database.addStockRequestHeader(param, user.getUsername());
-            for (Material param1 : param.getMaterialList()) {
-                database.addStockRequestDetail(param1, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-    }
-
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3000, "BTL"));
-        mList.add(new Material("11001", "Kratingdaeng", 100, "CAN"));
-        mList.add(new Material("11030", "Redbull", 2200, "CAN"));
-        mList.add(new Material("21001", "Torpedo Aneka Buah", 1000, "CAN"));
-        return mList;
     }
 
     private void initialize() {
@@ -132,6 +110,7 @@ public class StockRequestListActivity extends BaseActivity {
 
         if (mList == null || mList.isEmpty()) {
             progressCircle.setVisibility(View.VISIBLE);
+            PARAM = 1;
             new RequestUrl().execute();
         }
     }
@@ -146,12 +125,38 @@ public class StockRequestListActivity extends BaseActivity {
         @Override
         protected WSMessage doInBackground(Void... voids) {
             try {
-                String URL_ = Constants.API_GET_STOCK_REQUEST;
-                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                if (PARAM == 1) {
+                    String URL_ = Constants.API_STOCK_REQUEST_LIST;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                } else {
+                    mList = new ArrayList<>();
+                    StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
+                    Collections.addAll(mList, paramArray);
+                    database.deleteStockRequestHeader();
+                    database.deleteStockRequestDetail();
+
+                    for (StockRequest param : mList) {
+                        List<Material> listMat = new ArrayList<>();
+                        Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+                        Collections.addAll(listMat, matArray);
+                        param.setMaterialList(listMat);
+
+                        int idHeader = database.addStockRequestHeader(param, user.getUserLogin());
+                        for (Material mat : listMat) {
+                            database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
+                    }
+                    getData();
+                    saveDataSuccess = true;
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("stockRequest", ex.getMessage());
+                }
+                if (PARAM == 2) {
+                    saveDataSuccess = false;
                 }
                 return null;
             }
@@ -164,25 +169,27 @@ public class StockRequestListActivity extends BaseActivity {
 
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
-            progressCircle.setVisibility(View.GONE);
-            if (WsMessage != null) {
-                if (WsMessage.getIdMessage() == 1) {
-                    mList = new ArrayList<>();
-                    StockRequest[] paramArray = Helper.ObjectToGSON(WsMessage.getResult(), StockRequest[].class);
-                    Collections.addAll(mList, paramArray);
-                    for (StockRequest param : mList) {
-                        List<Material> listMat = new ArrayList<>();
-                        Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-                        Collections.addAll(listMat, matArray);
-                        param.setMaterialList(listMat);
+            if (PARAM == 1) {
+                if (WsMessage != null) {
+                    if (WsMessage.getIdMessage() == 1) {
+                        resultWsMessage = WsMessage;
+                        PARAM = 2;
+                        new RequestUrl().execute();
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
+                        setToast(WsMessage.getMessage());
                     }
-                    getData();
-                    mAdapter.setData(mList);
                 } else {
-                    setToast(WsMessage.getMessage());
+                    progressCircle.setVisibility(View.GONE);
+                    setToast(getString(R.string.failedGetData));
                 }
             } else {
-                setToast(getString(R.string.failedGetData));
+                if (saveDataSuccess) {
+                    progressCircle.setVisibility(View.GONE);
+                    mAdapter.setData(mList);
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
             }
 
         }

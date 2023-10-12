@@ -109,7 +109,7 @@ public class SpinnerBankAdapter extends RecyclerView.Adapter<SpinnerBankAdapter.
         holder.text1.setText(detail.getId() + " - " + detail.getName());
         if (showNoRek) {
             holder.txtNoRek.setVisibility(View.VISIBLE);
-            holder.txtNoRek.setText(detail.getNoRekening());
+            holder.txtNoRek.setText(detail.getNo_rek());
         } else {
             holder.txtNoRek.setVisibility(View.GONE);
         }
