@@ -62,7 +62,7 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Ho
                     for (Invoice row : mList) {
 
                         /*filter by name*/
-                        if (row.getInvoiceNo().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo_invoice().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -116,23 +116,23 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Ho
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        String idCust = Helper.isEmpty(detail.getInvoiceNo(), "");
-        String nameCust = Helper.isEmpty(detail.getCustomerName(), "");
+        String idCust = Helper.isEmpty(detail.getNo_invoice(), "");
+        String nameCust = Helper.isEmpty(detail.getNama(), "");
 
-        if (!Helper.isNullOrEmpty(detail.getInvoiceDate())) {
-            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoiceDate());
+        if (!Helper.isNullOrEmpty(detail.getInvoice_date())) {
+            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoice_date());
             holder.txtInvoiceDate.setText(invDate);
         }
 
-        if (!Helper.isNullOrEmpty(detail.getDueDate())) {
-            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getDueDate());
+        if (!Helper.isNullOrEmpty(detail.getTanggal_jatuh_tempo())) {
+            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggal_jatuh_tempo());
             holder.txtDueDate.setText(dueDate);
         }
         holder.txtCustomer.setText(idCust + " - " + nameCust);
-        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getInvoiceNo(), "-"));
+        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getNo_invoice(), "-"));
         holder.txtAmount.setText("Rp. " + format.format(detail.getAmount()));
         holder.txtNett.setText("Rp. " + format.format(detail.getNett()));
-        holder.txtPaid.setText("Rp. " + format.format(detail.getPaid()));
+        holder.txtPaid.setText("Rp. " + format.format(detail.getTotal_paid()));
     }
 
     private void setFormatSeparator() {

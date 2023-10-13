@@ -4,45 +4,47 @@ import java.util.List;
 
 public class Invoice {
     private String idHeader;
-    private String invoiceNo;
-    private String customerName;
-    private String customerID;
+    private String no_invoice;
+    private String nama;
+    private String id_customer;
     private double amount;
-    private double paid;
+    private double total_paid;
     private double nett;
-    private String invoiceDate;
-    private String dueDate;
+    private String invoice_date;
+    private String tanggal_jatuh_tempo;
     private String route;
+    private String status;
     private String signature;
     private boolean isChecked;
-    private boolean isRoute;
-    private boolean isSync;
-    private boolean isVerification;
+    private int is_route;
+    private int is_sync;
+    private int is_verif;
     private List<Material> materialList;
 
     public Invoice() {
     }
 
-    public Invoice(String invoiceNo, String customerName, String customerID, double amount, double paid, String invoiceDate, boolean isRoute) {
-        this.invoiceNo = invoiceNo;
-        this.customerName = customerName;
-        this.customerID = customerID;
+    public Invoice(String no_invoice, String nama, String id_customer, double amount, double total_paid, String invoice_date, boolean is_route) {
+        this.no_invoice = no_invoice;
+        this.nama = nama;
+        this.id_customer = id_customer;
         this.amount = amount;
-        this.paid = paid;
-        this.invoiceDate = invoiceDate;
-        this.isRoute = isRoute;
+        this.total_paid = total_paid;
+        this.invoice_date = invoice_date;
+        this.is_route = is_route ? 1 : 0;
     }
 
-    public Invoice(String invoiceNo, String customerName, String customerID, double amount, double paid, String invoiceDate, boolean isRoute, List<Material> materialList) {
-        this.invoiceNo = invoiceNo;
-        this.customerName = customerName;
-        this.customerID = customerID;
+    public Invoice(String no_invoice, String nama, String id_customer, double amount, double total_paid, String invoice_date, boolean is_route, List<Material> materialList) {
+        this.no_invoice = no_invoice;
+        this.nama = nama;
+        this.id_customer = id_customer;
         this.amount = amount;
-        this.paid = paid;
-        this.invoiceDate = invoiceDate;
-        this.isRoute = isRoute;
+        this.total_paid = total_paid;
+        this.invoice_date = invoice_date;
+        this.is_route = is_route ? 1 : 0;
         this.materialList = materialList;
     }
+
     public String getIdHeader() {
         return idHeader;
     }
@@ -51,100 +53,28 @@ public class Invoice {
         this.idHeader = idHeader;
     }
 
-    public boolean isVerification() {
-        return isVerification;
+    public String getNo_invoice() {
+        return no_invoice;
     }
 
-    public void setVerification(boolean verification) {
-        isVerification = verification;
+    public void setNo_invoice(String no_invoice) {
+        this.no_invoice = no_invoice;
     }
 
-    public List<Material> getMaterialList() {
-        return materialList;
+    public String getNama() {
+        return nama;
     }
 
-    public void setMaterialList(List<Material> materialList) {
-        this.materialList = materialList;
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public String getId_customer() {
+        return id_customer;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public double getNett() {
-        return nett;
-    }
-
-    public void setNett(double nett) {
-        this.nett = nett;
-    }
-
-    public String getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(String dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public boolean isRoute() {
-        return isRoute;
-    }
-
-    public void setRoute(boolean route) {
-        isRoute = route;
-    }
-
-    public boolean isChecked() {
-        return isChecked;
-    }
-
-    public void setChecked(boolean checked) {
-        isChecked = checked;
-    }
-
-    public String getRoute() {
-        return route;
-    }
-
-    public void setRoute(String route) {
-        this.route = route;
-    }
-
-    public String getInvoiceNo() {
-        return invoiceNo;
-    }
-
-    public void setInvoiceNo(String invoiceNo) {
-        this.invoiceNo = invoiceNo;
-    }
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getCustomerID() {
-        return customerID;
-    }
-
-    public void setCustomerID(String customerID) {
-        this.customerID = customerID;
+    public void setId_customer(String id_customer) {
+        this.id_customer = id_customer;
     }
 
     public double getAmount() {
@@ -155,19 +85,99 @@ public class Invoice {
         this.amount = amount;
     }
 
-    public double getPaid() {
-        return paid;
+    public double getTotal_paid() {
+        return total_paid;
     }
 
-    public void setPaid(double paid) {
-        this.paid = paid;
+    public void setTotal_paid(double total_paid) {
+        this.total_paid = total_paid;
     }
 
-    public String getInvoiceDate() {
-        return invoiceDate;
+    public double getNett() {
+        return nett;
     }
 
-    public void setInvoiceDate(String invoiceDate) {
-        this.invoiceDate = invoiceDate;
+    public void setNett(double nett) {
+        this.nett = nett;
+    }
+
+    public String getInvoice_date() {
+        return invoice_date;
+    }
+
+    public void setInvoice_date(String invoice_date) {
+        this.invoice_date = invoice_date;
+    }
+
+    public String getTanggal_jatuh_tempo() {
+        return tanggal_jatuh_tempo;
+    }
+
+    public void setTanggal_jatuh_tempo(String tanggal_jatuh_tempo) {
+        this.tanggal_jatuh_tempo = tanggal_jatuh_tempo;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+    }
+
+    public int getIs_route() {
+        return is_route;
+    }
+
+    public void setIs_route(int is_route) {
+        this.is_route = is_route;
+    }
+
+    public int getIs_sync() {
+        return is_sync;
+    }
+
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
+    }
+
+    public int getIs_verif() {
+        return is_verif;
+    }
+
+    public void setIs_verif(int is_verif) {
+        this.is_verif = is_verif;
+    }
+
+    public List<Material> getMaterialList() {
+        return materialList;
+    }
+
+    public void setMaterialList(List<Material> materialList) {
+        this.materialList = materialList;
     }
 }

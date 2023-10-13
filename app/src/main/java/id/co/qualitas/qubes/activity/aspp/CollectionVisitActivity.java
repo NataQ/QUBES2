@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.activity.aspp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -63,7 +62,7 @@ public class CollectionVisitActivity extends BaseActivity {
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
-            totalPaid = totalPaid + inv.getPaid();
+            totalPaid = totalPaid + inv.getTotal_paid();
         }
 
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));

@@ -32,6 +32,7 @@ public class Material implements Cloneable{
     private String material_sales;
     private String material_group_name;
     private String load_number;
+    private String no_invoice;
     private int id_material_group;
 
     public Material() {
@@ -103,6 +104,14 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getNo_invoice() {
+        return no_invoice;
+    }
+
+    public void setNo_invoice(String no_invoice) {
+        this.no_invoice = no_invoice;
     }
 
     public String getIdHeader() {

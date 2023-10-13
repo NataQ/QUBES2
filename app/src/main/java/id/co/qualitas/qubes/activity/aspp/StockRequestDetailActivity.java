@@ -57,6 +57,7 @@ public class StockRequestDetailActivity extends BaseActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private boolean isSigned;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -127,11 +128,12 @@ public class StockRequestDetailActivity extends BaseActivity {
         signaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
-
+                isSigned = true;
             }
 
             @Override
             public void onSigned() {
+                isSigned = true;
                 try {
                     cleared[0] = false;
                 } catch (Exception ignored) {
@@ -141,25 +143,21 @@ public class StockRequestDetailActivity extends BaseActivity {
 
             @Override
             public void onClear() {
+                isSigned = false;
             }
         });
 
         btnSubmit.setOnClickListener(v -> {
-//            Bitmap convertedImage = Utils.getResizedBitmap(signaturePad.getTransparentSignatureBitmap(), 200);
-//            String signPath = Utils.saveImage(signaturePad.getTransparentSignatureBitmap()).getAbsolutePath();
-//            if (!signPath.equals("null")) {
-            header.setSignature(Utils.encodeImageBase64Sign(signaturePad.getTransparentSignatureBitmap()));
-            header.setIs_verif(1);
-//            header.setSync(0);
-//            header.setStatus(Constants.STATUS_VERIFICATION);
-            dialog.dismiss();
+            if (isSigned) {
+                header.setSignature(Utils.encodeImageBase64Sign(signaturePad.getTransparentSignatureBitmap()));
+                header.setIs_verif(1);
+                dialog.dismiss();
 
-            progress.show();
-            new RequestUrl().execute();
-
-//            } else {
-//                setToast("Gagal menyimpan ttd");
-//            }
+                progress.show();
+                new RequestUrl().execute();
+            } else {
+                setToast("Harus tanda tangan");
+            }
         });
         dialog.show();
     }

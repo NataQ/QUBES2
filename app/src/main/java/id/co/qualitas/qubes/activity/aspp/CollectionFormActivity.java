@@ -443,10 +443,10 @@ public class CollectionFormActivity extends BaseActivity {
             mListLain = database.getAllInvoiceDetail(header.getIdHeader());
             mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
 
-            txtInvNo.setText(Helper.isEmpty(header.getInvoiceNo(), "-"));
+            txtInvNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
             txtAmount.setText("Rp." + format.format(header.getAmount()));
-            if (!Helper.isNullOrEmpty(header.getInvoiceDate())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoiceDate());
+            if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
                 txtDate.setText(requestDate);
             } else {
                 txtDate.setText("-");

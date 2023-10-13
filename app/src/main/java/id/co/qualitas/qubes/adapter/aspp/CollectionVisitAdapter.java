@@ -60,7 +60,7 @@ public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisit
                     for (Invoice row : mList) {
 
                         /*filter by name*/
-                        if (row.getInvoiceNo().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo_invoice().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -111,10 +111,10 @@ public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisit
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtDate.setText(detail.getInvoiceDate());
-        holder.txtInvoiceNo.setText(detail.getInvoiceNo());
+        holder.txtDate.setText(detail.getInvoice_date());
+        holder.txtInvoiceNo.setText(detail.getNo_invoice());
         holder.txtAmount.setText(format.format(detail.getAmount()));
-        holder.txtPaid.setText(format.format(detail.getPaid()));
+        holder.txtPaid.setText(format.format(detail.getTotal_paid()));
     }
 
     private void setFormatSeparator() {

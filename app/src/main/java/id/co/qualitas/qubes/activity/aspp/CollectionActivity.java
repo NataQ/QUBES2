@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,8 +16,6 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.CollectionAdapter;
-import id.co.qualitas.qubes.adapter.aspp.CollectionVisitAdapter;
-import id.co.qualitas.qubes.adapter.aspp.InvoiceVerificationAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
@@ -26,7 +23,6 @@ import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
-import id.co.qualitas.qubes.utils.Utils;
 
 public class CollectionActivity extends BaseActivity {
     private CollectionAdapter mAdapter;
@@ -143,7 +139,7 @@ public class CollectionActivity extends BaseActivity {
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
-            totalPaid = totalPaid + inv.getPaid();
+            totalPaid = totalPaid + inv.getTotal_paid();
         }
 
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));

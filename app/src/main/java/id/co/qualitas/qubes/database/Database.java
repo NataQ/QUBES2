@@ -1219,20 +1219,20 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
-        values.put(KEY_INVOICE_DATE, param.getInvoiceDate());
+        values.put(KEY_INVOICE_NO, param.getNo_invoice());
+        values.put(KEY_INVOICE_DATE, param.getInvoice_date());
         values.put(KEY_INVOICE_TOTAL, param.getAmount());
-        values.put(KEY_DUE_DATE, param.getDueDate());
-        values.put(KEY_PAID, param.getPaid());
-        values.put(KEY_NETT, param.getNett());
-        values.put(KEY_CUSTOMER_ID, param.getCustomerID());
-        values.put(KEY_CUSTOMER_NAME, param.getCustomerName());
+        values.put(KEY_DUE_DATE, param.getTanggal_jatuh_tempo());
+        values.put(KEY_PAID, param.getTotal_paid());
+        values.put(KEY_NETT, param.getAmount() - param.getTotal_paid());
+        values.put(KEY_CUSTOMER_ID, param.getId_customer());
+        values.put(KEY_CUSTOMER_NAME, param.getNama());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_VERIF, param.isVerification());
-        values.put(KEY_IS_ROUTE, param.isRoute());
+        values.put(KEY_IS_VERIF, param.getIs_verif());
+        values.put(KEY_IS_ROUTE, param.getIs_route());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = (int) db.insert(TABLE_INVOICE_HEADER, null, values);//return id yg ud d create
         //db.close();
@@ -2015,18 +2015,18 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Invoice paramModel = new Invoice();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
-                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
-                paramModel.setDueDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
-                paramModel.setCustomerID(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                paramModel.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
                 paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
-                paramModel.setVerification(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)) != 0);
-                paramModel.setRoute(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)) != 0);
-                paramModel.setSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)) != 0);
+                paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+                paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
+                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2070,18 +2070,18 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Invoice paramModel = new Invoice();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
-                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
-                paramModel.setDueDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
-                paramModel.setCustomerID(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                paramModel.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
                 paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
-                paramModel.setVerification(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)) != 0);
-                paramModel.setRoute(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)) != 0);
-                paramModel.setSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)) != 0);
+                paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+                paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
+                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2274,7 +2274,8 @@ public class Database extends SQLiteOpenHelper {
 
     public int getCountRouteCustomer(boolean allRoute) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String countQuery;Cursor cursor;
+        String countQuery;
+        Cursor cursor;
         if (allRoute) {
             countQuery = "SELECT * FROM " + TABLE_MASTER_ROUTE_CUSTOMER;
             cursor = db.rawQuery(countQuery, null);
@@ -2421,9 +2422,9 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_IS_VERIF, param.isVerification());
+        values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_SYNC, param.isSync());
+        values.put(KEY_IS_SYNC, param.getIs_sync());
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
 

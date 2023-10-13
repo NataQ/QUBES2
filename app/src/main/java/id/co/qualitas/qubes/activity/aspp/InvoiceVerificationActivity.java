@@ -20,7 +20,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -28,9 +31,11 @@ import id.co.qualitas.qubes.adapter.aspp.InvoiceVerificationAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class InvoiceVerificationActivity extends BaseActivity {
@@ -41,6 +46,10 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private double totalInvoice = 0;
     private double totalAmount = 0.0;
     private Bitmap transSign;
+    private WSMessage resultWsMessage;
+    private boolean saveDataSuccess = false;
+    private String signature;
+    private boolean isSigned;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,11 +120,12 @@ public class InvoiceVerificationActivity extends BaseActivity {
         signaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
             @Override
             public void onStartSigning() {
-
+                isSigned = true;
             }
 
             @Override
             public void onSigned() {
+                isSigned = true;
                 try {
                     cleared[0] = false;
                 } catch (Exception ignored) {
@@ -125,6 +135,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
             @Override
             public void onClear() {
+                isSigned = false;
             }
         });
 
@@ -132,11 +143,15 @@ public class InvoiceVerificationActivity extends BaseActivity {
             //            Bitmap convertedImage = Utils.getResizedBitmap(signaturePad.getTransparentSignatureBitmap(), 200);
 //            String signPath = Utils.saveImage(signaturePad.getTransparentSignatureBitmap()).getAbsolutePath();
 //            if (!signPath.equals("null")) {
-            transSign = signaturePad.getTransparentSignatureBitmap();
-            dialog.dismiss();
-            progress.show();
-            PARAM = 2;
-            new AsyncLoading().execute();//2
+            if (isSigned) {
+                transSign = signaturePad.getTransparentSignatureBitmap();
+                dialog.dismiss();
+                progress.show();
+                PARAM = 3;
+                new RequestUrl().execute();//3
+            } else {
+                setToast("Harus tanda tangan");
+            }
 //            } else {
 //                setToast("Gagal menyimpan ttd");
 //            }
@@ -144,32 +159,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void initData() {
-        mList = new ArrayList<>();
-        mList.add(new Invoice("DKA495486", "TOKO SIDIK HALIM", "0GV43", 884736, 0, "2023-06-01", true, initDataMaterial()));
-        mList.add(new Invoice("DKA496933", "TOKO SIDIK HALIM", "0GV43", 3929664, 0, "2023-07-01", false, initDataMaterial()));
-        mList.add(new Invoice("DKA492540", "SARI SARI (TK)", "0WJ42", 14024448, 0, "2023-09-01", true, initDataMaterial()));
-        mList.add(new Invoice("DKA402541", "TOKO SIDIK HALIM", "0GV43", 9363600, 0, "2023-11-01", false, initDataMaterial()));
-
-        for (Invoice param : mList) {
-            int idHeader = database.addInvoiceHeader(param, user.getUsername());
-            for (Material param1 : param.getMaterialList()) {
-                database.addInvoiceDetail(param1, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-    }
-
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 1200000));
-        mList.add(new Material("11001", "Kratingdaeng", 50000));
-        mList.add(new Material("11030", "Redbull", 740000));
-        mList.add(new Material("21001", "Torpedo Aneka Buah", 350000));
-        return mList;
-    }
-
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         txtDate = findViewById(R.id.txtDate);
@@ -195,21 +185,24 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void getFirstDataOffline() {
         getData();
         setAdapter();
+        setTotal();
 
         if (mList == null || mList.isEmpty()) {
             progressCircle.setVisibility(View.VISIBLE);
             PARAM = 1;
-            new AsyncLoading().execute();//1
+            new RequestUrl().execute();//1
         }
     }
 
     private void getData() {
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotVerif();
+    }
 
+    private void setTotal() {
         int verif = 0;
         for (Invoice inv : mList) {
-            if (inv.isVerification()) {
+            if (inv.getIs_verif() == 1) {
                 verif++;
             }
         }
@@ -230,27 +223,62 @@ public class InvoiceVerificationActivity extends BaseActivity {
         txtTotalInvoice.setText(format.format(totalInvoice));
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected WSMessage doInBackground(Void... voids) {
             try {
                 if (PARAM == 1) {
-                    initData();
+                    String URL_ = Constants.API_INVOICE_LIST;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                } else if (PARAM == 2) {
+                    mList = new ArrayList<>();
+                    Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
+                    Collections.addAll(mList, paramArray);
+                    database.deleteInvoiceHeader();
+                    database.deleteInvoiceDetail();
+
+                    for (Invoice param : mList) {
+                        List<Material> listMat = new ArrayList<>();
+                        Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+                        Collections.addAll(listMat, matArray);
+                        param.setMaterialList(listMat);
+
+                        int idHeader = database.addInvoiceHeader(param, user.getUserLogin());
+                        for (Material mat : listMat) {
+                            database.addInvoiceDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
+                    }
+                    getData();
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 3) {
+                    String URL_ = Constants.API_INVOICE_VERIFICATION;
+                    signature = Utils.encodeImageBase64Sign(transSign);
+                    Map request = new HashMap();
+                    request.put("header", mList);
+                    request.put("signature", signature);
+
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                 } else {
                     for (Invoice invoice : mList) {
-                        invoice.setSignature(Utils.encodeImageBase64Sign(transSign));
-                        invoice.setVerification(true);
-                        invoice.setSync(false);
+                        invoice.setSignature(signature);
+                        invoice.setIs_verif(1);
                         database.updateInvoiceVerification(invoice, user.getUsername());
                     }
+                    saveDataSuccess = true;
+                    return null;
                 }
-                return true;
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("invoice", ex.getMessage());
                 }
-                return false;
+                if (PARAM == 2 || PARAM == 4) {
+                    saveDataSuccess = false;
+                }
+                return null;
             }
         }
 
@@ -260,15 +288,50 @@ public class InvoiceVerificationActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        resultWsMessage = result;
+                        PARAM = 2;
+                        new RequestUrl().execute();//2
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    progressCircle.setVisibility(View.GONE);
+                    setToast(getString(R.string.failedGetData));
+                }
+            } else if (PARAM == 2) {
                 progressCircle.setVisibility(View.GONE);
-                getData();
-                mAdapter.setData(mList);
+                if (saveDataSuccess) {
+                    setTotal();
+                    mAdapter.setData(mList);
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
+            } else if (PARAM == 3) {
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        setToast("Verifikasi sukses");
+                        PARAM = 4;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    progress.dismiss();
+                    setToast(getString(R.string.serverError));
+                }
             } else {
                 progress.dismiss();
-                setToast("Verifikasi sukses");
-                btnSubmit.setVisibility(View.GONE);
+                if (saveDataSuccess) {
+                    btnSubmit.setVisibility(View.GONE);
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
             }
         }
     }

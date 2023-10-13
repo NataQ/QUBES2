@@ -495,9 +495,12 @@ public class Constants {
     public static final String API_PREFIX = "/api/v1/mobile/";
     public static final String API_USER_DETAIL_GET = "getDetailUser";
     public static final String API_MASTER_DATA_GET = "getMasterData";
-    public static final String API_STOCK_REQUEST_LIST = "getStockRequest";
+    public static final String API_STOCK_REQUEST_LIST = "getListStockRequest";
     public static final String API_STOCK_REQUEST_INSERT = "addStockRequest";
-    public static final String API_STOCK_REQUEST_VERIFICATION = "updateVerification";
+    public static final String API_STOCK_REQUEST_VERIFICATION = "updateVerificationStockRequest";
     public static final String API_STOCK_REQUEST_UNLOADING = "updateUnloading";
     public static final String API_ROUTE_CUSTOMER_LIST = "getAllCustomer";
+
+    public static final String API_INVOICE_LIST = "getListInvoice";
+    public static final String API_INVOICE_VERIFICATION = "updateVerificationInvoice";
 }
