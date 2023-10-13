@@ -128,7 +128,7 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
-        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
+        holder.txtPrice.setText("Rp." + format.format(detail.getAmount()));
         holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {

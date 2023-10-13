@@ -126,7 +126,7 @@ public class CollectionCashAdapter extends RecyclerView.Adapter<CollectionCashAd
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
-        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
+        holder.txtPrice.setText("Rp." + format.format(detail.getAmount()));
         holder.edtPaid.setText(format.format(detail.getQty()));
 
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {

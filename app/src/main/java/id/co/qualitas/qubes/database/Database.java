@@ -1248,7 +1248,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
         values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
-        values.put(KEY_PRICE, param.getPrice());
+        values.put(KEY_PRICE, param.getAmount());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
@@ -2048,7 +2048,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);

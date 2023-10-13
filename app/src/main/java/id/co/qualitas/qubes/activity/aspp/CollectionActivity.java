@@ -76,32 +76,7 @@ public class CollectionActivity extends BaseActivity {
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void initData() {
-        mList = new ArrayList<>();
-        mList.add(new Invoice("DKA495486", "TOKO SIDIK HALIM", "0GV43", 884736, 0, "2023-06-01", true, initDataMaterial()));
-        mList.add(new Invoice("DKA496933", "TOKO SIDIK HALIM", "0GV43", 3929664, 0, "2023-07-01", false, initDataMaterial()));
-        mList.add(new Invoice("DKA492540", "SARI SARI (TK)", "0WJ42", 14024448, 0, "2023-09-01", true, initDataMaterial()));
-        mList.add(new Invoice("DKA402541", "TOKO SIDIK HALIM", "0WJ42", 9363600, 0, "2023-11-01", false, initDataMaterial()));
-
-        for (Invoice param : mList) {
-            int idHeader = database.addInvoiceHeader(param, user.getUsername());
-            for (Material param1 : param.getMaterialList()) {
-                database.addInvoiceDetail(param1, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-    }
-
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 1200000));
-        mList.add(new Material("11001", "Kratingdaeng", 50000));
-        mList.add(new Material("11030", "Redbull", 740000));
-        mList.add(new Material("21001", "Torpedo Aneka Buah", 350000));
-        return mList;
-    }
-
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         txtDate = findViewById(R.id.txtDate);
@@ -128,8 +103,9 @@ public class CollectionActivity extends BaseActivity {
         setAdapter();
 
         if (mList == null || mList.isEmpty()) {
-            progressCircle.setVisibility(View.VISIBLE);
-            new AsyncLoading().execute();//1
+            setToast("Pastikan invoice sudah di verifikasi");
+//            progressCircle.setVisibility(View.VISIBLE);
+//            new AsyncLoading().execute();//1
         }
     }
 
@@ -147,33 +123,32 @@ public class CollectionActivity extends BaseActivity {
         txtTotalInvoice.setText(format.format(totalInvoice));
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-
-                initData();
-                return true;
-            } catch (Exception ex) {
-                if (ex.getMessage() != null) {
-                    Log.e("invoice", ex.getMessage());
-                }
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-
-            progressCircle.setVisibility(View.GONE);
-            getData();
-            mAdapter.setData(mList);
-        }
-    }
+//    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+//
+//        @Override
+//        protected Boolean doInBackground(Void... voids) {
+//            try {
+//                initData();
+//                return true;
+//            } catch (Exception ex) {
+//                if (ex.getMessage() != null) {
+//                    Log.e("invoice", ex.getMessage());
+//                }
+//                return false;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Boolean result) {
+//
+//            progressCircle.setVisibility(View.GONE);
+//            getData();
+//            mAdapter.setData(mList);
+//        }
+//    }
 }
