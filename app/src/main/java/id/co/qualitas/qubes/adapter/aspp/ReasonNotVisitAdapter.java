@@ -121,7 +121,7 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
     public void onBindViewHolder(Holder holder, int position) {
         Customer detail = mFilteredList.get(position);
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
+        holder.txtOutlet.setText(detail.getId() + " - " + detail.getNama());
 
         List<Reason> reasonList = new ArrayList<>();
         reasonList.addAll(new Database(mContext).getAllReason("Not Visit"));

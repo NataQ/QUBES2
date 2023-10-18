@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -33,6 +35,18 @@ public class DashboardFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.aspp_fragment_dashboard, container, false);
         getActivity().setTitle(getString(R.string.navmenu1));
         initialize();
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
+                }
+            }
+        });
+
         return rootView;
     }
 
@@ -83,7 +97,6 @@ public class DashboardFragment extends BaseFragment {
         txtAsset.setText(format.format(database.getCountRouteCustomer(true)));//all
         txtAssetRoute.setText(format.format(database.getCountRouteCustomer(false)));//route
         txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
-
-
     }
+
 }

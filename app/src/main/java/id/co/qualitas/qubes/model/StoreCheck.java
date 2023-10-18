@@ -1,7 +1,5 @@
 package id.co.qualitas.qubes.model;
 
-import java.math.BigDecimal;
-
 /**
  * Created by Wiliam on 8/9/2017.
  */
@@ -10,37 +8,22 @@ public class StoreCheck {
     private String idStoreCheck;
     private String date;
     private String customerId;
-    private String materialId;
-    private String materialName;
+    private int id;
+    private String nama;
     private double qty;
     private String uom;
-    private int isSync;
+    private int is_sync;
+    private String material_group_name;
+    private int id_material_group;
+    private int id_product_group;
+    private String name_product_group;
 
-    private String groupname;
-    private int materialgroupid;
-
-    public String getGroupname() {
-        return groupname;
+    public String getIdStoreCheck() {
+        return idStoreCheck;
     }
 
-    public void setGroupname(String groupname) {
-        this.groupname = groupname;
-    }
-
-    public int getMaterialgroupid() {
-        return materialgroupid;
-    }
-
-    public void setMaterialgroupid(int materialgroupid) {
-        this.materialgroupid = materialgroupid;
-    }
-
-    public int isSync() {
-        return isSync;
-    }
-
-    public void setSync(int sync) {
-        isSync = sync;
+    public void setIdStoreCheck(String idStoreCheck) {
+        this.idStoreCheck = idStoreCheck;
     }
 
     public String getDate() {
@@ -51,22 +34,6 @@ public class StoreCheck {
         this.date = date;
     }
 
-    public String getMaterialName() {
-        return materialName;
-    }
-
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
-    }
-
-    public String getIdStoreCheck() {
-        return idStoreCheck;
-    }
-
-    public void setIdStoreCheck(String idStoreCheck) {
-        this.idStoreCheck = idStoreCheck;
-    }
-
     public String getCustomerId() {
         return customerId;
     }
@@ -75,12 +42,20 @@ public class StoreCheck {
         this.customerId = customerId;
     }
 
-    public String getMaterialId() {
-        return materialId;
+    public int getId() {
+        return id;
     }
 
-    public void setMaterialId(String materialId) {
-        this.materialId = materialId;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
     }
 
     public double getQty() {
@@ -97,5 +72,45 @@ public class StoreCheck {
 
     public void setUom(String uom) {
         this.uom = uom;
+    }
+
+    public int getIs_sync() {
+        return is_sync;
+    }
+
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
+    }
+
+    public String getMaterial_group_name() {
+        return material_group_name;
+    }
+
+    public void setMaterial_group_name(String material_group_name) {
+        this.material_group_name = material_group_name;
+    }
+
+    public int getId_material_group() {
+        return id_material_group;
+    }
+
+    public void setId_material_group(int id_material_group) {
+        this.id_material_group = id_material_group;
+    }
+
+    public int getId_product_group() {
+        return id_product_group;
+    }
+
+    public void setId_product_group(int id_product_group) {
+        this.id_product_group = id_product_group;
+    }
+
+    public String getName_product_group() {
+        return name_product_group;
+    }
+
+    public void setName_product_group(String name_product_group) {
+        this.name_product_group = name_product_group;
     }
 }

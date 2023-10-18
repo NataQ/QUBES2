@@ -1,7 +1,7 @@
 package id.co.qualitas.qubes.constants;
 
 public class Constants {
-    public static final double ZOOM_LEVEL = 13.0;
+    public static final double ZOOM_LEVEL = 10.0;
     public static final String FCM = "fcm";
     public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
@@ -499,8 +499,9 @@ public class Constants {
     public static final String API_STOCK_REQUEST_INSERT = "addStockRequest";
     public static final String API_STOCK_REQUEST_VERIFICATION = "updateVerificationStockRequest";
     public static final String API_STOCK_REQUEST_UNLOADING = "updateUnloading";
-    public static final String API_ROUTE_CUSTOMER_LIST = "getAllCustomer";
-
     public static final String API_INVOICE_LIST = "getListInvoice";
     public static final String API_INVOICE_VERIFICATION = "updateVerificationInvoice";
+    public static final String API_GET_TODAY_CUSTOMER = "getTodayCustomer";
+    public static final String API_GET_START_DAY = "startDay";
+    public static final String API_GET_END_DAY = "endDay";
 }

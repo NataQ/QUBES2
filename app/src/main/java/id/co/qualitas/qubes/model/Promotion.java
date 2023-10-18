@@ -1,76 +1,133 @@
 package id.co.qualitas.qubes.model;
 
 public class Promotion {
-    private String promotionId;
-    private String promotionName;
-    private String promotionDecs;
-    private String promotionPeriode;
-    private String promotionValidFrom;
-    private String promotionValidTo;
-    private boolean isSync;
+    private String idHeader;
+    private int idParent;
+    private int id;
+    private String idCustomer;
+    private String no_promo;
+    private String nama_promo;
+    private String keterangan;
+    private String toleransi;
+    private String jenis_promosi;
+    private String valid_from;
+    private String valid_to;
+    private String segmen;
+    private int is_sync;
+
+    public Promotion() {
+    }
 
     public Promotion(String promotionName) {
-        this.promotionName = promotionName;
+        this.nama_promo = promotionName;
     }
 
-    public Promotion(String promotionName, String promotionPeriode) {
-        this.promotionName = promotionName;
-        this.promotionPeriode = promotionPeriode;
+    public Promotion(String promotionName, String keterangan) {
+        this.nama_promo = promotionName;
+        this.keterangan = keterangan;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public int getIdParent() {
+        return idParent;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setIdParent(int idParent) {
+        this.idParent = idParent;
     }
 
-    public String getPromotionId() {
-        return promotionId;
+    public String getIdHeader() {
+        return idHeader;
     }
 
-    public void setPromotionId(String promotionId) {
-        this.promotionId = promotionId;
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
     }
 
-    public String getPromotionValidFrom() {
-        return promotionValidFrom;
+    public int getId() {
+        return id;
     }
 
-    public void setPromotionValidFrom(String promotionValidFrom) {
-        this.promotionValidFrom = promotionValidFrom;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getPromotionValidTo() {
-        return promotionValidTo;
+    public String getIdCustomer() {
+        return idCustomer;
     }
 
-    public void setPromotionValidTo(String promotionValidTo) {
-        this.promotionValidTo = promotionValidTo;
+    public void setIdCustomer(String idCustomer) {
+        this.idCustomer = idCustomer;
     }
 
-    public String getPromotionPeriode() {
-        return promotionPeriode;
+    public String getNo_promo() {
+        return no_promo;
     }
 
-    public void setPromotionPeriode(String promotionPeriode) {
-        this.promotionPeriode = promotionPeriode;
+    public void setNo_promo(String no_promo) {
+        this.no_promo = no_promo;
     }
 
-    public String getPromotionName() {
-        return promotionName;
+    public String getNama_promo() {
+        return nama_promo;
     }
 
-    public void setPromotionName(String promotionName) {
-        this.promotionName = promotionName;
+    public void setNama_promo(String nama_promo) {
+        this.nama_promo = nama_promo;
     }
 
-    public String getPromotionDecs() {
-        return promotionDecs;
+    public String getKeterangan() {
+        return keterangan;
     }
 
-    public void setPromotionDecs(String promotionDecs) {
-        this.promotionDecs = promotionDecs;
+    public void setKeterangan(String keterangan) {
+        this.keterangan = keterangan;
+    }
+
+    public String getToleransi() {
+        return toleransi;
+    }
+
+    public void setToleransi(String toleransi) {
+        this.toleransi = toleransi;
+    }
+
+    public String getJenis_promosi() {
+        return jenis_promosi;
+    }
+
+    public void setJenis_promosi(String jenis_promosi) {
+        this.jenis_promosi = jenis_promosi;
+    }
+
+    public String getValid_from() {
+        return valid_from;
+    }
+
+    public void setValid_from(String valid_from) {
+        this.valid_from = valid_from;
+    }
+
+    public String getValid_to() {
+        return valid_to;
+    }
+
+    public void setValid_to(String valid_to) {
+        this.valid_to = valid_to;
+    }
+
+    public String getSegmen() {
+        return segmen;
+    }
+
+    public void setSegmen(String segmen) {
+        this.segmen = segmen;
+    }
+
+    public int getIs_sync() {
+        return is_sync;
+    }
+
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
     }
 }

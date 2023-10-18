@@ -55,8 +55,11 @@ import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.LoginResponse;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Parameter;
+import id.co.qualitas.qubes.model.PriceCode;
 import id.co.qualitas.qubes.model.Reason;
-import id.co.qualitas.qubes.model.RouteCustomer;
+import id.co.qualitas.qubes.model.SalesPriceDetail;
+import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -239,6 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                     User param = new User();
                     param.setUsername(userId);
                     param.setImei(Helper.getImei(getApplicationContext()));
+                    param.setRegis_id(registerID);
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
@@ -269,10 +273,10 @@ public class LoginActivity extends AppCompatActivity {
                     messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
                     return null;
                 } else {
-                    LoginResponse response = Helper.ObjectToGSON(messageResponse.getResult(), LoginResponse.class);
+                    Map response = (Map) messageResponse.getResult();
 
                     List<Reason> reasonList = new ArrayList<>();
-                    Reason[] paramArray = Helper.ObjectToGSON(response.getListReason(), Reason[].class);
+                    Reason[] paramArray = Helper.ObjectToGSON(response.get("listReason"), Reason[].class);
                     Collections.addAll(reasonList, paramArray);
                     database.deleteMasterReason();
                     for (Reason reason : reasonList) {
@@ -280,23 +284,15 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     List<Bank> bankList = new ArrayList<>();
-                    Bank[] paramArray1 = Helper.ObjectToGSON(response.getListBank(), Bank[].class);
+                    Bank[] paramArray1 = Helper.ObjectToGSON(response.get("listBank"), Bank[].class);
                     Collections.addAll(bankList, paramArray1);
                     database.deleteMasterBank();
                     for (Bank param : bankList) {
                         database.addMasterBank(param, userId);
                     }
 
-                    List<RouteCustomer> custList = new ArrayList<>();
-                    RouteCustomer[] paramArray2 = Helper.ObjectToGSON(response.getListCustomer(), RouteCustomer[].class);
-                    Collections.addAll(custList, paramArray2);
-                    database.deleteMasterRouteCustomer();
-                    for (RouteCustomer param : custList) {
-                        database.addRouteCustomer(param, userId);
-                    }
-
                     List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
-                    DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.getListDaerahTingkat(), DaerahTingkat[].class);
+                    DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.get("listDaerahTingkat"), DaerahTingkat[].class);
                     Collections.addAll(daerahTingkatList, paramArray3);
                     database.deleteMasterDaerahTingkat();
                     for (DaerahTingkat param : daerahTingkatList) {
@@ -304,7 +300,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     List<Material> materialList = new ArrayList<>();
-                    Material[] paramArray4 = Helper.ObjectToGSON(response.getListMaterial(), Material[].class);
+                    Material[] paramArray4 = Helper.ObjectToGSON(response.get("listMaterial"), Material[].class);
                     Collections.addAll(materialList, paramArray4);
                     database.deleteMasterMaterial();
                     for (Material param : materialList) {
@@ -312,15 +308,45 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     List<Uom> uomList = new ArrayList<>();
-                    Uom[] paramArray5 = Helper.ObjectToGSON(response.getListUom(), Uom[].class);
+                    Uom[] paramArray5 = Helper.ObjectToGSON(response.get("listUom"), Uom[].class);
                     Collections.addAll(uomList, paramArray5);
                     database.deleteMasterUom();
                     for (Uom param : uomList) {
                         database.addMasterUom(param, userId);
                     }
 
-                    userResponse.setRadius(response.getRadius());
-                    userResponse.setMax_visit(response.getMax_visit());
+                    List<PriceCode> priceList = new ArrayList<>();
+                    PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
+                    Collections.addAll(priceList, paramArray6);
+                    database.deleteMasterPriceCode();
+                    for (PriceCode param : priceList) {
+                        database.addMasterPriceCode(param, userId);
+                    }
+
+                    List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
+                    SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
+                    Collections.addAll(salesPriceHeaderList, paramArray7);
+                    database.deleteMasterSalesPriceHeader();
+                    for (SalesPriceHeader param : salesPriceHeaderList) {
+                        database.addMasterSalesPriceHeader(param, userId);
+                    }
+
+                    List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
+                    SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
+                    Collections.addAll(salesPriceDetailList, paramArray8);
+                    database.deleteMasterSalesPriceDetail();
+                    for (SalesPriceDetail param : salesPriceDetailList) {
+                        database.addMasterSalesPriceDetail(param, userId);
+                    }
+
+                    List<Parameter> parameterList = new ArrayList<>();
+                    Parameter[] paramArray9 = Helper.ObjectToGSON(response.get("parameter"), Parameter[].class);
+                    Collections.addAll(parameterList, paramArray9);
+                    database.deleteMasterParameter();
+                    for (Parameter param : parameterList) {
+                        database.addMasterParameter(param, userId);
+                    }
+
                     SessionManagerQubes.setUserProfile(userResponse);
 
                     saveDataSuccess = true;

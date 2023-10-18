@@ -60,7 +60,6 @@ import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.GPSTracker;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
@@ -78,13 +77,13 @@ public class DirectionFragment extends BaseFragment {
     private RotationGestureOverlay mRotationGestureOverlay;
     private BoundingBox boundingBox;
     //    private List<GeoPoint> geoPointList;
-    private List<RouteCustomer> custList;
+    private List<Customer> custList;
     private AutoCompleteTextView edtStartPoint, edtEndPoint;
     private ImageView imgCurrentStartingPoint, imgCurrentEndPoint, imgBack;
     private TextView txtStore, txtAddress, txtRoute;
     private Button btnMaps;
     private AutoCompleteRouteAdapter startPointAdapter, endPointAdapter;
-    private RouteCustomer startPointCustomer, currLocation, endPointCustomer;
+    private Customer startPointCustomer, currLocation, endPointCustomer;
 
     final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -93,7 +92,7 @@ public class DirectionFragment extends BaseFragment {
 
     private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract;
     private ActivityResultLauncher<String[]> multiplePermissionLauncher;
-    private RouteCustomer routeCustHeader;
+    private Customer routeCustHeader;
     Customer currentLoc;
 
     @Override
@@ -118,7 +117,7 @@ public class DirectionFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 //this is the way to find selected object/item
-                startPointCustomer = (RouteCustomer) adapterView.getItemAtPosition(pos);
+                startPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -130,7 +129,7 @@ public class DirectionFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 //this is the way to find selected object/item
-                endPointCustomer = (RouteCustomer) adapterView.getItemAtPosition(pos);
+                endPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -154,7 +153,7 @@ public class DirectionFragment extends BaseFragment {
             public void onClick(View view) {
                 getMyLocation();
                 edtStartPoint.setText("Current Location");
-                startPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+                startPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -165,7 +164,7 @@ public class DirectionFragment extends BaseFragment {
             public void onClick(View view) {
                 getMyLocation();
                 edtEndPoint.setText("Current Location");
-                endPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+                endPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
                 if (startPointCustomer != null && endPointCustomer != null)
                     setMap(startPointCustomer, endPointCustomer);
             }
@@ -208,22 +207,22 @@ public class DirectionFragment extends BaseFragment {
             txtStore.setText(routeCustHeader.getId() + " - " + routeCustHeader.getNama());
             txtAddress.setText(routeCustHeader.getAddress());
             edtEndPoint.setText(routeCustHeader.getNama());
-            txtRoute.setText("P1H1-P3H1");
+            txtRoute.setText(routeCustHeader.getRute());
 
             getMyLocation();
 
             edtStartPoint.setText("Current Location");
-            startPointCustomer = new RouteCustomer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
-            endPointCustomer = new RouteCustomer(routeCustHeader.getId(), routeCustHeader.getNama(), routeCustHeader.getAddress(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
+            startPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
+            endPointCustomer = new Customer(routeCustHeader.getId(), routeCustHeader.getNama(), routeCustHeader.getAddress(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
             if (startPointCustomer != null && endPointCustomer != null)
                 setMap(startPointCustomer, endPointCustomer);
         }
 
         custList = new ArrayList<>();
-        custList = database.getAllRouteCustomer(null);
+        custList = database.getAllCustomerVisit(null, false);
     }
 
-    private void setMap(RouteCustomer startPointCustomer, RouteCustomer endPointCustomer) {
+    private void setMap(Customer startPointCustomer, Customer endPointCustomer) {
 //        zoomToBounds(custList)
 
         if (mOverlay != null) {
@@ -302,7 +301,7 @@ public class DirectionFragment extends BaseFragment {
         mMapView.getOverlays().add(mCompassOverlay);
     }
 
-    private Bitmap getMarkerBitmapFromView(RouteCustomer cust, boolean start) {
+    private Bitmap getMarkerBitmapFromView(Customer cust, boolean start) {
         //HERE YOU CAN ADD YOUR CUSTOM VIEW
         View customMarkerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
 
@@ -331,7 +330,7 @@ public class DirectionFragment extends BaseFragment {
         return returnedBitmap;
     }
 
-    private GeoPoint computeCentroid(RouteCustomer startPoint, RouteCustomer endPoint) {
+    private GeoPoint computeCentroid(Customer startPoint, Customer endPoint) {
         double latitude = 0;
         double longitude = 0;
 

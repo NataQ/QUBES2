@@ -100,11 +100,11 @@ public class CreateNewReturnAdapter extends BaseAdapter {
             holder.txtError.setVisibility(View.GONE);
         }
         holder.idMaterial.setId(position);
-        if (returnList.get(position).getIdMat() != null) {
-            holder.idMaterial.setText(returnList.get(position).getIdMat());
+        if (returnList.get(position).getId() != null) {
+            holder.idMaterial.setText(returnList.get(position).getId());
         }
-        if (returnList.get(position).getMaterialName() != null) {
-            holder.materialName.setText(returnList.get(position).getMaterialName());
+        if (returnList.get(position).getName() != null) {
+            holder.materialName.setText(returnList.get(position).getName());
         }
 
         if (aReturn.getCategory() != null && !aReturn.getCategory().equals(Constants.NULL)) {
@@ -128,7 +128,7 @@ public class CreateNewReturnAdapter extends BaseAdapter {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                returnList.get(holder.idMaterial.getId()).setIdMat(s.toString().trim());
+                returnList.get(holder.idMaterial.getId()).setId(s.toString().trim());
             }
 
             @Override
@@ -355,7 +355,7 @@ public class CreateNewReturnAdapter extends BaseAdapter {
                 if (aReturn.getListUomName() != null && !aReturn.getListUomName().isEmpty()) {
                     for (int i = 0; i < aReturn.getListUomName().size(); i++) {
                         if (uom1.equals(aReturn.getListUomName().get(i).getUomName())) {
-                            aReturn.setUom1(aReturn.getListUomName().get(i).getId());
+                            aReturn.setUom(aReturn.getListUomName().get(i).getId());
                         }
                     }
                 }
@@ -497,11 +497,11 @@ public class CreateNewReturnAdapter extends BaseAdapter {
 //            holder.qty1.setText(String.valueOf(aReturn.getQty1()));
 //        }
 
-        if (aReturn.getUom1() != null) {
+        if (aReturn.getUom() != null) {
             if (aReturn.getListUomName() != null && !aReturn.getListUomName().isEmpty()) {
                 for (int i = 0; i < aReturn.getListUomName().size(); i++) {
                     if (aReturn.getListUomName().get(i).getId() != null) {
-                        if (aReturn.getListUomName().get(i).getId().equals(aReturn.getUom1())) {
+                        if (aReturn.getListUomName().get(i).getId().equals(aReturn.getUom())) {
                             int spinnerPosition = context.getSpinnerAdapter().getPosition(aReturn.getListUomName().get(i).getUomName());
 //                            holder.uom1.setSelection(spinnerPosition);
                             holder.uom1.setText(aReturn.getListUomName().get(i).getUomName());

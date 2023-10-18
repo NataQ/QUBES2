@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.PromotionAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -43,6 +45,17 @@ public class PromotionFragment extends BaseFragment {
 
         mAdapter = new PromotionAdapter(this, promotionList);
         recyclerView.setAdapter(mAdapter);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (isEnabled()) {
+                    setEnabled(false);
+//                    ((MainActivity) getActivity()).changePage(1);
+                    ((MainActivity) getActivity()).backPress();
+                }
+            }
+        });
 
         return rootView;
     }

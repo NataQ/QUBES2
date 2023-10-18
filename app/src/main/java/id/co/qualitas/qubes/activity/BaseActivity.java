@@ -324,6 +324,7 @@ public class BaseActivity extends AppCompatActivity {
     private void clearAllSession() {
         SessionManagerQubes.clearLoginSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
+        SessionManagerQubes.clearStartDaySession();
         SessionManagerQubes.clearInvoiceHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
 
@@ -331,10 +332,20 @@ public class BaseActivity extends AppCompatActivity {
         database.deleteStockRequestDetail();
         database.deleteInvoiceHeader();
         database.deleteInvoiceDetail();
+        database.deleteMasterNonRouteCustomer();
+        database.deleteMasterNonRouteCustomerPromotion();
         database.deleteCustomer();
+        database.deleteCustomerPromotion();
         database.deleteNoo();
         database.deleteMasterBank();
         database.deleteMasterReason();
+        database.deleteMasterMaterial();
+        database.deleteMasterUom();
+        database.deleteMasterDaerahTingkat();
+        database.deleteMasterPriceCode();
+        database.deleteMasterSalesPriceHeader();
+        database.deleteMasterSalesPriceDetail();
+        database.deleteMasterParameter();
     }
 
     public void snackBar(View rootView, int message) {

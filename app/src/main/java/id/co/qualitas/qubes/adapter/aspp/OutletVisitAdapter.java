@@ -113,7 +113,7 @@ public class OutletVisitAdapter extends RecyclerView.Adapter<OutletVisitAdapter.
         Customer detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
+        holder.txtOutlet.setText(detail.getId() + " - " + detail.getNama());
         holder.txtRoute.setText(detail.isRoute() ? "Route" : "Non Route");
 
         if (position == 1) {

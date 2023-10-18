@@ -115,7 +115,7 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
         Customer detail = mFilteredList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
         holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getIdCustomer() + " - " + detail.getNama());
+        holder.txtOutlet.setText(detail.getId() + " - " + detail.getNama());
 
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");

@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -30,11 +29,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
-import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
-import id.co.qualitas.qubes.activity.aspp.VisitActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
@@ -42,9 +40,7 @@ import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.RouteCustomer;
-import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -52,7 +48,7 @@ import id.co.qualitas.qubes.utils.Utils;
 
 public class RouteCustomerFragment extends BaseFragment implements LocationListener {
     private RouteCustomerAdapter mAdapter;
-    private List<RouteCustomer> mList, mListFiltered;
+    private List<Customer> mList, mListFiltered;
     private Button btnCoverage;
     private EditText edtSearch;
     private Spinner spinnerRouteCustomer;
@@ -164,7 +160,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         return rootView;
     }
 
-    public void moveDirection(RouteCustomer headerCustomer) {
+    public void moveDirection(Customer headerCustomer) {
         if (Utils.isGPSOn(getContext())) {
             SessionManagerQubes.setRouteCustomerHeader(headerCustomer);
             ((MainActivity) getActivity()).changePage(24);
@@ -193,7 +189,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         if (all) {
             mListFiltered.addAll(mList);
         } else {
-            for (RouteCustomer routeCustomer : mList) {
+            for (Customer routeCustomer : mList) {
                 if (routeCustomer.isRoute()) {
                     mListFiltered.add(routeCustomer);
                 }
@@ -232,19 +228,50 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         protected WSMessage doInBackground(Void... voids) {
             try {
                 if (PARAM == 1) {
-                    String URL_ = Constants.API_ROUTE_CUSTOMER_LIST;
+                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
                 } else {
                     mList = new ArrayList<>();
-                    RouteCustomer[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), RouteCustomer[].class);
-                    Collections.addAll(mList, paramArray);
-                    database.deleteMasterRouteCustomer();
-                    for (RouteCustomer param : mList) {
-                        int idHeader = database.addRouteCustomer(param, user.getUserLogin());
+                    List<Customer> mListNonRoute = new ArrayList<>();
+                    Map result = (Map) resultWsMessage.getResult();
+                    int startDay = (int) result.get("visit");
+                    SessionManagerQubes.setStartDay(startDay);
+                    Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
+                    Collections.addAll(mListNonRoute, param1Array);
+                    database.deleteMasterNonRouteCustomer();
+                    database.deleteMasterNonRouteCustomerPromotion();
+
+                    for (Customer param : mListNonRoute) {
+                        List<Promotion> arrayList = new ArrayList<>();
+                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        Collections.addAll(arrayList, matArray);
+                        param.setPromoList(arrayList);
+
+                        int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+                        for (Promotion mat : arrayList) {
+                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
                     }
+
+                    Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
+                    Collections.addAll(mList, paramArray);
+                    database.deleteCustomer();
+                    database.deleteCustomerPromotion();
+
+                    for (Customer param : mList) {
+                        List<Promotion> arrayList = new ArrayList<>();
+                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        Collections.addAll(arrayList, matArray);
+                        param.setPromoList(arrayList);
+
+                        int idHeader = database.addCustomer(param, user.getUserLogin());
+                        for (Promotion mat : arrayList) {
+                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
+                    }
+
                     getData();
-                    filterData(false);//request url
                     saveDataSuccess = true;
                     return null;
                 }
@@ -281,8 +308,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                     setToast(getString(R.string.failedGetData));
                 }
             } else {
+                progressCircle.setVisibility(View.GONE);
                 if (saveDataSuccess) {
-                    progressCircle.setVisibility(View.GONE);
+                    filterData(false);//request url
 //                    mAdapter.setData(mListFiltered);
                 } else {
                     setToast(getString(R.string.failedSaveData));
@@ -293,7 +321,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getAllRouteCustomer(currentLocation);
+        mList = database.getAllCustomerVisit(currentLocation, false);
     }
 
     private void checkLocationPermission() {

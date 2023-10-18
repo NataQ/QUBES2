@@ -2264,7 +2264,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_HEADER_RETURN, rt.getIdReturn());
-        values.put(KEY_ID_MATERIAL, rt.getMaterialId());
+        values.put(KEY_ID_MATERIAL, rt.getId());
 //        if (rt.getQty1() != null && !rt.getQty1().equals(BigDecimal.ZERO)) {
 //            values.put(KEY_QTY_1, String.valueOf(rt.getQty1()));
 //            values.put(KEY_UOM_1, rt.getUom1());
@@ -2298,11 +2298,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 Return rt = new Return();
                 rt.setIdReturn(cursor.getString(0));
-                rt.setMaterialId(cursor.getString(1));
+                rt.setId(cursor.getString(1));
 //                if (cursor.getString(2) != null) {
 //                    rt.setQty1(new BigDecimal(cursor.getString(2)));
 //                }
-                rt.setUom1(cursor.getString(3));
+                rt.setUom(cursor.getString(3));
                 if (cursor.getString(4) != null && !cursor.getString(4).equals("null")) {
                     rt.setQty2(new BigDecimal(cursor.getString(4)));
                 }

@@ -56,30 +56,35 @@ import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerCustomerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerNoo;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class VisitActivity extends BaseActivity implements LocationListener {
     private VisitListAdapter mAdapterVisit;
     private NooListAdapter mAdapterNoo;
-    private List<Customer> mList;
+    private List<Customer> mList, mListNonRoute;
     private List<CustomerNoo> mListNoo;
     private MovableFloatingActionButton btnAddVisit, btnAddNoo;
     private Button btnEndDay, btnNextDay, btnStartVisit, btnEndVisit;
@@ -105,6 +110,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private SwipeRefreshLayout swipeLayoutNoo, swipeLayoutVisit;
     private ProgressBar progressCircleNoo, progressCircleVisit;
+    private WSMessage resultWsMessage;
+    private boolean saveDataSuccess = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -172,6 +179,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                getData();
                 setAdapterVisit();
                 swipeLayoutVisit.setRefreshing(false);
             }
@@ -261,7 +269,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         mapView.getOverlays().add(mCompassOverlay);
 
         final List<Customer>[] custList = new List[]{new ArrayList<>()};
-        custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+        custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
         if (currentLocation != null) {
             GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
@@ -303,7 +311,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     mapView.getController().animateTo(myPosition);
 
                     custList[0].clear();
-                    custList[0].add(new Customer(outletClicked.getIdCustomer(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+                    custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
                     custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
 
                     items[0] = Helper.setOverLayItems(custList[0], VisitActivity.this);
@@ -368,6 +376,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                getData();
                 setAdapterNoo();
                 swipeLayoutNoo.setRefreshing(false);
             }
@@ -401,7 +410,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void setAdapterNoo() {
         mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
             outletNooClicked = header;
-            outletClicked = new Customer(header.getIdHeader(), header.getName(), header.getNamePemilik(), header.getAddress(), header.getPhone(), header.getCreditLimit(), header.getNoKtp(), header.getNoNpwp(), true, header.getLatitude(), header.getLongitude(), header.isSync());
+            outletClicked = new Customer(header.getIdHeader(), header.getName(), header.getNamePemilik(), header.getAddress(), header.getPhone(), header.getCreditLimit(), header.getNoKtp(), header.getNoNpwp(), true, header.getLatitude(), header.getLongitude(), 0);
             outletClicked.setIdHeader(header.getIdHeader());
             checkLocationPermission();
         });
@@ -520,13 +529,19 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         EditText editText = alertDialog.findViewById(R.id.edit_text);
         RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-        List<String> groupList = new ArrayList<>();
-        groupList.add("OBC44 - YANTO (TK)\nJL. KOMODORE");
-        groupList.add("0C258 - SUSU IBU (WR)\nJL. RAYA BOGOR");
-        groupList.add("0AQ13 - TOSIN (WR)\nJL. JATIWARINGIN");
-        groupList.add("0AM92 - ES TIGA (TK)\nJL. BINA MARGA");
+        List<Customer> groupList = new ArrayList<>();
+        groupList.addAll(database.getAllNonRouteCustomer());
 
-        FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
+        FilteredSpinnerCustomerAdapter spinnerAdapter = new FilteredSpinnerCustomerAdapter(this, groupList, (header, adapterPosition) -> {
+            int idHeader = database.addCustomer(header, user.getUsername());
+            List<Promotion> promoList = database.getPromotionNonRouteByIdCustomer(header.getId());
+            for (Promotion promo : promoList) {
+                database.addCustomerPromotion(promo, String.valueOf(idHeader), user.getUsername());
+            }
+            database.deleteMasterNonRouteCustomerById(header.getIdHeader());
+            database.deleteMasterNonRouteCustomerPromotionById(header.getIdHeader());
+            getData();
+            setAdapterVisit();
             alertDialog.dismiss();
         });
 
@@ -554,27 +569,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
     }
 
-    private void initData() {
-        mList = new ArrayList<>();
-        mList.add(new Customer("0GV43", "TOKO SIDIK HALIM", "Halim", "Golf Island Beach Theme Park, Jl. Pantai Indah Kapuk No.77, Kamal Muara, DKI Jakarta 14470", "08123456789", 2000000, "123456789987456", "741852963369852", true, -6.090263984566263, 106.74593288657607, false));
-        mList.add(new Customer("0WJ42", "SARI SARI (TK)", "Sari", "Jl. Perancis No.88, Jatimulya, Kec. Kosambi, Kabupaten Tangerang, Banten 15211", "08748596123", 3000000, "123456789987456", "741852963369852", true, -6.095590779425033, 106.68757459341451, false));
-
-        List<Promotion> promoList = new ArrayList<>();
-        promoList.add(new Promotion("Beli 4 Kratingdaeng get discount 10%"));
-        promoList.add(new Promotion("Beli kratingdaeng bisa nonton bola di Madrid"));
-        promoList.add(new Promotion("Dapatkan voucher Buy 1 Get 1 untuk variant Kratingdaeng Bull"));
-
-        for (Customer cust : mList) {
-            cust.setSync(false);
-            int idHeader = database.addCustomer(cust, user.getUsername());
-            for (Promotion promotion : promoList) {
-                database.addCustomerPromotion(promotion, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-    }
-
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         pdfUtils = LashPdfUtils.getInstance(VisitActivity.this);
 
@@ -747,30 +742,78 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         if (mList == null || mList.isEmpty()) {
             progressCircleVisit.setVisibility(View.VISIBLE);
-            new AsyncLoading().execute();
+            new RequestUrl().execute();
         }
     }
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getAllCustomerVisit();
+        mList = database.getAllCustomerVisit(null, false);
 
         mListNoo = new ArrayList<>();
         mListNoo = database.getAllCustomerNoo();
     }
 
-    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected WSMessage doInBackground(Void... voids) {
             try {
-                initData();
-                return true;
+                if (PARAM == 1) {
+                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                } else {
+                    mList = new ArrayList<>();
+                    mListNonRoute = new ArrayList<>();
+                    Map result = (Map) resultWsMessage.getResult();
+                    int startDay = (int) result.get("visit");
+                    SessionManagerQubes.setStartDay(startDay);
+
+                    Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
+                    Collections.addAll(mListNonRoute, param1Array);
+                    database.deleteMasterNonRouteCustomer();
+                    database.deleteMasterNonRouteCustomerPromotion();
+
+                    for (Customer param : mListNonRoute) {
+                        List<Promotion> arrayList = new ArrayList<>();
+                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        Collections.addAll(arrayList, matArray);
+                        param.setPromoList(arrayList);
+
+                        int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+                        for (Promotion mat : arrayList) {
+                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
+                    }
+
+                    Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
+                    Collections.addAll(mList, paramArray);
+                    database.deleteCustomer();
+
+                    for (Customer param : mList) {
+                        List<Promotion> arrayList = new ArrayList<>();
+                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        Collections.addAll(arrayList, matArray);
+                        param.setPromoList(arrayList);
+
+                        int idHeader = database.addCustomer(param, user.getUserLogin());
+                        for (Promotion mat : arrayList) {
+                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                        }
+                    }
+                    getData();
+                    saveDataSuccess = true;
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("Customer", ex.getMessage());
                 }
-                return false;
+                if (PARAM == 2) {
+                    saveDataSuccess = false;
+                }
+                return null;
             }
         }
 
@@ -780,10 +823,47 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
-            progressCircleVisit.setVisibility(View.GONE);
-            getData();
-            mAdapterVisit.setData(mList);
+        protected void onPostExecute(WSMessage result) {
+            if (PARAM == 1) {
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        resultWsMessage = result;
+                        PARAM = 2;
+                        new RequestUrl().execute();
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    progressCircle.setVisibility(View.GONE);
+                    setToast(getString(R.string.failedGetData));
+                }
+            } else {
+                progressCircleVisit.setVisibility(View.GONE);
+                if (saveDataSuccess) {
+                    mAdapterVisit.setData(mList);
+                    validateButton();
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
+            }
+
+        }
+    }
+
+    private void validateButton() {
+        if (user.getRute_inap() == 1) {
+            rlInap.setVisibility(View.VISIBLE);
+        } else {
+            rlInap.setVisibility(View.GONE);
+        }
+
+        if (SessionManagerQubes.geStartDay() == 1) {
+            btnStartVisit.setVisibility(View.GONE);
+            btnNextDay.setVisibility(View.GONE);
+        } else {
+            btnEndVisit.setVisibility(View.VISIBLE);
+            btnEndDay.setVisibility(View.VISIBLE);
         }
     }
 }

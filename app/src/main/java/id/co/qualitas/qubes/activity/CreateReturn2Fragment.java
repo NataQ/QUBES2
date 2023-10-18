@@ -470,8 +470,8 @@ public class CreateReturn2Fragment extends BaseFragment {
 //            customerName.setText(Helper.validateResponseEmpty(outletResponse.getOutletName()));
 //        }
         if (material != null) {
-            returns.setMaterialId(Helper.validateResponseEmpty(material.getMaterialCode()));
-            returns.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
+            returns.setId(Helper.validateResponseEmpty(material.getMaterialCode()));
+            returns.setName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
 
             if (material.getMaterialCode() != null) {
                 listUom = db.getListUomByIdMat(material.getMaterialCode(), Constants.IS_RETURN);
@@ -481,7 +481,7 @@ public class CreateReturn2Fragment extends BaseFragment {
 
             if (returnList != null && !returnList.isEmpty()) {
                 for (int i = 0; i < returnList.size(); i++) {
-                    if (returnList.get(i).getMaterialId().equals(returns.getMaterialId())) {
+                    if (returnList.get(i).getId().equals(returns.getId())) {
                         returnList.remove(i);
                     }
                 }
@@ -491,7 +491,7 @@ public class CreateReturn2Fragment extends BaseFragment {
             Collections.sort(returnList, new Comparator<Return>() {
                 @Override
                 public int compare(Return s1, Return s2) {
-                    return Helper.ltrim(Helper.validateResponseEmpty(s1.getMaterialName())).compareToIgnoreCase(Helper.ltrim(Helper.validateResponseEmpty(s2.getMaterialName())));
+                    return Helper.ltrim(Helper.validateResponseEmpty(s1.getName())).compareToIgnoreCase(Helper.ltrim(Helper.validateResponseEmpty(s2.getName())));
                 }
             });
 
@@ -519,7 +519,7 @@ public class CreateReturn2Fragment extends BaseFragment {
             for (int i = 0; i < returnList.size(); i++) {
                 Return material = returnList.get(i);
 
-                listUom = db.getListUomByIdMat(material.getMaterialId(), Constants.IS_RETURN);
+                listUom = db.getListUomByIdMat(material.getId(), Constants.IS_RETURN);
                 material.setListUomName(listUom);
 
                 selectedReason = new ArrayList<>();
@@ -575,10 +575,10 @@ public class CreateReturn2Fragment extends BaseFragment {
 
     public void setDataRet(Return returns) {
         mLinearLayout.removeAllViews();
-        returns.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(returns.getMaterialId())));
+        returns.setName(Helper.validateResponseEmpty(db.getMaterialName(returns.getId())));
 //        if (!isNetworkAvailable()) {
-        if (returns.getMaterialId() != null) {
-            listUom = db.getListUomByIdMat(returns.getMaterialId(), Constants.IS_RETURN);
+        if (returns.getId() != null) {
+            listUom = db.getListUomByIdMat(returns.getId(), Constants.IS_RETURN);
             returns.setListUomName(listUom);
         }
 //        }
@@ -606,8 +606,8 @@ public class CreateReturn2Fragment extends BaseFragment {
             material = (Material) Helper.getItemParam(Constants.ADD_MATERIAL);
 
             Return addedMat = new Return();
-            addedMat.setMaterialId(Helper.validateResponseEmpty(material.getMaterialCode()));
-            addedMat.setMaterialName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
+            addedMat.setId(Helper.validateResponseEmpty(material.getMaterialCode()));
+            addedMat.setName(Helper.validateResponseEmpty(db.getMaterialName(material.getMaterialCode())));
 
             if (Helper.getItemParam(Constants.RETURN_DETAIL) != null) {
                 returnList = new ArrayList<>();

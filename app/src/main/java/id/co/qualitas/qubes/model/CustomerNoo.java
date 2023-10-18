@@ -10,6 +10,8 @@ public class CustomerNoo {
     private double longitude;
     private int status;
     private String kodePos;
+    private String udf_5;
+    private String udf_5_desc;
     private String idDesaKelurahan;
     private String nameDesaKelurahan;
     private String idKecamatan;
@@ -38,7 +40,23 @@ public class CustomerNoo {
     private String photoKtp;
     private String photoNpwp;
     private String photoOutlet;
-    private boolean isSync;
+    private int is_sync;
+
+    public String getUdf_5_desc() {
+        return udf_5_desc;
+    }
+
+    public void setUdf_5_desc(String udf_5_desc) {
+        this.udf_5_desc = udf_5_desc;
+    }
+
+    public String getUdf_5() {
+        return udf_5;
+    }
+
+    public void setUdf_5(String udf_5) {
+        this.udf_5 = udf_5;
+    }
 
     public String getIdHeader() {
         return idHeader;
@@ -320,11 +338,11 @@ public class CustomerNoo {
         this.photoOutlet = photoOutlet;
     }
 
-    public boolean isSync() {
-        return isSync;
+    public int getIs_sync() {
+        return is_sync;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
     }
 }

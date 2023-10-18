@@ -56,8 +56,8 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Return aReturn = returnList.get(position);
         holder.txtNo.setText(String.valueOf(position + 1));
-        holder.kodeProduk.setText(Helper.validateResponseEmpty(aReturn.getMaterialId()));
-        holder.namaProduk.setText(Helper.validateResponseEmpty(aReturn.getMaterialName()));
+        holder.kodeProduk.setText(Helper.validateResponseEmpty(aReturn.getId()));
+        holder.namaProduk.setText(Helper.validateResponseEmpty(aReturn.getName()));
         if (aReturn.getExpiredDate() != null) {
             holder.date.setText(Helper.changeDateFormat(Constants.DATE_TYPE_2, Constants.DATE_TYPE_12, aReturn.getExpiredDate()));
         }

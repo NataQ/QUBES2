@@ -61,7 +61,7 @@ public class CustomerInfoPromoAdapter extends RecyclerView.Adapter<CustomerInfoP
                     for (Promotion row : mList) {
 
                         /*filter by name*/
-                        if (row.getPromotionName().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama_promo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -109,7 +109,7 @@ public class CustomerInfoPromoAdapter extends RecyclerView.Adapter<CustomerInfoP
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Promotion detail = mFilteredList.get(position);
-        holder.txtPromo.setText("\u2022 " + detail.getPromotionName());
+        holder.txtPromo.setText("\u2022 " + detail.getNama_promo());
     }
 
     private void setFormatSeparator() {

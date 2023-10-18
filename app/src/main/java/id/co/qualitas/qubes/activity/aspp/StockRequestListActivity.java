@@ -168,24 +168,24 @@ public class StockRequestListActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(WSMessage WsMessage) {
+        protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
-                if (WsMessage != null) {
-                    if (WsMessage.getIdMessage() == 1) {
-                        resultWsMessage = WsMessage;
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        resultWsMessage = result;
                         PARAM = 2;
                         new RequestUrl().execute();
                     } else {
                         progressCircle.setVisibility(View.GONE);
-                        setToast(WsMessage.getMessage());
+                        setToast(result.getMessage());
                     }
                 } else {
                     progressCircle.setVisibility(View.GONE);
                     setToast(getString(R.string.failedGetData));
                 }
             } else {
+                progressCircle.setVisibility(View.GONE);
                 if (saveDataSuccess) {
-                    progressCircle.setVisibility(View.GONE);
                     mAdapter.setData(mList);
                 } else {
                     setToast(getString(R.string.failedSaveData));

@@ -61,7 +61,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
                     for (Promotion row : promotionList) {
 
                         /*filter by name*/
-                        if (row.getPromotionName().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama_promo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -107,8 +107,8 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Promotion promotion = promotionFilteredList.get(position);
-        holder.txtTitle.setText(promotion.getPromotionName());
-        holder.txtPeriode.setText(promotion.getPromotionPeriode());
+        holder.txtTitle.setText(promotion.getNama_promo());
+        holder.txtPeriode.setText(promotion.getValid_from() + " - " + promotion.getValid_to());
     }
 
     @Override

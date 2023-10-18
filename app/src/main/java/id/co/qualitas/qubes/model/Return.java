@@ -5,15 +5,11 @@ import com.google.gson.annotations.SerializedName;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-/**
- * Created by Foo on 10/31/2016.
- */
-
 public class Return {
     private String idReturn;
     private String itemNr;
     private String idRow;
-    private String materialId;
+    private String id;
     private double qty;
 
     private BigDecimal qty2;
@@ -22,7 +18,7 @@ public class Return {
     private String uom2;
     private String batch;
     private String expiredDateString;
-    private String materialName;
+    private String name;
     private String goodStock;
     private String reason;
     private String idHeader;
@@ -47,30 +43,218 @@ public class Return {
     private String nameReason;
     private String descReason;
     private String photoReason;
-    private int isSync;
+    private int is_sync;
+    private int id_material_group;
+    private String material_group_name;
+    private int id_product_group;
+    private String name_product_group;
 
-    private String groupname;
-    private int materialgroupid;
+    public Return() {
+    }
 
     public Return(String idReturn, String expiredDate) {
         this.idReturn = idReturn;
         this.expiredDate = expiredDate;
     }
 
-    public String getGroupname() {
-        return groupname;
+    public String getIdReturn() {
+        return idReturn;
     }
 
-    public void setGroupname(String groupname) {
-        this.groupname = groupname;
+    public void setIdReturn(String idReturn) {
+        this.idReturn = idReturn;
     }
 
-    public int getMaterialgroupid() {
-        return materialgroupid;
+    public String getItemNr() {
+        return itemNr;
     }
 
-    public void setMaterialgroupid(int materialgroupid) {
-        this.materialgroupid = materialgroupid;
+    public void setItemNr(String itemNr) {
+        this.itemNr = itemNr;
+    }
+
+    public String getIdRow() {
+        return idRow;
+    }
+
+    public void setIdRow(String idRow) {
+        this.idRow = idRow;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public double getQty() {
+        return qty;
+    }
+
+    public void setQty(double qty) {
+        this.qty = qty;
+    }
+
+    public BigDecimal getQty2() {
+        return qty2;
+    }
+
+    public void setQty2(BigDecimal qty2) {
+        this.qty2 = qty2;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
+
+    public String getUom2() {
+        return uom2;
+    }
+
+    public void setUom2(String uom2) {
+        this.uom2 = uom2;
+    }
+
+    public String getBatch() {
+        return batch;
+    }
+
+    public void setBatch(String batch) {
+        this.batch = batch;
+    }
+
+    public String getExpiredDateString() {
+        return expiredDateString;
+    }
+
+    public void setExpiredDateString(String expiredDateString) {
+        this.expiredDateString = expiredDateString;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGoodStock() {
+        return goodStock;
+    }
+
+    public void setGoodStock(String goodStock) {
+        this.goodStock = goodStock;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public String getNoBrb() {
+        return noBrb;
+    }
+
+    public void setNoBrb(String noBrb) {
+        this.noBrb = noBrb;
+    }
+
+    public String getNoRr() {
+        return noRr;
+    }
+
+    public void setNoRr(String noRr) {
+        this.noRr = noRr;
+    }
+
+    public ArrayList<Uom> getListUomName() {
+        return listUomName;
+    }
+
+    public void setListUomName(ArrayList<Uom> listUomName) {
+        this.listUomName = listUomName;
+    }
+
+    public String getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(String expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    public String[] getItemsReason() {
+        return itemsReason;
+    }
+
+    public void setItemsReason(String[] itemsReason) {
+        this.itemsReason = itemsReason;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public String getIdReason() {
@@ -105,243 +289,43 @@ public class Return {
         this.photoReason = photoReason;
     }
 
-    public String getCondition() {
-        return condition;
+    public int getIs_sync() {
+        return is_sync;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setIs_sync(int is_sync) {
+        this.is_sync = is_sync;
     }
 
-    public int isSync() {
-        return isSync;
+    public int getId_material_group() {
+        return id_material_group;
     }
 
-    public void setSync(int sync) {
-        isSync = sync;
+    public void setId_material_group(int id_material_group) {
+        this.id_material_group = id_material_group;
     }
 
-    public String getDate() {
-        return date;
+    public String getMaterial_group_name() {
+        return material_group_name;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMaterial_group_name(String material_group_name) {
+        this.material_group_name = material_group_name;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public int getId_product_group() {
+        return id_product_group;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setId_product_group(int id_product_group) {
+        this.id_product_group = id_product_group;
     }
 
-    public double getQty() {
-        return qty;
+    public String getName_product_group() {
+        return name_product_group;
     }
 
-    public void setQty(double qty) {
-        this.qty = qty;
+    public void setName_product_group(String name_product_group) {
+        this.name_product_group = name_product_group;
     }
-
-    public String getUom() {
-        return uom;
-    }
-
-    public void setUom(String uom) {
-        this.uom = uom;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String[] getItemsReason() {
-        return itemsReason;
-    }
-
-    public void setItemsReason(String[] itemsReason) {
-        this.itemsReason = itemsReason;
-    }
-
-    public String getExpiredDate() {
-        return expiredDate;
-    }
-
-    public void setExpiredDate(String expiredDate) {
-        this.expiredDate = expiredDate;
-    }
-
-    public String getIdReturn() {
-        return idReturn;
-    }
-
-    public void setIdReturn(String idReturn) {
-        this.idReturn = idReturn;
-    }
-
-    public String getIdHeader() {
-        return idHeader;
-    }
-
-    public void setIdHeader(String idHeader) {
-        this.idHeader = idHeader;
-    }
-
-    public String getItemNr() {
-        return itemNr;
-    }
-
-    public void setItemNr(String itemNr) {
-        this.itemNr = itemNr;
-    }
-
-    public String getMaterialId() {
-        return materialId;
-    }
-
-    public void setMaterialId(String materialId) {
-        this.materialId = materialId;
-    }
-
-    public String getExpiredDateString() {
-        return expiredDateString;
-    }
-
-    public void setExpiredDateString(String expiredDateString) {
-        this.expiredDateString = expiredDateString;
-    }
-
-    public ArrayList<Uom> getListUomName() {
-        return listUomName;
-    }
-
-    public void setListUomName(ArrayList<Uom> listUomName) {
-        this.listUomName = listUomName;
-    }
-
-    public String getNoBrb() {
-        return noBrb;
-    }
-
-    public void setNoBrb(String noBrb) {
-        this.noBrb = noBrb;
-    }
-
-    public String getNoRr() {
-        return noRr;
-    }
-
-    public void setNoRr(String noRr) {
-        this.noRr = noRr;
-    }
-
-    public Return() {
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public Return(String idRow) {
-        this.idRow = idRow;
-    }
-
-    public String getIdRow() {
-        return idRow;
-    }
-
-    public void setIdRow(String idRow) {
-        this.idRow = idRow;
-    }
-
-    public String getIdMat() {
-        return materialId;
-    }
-
-    public void setIdMat(String idMat) {
-        this.materialId = idMat;
-    }
-
-    public double getQty1() {
-        return qty;
-    }
-
-    public void setQty1(double qty) {
-        this.qty = qty;
-    }
-
-    public String getUom1() {
-        return uom;
-    }
-
-    public void setUom1(String uom) {
-        this.uom = uom;
-    }
-
-    public String getBatch() {
-        return batch;
-    }
-
-    public void setBatch(String batch) {
-        this.batch = batch;
-    }
-
-    public String getMaterialName() {
-        return materialName;
-    }
-
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
-    }
-
-    public String getGoodStock() {
-        return goodStock;
-    }
-
-    public void setGoodStock(String goodStock) {
-        this.goodStock = goodStock;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUom2() {
-        return uom2;
-    }
-
-    public void setUom2(String uom2) {
-        this.uom2 = uom2;
-    }
-
-    public BigDecimal getQty2() {
-        return qty2;
-    }
-
-    public void setQty2(BigDecimal qty2) {
-        this.qty2 = qty2;
-    }
-
 }

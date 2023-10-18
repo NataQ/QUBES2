@@ -150,7 +150,7 @@ public class CoverageActivity extends BaseActivity {
         TextView txt_add = customMarkerView.findViewById(R.id.txt_add);
         ImageView imgStore = customMarkerView.findViewById(R.id.imgStore);
 
-        txt_name.setText(cust.getIdCustomer() + " - " + cust.getNama());
+        txt_name.setText(cust.getId() + " - " + cust.getNama());
 //        txt_add.setText(cust.getAddress());
         if (cust.isRoute()) {
             imgStore.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.marker_blue));
@@ -191,7 +191,7 @@ public class CoverageActivity extends BaseActivity {
         geoPointList = new ArrayList<>();
 
         for (Customer cust : customers) {
-            OverlayItem ov = new OverlayItem(cust.getIdCustomer() + "-" + cust.getNama(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
+            OverlayItem ov = new OverlayItem(cust.getId() + "-" + cust.getNama(), cust.getAddress(), new GeoPoint(cust.getLatitude(), cust.getLongitude()));
 //            if (cust.isRoute()) {
 //
 //            } else {

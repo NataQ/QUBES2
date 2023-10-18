@@ -39,12 +39,6 @@ public class HomeFragment extends BaseFragment {
         mIndicator = rootView.findViewById(R.id.indicator);
         mViewPager = rootView.findViewById(R.id.viewPager);
 
-//        mTabs.addTab(mTabs.newTab().setText("Calendar"));
-//        mTabs.addTab(mTabs.newTab().setText("Target"));
-//        mTabs.addTab(mTabs.newTab().setText("Promotion"));
-//        adapter = new NewTabFragmentAdapter(getActivity().getSupportFragmentManager(), mTabs.getTabCount(), "home");
-//        mViewPager.setAdapter(adapter);
-
         //Set up the view pager and fragments
         adapter = new NewTabFragmentAdapter(getChildFragmentManager(), mTabs.getTabCount(), "home");
 //        adapter.addFragment(new CalendarFragment(), "Calendar");
@@ -137,4 +131,5 @@ public class HomeFragment extends BaseFragment {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "1");
     }
+
 }

@@ -12,19 +12,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.model.RouteCustomer;
-import id.co.qualitas.qubes.model.RouteCustomer;
+import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Customer;
 
-public class AutoCompleteRouteAdapter extends ArrayAdapter<RouteCustomer> {
+public class AutoCompleteRouteAdapter extends ArrayAdapter<Customer> {
     Context context;
-    List<RouteCustomer> items, tempItems, suggestions;
+    List<Customer> items, tempItems, suggestions;
 
-    public AutoCompleteRouteAdapter(Context context, List<RouteCustomer> items) {
+    public AutoCompleteRouteAdapter(Context context, List<Customer> items) {
         super(context, 0, items);
         this.context = context;
         this.items = items;
-        tempItems = new ArrayList<RouteCustomer>(items); // this makes the difference.
-        suggestions = new ArrayList<RouteCustomer>();
+        tempItems = new ArrayList<Customer>(items); // this makes the difference.
+        suggestions = new ArrayList<Customer>();
     }
 
     @Override
@@ -34,13 +35,13 @@ public class AutoCompleteRouteAdapter extends ArrayAdapter<RouteCustomer> {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.aspp_auto_complete_item, parent, false);
         }
-        RouteCustomer RouteCustomer = items.get(position);
-        if (RouteCustomer != null) {
+        Customer Customer = items.get(position);
+        if (Customer != null) {
             TextView txtID = (TextView) view.findViewById(R.id.txtID);
             TextView textName = (TextView) view.findViewById(R.id.textName);
 
-            if (txtID != null) txtID.setText(RouteCustomer.getId());
-            if (textName != null) textName.setText(RouteCustomer.getNama());
+            if (txtID != null) txtID.setText(Customer.getId());
+            if (textName != null) textName.setText(Customer.getNama());
         }
         return view;
     }
@@ -56,7 +57,7 @@ public class AutoCompleteRouteAdapter extends ArrayAdapter<RouteCustomer> {
     Filter nameFilter = new Filter() {
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            String str = ((RouteCustomer) resultValue).getNama();
+            String str = ((Customer) resultValue).getNama();
             return str;
         }
 
@@ -64,9 +65,9 @@ public class AutoCompleteRouteAdapter extends ArrayAdapter<RouteCustomer> {
         protected FilterResults performFiltering(CharSequence constraint) {
             if (constraint != null) {
                 suggestions.clear();
-                for (RouteCustomer RouteCustomer : tempItems) {
-                    if (RouteCustomer.getNama().toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        suggestions.add(RouteCustomer);
+                for (Customer Customer : tempItems) {
+                    if (Customer.getNama().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        suggestions.add(Customer);
                     }
                 }
                 FilterResults filterResults = new FilterResults();
@@ -80,11 +81,11 @@ public class AutoCompleteRouteAdapter extends ArrayAdapter<RouteCustomer> {
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            List<RouteCustomer> filterList = (ArrayList<RouteCustomer>) results.values;
+            List<Customer> filterList = (ArrayList<Customer>) results.values;
             if (results != null && results.count > 0) {
                 clear();
-                for (RouteCustomer RouteCustomer : filterList) {
-                    add(RouteCustomer);
+                for (Customer Customer : filterList) {
+                    add(Customer);
                     notifyDataSetChanged();
                 }
             }

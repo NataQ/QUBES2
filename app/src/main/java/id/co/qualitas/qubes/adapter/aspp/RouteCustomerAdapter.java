@@ -17,11 +17,11 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.RouteCustomer;
+import id.co.qualitas.qubes.model.Customer;
 
 public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdapter.Holder> implements Filterable {
-    private List<RouteCustomer> dataList;
-    private List<RouteCustomer> dataFilteredList;
+    private List<Customer> dataList;
+    private List<Customer> dataFilteredList;
     private LayoutInflater mInflater;
     //    private OnClickListener onClickListener;
     private RouteCustomerFragment mContext;
@@ -30,7 +30,7 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
 //        this.onClickListener = onClickListener;
 //    }
 
-    public RouteCustomerAdapter(RouteCustomerFragment mContext, List<RouteCustomer> dataList) {
+    public RouteCustomerAdapter(RouteCustomerFragment mContext, List<Customer> dataList) {
         if (dataList != null) {
             this.dataList = dataList;
             this.dataFilteredList = dataList;
@@ -42,7 +42,7 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
         this.mInflater = LayoutInflater.from(mContext.getContext());
     }
 
-    public void setData(List<RouteCustomer> mDataSet) {
+    public void setData(List<Customer> mDataSet) {
         this.dataList = mDataSet;
         this.dataFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -57,8 +57,8 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
                 if (charString.isEmpty()) {
                     dataFilteredList = dataList;
                 } else {
-                    List<RouteCustomer> filteredList = new ArrayList<>();
-                    for (RouteCustomer row : dataList) {
+                    List<Customer> filteredList = new ArrayList<>();
+                    for (Customer row : dataList) {
 
                         /*filter by name*/
                         if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
@@ -76,7 +76,7 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                dataFilteredList = (ArrayList<RouteCustomer>) filterResults.values;
+                dataFilteredList = (ArrayList<Customer>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -110,7 +110,7 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        RouteCustomer detail = dataFilteredList.get(position);
+        Customer detail = dataFilteredList.get(position);
         String mileage = " (" + Helper.isEmpty(detail.getMileage(), "0") + " KM)";
         holder.txtStore.setText(Helper.isEmpty(detail.getId(), "") + " - " + Helper.isEmpty(detail.getNama(), "") + mileage);
         holder.txtAddress.setText(Helper.isEmpty(detail.getAddress(), ""));

@@ -46,7 +46,6 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.RouteCustomer;
 import id.co.qualitas.qubes.model.User;
 
 public class CoverageFragment extends BaseFragment implements LocationListener {
@@ -61,7 +60,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
     private RotationGestureOverlay mRotationGestureOverlay;
     private BoundingBox boundingBox;
     private List<GeoPoint> geoPointList;
-    private List<RouteCustomer> custList;
+    private List<Customer> custList;
     private LocationManager lm;
     private Location currentLocation = null;
 
@@ -138,11 +137,11 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
 
         //your items
         custList = new ArrayList<>();
-        custList = database.getRouteCustomerCoverage();
+        custList = database.getAllCustomerVisit(null, true);
 
 //        zoomToBounds(custList);
 
-        ArrayList<OverlayItem> items = Helper.setOverLayItemsCoverage(custList, getActivity());
+        ArrayList<OverlayItem> items = Helper.setOverLayItems(custList, getActivity());
 
         //the overlay
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(items,
@@ -168,7 +167,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
         });
 
         mMapView.getOverlays().add(mOverlay);
-        mapController.setCenter(Helper.computeCentroidCoverage(custList));
+        mapController.setCenter(Helper.computeCentroid(custList));
 
 //        double minLat = Integer.MAX_VALUE;
 //        double maxLat = Integer.MIN_VALUE;
@@ -209,7 +208,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
             Log.d(TAG, String.format("North %f, south %f, west %f, east %f", north, south, west, east));
             BoundingBox boundingBox = new BoundingBox(north, west, south, east);
             mMapView.zoomToBoundingBox(boundingBox, false);
-            mapController.setCenter(Helper.computeCentroidCoverage(custList));
+            mapController.setCenter(Helper.computeCentroid(custList));
             mMapView.invalidate();
         }
     }

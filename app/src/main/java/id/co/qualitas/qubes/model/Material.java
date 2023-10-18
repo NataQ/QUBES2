@@ -30,10 +30,12 @@ public class Material implements Cloneable{
     private boolean isChecked;
     private int is_sync;
     private String material_sales;
-    private String material_group_name;
     private String load_number;
     private String no_invoice;
     private int id_material_group;
+    private String material_group_name;
+    private int id_product_group;
+    private String name_product_group;
 
     public Material() {
     }
@@ -104,6 +106,22 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public int getId_product_group() {
+        return id_product_group;
+    }
+
+    public void setId_product_group(int id_product_group) {
+        this.id_product_group = id_product_group;
+    }
+
+    public String getName_product_group() {
+        return name_product_group;
+    }
+
+    public void setName_product_group(String name_product_group) {
+        this.name_product_group = name_product_group;
     }
 
     public String getNo_invoice() {

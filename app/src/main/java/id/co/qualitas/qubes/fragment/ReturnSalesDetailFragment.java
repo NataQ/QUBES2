@@ -76,11 +76,11 @@ public class ReturnSalesDetailFragment extends BaseFragment {
                 returnDetail = db.getListReturnDetail(returnHeader.getId());
                 if (returnDetail != null && !returnDetail.isEmpty()) {
                     for (int i = 0; i < returnDetail.size(); i++) {
-                        if (returnDetail.get(i).getMaterialName() == null) {
-                            if (returnDetail.get(i).getMaterialId() != null) {
-                                String materialName = db.getMaterialName(returnDetail.get(i).getMaterialId());
+                        if (returnDetail.get(i).getName() == null) {
+                            if (returnDetail.get(i).getId() != null) {
+                                String materialName = db.getMaterialName(returnDetail.get(i).getId());
                                 if (materialName != null) {
-                                    returnDetail.get(i).setMaterialName(materialName);
+                                    returnDetail.get(i).setName(materialName);
                                 }
                             }
                         }
