@@ -147,7 +147,7 @@ public abstract class SessionManagerQubes {
         return prefs.getString(KEY_URL, Constants.URL);
     }
 
-    public static int geStartDay() {
+    public static int getStartDay() {
         return startDayPrefs.getInt(KEY_START_DAY, 0);
     }
 

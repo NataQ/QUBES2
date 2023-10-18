@@ -62,7 +62,6 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerCustomerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
@@ -112,6 +111,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private ProgressBar progressCircleNoo, progressCircleVisit;
     private WSMessage resultWsMessage;
     private boolean saveDataSuccess = false;
+    private boolean outRadius = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -211,8 +211,16 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void setAdapterVisit() {
         mAdapterVisit = new VisitListAdapter(this, mList, header -> {
-            outletClicked = header;
-            checkLocationPermission();
+            if (SessionManagerQubes.getStartDay() == 1) {
+                outletClicked = header;
+                checkLocationPermission();
+            } else if (SessionManagerQubes.getStartDay() == 2) {
+                outletClicked = header;
+                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                startActivity(intent);
+            } else {
+                setToast("Please start day first");
+            }
         });
 
         recyclerViewVisit.setAdapter(mAdapterVisit);
@@ -250,7 +258,16 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         btnCheckIn.setOnClickListener(v -> {
             dialog.dismiss();
-            openDialogOutRadius();
+            Location locCustomer = null;
+            locCustomer.setLatitude(outletClicked.getLatitude());
+            locCustomer.setLongitude(outletClicked.getLongitude());
+            outRadius = Helper.checkRadius(currentLocation, locCustomer);
+            if (outRadius) {
+                openDialogOutRadius();
+            } else {
+                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                startActivity(intent);
+            }
         });
 
         btnNo.setOnClickListener(v -> {
@@ -744,6 +761,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             progressCircleVisit.setVisibility(View.VISIBLE);
             new RequestUrl().execute();
         }
+
+        validateButton();
     }
 
     private void getData() {
@@ -858,7 +877,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             rlInap.setVisibility(View.GONE);
         }
 
-        if (SessionManagerQubes.geStartDay() == 1) {
+        if (SessionManagerQubes.getStartDay() == 1) {
             btnStartVisit.setVisibility(View.GONE);
             btnNextDay.setVisibility(View.GONE);
         } else {

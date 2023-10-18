@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.provider.Settings;
@@ -873,7 +874,6 @@ public class Helper extends BaseFragment {
         }
         return imei;
     }
-
     public static boolean checkTodayRoute(String rute) {
         String todayRute = getTodayRoute();
         if (rute != null) {
@@ -882,5 +882,17 @@ public class Helper extends BaseFragment {
             }
         }
         return false;
+    }
+
+    public static boolean checkRadius(Location currentLocation, Location custLocation) {
+        boolean inside = false;
+        float radius = database.getRadius(); //in meters
+        float distance = custLocation.distanceTo(currentLocation);
+        if (distance < radius) {
+            inside = true;
+        } else {
+            inside = false;
+        }
+        return inside;
     }
 }

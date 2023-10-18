@@ -2761,6 +2761,23 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public float getRadius() {
+        float radius = 0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_VALUE + " FROM " + TABLE_MASTER_PARAMETER + " WHERE " + KEY_KEY_PARAMETER + " = \'RADIUS\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                radius = cursor.getFloat(cursor.getColumnIndexOrThrow(KEY_VALUE));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return radius;
+    }
+
     //update
     public void updateStockRequestVerification(StockRequest param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -2909,13 +2926,13 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteMasterNonRouteCustomerById(String idHeader) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " WHERE "+ KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
         //db.close();
     }
 
     public void deleteMasterNonRouteCustomerPromotionById(String idHeader) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE "+ KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
         //db.close();
     }
 
