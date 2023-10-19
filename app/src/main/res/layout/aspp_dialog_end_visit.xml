@@ -46,7 +46,6 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/editbox"
             android:padding="5dp"
-            android:text="0"
             android:textColor="@color/gray8_aspp"
             android:textSize="@dimen/superSmallFont" />
 

@@ -283,20 +283,12 @@ public class BaseActivity extends AppCompatActivity {
 
 
     public void logOut(Activity activity) {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        int width = metrics.widthPixels;
-        int height = metrics.heightPixels;
         LayoutInflater inflater = LayoutInflater.from(activity);
         final Dialog dialog = new Dialog(activity);
         View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(dialogView);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-//        layoutParams.copyFrom(dialog.getWindow().getAttributes());
-//        layoutParams.width = 300;
-//        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//        dialog.getWindow().setAttributes(layoutParams);//height => (4 * height) / 5
         dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
         Button btnNo = dialog.findViewById(R.id.btnNo);
         Button btnYes = dialog.findViewById(R.id.btnYes);
@@ -325,6 +317,8 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearLoginSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearStartDaySession();
+        SessionManagerQubes.clearOutletHeaderSession();
+        SessionManagerQubes.clearImageTypeSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
 

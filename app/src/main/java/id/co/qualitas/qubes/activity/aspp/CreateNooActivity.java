@@ -13,18 +13,25 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,16 +42,26 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerDaerahTingkatAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Attachment;
+import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class CreateNooActivity extends BaseActivity {
     private Button btnSave;
+    private TextView txtKodePos, txtKelurahan, txtKecamatan, txtKotaKabupaten, txtProvinsi;
+    private TextView txtTypeToko, txtPriceListType, txtCreditLimit, txtRoute;
+    private EditText edtPhone, edtNamaToko, edtAddress, edtNoNpwp, edtNamaNpwp;
+    private EditText edtAlamatNpwp, edtNamaPemilik, edtNIK, edtLokasi, edtJenisUsaha, edtLamaUsaha;
     private Spinner spnSuku, spnStatusToko, spnStatusNpwp;
     private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageType imageType;
@@ -55,13 +72,14 @@ public class CreateNooActivity extends BaseActivity {
     ImageView imgKTP, imgNPWP, imgOutlet;
     ImageView imgAddKTP, imgAddNPWP, imgAddOutlet;
     ImageView imgDeleteKTP, imgDeleteNPWP, imgDeleteOutlet;
+    private FilteredSpinnerDaerahTingkatAdapter kodePosAdapter, kelurahanAdapter, kecamatanAdapter, kabupatenAdapter, provinsiAdpater;
+    private DaerahTingkat daerahTingkat;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_create_noo);
 
-        initProgress();
         initialize();
 
         imgBack.setOnClickListener(v -> {
@@ -76,26 +94,26 @@ public class CreateNooActivity extends BaseActivity {
             onBackPressed();
         });
 
-        setDropDown();
+        setDataDefault();
 
         llKTP.setOnClickListener(view -> {
             typeImage = 1;
             imageType.setPosImage(typeImage);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
         });
 
         llNPWP.setOnClickListener(view -> {
             typeImage = 2;
             imageType.setPosImage(typeImage);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
         });
 
         llOutlet.setOnClickListener(view -> {
             typeImage = 3;
             imageType.setPosImage(typeImage);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
         });
 
@@ -104,7 +122,7 @@ public class CreateNooActivity extends BaseActivity {
                 imageType = new ImageType();
             }
             imageType.setPhotoKTP(null);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             Utils.loadImageFit(CreateNooActivity.this, null, imgKTP);
             imgAddKTP.setVisibility(View.VISIBLE);
             imgDeleteKTP.setVisibility(View.GONE);
@@ -116,7 +134,7 @@ public class CreateNooActivity extends BaseActivity {
                 imageType = new ImageType();
             }
             imageType.setPhotoNPWP(null);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             Utils.loadImageFit(CreateNooActivity.this, null, imgNPWP);
             imgAddNPWP.setVisibility(View.VISIBLE);
             imgDeleteNPWP.setVisibility(View.GONE);
@@ -128,7 +146,7 @@ public class CreateNooActivity extends BaseActivity {
                 imageType = new ImageType();
             }
             imageType.setPhotoOutlet(null);
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            SessionManagerQubes.setImageType(imageType);
             Utils.loadImageFit(CreateNooActivity.this, null, imgOutlet);
             imgAddOutlet.setVisibility(View.VISIBLE);
             imgDeleteOutlet.setVisibility(View.GONE);
@@ -209,7 +227,10 @@ public class CreateNooActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void setDropDown() {
+    private void setDataDefault() {
+        txtRoute.setText(Helper.getTodayRouteDouble());
+        txtCreditLimit.setText(database.getCreditLimit());
+
         List<String> suku = new ArrayList<>();
         suku.add("--");
         suku.add("Tiong Hua");
@@ -228,12 +249,276 @@ public class CreateNooActivity extends BaseActivity {
         setSpinnerData(suku, spnSuku);
         setSpinnerData(statusToko, spnStatusToko);
         setSpinnerData(statusNPWP, spnStatusNpwp);
+
+        txtKodePos.setOnClickListener(view -> {
+            openDialogKodePos();
+        });
+
+        txtKelurahan.setOnClickListener(view -> {
+            openDialogKelurahan();
+        });
+
+        txtKecamatan.setOnClickListener(view -> {
+            openDialogKecamatan();
+        });
+
+        txtKotaKabupaten.setOnClickListener(view -> {
+            openDialogKabupaten();
+        });
+
+        txtProvinsi.setOnClickListener(view -> {
+            openDialogProvinsi();
+        });
+    }
+
+    private void openDialogProvinsi() {
+        Dialog dialog = new Dialog(CreateNooActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.list_view);
+        setDataDaerahTingkat();
+
+        List<DaerahTingkat> arrayList = new ArrayList<>();
+        arrayList.addAll(database.getAllProvinsi(daerahTingkat));
+
+        provinsiAdpater = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 5, arrayList, (header, adapterPosition) -> {
+            txtProvinsi.setText(header.getNama_kelurahan());
+            dialog.dismiss();
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(provinsiAdpater);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                provinsiAdpater.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void openDialogKabupaten() {
+        Dialog dialog = new Dialog(CreateNooActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.list_view);
+        setDataDaerahTingkat();
+
+        List<DaerahTingkat> arrayList = new ArrayList<>();
+        arrayList.addAll(database.getAllKabupaten(daerahTingkat));
+
+        kabupatenAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 4, arrayList, (header, adapterPosition) -> {
+            txtKotaKabupaten.setText(header.getNama_kelurahan());
+            dialog.dismiss();
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(kabupatenAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                kabupatenAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void openDialogKecamatan() {
+        Dialog dialog = new Dialog(CreateNooActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.list_view);
+        setDataDaerahTingkat();
+
+        List<DaerahTingkat> arrayList = new ArrayList<>();
+        arrayList.addAll(database.getAllKecamatan(daerahTingkat));
+
+        kecamatanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 3, arrayList, (header, adapterPosition) -> {
+            txtKecamatan.setText(header.getNama_kelurahan());
+            dialog.dismiss();
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(kecamatanAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                kecamatanAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void setDataDaerahTingkat() {
+        daerahTingkat = new DaerahTingkat();
+        daerahTingkat.setKode_pos(Integer.parseInt(txtKodePos.getText().toString()));
+        daerahTingkat.setNama_kelurahan(txtKelurahan.getText().toString().trim());
+        daerahTingkat.setNama_kecamatan(txtKecamatan.getText().toString().trim());
+        daerahTingkat.setNama_kabupaten(txtKotaKabupaten.getText().toString().trim());
+        daerahTingkat.setNama_provinsi(txtProvinsi.getText().toString().trim());
+    }
+
+    private void openDialogKodePos() {
+        Dialog dialog = new Dialog(CreateNooActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.list_view);
+        setDataDaerahTingkat();
+
+        List<DaerahTingkat> arrayList = new ArrayList<>();
+        arrayList.addAll(database.getAllKodePos(daerahTingkat));
+
+        kodePosAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 1, arrayList, (header, adapterPosition) -> {
+            txtKodePos.setText(String.valueOf(header.getKode_pos()));
+            dialog.dismiss();
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(kodePosAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                kodePosAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void openDialogKelurahan() {
+        Dialog dialog = new Dialog(CreateNooActivity.this);
+
+        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text);
+        RecyclerView rv = dialog.findViewById(R.id.list_view);
+
+        setDataDaerahTingkat();
+        List<DaerahTingkat> arrayList = new ArrayList<>();
+        arrayList.addAll(database.getAllKelurahan(daerahTingkat));
+
+        kelurahanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 2, arrayList, (header, adapterPosition) -> {
+            txtKelurahan.setText(header.getNama_kelurahan());
+            dialog.dismiss();
+        });
+
+        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        rv.setAdapter(kelurahanAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                kelurahanAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        txtKodePos = findViewById(R.id.txtKodePos);
+        txtKelurahan = findViewById(R.id.txtKelurahan);
+        txtKecamatan = findViewById(R.id.txtKecamatan);
+        txtKotaKabupaten = findViewById(R.id.txtKotaKabupaten);
+        txtProvinsi = findViewById(R.id.txtProvinsi);
+        edtPhone = findViewById(R.id.edtPhone);
+        edtNamaToko = findViewById(R.id.edtNamaToko);
+        edtAddress = findViewById(R.id.edtAddress);
+        edtNoNpwp = findViewById(R.id.edtNoNpwp);
+        edtNamaNpwp = findViewById(R.id.edtNamaNpwp);
+        edtNamaPemilik = findViewById(R.id.edtNamaPemilik);
+        edtAlamatNpwp = findViewById(R.id.edtAlamatNpwp);
+        edtNIK = findViewById(R.id.edtNIK);
+        edtLokasi = findViewById(R.id.edtLokasi);
+        edtJenisUsaha = findViewById(R.id.edtJenisUsaha);
+        edtLamaUsaha = findViewById(R.id.edtLamaUsaha);
+        txtTypeToko = findViewById(R.id.txtTypeToko);
+        txtPriceListType = findViewById(R.id.txtPriceListType);
+        txtCreditLimit = findViewById(R.id.txtCreditLimit);
+        txtRoute = findViewById(R.id.txtRoute);
+        txtPriceListType = findViewById(R.id.txtPriceListType);
         spnStatusNpwp = findViewById(R.id.spnStatusNpwp);
         spnSuku = findViewById(R.id.spnSuku);
         spnStatusToko = findViewById(R.id.spnStatusToko);
@@ -257,9 +542,9 @@ public class CreateNooActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
+        if (SessionManagerQubes.getImageType() != null) {
             imageType = new ImageType();
-            imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
+            imageType = SessionManagerQubes.getImageType();
         } else {
             imageType = new ImageType();
         }
@@ -293,7 +578,7 @@ public class CreateNooActivity extends BaseActivity {
         imgKTP.setImageURI(imageType.getPhotoKTP());
         imgNPWP.setImageURI(imageType.getPhotoNPWP());
         imgOutlet.setImageURI(imageType.getPhotoOutlet());
-        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+        SessionManagerQubes.setImageType(imageType);
 
 //        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
 //        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
@@ -400,7 +685,7 @@ public class CreateNooActivity extends BaseActivity {
                 break;
         }
 
-        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+        SessionManagerQubes.setImageType(imageType);
     }
 
     public String getImageFilePath(Uri uri) {

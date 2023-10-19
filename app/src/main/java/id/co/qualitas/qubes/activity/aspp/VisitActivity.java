@@ -20,6 +20,7 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -41,6 +42,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.gson.Gson;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -53,10 +56,14 @@ import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,9 +78,10 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.CustomerNoo;
+import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -84,7 +92,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private VisitListAdapter mAdapterVisit;
     private NooListAdapter mAdapterNoo;
     private List<Customer> mList, mListNonRoute;
-    private List<CustomerNoo> mListNoo;
+    private List<Customer> mListNoo;
     private MovableFloatingActionButton btnAddVisit, btnAddNoo;
     private Button btnEndDay, btnNextDay, btnStartVisit, btnEndVisit;
     private TextView txtVisit, txtVisitLine, txtNOO, txtNOOLine;
@@ -96,7 +104,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private LocationManager lm;
     private Location currentLocation = null;
     private Customer outletClicked;
-    private CustomerNoo outletNooClicked;
     private LashPdfUtils pdfUtils;
     private File pdfFile;
     private Boolean success = false;
@@ -112,6 +119,11 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private WSMessage resultWsMessage;
     private boolean saveDataSuccess = false;
     private boolean outRadius = false;
+    public static final int CAMERA_PERM_CODE = 102;
+    private ImageType imageType;
+    private Uri uriBerangkat, uriPulang, uriSelesai;
+    private Map startDay, endDay;
+    private String kmAwal, kmAkhir;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,25 +217,53 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnAddVisit.setOnClickListener(v -> {
-            openDialogAdd();
+            if (SessionManagerQubes.getStartDay() == 1) {
+                openDialogAdd();
+            } else {
+                setToast("Please start visit first");
+            }
         });
     }
 
     private void setAdapterVisit() {
         mAdapterVisit = new VisitListAdapter(this, mList, header -> {
-            if (SessionManagerQubes.getStartDay() == 1) {
-                outletClicked = header;
-                checkLocationPermission();
-            } else if (SessionManagerQubes.getStartDay() == 2) {
-                outletClicked = header;
-                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                startActivity(intent);
+            SessionManagerQubes.setOutletHeader(header);
+            outletClicked = header;
+            if (SessionManagerQubes.getStartDay() != 0) {
+                if (header.getStatus() == 0) {//belum check in
+                    checkLocationPermission();
+                } else {
+                    if (checkOutletStatus()) {
+                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                        startActivity(intent);
+                    } else {
+                        setToast("Selesaikan customer yang sedang check in");
+                    }
+                }
             } else {
-                setToast("Please start day first");
+                setToast("Please start visit first");
             }
         });
 
         recyclerViewVisit.setAdapter(mAdapterVisit);
+    }
+
+    private boolean checkOutletStatus() {
+        int statusCheckIn = 0;
+        for (Customer customer : mList) {
+            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
+            if (customer.getStatus() == 1) {
+                statusCheckIn++;
+            }
+        }
+
+        for (Customer customer : mListNoo) {
+            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
+            if (customer.getStatus() == 1) {
+                statusCheckIn++;
+            }
+        }
+        return (statusCheckIn == 0);
     }
 
     private void checkLocationPermission() {
@@ -386,8 +426,12 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnAddNoo.setOnClickListener(v -> {
-            Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-            startActivity(intent);
+            if (SessionManagerQubes.getStartDay() == 1) {
+                Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+                startActivity(intent);
+            } else {
+                setToast("Please start visit first");
+            }
         });
 
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -417,19 +461,26 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
             }
         });
-
-        btnAddNoo.setOnClickListener(v -> {
-            Intent intent = new Intent(this, CreateNooActivity.class);
-            startActivity(intent);
-        });
     }
 
     private void setAdapterNoo() {
         mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
-            outletNooClicked = header;
-            outletClicked = new Customer(header.getIdHeader(), header.getName(), header.getNamePemilik(), header.getAddress(), header.getPhone(), header.getCreditLimit(), header.getNoKtp(), header.getNoNpwp(), true, header.getLatitude(), header.getLongitude(), 0);
-            outletClicked.setIdHeader(header.getIdHeader());
-            checkLocationPermission();
+            outletClicked = header;
+            SessionManagerQubes.setOutletHeader(header);
+            if (SessionManagerQubes.getStartDay() != 0) {
+                if (header.getStatus() == 0) {//belum check in
+                    checkLocationPermission();
+                } else {
+                    if (checkOutletStatus()) {
+                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                        startActivity(intent);
+                    } else {
+                        setToast("Selesaikan customer yang sedang check in");
+                    }
+                }
+            } else {
+                setToast("Please start visit first");
+            }
         });
 
         recyclerViewNoo.setAdapter(mAdapterNoo);
@@ -488,15 +539,63 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         dialog.setContentView(R.layout.aspp_dialog_end_visit);
         Button btnEnd = dialog.findViewById(R.id.btnEnd);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        EditText txtKmAkhir = dialog.findViewById(R.id.txtKmAkhir);
+        LinearLayout llImgSelesai = dialog.findViewById(R.id.llImgSelesai);
+        LinearLayout llImgPulang = dialog.findViewById(R.id.llImgPulang);
         ImageView imgSelesai = dialog.findViewById(R.id.imgSelesai);
         ImageView imgAddSelesai = dialog.findViewById(R.id.imgAddSelesai);
         ImageView imgPulang = dialog.findViewById(R.id.imgPulang);
         ImageView imgAddPulang = dialog.findViewById(R.id.imgAddPulang);
 
+        if (uriSelesai != null) {
+            imgSelesai.setImageURI(uriSelesai);
+            imgAddSelesai.setVisibility(View.GONE);
+        } else {
+            imgAddSelesai.setVisibility(View.VISIBLE);
+        }
+        if (uriPulang != null) {
+            imgPulang.setImageURI(uriPulang);
+            imgAddPulang.setVisibility(View.GONE);
+        } else {
+            imgAddPulang.setVisibility(View.VISIBLE);
+        }
+
+        txtKmAkhir.setText(imageType.getKmAkhir());
+
+        llImgPulang.setOnClickListener(v -> {
+            ImageType imageType = new ImageType();
+            imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
+            imageType.setPhotoAkhir(uriPulang);
+            imageType.setPhotoSelesai(uriSelesai);
+            imageType.setPosImage(5);
+            SessionManagerQubes.setImageType(imageType);
+            askPermissionCamera();
+        });
+
+        llImgSelesai.setOnClickListener(v -> {
+            ImageType imageType = new ImageType();
+            imageType.setPosImage(6);
+            imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
+            imageType.setPhotoAkhir(uriPulang);
+            imageType.setPhotoSelesai(uriSelesai);
+            SessionManagerQubes.setImageType(imageType);
+            askPermissionCamera();
+        });
+
         btnEnd.setOnClickListener(v -> {
             dialog.dismiss();
-            btnStartVisit.setVisibility(View.VISIBLE);
-            btnEndVisit.setVisibility(View.GONE);
+            if (Helper.isEmptyEditText(txtKmAkhir)) {
+                txtKmAkhir.setError(getString(R.string.emptyField));
+            } else if (uriPulang == null) {
+                setToast("Harus Foto KM Akhir");
+            } else if (uriSelesai == null) {
+                setToast("Harus Foto Selesai");
+            } else {
+                kmAkhir = txtKmAkhir.getText().toString().trim();
+                PARAM = 4;
+                new RequestUrl().execute();
+                progress.show();
+            }
         });
 
         btnCancel.setOnClickListener(v -> {
@@ -507,26 +606,53 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void openDialogStartVisit() {
-        Dialog dialog = new Dialog(this);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_start_visit, null);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.aspp_dialog_start_visit);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(500, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+
         Button btnStart = dialog.findViewById(R.id.btnStart);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        EditText txtKmAwal = dialog.findViewById(R.id.txtKmAwal);
         ImageView imgAdd = dialog.findViewById(R.id.imgAdd);
         ImageView imgBerangkat = dialog.findViewById(R.id.imgBerangkat);
         LinearLayout llImgBerangkat = dialog.findViewById(R.id.llImgBerangkat);
 
-        imgAdd.setOnClickListener(v -> {
+        if (uriBerangkat != null) {
+            imgBerangkat.setImageURI(uriBerangkat);
+            imgAdd.setVisibility(View.GONE);
+        } else {
+            imgAdd.setVisibility(View.VISIBLE);
+        }
+
+        txtKmAwal.setText(imageType.getKmAwal());
+
+        llImgBerangkat.setOnClickListener(v -> {
+            ImageType imageType = new ImageType();
+            imageType.setKmAwal(txtKmAwal.getText().toString().trim());
+            imageType.setPosImage(4);
+            imageType.setPhotoKmAwal(uriBerangkat);
+            SessionManagerQubes.setImageType(imageType);
+            askPermissionCamera();
 //            Intent camera = new Intent(this, Camera3PLActivity.class);//3
 //            startActivityForResult(camera, Constants.REQUEST_CAMERA_CODE);
         });
 
         btnStart.setOnClickListener(v -> {
             dialog.dismiss();
-            btnStartVisit.setVisibility(View.GONE);
-            btnEndVisit.setVisibility(View.VISIBLE);
+            if (Helper.isEmptyEditText(txtKmAwal)) {
+                txtKmAwal.setError(getString(R.string.emptyField));
+            } else if (uriBerangkat == null) {
+                setToast("Foto KM Awal");
+            } else {
+                kmAwal = txtKmAwal.getText().toString().trim();
+                PARAM = 3;
+                new RequestUrl().execute();
+                progress.show();
+            }
         });
 
         btnCancel.setOnClickListener(v -> {
@@ -534,6 +660,23 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         dialog.show();
+    }
+
+    public void askPermissionCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, CAMERA_PERM_CODE);
+        } else {
+            Helper.takePhoto(VisitActivity.this);
+        }
     }
 
     private void openDialogAdd() {
@@ -636,6 +779,32 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     public void onResume() {
         super.onResume();
         getFirstDataOffline();
+        if (SessionManagerQubes.getImageType() != null) {
+            imageType = new ImageType();
+            imageType = SessionManagerQubes.getImageType();
+        } else {
+            imageType = new ImageType();
+        }
+
+        if (getIntent().getExtras() != null) {
+            Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
+            getIntent().removeExtra(Constants.OUTPUT_CAMERA);
+
+            switch (imageType.getPosImage()) {
+                case 4:
+                    uriBerangkat = uri;
+                    openDialogStartVisit();
+                    break;
+                case 5:
+                    uriPulang = uri;
+                    openDialogEndVisit();
+                    break;
+                case 6:
+                    uriSelesai = uri;
+                    openDialogEndVisit();
+                    break;
+            }
+        }
     }
 
     @Override
@@ -699,19 +868,19 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    new AsyncTaskGeneratePDF().execute();
-                } else {
-                    setToast(getString(R.string.pleaseEnablePermission));
-                }
-                break;
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case PERMISSION_REQUEST_CODE:
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+//                    new AsyncTaskGeneratePDF().execute();
+//                } else {
+//                    setToast(getString(R.string.pleaseEnablePermission));
+//                }
+//                break;
+//        }
+//    }
 
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
         @Override
@@ -782,7 +951,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     String URL_ = Constants.API_GET_TODAY_CUSTOMER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
-                } else {
+                } else if (PARAM == 2) {
                     mList = new ArrayList<>();
                     mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
@@ -824,6 +993,41 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     getData();
                     saveDataSuccess = true;
                     return null;
+                } else if (PARAM == 3) {
+//                    String photoKMAwal = Utils.compressImageUri(getApplicationContext(), uriBerangkat.toString());
+//                    StartVisit startDay = new StartVisit();
+//                    startDay.setKmAwal(kmAwal);
+//                    startDay.setUsername(user.getUsername());
+//                    startDay.setUserLogin(user.getUserLogin());
+                    startDay = new HashMap();
+                    startDay.put("kmAwal", kmAwal);
+                    startDay.put("username", user.getUsername());
+                    startDay.put("userLogin", user.getUserLogin());
+                    startDay.put("photo", Utils.encodeImageBase64(VisitActivity.this, uriBerangkat));
+//                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//                    if (photoKMAwal != null) {
+//                        map.add("kmAwal", new FileSystemResource(photoKMAwal));
+//                    } else {
+//                        map.add("kmAwal", "");
+//                    }
+//                    String json = new Gson().toJson(startDay);
+//                    map.add("data", json);
+//
+//                    String URL_ = Constants.API_GET_START_DAY_MULTI_PART;
+                    String URL_ = Constants.API_GET_START_DAY;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+//                    return (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, startDay);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
+                } else {
+                    endDay = new HashMap();
+                    endDay.put("kmAkhir", kmAkhir);
+                    endDay.put("username", user.getUsername());
+                    endDay.put("photoKmAkhir", Utils.encodeImageBase64(VisitActivity.this, uriPulang));
+                    endDay.put("photoCompleted", Utils.encodeImageBase64(VisitActivity.this, uriSelesai));
+
+                    String URL_ = Constants.API_GET_END_DAY;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
                 }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
@@ -857,7 +1061,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     progressCircle.setVisibility(View.GONE);
                     setToast(getString(R.string.failedGetData));
                 }
-            } else {
+            } else if (PARAM == 2) {
                 progressCircleVisit.setVisibility(View.GONE);
                 if (saveDataSuccess) {
                     mAdapterVisit.setData(mList);
@@ -865,8 +1069,31 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }
+            } else if (PARAM == 3) {
+                progress.dismiss();
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        SessionManagerQubes.setStartDay(1);
+                        validateButton();
+                    } else {
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    setToast(getString(R.string.serverError));
+                }
+            } else {
+                progress.dismiss();
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        SessionManagerQubes.setStartDay(2);
+                        validateButton();
+                    } else {
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    setToast(getString(R.string.serverError));
+                }
             }
-
         }
     }
 
@@ -877,12 +1104,45 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             rlInap.setVisibility(View.GONE);
         }
 
-        if (SessionManagerQubes.getStartDay() == 1) {
-            btnStartVisit.setVisibility(View.GONE);
-            btnNextDay.setVisibility(View.GONE);
+        switch (SessionManagerQubes.getStartDay()) {
+            case 0:
+                btnStartVisit.setVisibility(View.VISIBLE);
+                btnNextDay.setVisibility(View.VISIBLE);
+                btnEndVisit.setVisibility(View.GONE);
+                btnEndDay.setVisibility(View.GONE);
+                btnAddVisit.setVisibility(View.GONE);
+                btnAddNoo.setVisibility(View.GONE);
+                break;
+            case 1:
+                btnStartVisit.setVisibility(View.GONE);
+                btnNextDay.setVisibility(View.GONE);
+                btnEndVisit.setVisibility(View.VISIBLE);
+                btnEndDay.setVisibility(View.VISIBLE);
+                btnAddVisit.setVisibility(View.VISIBLE);
+                btnAddNoo.setVisibility(View.VISIBLE);
+                break;
+            case 2:
+                btnStartVisit.setVisibility(View.GONE);
+                btnNextDay.setVisibility(View.GONE);
+                btnEndVisit.setVisibility(View.GONE);
+                btnEndDay.setVisibility(View.GONE);
+                btnAddVisit.setVisibility(View.GONE);
+                btnAddNoo.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERM_CODE
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            Helper.takePhoto(VisitActivity.this);
+        } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+            new AsyncTaskGeneratePDF().execute();
         } else {
-            btnEndVisit.setVisibility(View.VISIBLE);
-            btnEndDay.setVisibility(View.VISIBLE);
+            setToast(getString(R.string.pleaseEnablePermission));
         }
     }
 }

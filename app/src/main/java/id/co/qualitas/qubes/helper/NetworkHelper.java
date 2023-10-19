@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.helper;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Objects;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class NetworkHelper {
     /*GET*/
@@ -177,5 +179,47 @@ public class NetworkHelper {
         }
 
         return jsonString;
+    }
+
+    public static Object postWebserviceWithBodyMultiPart(String url, Class<?> responseType, Object body) {
+        int flag = 0;
+        ResponseEntity<?> responseEntity = null;
+//        while (flag == 0) {
+//            flag = 1;
+
+//            String token = (String) Helper.getItemParam(Constants.TOKEN);
+        String token = SessionManagerQubes.getToken();
+        String bearerToken = Constants.BEARER.concat(token);
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders requestHeaders = new HttpHeaders();
+//        requestHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        requestHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+        requestHeaders.set("Authorization", bearerToken);
+
+        HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
+        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+
+
+        try {
+            responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
+        } catch (Exception e) {
+            if (e.getMessage() != null) {
+                Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
+                Log.e(url, e.getMessage());
+                if (e.getMessage().contains("401")) {
+//                    flag = 0;
+                    Helper.setItemParam(Constants.UNAUTHORIZED, "1");
+//                    break;
+                } else {
+                    if (e.getMessage().contains("ENETUNREACH")) {
+                        Helper.setItemParam(Constants.NO_CONNECTION, "1");
+//                        break;
+                    }
+                }
+            }
+
+        }
+        return Objects.requireNonNull(responseEntity).getBody();
     }
 }

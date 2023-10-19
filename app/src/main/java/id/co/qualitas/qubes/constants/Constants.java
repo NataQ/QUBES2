@@ -3,14 +3,17 @@ package id.co.qualitas.qubes.constants;
 public class Constants {
     public static final double ZOOM_LEVEL = 10.0;
     public static final String FCM = "fcm";
-    public static final String IMAGE_TYPE = "image_type";
+    //    public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_APPROVE = "approve";
     public static final String STATUS_REJECTED = "rejected";
     public static final String STATUS_VERIFICATION = "verification";
     public static final String STATUS_UNLOADING = "unloading";
+    public static final String UNAUTHORIZED = "401 Unauthorized";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
+    public static final String LOG_EXCEPTION = "log exception";
+    public static final int COMPRESS_IMAGE = 80;
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
     public static final String HTTP_HEADER_CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -503,5 +506,6 @@ public class Constants {
     public static final String API_INVOICE_VERIFICATION = "updateVerificationInvoice";
     public static final String API_GET_TODAY_CUSTOMER = "getTodayCustomer";
     public static final String API_GET_START_DAY = "startDay";
+    public static final String API_GET_START_DAY_MULTI_PART = "startDayMultiPart";
     public static final String API_GET_END_DAY = "endDay";
 }

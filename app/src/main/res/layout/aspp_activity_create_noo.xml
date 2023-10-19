@@ -311,7 +311,7 @@
                             android:text="Alamat"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <EditText
                             android:id="@+id/edtAddress"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -504,7 +504,7 @@
                             android:textColor="@color/gray8_aspp" />
 
                         <EditText
-                            android:id="@+id/txtPhone"
+                            android:id="@+id/edtPhone"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -686,7 +686,7 @@
                             android:textColor="@color/gray8_aspp" />
 
                         <EditText
-                            android:id="@+id/txtNIK"
+                            android:id="@+id/edtNIK"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -741,7 +741,7 @@
                             android:textColor="@color/gray8_aspp" />
 
                         <EditText
-                            android:id="@+id/txtLokasi"
+                            android:id="@+id/edtLokasi"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -767,7 +767,7 @@
                             android:textColor="@color/gray8_aspp" />
 
                         <EditText
-                            android:id="@+id/txtJenisUsaha"
+                            android:id="@+id/edtJenisUsaha"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -793,7 +793,7 @@
                             android:textColor="@color/gray8_aspp" />
 
                         <EditText
-                            android:id="@+id/txtLamaUsaha"
+                            android:id="@+id/edtLamaUsaha"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -911,7 +911,6 @@
                             android:layout_weight=".6"
                             android:background="@drawable/editbox_disable"
                             android:padding="5dp"
-                            android:text="2000000"
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
@@ -938,7 +937,6 @@
                             android:layout_weight=".6"
                             android:background="@drawable/editbox_disable"
                             android:padding="5dp"
-                            android:text="P3H4"
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>

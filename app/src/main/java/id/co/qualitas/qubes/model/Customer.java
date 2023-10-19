@@ -9,42 +9,59 @@ public class Customer {
     private String id;
     private String nama;
     private String address;
-    private String phone;
+    private String no_tlp;
     private String udf_5;
     private String udf_5_desc;
-    private double sisaCreditLimit;
-    private double limit_kredit;
-    private double totalTagihan;
-    private String nama_pemilik;
-    private String nik;
-    private String no_npwp;
-    private int status;
-    private boolean route;
     private double latitude;
     private double longitude;
-    private LatLng position;
-    private String photoKtp;
-    private String photoNpwp;
-    private String photoOutlet;
-    private String rute;
+    private int status; //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
     private String kode_pos;
+    private String idKelurahan;
+    private String kelurahan;
+    private String idKecamatan;
+    private String kecamatan;
+    private String idKota;
     private String kota;
-    private String mileage;
+    private String idProvinsi;
+    private String provinsi;
+    private String no_npwp;
+    private String npwp_name;
+    private String npwp_address;
+    private String status_npwp;
+    private String nama_pemilik;
+    private String alamat_pemilik;
+    private String nik;
+    private String status_toko;
+    private String location;
+    private String jenis_usaha;
+    private String lama_usaha;
+    private String suku;
     private String type_customer;
     private String name_type_customer;
     private String type_price;
+    private double credit_limit;
+    private String rute;
+    private String photoKtp;
+    private String photoNpwp;
+    private String photoOutlet;
     private int is_sync;
     private List<Promotion> promoList;
+    private boolean route;
+    private LatLng position;
+    private double limit_kredit;
+    private double sisaCreditLimit;
+    private double totalTagihan;
+    private String mileage;
 
     public Customer() {
     }
 
-    public Customer(String id, String nama, String nama_pemilik, String address, String phone, double limit_kredit, String nik, String no_npwp, boolean route, double latitude, double longitude, int isSync) {
+    public Customer(String id, String nama, String nama_pemilik, String address, String no_tlp, double limit_kredit, String nik, String no_npwp, boolean route, double latitude, double longitude, int isSync) {
         this.id = id;
         this.nama_pemilik = nama_pemilik;
         this.nama = nama;
         this.address = address;
-        this.phone = phone;
+        this.no_tlp = no_tlp;
         this.limit_kredit = limit_kredit;
         this.nik = nik;
         this.no_npwp = no_npwp;
@@ -76,70 +93,6 @@ public class Customer {
         this.route = route;
         this.position = position;
         this.status = status;
-    }
-
-    public String getName_type_customer() {
-        return name_type_customer;
-    }
-
-    public void setName_type_customer(String name_type_customer) {
-        this.name_type_customer = name_type_customer;
-    }
-
-    public String getRute() {
-        return rute;
-    }
-
-    public void setRute(String rute) {
-        this.rute = rute;
-    }
-
-    public String getKode_pos() {
-        return kode_pos;
-    }
-
-    public void setKode_pos(String kode_pos) {
-        this.kode_pos = kode_pos;
-    }
-
-    public String getKota() {
-        return kota;
-    }
-
-    public void setKota(String kota) {
-        this.kota = kota;
-    }
-
-    public String getMileage() {
-        return mileage;
-    }
-
-    public void setMileage(String mileage) {
-        this.mileage = mileage;
-    }
-
-    public String getType_customer() {
-        return type_customer;
-    }
-
-    public void setType_customer(String type_customer) {
-        this.type_customer = type_customer;
-    }
-
-    public String getType_price() {
-        return type_price;
-    }
-
-    public void setType_price(String type_price) {
-        this.type_price = type_price;
-    }
-
-    public List<Promotion> getPromoList() {
-        return promoList;
-    }
-
-    public void setPromoList(List<Promotion> promoList) {
-        this.promoList = promoList;
     }
 
     public String getIdHeader() {
@@ -174,12 +127,12 @@ public class Customer {
         this.address = address;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getNo_tlp() {
+        return no_tlp;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setNo_tlp(String no_tlp) {
+        this.no_tlp = no_tlp;
     }
 
     public String getUdf_5() {
@@ -198,70 +151,6 @@ public class Customer {
         this.udf_5_desc = udf_5_desc;
     }
 
-    public double getSisaCreditLimit() {
-        return sisaCreditLimit;
-    }
-
-    public void setSisaCreditLimit(double sisaCreditLimit) {
-        this.sisaCreditLimit = sisaCreditLimit;
-    }
-
-    public double getLimit_kredit() {
-        return limit_kredit;
-    }
-
-    public void setLimit_kredit(double limit_kredit) {
-        this.limit_kredit = limit_kredit;
-    }
-
-    public double getTotalTagihan() {
-        return totalTagihan;
-    }
-
-    public void setTotalTagihan(double totalTagihan) {
-        this.totalTagihan = totalTagihan;
-    }
-
-    public String getNama_pemilik() {
-        return nama_pemilik;
-    }
-
-    public void setNama_pemilik(String nama_pemilik) {
-        this.nama_pemilik = nama_pemilik;
-    }
-
-    public String getNik() {
-        return nik;
-    }
-
-    public void setNik(String nik) {
-        this.nik = nik;
-    }
-
-    public String getNo_npwp() {
-        return no_npwp;
-    }
-
-    public void setNo_npwp(String no_npwp) {
-        this.no_npwp = no_npwp;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public boolean isRoute() {
-        return route;
-    }
-
-    public void setRoute(boolean route) {
-        this.route = route;
-    }
-
     public double getLatitude() {
         return latitude;
     }
@@ -278,12 +167,220 @@ public class Customer {
         this.longitude = longitude;
     }
 
-    public LatLng getPosition() {
-        return position;
+    public int getStatus() {
+        return status;
     }
 
-    public void setPosition(LatLng position) {
-        this.position = position;
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getKode_pos() {
+        return kode_pos;
+    }
+
+    public void setKode_pos(String kode_pos) {
+        this.kode_pos = kode_pos;
+    }
+
+    public String getIdKelurahan() {
+        return idKelurahan;
+    }
+
+    public void setIdKelurahan(String idKelurahan) {
+        this.idKelurahan = idKelurahan;
+    }
+
+    public String getKelurahan() {
+        return kelurahan;
+    }
+
+    public void setKelurahan(String kelurahan) {
+        this.kelurahan = kelurahan;
+    }
+
+    public String getIdKecamatan() {
+        return idKecamatan;
+    }
+
+    public void setIdKecamatan(String idKecamatan) {
+        this.idKecamatan = idKecamatan;
+    }
+
+    public String getKecamatan() {
+        return kecamatan;
+    }
+
+    public void setKecamatan(String kecamatan) {
+        this.kecamatan = kecamatan;
+    }
+
+    public String getIdKota() {
+        return idKota;
+    }
+
+    public void setIdKota(String idKota) {
+        this.idKota = idKota;
+    }
+
+    public String getKota() {
+        return kota;
+    }
+
+    public void setKota(String kota) {
+        this.kota = kota;
+    }
+
+    public String getIdProvinsi() {
+        return idProvinsi;
+    }
+
+    public void setIdProvinsi(String idProvinsi) {
+        this.idProvinsi = idProvinsi;
+    }
+
+    public String getProvinsi() {
+        return provinsi;
+    }
+
+    public void setProvinsi(String provinsi) {
+        this.provinsi = provinsi;
+    }
+
+    public String getNo_npwp() {
+        return no_npwp;
+    }
+
+    public void setNo_npwp(String no_npwp) {
+        this.no_npwp = no_npwp;
+    }
+
+    public String getNpwp_name() {
+        return npwp_name;
+    }
+
+    public void setNpwp_name(String npwp_name) {
+        this.npwp_name = npwp_name;
+    }
+
+    public String getNpwp_address() {
+        return npwp_address;
+    }
+
+    public void setNpwp_address(String npwp_address) {
+        this.npwp_address = npwp_address;
+    }
+
+    public String getStatus_npwp() {
+        return status_npwp;
+    }
+
+    public void setStatus_npwp(String status_npwp) {
+        this.status_npwp = status_npwp;
+    }
+
+    public String getNama_pemilik() {
+        return nama_pemilik;
+    }
+
+    public void setNama_pemilik(String nama_pemilik) {
+        this.nama_pemilik = nama_pemilik;
+    }
+
+    public String getAlamat_pemilik() {
+        return alamat_pemilik;
+    }
+
+    public void setAlamat_pemilik(String alamat_pemilik) {
+        this.alamat_pemilik = alamat_pemilik;
+    }
+
+    public String getNik() {
+        return nik;
+    }
+
+    public void setNik(String nik) {
+        this.nik = nik;
+    }
+
+    public String getStatus_toko() {
+        return status_toko;
+    }
+
+    public void setStatus_toko(String status_toko) {
+        this.status_toko = status_toko;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getJenis_usaha() {
+        return jenis_usaha;
+    }
+
+    public void setJenis_usaha(String jenis_usaha) {
+        this.jenis_usaha = jenis_usaha;
+    }
+
+    public String getLama_usaha() {
+        return lama_usaha;
+    }
+
+    public void setLama_usaha(String lama_usaha) {
+        this.lama_usaha = lama_usaha;
+    }
+
+    public String getSuku() {
+        return suku;
+    }
+
+    public void setSuku(String suku) {
+        this.suku = suku;
+    }
+
+    public String getType_customer() {
+        return type_customer;
+    }
+
+    public void setType_customer(String type_customer) {
+        this.type_customer = type_customer;
+    }
+
+    public String getName_type_customer() {
+        return name_type_customer;
+    }
+
+    public void setName_type_customer(String name_type_customer) {
+        this.name_type_customer = name_type_customer;
+    }
+
+    public String getType_price() {
+        return type_price;
+    }
+
+    public void setType_price(String type_price) {
+        this.type_price = type_price;
+    }
+
+    public double getCredit_limit() {
+        return credit_limit;
+    }
+
+    public void setCredit_limit(double credit_limit) {
+        this.credit_limit = credit_limit;
+    }
+
+    public String getRute() {
+        return rute;
+    }
+
+    public void setRute(String rute) {
+        this.rute = rute;
     }
 
     public String getPhotoKtp() {
@@ -316,5 +413,61 @@ public class Customer {
 
     public void setIs_sync(int is_sync) {
         this.is_sync = is_sync;
+    }
+
+    public List<Promotion> getPromoList() {
+        return promoList;
+    }
+
+    public void setPromoList(List<Promotion> promoList) {
+        this.promoList = promoList;
+    }
+
+    public boolean isRoute() {
+        return route;
+    }
+
+    public void setRoute(boolean route) {
+        this.route = route;
+    }
+
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
+    }
+
+    public double getLimit_kredit() {
+        return limit_kredit;
+    }
+
+    public void setLimit_kredit(double limit_kredit) {
+        this.limit_kredit = limit_kredit;
+    }
+
+    public double getSisaCreditLimit() {
+        return sisaCreditLimit;
+    }
+
+    public void setSisaCreditLimit(double sisaCreditLimit) {
+        this.sisaCreditLimit = sisaCreditLimit;
+    }
+
+    public double getTotalTagihan() {
+        return totalTagihan;
+    }
+
+    public void setTotalTagihan(double totalTagihan) {
+        this.totalTagihan = totalTagihan;
+    }
+
+    public String getMileage() {
+        return mileage;
+    }
+
+    public void setMileage(String mileage) {
+        this.mileage = mileage;
     }
 }

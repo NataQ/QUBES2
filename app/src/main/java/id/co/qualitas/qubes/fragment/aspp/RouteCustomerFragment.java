@@ -235,8 +235,12 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                     mList = new ArrayList<>();
                     List<Customer> mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
-                    int startDay = (int) result.get("visit");
-                    SessionManagerQubes.setStartDay(startDay);
+                    if(result.get("visit") != null) {
+                        int startDay = (int) result.get("visit");
+                        SessionManagerQubes.setStartDay(startDay);
+                    }else{
+                        SessionManagerQubes.setStartDay(0);
+                    }
                     Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
                     Collections.addAll(mListNonRoute, param1Array);
                     database.deleteMasterNonRouteCustomer();

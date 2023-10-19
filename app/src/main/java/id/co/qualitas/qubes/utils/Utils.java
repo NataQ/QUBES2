@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -789,5 +790,23 @@ public class Utils {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
+
+    public static String encodeImageBase64(Context context, Uri uri) {
+        if (uri == null) {
+            return null;
+        }
+        InputStream fis;
+        try {
+            fis = context.getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+        Bitmap bm = BitmapFactory.decodeStream(fis);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, Constants.COMPRESS_IMAGE, baos);
+        byte[] b = baos.toByteArray();
+        //Base64.de
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 }

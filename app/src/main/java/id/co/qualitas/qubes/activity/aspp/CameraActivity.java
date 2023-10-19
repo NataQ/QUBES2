@@ -39,6 +39,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.ImageType;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 import io.fotoapparat.Fotoapparat;
 import io.fotoapparat.parameter.ScaleType;
@@ -46,25 +47,20 @@ import io.fotoapparat.result.PhotoResult;
 import io.fotoapparat.view.CameraView;
 
 public class CameraActivity extends BaseActivity implements View.OnClickListener {
-
     private Uri croppedUri;
-
     private static final int[] FLASH_ICONS = {
             R.drawable.ic_flash_auto,
             R.drawable.ic_flash_off,
             R.drawable.ic_flash_on,
     };
-
     private static final int[] FLASH_TITLES = {
             R.string.flash_auto,
             R.string.flash_off,
             R.string.flash_on,
     };
-
     private CameraView mCameraView;
     private ImageView fab;
     private Toolbar toolbar;
-
     private Fotoapparat fotoapparatFront, fotoapparatBack, fotoapparatCurrent;
     private boolean isCameraStarted = false;
     private boolean isCameraFrontFacing = false;
@@ -77,7 +73,6 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_camera);
-
         init();
         initProgress();
         initCamera();
@@ -202,16 +197,6 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case Constants.REQUEST_CAMERA_CODE:
-//                if (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) {
-//                    onBackPressed();
-//                    Toast.makeText(this, R.string.camera_and_storage_permission_not_granted, Toast.LENGTH_SHORT).show();
-//                } else {
-//                    startCamera();
-//                }
-//                break;
-//        }
         if (requestCode == CAMERA_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             startCamera();
@@ -267,7 +252,13 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void gotoConfirmPhoto(Uri uri) {
-        Intent resultIntent = new Intent(CameraActivity.this, CreateNooActivity.class);
+        Intent resultIntent;
+        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
+        if (imageType.getPosImage() > 3) {
+            resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
+        } else {
+            resultIntent = new Intent(CameraActivity.this, CreateNooActivity.class);
+        }
 
         if (uri != null) {
             resultIntent.putExtra(Constants.OUTPUT_CAMERA, uri);
@@ -278,10 +269,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private File createImageFile() throws IOException {
         String imageFileName = "";
-        ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
-//        String doNo = SessionManager.getDoHeader() != null ? SessionManager.getDoHeader().getDoNumber() : "null";
-//        String shipmentNo = SessionManager.getSelectedCustomerMobile() != null ? SessionManager.getSelectedCustomerMobile().getShipToNumber() : "null";
-
+        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
         switch (imageType.getPosImage()) {
             case 1:
                 imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_6);
@@ -292,8 +280,16 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 3:
                 imageFileName = "Outlet" + Helper.getTodayDate(Constants.DATE_TYPE_6);
                 break;
+            case 4:
+                imageFileName = "KM_Awal" + Helper.getTodayDate(Constants.DATE_TYPE_6);
+                break;
+            case 5:
+                imageFileName = "KM_Akhir" + Helper.getTodayDate(Constants.DATE_TYPE_6);
+                break;
+            case 6:
+                imageFileName = "Completed" + Helper.getTodayDate(Constants.DATE_TYPE_6);
+                break;
         }
-
 
         File storageDir = getDirLoc(getApplicationContext());
         File image = File.createTempFile(

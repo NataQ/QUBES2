@@ -51,6 +51,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.LoginResponse;
@@ -345,6 +346,14 @@ public class LoginActivity extends AppCompatActivity {
                     database.deleteMasterParameter();
                     for (Parameter param : parameterList) {
                         database.addMasterParameter(param, userId);
+                    }
+
+                    List<CustomerType> cusTypeList = new ArrayList<>();
+                    CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
+                    Collections.addAll(cusTypeList, paramArray10);
+                    database.deleteMasterCustomerTYpe();
+                    for (CustomerType param : cusTypeList) {
+                        database.addMasterCustomerType(param, userId);
                     }
 
                     SessionManagerQubes.setUserProfile(userResponse);

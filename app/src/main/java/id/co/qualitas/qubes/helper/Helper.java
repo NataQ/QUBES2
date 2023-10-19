@@ -837,6 +837,22 @@ public class Helper extends BaseFragment {
         return result;
     }
 
+    public static String getTodayRouteDouble() {
+        String result = "", result2 = "";
+//        String tempDate = getTodayDate(Constants.DATE_FORMAT_3);
+//        LocalDate date = LocalDate.parse(tempDate);
+//        DayOfWeek day = date.getDayOfWeek();
+
+        int weekYear = (Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)) % 4;
+        int dayWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
+//        Calendar cal = Calendar.getInstance();
+//        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+//        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
+        result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
+        result2 = "P" + String.valueOf(weekYear + 2) + "H" + String.valueOf(dayWeek);
+        return result + "-" + result2;
+    }
+
     public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
@@ -874,6 +890,7 @@ public class Helper extends BaseFragment {
         }
         return imei;
     }
+
     public static boolean checkTodayRoute(String rute) {
         String todayRute = getTodayRoute();
         if (rute != null) {
