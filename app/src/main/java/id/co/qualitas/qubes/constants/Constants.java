@@ -3,7 +3,7 @@ package id.co.qualitas.qubes.constants;
 public class Constants {
     public static final double ZOOM_LEVEL = 10.0;
     public static final String FCM = "fcm";
-    //    public static final String IMAGE_TYPE = "image_type";
+        public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_APPROVE = "approve";
@@ -11,6 +11,7 @@ public class Constants {
     public static final String STATUS_VERIFICATION = "verification";
     public static final String STATUS_UNLOADING = "unloading";
     public static final String UNAUTHORIZED = "401 Unauthorized";
+    public static final String FROM_VISIT = "FROM VISIT";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String LOG_EXCEPTION = "log exception";
     public static final int COMPRESS_IMAGE = 80;
@@ -226,7 +227,9 @@ public class Constants {
     public static final String FLAG_DELETE = "del";
 
     public static final String POSITION = "pos";
-
+    public static final int CHECK_IN_VISIT = 1;
+    public static final int PAUSE_VISIT = 2;
+    public static final int CHECK_OUT_VISIT = 3;
     public static final String PAUSE = "P";
     public static final String PLAY = "play";
 

@@ -12,6 +12,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
@@ -843,7 +844,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_DATE + " TEXT,"
             + KEY_CHECK_IN_TIME + " TEXT,"
             + KEY_CHECK_OUT_TIME + " TEXT,"
-            + KEY_STATUS + " TEXT,"
+            + KEY_STATUS + " INTEGER,"
             + KEY_RESUME_TIME + " TEXT,"
             + KEY_PAUSE_TIME + " TEXT,"
             + KEY_LAT_CHECK_IN + " REAL,"
@@ -874,7 +875,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_DATE + " TEXT,"
             + KEY_CHECK_IN_TIME + " TEXT,"
             + KEY_CHECK_OUT_TIME + " TEXT,"
-            + KEY_STATUS + " TEXT,"
+            + KEY_STATUS + " INTEGER,"
             + KEY_RESUME_TIME + " TEXT,"
             + KEY_PAUSE_TIME + " TEXT,"
             + KEY_LAT_CHECK_IN + " REAL,"
@@ -1457,7 +1458,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LATITUDE, param.getLatitude());
         values.put(KEY_LONGITUDE, param.getLongitude());
         values.put(KEY_STATUS, param.getStatus());
-        values.put(KEY_KODE_POS, param.getUdf_5());
+        values.put(KEY_KODE_POS, param.getKode_pos());
         values.put(KEY_UDF_5, param.getUdf_5());
         values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
         values.put(KEY_ID_DESA_KELURAHAN, param.getIdKelurahan());
@@ -1468,29 +1469,29 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_KOTA_KABUPATEN, param.getKota());
         values.put(KEY_ID_PROVINSI, param.getIdProvinsi());
         values.put(KEY_NAME_PROVINSI, param.getProvinsi());
-//        values.put(KEY_PHONE, param.getPhone());
-//        values.put(KEY_NO_NPWP, param.getNoNpwp());
-//        values.put(KEY_NAME_NPWP, param.getNpwp_name());
-//        values.put(KEY_ADDRESS_NPWP, param.getNpwp_address());
-//        values.put(KEY_STATUS_NPWP, param.getStatus_npwp());
-//        values.put(KEY_NO_KTP, param.getNoKtp());
-//        values.put(KEY_NAME_PEMILIK, param.getNamePemilik());
-//        values.put(KEY_NIK_PEMILIK, param.getNikPemilik());
-//        values.put(KEY_STATUS_TOKO, param.getStatus_toko());
-//        values.put(KEY_LOKASI, param.getLocation());
-//        values.put(KEY_JENIS_USAHA, param.getJenis_usaha());
-//        values.put(KEY_LAMA_USAHA, param.getLama_usaha());
-//        values.put(KEY_SUKU, param.getSuku());
-//        values.put(KEY_TYPE_TOKO_OUTLET, param.getType_customer());
-//        values.put(KEY_PRICE_LIST_TYPE, param.getType_price());
-//        values.put(KEY_CREDIT_LIMIT, param.getCredit_limit());
-//        values.put(KEY_ROUTE, param.getRute());
-//        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
-//        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
-//        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
-//        values.put(KEY_CREATED_BY, idSales);
-//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
-//        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_PHONE, param.getNo_tlp());
+        values.put(KEY_NO_NPWP, param.getNo_npwp());
+        values.put(KEY_NAME_NPWP, param.getNpwp_name());
+        values.put(KEY_ADDRESS_NPWP, param.getNpwp_address());
+        values.put(KEY_STATUS_NPWP, param.getStatus_npwp());
+        values.put(KEY_NO_KTP, param.getNik());
+        values.put(KEY_NAME_PEMILIK, param.getNama_pemilik());
+        values.put(KEY_NIK_PEMILIK, param.getNik());
+        values.put(KEY_STATUS_TOKO, param.getStatus_toko());
+        values.put(KEY_LOKASI, param.getLocation());
+        values.put(KEY_JENIS_USAHA, param.getJenis_usaha());
+        values.put(KEY_LAMA_USAHA, param.getLama_usaha());
+        values.put(KEY_SUKU, param.getSuku());
+        values.put(KEY_TYPE_TOKO_OUTLET, param.getType_customer());
+        values.put(KEY_PRICE_LIST_TYPE, param.getType_price());
+        values.put(KEY_CREDIT_LIMIT, param.getCredit_limit());
+        values.put(KEY_ROUTE, param.getRute());
+        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
+        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
+        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = (int) db.insert(TABLE_NOO, null, values);//return id yg ud d create
         //db.close();
@@ -1615,24 +1616,24 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_DATE, param.getDate());
         values.put(KEY_CHECK_IN_TIME, param.getCheckInTime());
-        values.put(KEY_CHECK_OUT_TIME, param.getCheckOutTime());
+//        values.put(KEY_CHECK_OUT_TIME, param.getCheckOutTime());
         values.put(KEY_STATUS, param.getStatus());
-        values.put(KEY_RESUME_TIME, param.getResumeTime());
-        values.put(KEY_PAUSE_TIME, param.getPauseTime());
+//        values.put(KEY_RESUME_TIME, param.getResumeTime());
+//        values.put(KEY_PAUSE_TIME, param.getPauseTime());
         values.put(KEY_LAT_CHECK_IN, param.getLatCheckIn());
         values.put(KEY_LONG_CHECK_IN, param.getLongCheckIn());
-        values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
-        values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
+//        values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
+//        values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
         values.put(KEY_INSIDE, param.isInside());
-        values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
-        values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
-        values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
-        values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
-        values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
-        values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-        values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-        values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-        values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
+//        values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
+//        values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
+//        values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
+//        values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
+//        values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
+//        values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
+//        values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
+//        values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
+//        values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
@@ -1677,11 +1678,12 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addStoreCheck(StoreCheck param, String idSales) {
+    public int addStoreCheck(Material param, Map header) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_CUSTOMER_ID, param.getCustomerId());
+        values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
+        values.put(KEY_DATE, header.get("date").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1690,7 +1692,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
         values.put(KEY_QTY, param.getQty());
         values.put(KEY_UOM, param.getUom());
-        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
@@ -2793,21 +2795,28 @@ public class Database extends SQLiteOpenHelper {
     public List<DaerahTingkat> getAllKodePos(DaerahTingkat daerahTingkat) {
         List<DaerahTingkat> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "select " + KEY_KODE_POS + " from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_NAME_DESA_KELURAHAN + " like ? and "
-                + KEY_NAME_KECAMATAN + " like ? and "
-                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
-                + KEY_NAME_PROVINSI + " like ? "
+        String selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
+//                + " where " + KEY_NAME_DESA_KELURAHAN + " like ? and "
+//                + KEY_NAME_KECAMATAN + " like ? and "
+//                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
+//                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_KODE_POS;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + daerahTingkat.getNama_kelurahan() + "%", "%" + daerahTingkat.getNama_kecamatan() + "%",
-                "%" + daerahTingkat.getNama_kabupaten() + "%", "%" + daerahTingkat.getNama_provinsi() + "%"});
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
                 DaerahTingkat paramModel = new DaerahTingkat();
                 paramModel.setKode_pos(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
+                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setKode_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setNama_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setNama_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setNama_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2817,32 +2826,30 @@ public class Database extends SQLiteOpenHelper {
 
     public List<DaerahTingkat> getAllKelurahan(DaerahTingkat daerahTingkat) {
         List<DaerahTingkat> arrayList = new ArrayList<>();
-        String selectQuery = null;
+        String selectQuery = null, kodePosQuery = null;
         Cursor cursor = null;
         SQLiteDatabase db = this.getWritableDatabase();
 
-        // Select All Query
-//        if (Helper.isNullOrEmpty(kodePos)) {
-//            selectQuery = "select " + KEY_ID_DESA_KELURAHAN + "," + KEY_NAME_DESA_KELURAHAN + " from " + TABLE_MASTER_DAERAH_TINGKAT + " group by " + KEY_ID_DESA_KELURAHAN;
-//            cursor = db.rawQuery(selectQuery, null);
-//        } else {
-//            selectQuery = "select " + KEY_ID_DESA_KELURAHAN + "," + KEY_NAME_DESA_KELURAHAN + " from " + TABLE_MASTER_DAERAH_TINGKAT + " where " + KEY_KODE_POS + " = ? group by " + KEY_ID_DESA_KELURAHAN;
-//            cursor = db.rawQuery(selectQuery, new String[]{kodePos});
-//        }
-        selectQuery = "select " + KEY_ID_DESA_KELURAHAN + "," + KEY_NAME_DESA_KELURAHAN + " from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_KODE_POS + " like ? and "
-                + KEY_NAME_KECAMATAN + " like ? and "
-                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
-                + KEY_NAME_PROVINSI + " like ? "
+        selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
+                + " where " + KEY_KODE_POS + " = ? "
+//                + KEY_NAME_KECAMATAN + " like ? and "
+//                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
+//                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_ID_DESA_KELURAHAN;
-        cursor = db.rawQuery(selectQuery, new String[]{"%" + daerahTingkat.getKode_pos() + "%", "%" + daerahTingkat.getNama_kecamatan() + "%",
-                "%" + daerahTingkat.getNama_kabupaten() + "%", "%" + daerahTingkat.getNama_provinsi() + "%"});
+        cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(daerahTingkat.getKode_pos())});
 
         if (cursor.moveToFirst()) {
             do {
                 DaerahTingkat paramModel = new DaerahTingkat();
+                paramModel.setKode_pos(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                 paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
                 paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setKode_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setNama_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setNama_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setNama_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2857,21 +2864,27 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Select All Query
-        selectQuery = "select " + KEY_ID_KECAMATAN + "," + KEY_NAME_KECAMATAN + " from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_KODE_POS + " like ? and "
-                + KEY_NAME_DESA_KELURAHAN + " like ? and "
-                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
-                + KEY_NAME_PROVINSI + " like ? "
+        selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
+//                + " where " + KEY_KODE_POS + " like ? and "
+//                + KEY_NAME_DESA_KELURAHAN + " like ? and "
+//                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
+//                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_ID_KECAMATAN;
 
-        cursor = db.rawQuery(selectQuery, new String[]{"%" + daerahTingkat.getKode_pos() + "%", "%" + daerahTingkat.getNama_kelurahan() + "%",
-                "%" + daerahTingkat.getNama_kabupaten() + "%", "%" + daerahTingkat.getNama_provinsi() + "%"});
+        cursor = db.rawQuery(selectQuery,null);
 
         if (cursor.moveToFirst()) {
             do {
                 DaerahTingkat paramModel = new DaerahTingkat();
-                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
-                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_pos(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
+                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setKode_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setNama_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setNama_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setNama_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2886,21 +2899,27 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Select All Query
-        selectQuery = "select " + KEY_ID_KOTA_KABUPATEN + "," + KEY_NAME_KOTA_KABUPATEN + " from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_KODE_POS + " like ? and "
-                + KEY_NAME_DESA_KELURAHAN + " like ? and "
-                + KEY_NAME_KECAMATAN + " like ? and "
-                + KEY_NAME_PROVINSI + " like ? "
+        selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
+//                + " where " + KEY_KODE_POS + " like ? and "
+//                + KEY_NAME_DESA_KELURAHAN + " like ? and "
+//                + KEY_NAME_KECAMATAN + " like ? and "
+//                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_ID_KOTA_KABUPATEN;
 
-        cursor = db.rawQuery(selectQuery, new String[]{"%" + daerahTingkat.getKode_pos() + "%", "%" + daerahTingkat.getNama_kelurahan() + "%",
-                "%" + daerahTingkat.getNama_kecamatan() + "%", "%" + daerahTingkat.getNama_provinsi() + "%"});
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
                 DaerahTingkat paramModel = new DaerahTingkat();
-                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
-                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_pos(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
+                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setKode_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setNama_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setNama_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setNama_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2915,21 +2934,27 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Select All Query
-        selectQuery = "select " + KEY_ID_PROVINSI + "," + KEY_NAME_PROVINSI + " from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_KODE_POS + " like ? and "
-                + KEY_NAME_DESA_KELURAHAN + " like ? and "
-                + KEY_NAME_KECAMATAN + " like ? and "
-                + KEY_NAME_KOTA_KABUPATEN + " like ? "
+        selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
+//                + " where " + KEY_KODE_POS + " like ? and "
+//                + KEY_NAME_DESA_KELURAHAN + " like ? and "
+//                + KEY_NAME_KECAMATAN + " like ? and "
+//                + KEY_NAME_KOTA_KABUPATEN + " like ? "
                 + " group by " + KEY_ID_PROVINSI;
 
-        cursor = db.rawQuery(selectQuery, new String[]{"%" + daerahTingkat.getKode_pos() + "%", "%" + daerahTingkat.getNama_kelurahan() + "%",
-                "%" + daerahTingkat.getNama_kecamatan() + "%", "%" + daerahTingkat.getNama_kabupaten() + "%"});
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
                 DaerahTingkat paramModel = new DaerahTingkat();
-                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
-                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
+                paramModel.setKode_pos(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKode_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
+                paramModel.setNama_kelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setKode_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setNama_kecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setKode_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setNama_kabupaten(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setKode_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setNama_provinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -2971,7 +2996,7 @@ public class Database extends SQLiteOpenHelper {
         return radius;
     }
 
-    public List<CustomerType> getAllCustomerType(String idHeader) {
+    public List<CustomerType> getAllCustomerType() {
         List<CustomerType> arrayList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_MASTER_CUSTOMER_TYPE;

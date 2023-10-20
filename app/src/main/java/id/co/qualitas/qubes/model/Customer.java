@@ -1,5 +1,7 @@
 package id.co.qualitas.qubes.model;
 
+import android.net.Uri;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
@@ -52,6 +54,9 @@ public class Customer {
     private double sisaCreditLimit;
     private double totalTagihan;
     private String mileage;
+//    private Uri photoKTPUri;
+//    private Uri photoNPWPUri;
+//    private Uri photoOutletUri;
 
     public Customer() {
     }
@@ -94,6 +99,30 @@ public class Customer {
         this.position = position;
         this.status = status;
     }
+
+//    public Uri getPhotoKTPUri() {
+//        return photoKTPUri;
+//    }
+//
+//    public void setPhotoKTPUri(Uri photoKTPUri) {
+//        this.photoKTPUri = photoKTPUri;
+//    }
+//
+//    public Uri getPhotoNPWPUri() {
+//        return photoNPWPUri;
+//    }
+//
+//    public void setPhotoNPWPUri(Uri photoNPWPUri) {
+//        this.photoNPWPUri = photoNPWPUri;
+//    }
+//
+//    public Uri getPhotoOutletUri() {
+//        return photoOutletUri;
+//    }
+//
+//    public void setPhotoOutletUri(Uri photoOutletUri) {
+//        this.photoOutletUri = photoOutletUri;
+//    }
 
     public String getIdHeader() {
         return idHeader;

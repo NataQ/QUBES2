@@ -289,7 +289,6 @@ public class StockRequestAddActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         imgLogOut = findViewById(R.id.imgLogOut);

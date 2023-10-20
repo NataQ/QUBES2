@@ -63,6 +63,7 @@
 
             <RelativeLayout
                 android:id="@+id/rlInap"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
@@ -98,6 +99,7 @@
 
             <RelativeLayout
                 android:id="@+id/rlDaily"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center">

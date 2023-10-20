@@ -398,4 +398,14 @@
         <item name="android:width">300dp</item>
     </style>
 
+    <style name="TextView_Small_Location" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/inter</item>
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:scaleX">0.8</item>
+        <item name="android:scaleY">0.8</item>
+    </style>
+
+
 </resources>

@@ -4,10 +4,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -24,7 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -36,8 +40,12 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StoreCheck;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class StoreCheckActivity extends BaseActivity {
     private StoreCheckAdapter mAdapter;
@@ -75,7 +83,7 @@ public class StoreCheckActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-            onBackPressed();
+            validateData();
         });
 
         imgLogOut.setOnClickListener(v -> {
@@ -83,6 +91,64 @@ public class StoreCheckActivity extends BaseActivity {
         });
 
         setDate();
+    }
+
+    private void validateData() {
+        int param = 0;
+
+        if (Helper.isEmpty(txtDate)) {
+            param++;
+            txtDate.setError(getString(R.string.emptyField));
+        } else {
+            txtDate.setError(null);
+        }
+
+        if (mList.isEmpty() || mList == null) {
+            param++;
+            setToast(getString(R.string.emptyMaterial));
+        }
+
+        if (param == 0) {
+            progress.show();
+            new RequestUrl().execute();//1
+        }
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Map header = new HashMap();
+                header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
+                header.put("date", txtDate.getText().toString().trim());
+                header.put("username", user.getUsername());
+                for (Material material : mList) {
+                    database.addStoreCheck(material, header);
+                }
+                return true;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("storeCheck", ex.getMessage());
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progress.dismiss();
+            if (result) {
+                setToast("Save Success");
+                onBackPressed();
+            } else {
+                setToast("Save Failed");
+            }
+        }
     }
 
     private void setDate() {
@@ -145,7 +211,6 @@ public class StoreCheckActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         imgLogOut = findViewById(R.id.imgLogOut);

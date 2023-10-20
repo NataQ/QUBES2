@@ -253,7 +253,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private void gotoConfirmPhoto(Uri uri) {
         Intent resultIntent;
-        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
+//        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
+        ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
         if (imageType.getPosImage() > 3) {
             resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
         } else {
@@ -269,7 +270,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private File createImageFile() throws IOException {
         String imageFileName = "";
-        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
+//        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
+        ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
         switch (imageType.getPosImage()) {
             case 1:
                 imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_6);

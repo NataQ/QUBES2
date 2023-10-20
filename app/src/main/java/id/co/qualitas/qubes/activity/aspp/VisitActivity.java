@@ -43,6 +43,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -64,6 +65,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +85,7 @@ import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
@@ -124,6 +127,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private Uri uriBerangkat, uriPulang, uriSelesai;
     private Map startDay, endDay;
     private String kmAwal, kmAkhir;
+    private VisitSalesman visitSalesman;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -227,13 +231,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void setAdapterVisit() {
         mAdapterVisit = new VisitListAdapter(this, mList, header -> {
-            SessionManagerQubes.setOutletHeader(header);
             outletClicked = header;
             if (SessionManagerQubes.getStartDay() != 0) {
                 if (header.getStatus() == 0) {//belum check in
                     checkLocationPermission();
                 } else {
                     if (checkOutletStatus()) {
+                        outletClicked.setStatus(Constants.CHECK_IN_VISIT);
+                        SessionManagerQubes.setOutletHeader(outletClicked);
                         Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                         startActivity(intent);
                     } else {
@@ -302,9 +307,24 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             locCustomer.setLatitude(outletClicked.getLatitude());
             locCustomer.setLongitude(outletClicked.getLongitude());
             outRadius = Helper.checkRadius(currentLocation, locCustomer);
+
+            visitSalesman = new VisitSalesman();
+            visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
+            visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            visitSalesman.setLatCheckIn(currentLocation.getLatitude());
+            visitSalesman.setLongCheckIn(currentLocation.getLongitude());
+            visitSalesman.setInside(outRadius);
+            visitSalesman.setIdSalesman(user.getUsername());
+            visitSalesman.setCustomerId(outletClicked.getId());
+            visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+            visitSalesman.setSync(0);
+
             if (outRadius) {
                 openDialogOutRadius();
             } else {
+                database.addVisitSalesman(visitSalesman, user.getUsername());
+                outletClicked.setStatus(Constants.CHECK_IN_VISIT);
+                SessionManagerQubes.setOutletHeader(outletClicked);
                 Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                 startActivity(intent);
             }
@@ -403,6 +423,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         btnYes.setOnClickListener(v -> {
             dialog.dismiss();
+            database.addVisitSalesman(visitSalesman, user.getUsername());
+            outletClicked.setStatus(Constants.CHECK_IN_VISIT);
+            SessionManagerQubes.setOutletHeader(outletClicked);
             Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
             startActivity(intent);
         });
@@ -427,6 +450,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         btnAddNoo.setOnClickListener(v -> {
             if (SessionManagerQubes.getStartDay() == 1) {
+                SessionManagerQubes.clearCustomerNooSession();
+                Helper.removeItemParam(Constants.IMAGE_TYPE);
                 Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
                 startActivity(intent);
             } else {
@@ -466,12 +491,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void setAdapterNoo() {
         mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
             outletClicked = header;
-            SessionManagerQubes.setOutletHeader(header);
+
             if (SessionManagerQubes.getStartDay() != 0) {
                 if (header.getStatus() == 0) {//belum check in
                     checkLocationPermission();
                 } else {
                     if (checkOutletStatus()) {
+                        outletClicked.setStatus(Constants.CHECK_IN_VISIT);
+                        SessionManagerQubes.setOutletHeader(outletClicked);
                         Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                         startActivity(intent);
                     } else {
@@ -568,7 +595,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setPhotoAkhir(uriPulang);
             imageType.setPhotoSelesai(uriSelesai);
             imageType.setPosImage(5);
-            SessionManagerQubes.setImageType(imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+//            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
 
@@ -578,7 +606,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
             imageType.setPhotoAkhir(uriPulang);
             imageType.setPhotoSelesai(uriSelesai);
-            SessionManagerQubes.setImageType(imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+//            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
 
@@ -593,7 +622,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             } else {
                 kmAkhir = txtKmAkhir.getText().toString().trim();
                 PARAM = 4;
-                new RequestUrl().execute();
+                new RequestUrl().execute();//4
                 progress.show();
             }
         });
@@ -635,7 +664,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setKmAwal(txtKmAwal.getText().toString().trim());
             imageType.setPosImage(4);
             imageType.setPhotoKmAwal(uriBerangkat);
-            SessionManagerQubes.setImageType(imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+//            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
 //            Intent camera = new Intent(this, Camera3PLActivity.class);//3
 //            startActivityForResult(camera, Constants.REQUEST_CAMERA_CODE);
@@ -650,7 +680,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             } else {
                 kmAwal = txtKmAwal.getText().toString().trim();
                 PARAM = 3;
-                new RequestUrl().execute();
+                new RequestUrl().execute();//3
                 progress.show();
             }
         });
@@ -779,9 +809,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     public void onResume() {
         super.onResume();
         getFirstDataOffline();
-        if (SessionManagerQubes.getImageType() != null) {
+        if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
             imageType = new ImageType();
-            imageType = SessionManagerQubes.getImageType();
+            imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
         } else {
             imageType = new ImageType();
         }
@@ -922,13 +952,16 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void getFirstDataOffline() {
+        rlInap.setVisibility(View.GONE);
+        rlDaily.setVisibility(View.GONE);
         getData();
         setAdapterVisit();
         setAdapterNoo();
 
         if (mList == null || mList.isEmpty()) {
             progressCircleVisit.setVisibility(View.VISIBLE);
-            new RequestUrl().execute();
+            PARAM = 1;
+            new RequestUrl().execute();//1
         }
 
         validateButton();
@@ -955,8 +988,13 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     mList = new ArrayList<>();
                     mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
-                    int startDay = (int) result.get("visit");
-                    SessionManagerQubes.setStartDay(startDay);
+                    if (result.get("visit") != null) {
+                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+                        double id = (double) startDay.get("id");
+                        SessionManagerQubes.setStartDay((int) id);
+                    } else {
+                        SessionManagerQubes.setStartDay(0);
+                    }
 
                     Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
                     Collections.addAll(mListNonRoute, param1Array);
@@ -1052,7 +1090,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     if (result.getIdMessage() == 1) {
                         resultWsMessage = result;
                         PARAM = 2;
-                        new RequestUrl().execute();
+                        new RequestUrl().execute();//2
                     } else {
                         progressCircle.setVisibility(View.GONE);
                         setToast(result.getMessage());
@@ -1100,8 +1138,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void validateButton() {
         if (user.getRute_inap() == 1) {
             rlInap.setVisibility(View.VISIBLE);
+            rlDaily.setVisibility(View.GONE);
         } else {
             rlInap.setVisibility(View.GONE);
+            rlDaily.setVisibility(View.VISIBLE);
         }
 
         switch (SessionManagerQubes.getStartDay()) {
@@ -1144,5 +1184,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         } else {
             setToast(getString(R.string.pleaseEnablePermission));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Helper.setItemParam(Constants.FROM_VISIT,"1");
+        intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

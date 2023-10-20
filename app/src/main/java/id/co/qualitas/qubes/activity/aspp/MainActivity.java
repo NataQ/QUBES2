@@ -256,12 +256,14 @@ public class MainActivity extends BaseActivity {
         switch (page) {
             case 1:
                 if (!currentpage.equals("1")) {
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_home);
                     Helper.setItemParam(Constants.CURRENTPAGE, "1");
                     setContent(homeFragment);
                 }
                 break;
             case 2:
                 if (!currentpage.equals("2")) {
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_route_customer);
                     Helper.setItemParam(Constants.CURRENTPAGE, "2");
                     setContent(routeCustomerFragment);
                 }
@@ -269,18 +271,21 @@ public class MainActivity extends BaseActivity {
             case 3:
                 if (!currentpage.equals("3")) {
 //                    if (getMenu(88) || getMenu(92)) {
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
                     Helper.setItemParam(Constants.CURRENTPAGE, "3");
                     setContent(activityFragment);
                 }
                 break;
             case 4:
                 if (!currentpage.equals("4")) {
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_summary);
                     Helper.setItemParam(Constants.CURRENTPAGE, "4");
                     setContent(summaryFragment);
                 }
                 break;
             case 5:
                 if (!currentpage.equals("5")) {
+                    bottomNavigationView.setSelectedItemId(R.id.navigation_account);
                     Helper.setItemParam(Constants.CURRENTPAGE, "5");
                     setContent(accountFragment);
                 }
@@ -306,15 +311,22 @@ public class MainActivity extends BaseActivity {
         initProgress();
         registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
 //        setPage();
+        if(Helper.getItemParam(Constants.FROM_VISIT) != null){
+            Helper.removeItemParam(Constants.CURRENTPAGE);
+            Helper.removeItemParam(Constants.FROM_VISIT);
+//            bottomNavigationView.setSelectedItemId(R.id.navigation_activity);
+            changePage(3);
+        }
     }
 
     private void setPage() {
         currentpage = (String) Helper.getItemParam(Constants.CURRENTPAGE);
         if (currentpage != null) {//&& session != null
             changePage(Integer.parseInt(currentpage));
-        } else {
-            changePage(1);
         }
+//        else {
+//            changePage(1);
+//        }
     }
 
     public void backPress() {

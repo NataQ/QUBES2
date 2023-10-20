@@ -1,8 +1,11 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -13,11 +16,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.StoreCheckActivity;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
@@ -28,6 +35,8 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
     private StoreCheckActivity mContext;
     private OnAdapterListener onAdapterListener;
     private ArrayAdapter<String> spn1Adapter;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public StoreCheckAdapter(StoreCheckActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -98,52 +107,6 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
             spinnerUom = itemView.findViewById(R.id.spinnerUom);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
-
-//            txtProduct.setOnClickListener(v -> {
-//                Dialog alertDialog = new Dialog(mContext);
-//
-//                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-//                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                alertDialog.show();
-//
-//                EditText editText = alertDialog.findViewById(R.id.edit_text);
-//                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-//
-//                List<String> groupList = new ArrayList<>();
-//                groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-//                groupList.add("11007_KRATINGDAENG - MT");
-//                groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-//                groupList.add("11005_KRATINGDAENG LUAR PULAU");
-//                groupList.add("11001_KRATINGDAENG");
-//
-//                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-//                    txtProduct.setText(nameItem);
-//                    alertDialog.dismiss();
-//                });
-//
-//                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-//                listView.setLayoutManager(mManager);
-//                listView.setHasFixedSize(true);
-//                listView.setNestedScrollingEnabled(false);
-//                listView.setAdapter(spinnerAdapter);
-//
-//                editText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        spinnerAdapter.getFilter().filter(s);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                });
-//            });
         }
 
         @Override
@@ -161,25 +124,60 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
+        setFormatSeparator();
 
-        List<String> listSpinner = new ArrayList<>();
-        listSpinner.add("BTL");
-        listSpinner.add("SLOP");
-        listSpinner.add("KRT");
+        List<String> listSpinner = new Database(mContext).getUom(detail.getId());
+        if (listSpinner == null || listSpinner.size() == 0) {
+            listSpinner.add("BTL");
+            listSpinner.add("SLOP");
+            listSpinner.add("KRT");
+        }
 
-        spn1Adapter = new ArrayAdapter<>(mContext.getApplicationContext(), R.layout.spinner_item, listSpinner);
-        spn1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.spinnerUom.setAdapter(spn1Adapter);
-
-        String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
+        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
 
-        holder.txtNo.setText(String.valueOf(position + 1) + ".");
+        holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(String.valueOf(detail.getQty()));
+        holder.edtQty.setText(format.format(detail.getQty()));
+        mContext.setSpinnerData(listSpinner, holder.spinnerUom);
 
         holder.imgDelete.setOnClickListener(v -> {
-            mContext.delete(holder.getAbsoluteAdapterPosition());
+            mList.remove(holder.getAbsoluteAdapterPosition());
+            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+        });
+
+        holder.edtQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtQty, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    detail.setQty(qty);
+                } else {
+                    detail.setQty(0);
+                }
+            }
+        });
+
+        holder.spinnerUom.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView adapterView, View view, int position, long l) {
+                String selected = listSpinner.get(position).toString();
+                detail.setUom(selected);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView adapterView) {
+            }
         });
     }
 
@@ -190,5 +188,13 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

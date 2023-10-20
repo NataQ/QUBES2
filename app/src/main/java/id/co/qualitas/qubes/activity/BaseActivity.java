@@ -319,6 +319,7 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearStartDaySession();
         SessionManagerQubes.clearOutletHeaderSession();
         SessionManagerQubes.clearImageTypeSession();
+        SessionManagerQubes.clearCustomerNooSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
 
@@ -340,6 +341,9 @@ public class BaseActivity extends AppCompatActivity {
         database.deleteMasterSalesPriceHeader();
         database.deleteMasterSalesPriceDetail();
         database.deleteMasterParameter();
+
+        Helper.removeItemParam(Constants.FROM_VISIT);
+        Helper.removeItemParam(Constants.CURRENTPAGE);
     }
 
     public void snackBar(View rootView, int message) {

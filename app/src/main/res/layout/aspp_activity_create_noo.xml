@@ -337,15 +337,16 @@
                             android:text="GPS Location"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
-                            android:id="@+id/edtGPSLocation"
+                        <TextView
+                            android:id="@+id/txtGPSLocation"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
-                            android:textColor="@color/black_aspp" />
+                            android:textColor="@color/black_aspp"
+                            android:drawableEnd="@drawable/ic_current_location_red"/>
 
                     </LinearLayout>
 
@@ -877,6 +878,34 @@
 
                         <TextView
                             android:id="@+id/txtPriceListType"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_alert"
+                            android:completionThreshold="1"
+                            android:hint="Search..."
+                            android:padding="5dp"
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <TextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="UDF 5"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <Spinner
+                            android:id="@+id/spnUdf5"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

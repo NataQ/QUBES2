@@ -6,6 +6,7 @@ import java.util.List;
 public class Material implements Cloneable{
     private String idHeader;//aspp
     private int id;//aspp
+    private String id_customer;//aspp
     private String nama;//aspp
     private String materialCode;
     private String materialQty;
@@ -106,6 +107,14 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getId_customer() {
+        return id_customer;
+    }
+
+    public void setId_customer(String id_customer) {
+        this.id_customer = id_customer;
     }
 
     public int getId_product_group() {

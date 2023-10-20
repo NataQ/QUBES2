@@ -360,6 +360,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearStartDaySession();
         SessionManagerQubes.clearImageTypeSession();
+        SessionManagerQubes.clearCustomerNooSession();
         SessionManagerQubes.clearOutletHeaderSession();
         SessionManagerQubes.clearInvoiceHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
@@ -382,6 +383,9 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         database.deleteMasterSalesPriceHeader();
         database.deleteMasterSalesPriceDetail();
         database.deleteMasterParameter();
+
+        Helper.removeItemParam(Constants.FROM_VISIT);
+        Helper.removeItemParam(Constants.CURRENTPAGE);
     }
 
     public void setFormatSeparator() {

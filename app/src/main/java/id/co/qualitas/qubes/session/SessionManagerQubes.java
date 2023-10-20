@@ -18,6 +18,7 @@ import id.co.qualitas.qubes.model.User;
 public abstract class SessionManagerQubes {
     private static final Gson gson = new Gson();
     private static final Object sync = new Object();
+    private static final String PREF_CUSTOMER_NOO = "pref_customer_noo";
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
     private static final String PREF_START_DAY = "pref_start_day";
@@ -26,6 +27,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
     private static final String PREF_COLLECTION_SOURCE = "pref_collection_source";
+    private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
     private static final String KEY_START_DAY = "key_start_day";
@@ -37,6 +39,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_TOKEN = "key_token";
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
+    private static SharedPreferences customerNooPrefs;
     private static SharedPreferences imageTypePrefs;
     private static SharedPreferences outletHeaderPrefs;
     private static SharedPreferences startDayPrefs;
@@ -57,6 +60,7 @@ public abstract class SessionManagerQubes {
         startDayPrefs = context.getSharedPreferences(PREF_START_DAY, Context.MODE_PRIVATE);
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
+        customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
     }
 
     public static void setStartDay(int param) {
@@ -68,6 +72,14 @@ public abstract class SessionManagerQubes {
     public static void setUrl(String url) {
         synchronized (sync) {
             prefs.edit().putString(KEY_URL, url).apply();
+        }
+    }
+
+    public static void setCustomerNoo(Customer param) {
+        if (param != null) {
+            synchronized (sync) {
+                customerNooPrefs.edit().putString(KEY_CUSTOMER_NOO, gson.toJson(param)).apply();
+            }
         }
     }
 
@@ -171,6 +183,10 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(imageTypePrefs.getString(KEY_IMAGE_TYPE, null), ImageType.class);
     }
 
+    public static Customer getCustomerNoo() {
+        return gson.fromJson(customerNooPrefs.getString(KEY_CUSTOMER_NOO, null), Customer.class);
+    }
+
     public static String getImei() {
         return loginPrefs.getString(KEY_IMEI, null);
     }
@@ -187,6 +203,10 @@ public abstract class SessionManagerQubes {
 
     public static void clearImageTypeSession() {
         imageTypePrefs.edit().clear().apply();
+    }
+
+    public static void clearCustomerNooSession() {
+        customerNooPrefs.edit().clear().apply();
     }
     public static void clearOutletHeaderSession() {
         outletHeaderPrefs.edit().clear().apply();

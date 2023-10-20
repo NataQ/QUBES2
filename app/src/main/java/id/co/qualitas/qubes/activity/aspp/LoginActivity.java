@@ -127,9 +127,9 @@ public class LoginActivity extends AppCompatActivity {
             } else if (password.isEmpty()) {
                 edtPassword.setError(getString(R.string.pleaseFillPassword));
             } else {
+                progress.show();
                 PARAM = 1;
                 new RequestUrl().execute();
-                progress.show();
             }
         });
 

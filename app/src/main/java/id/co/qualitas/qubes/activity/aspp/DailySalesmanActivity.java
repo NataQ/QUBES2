@@ -33,15 +33,19 @@ import id.co.qualitas.qubes.adapter.aspp.CustomerInfoDctOutletAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.TimerFragment;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class DailySalesmanActivity extends BaseActivity {
     private TextView txtOutlet, txtTypeOutlet, txtStatus;
@@ -68,6 +72,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private Date dCheckIn = null, dCurrent = null, dResume = null;
     public String checkInTime, pauseTime, curTime, continueTime, timeDuration;
     public boolean pause = false;
+    private Customer outletHeader;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -78,7 +83,6 @@ public class DailySalesmanActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_daily_salesman);
 
-        initProgress();
         initialize();
         setData();
         setView();
@@ -142,22 +146,28 @@ public class DailySalesmanActivity extends BaseActivity {
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("P1 - Toko Ramai");
-            groupList.add("P2 - Toko Tutup");
-            groupList.add("P3 - Toko Pindah");
+//            List<String> groupList = new ArrayList<>();
+//            groupList.add("P1 - Toko Ramai");
+//            groupList.add("P2 - Toko Tutup");
+//            groupList.add("P3 - Toko Pindah");
+
+            List<Reason> reasonList = new ArrayList<>();
+            reasonList.addAll(database.getAllReason("Pause"));
 
             txtTitle.setText("Reason Pause");
 
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
+            FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (nameItem, adapterPosition) -> {
 //                spnBankTransfer.setText(nameItem);
-                if (Helper.getItemParam(Constants.PAUSE) != null) {
-                    Helper.setItemParam(Constants.PLAY, "1");
-                    Helper.removeItemParam(Constants.PAUSE);
-                } else {
-                    Helper.setItemParam(Constants.PAUSE, "1");
-                    Helper.removeItemParam(Constants.PLAY);
-                }
+                outletHeader.setStatus(Constants.PAUSE_VISIT);
+                SessionManagerQubes.setOutletHeader(outletHeader);
+
+//                if (Helper.getItemParam(Constants.PAUSE) != null) {
+//                    Helper.setItemParam(Constants.PLAY, "1");
+//                    Helper.removeItemParam(Constants.PAUSE);
+//                } else {
+//                    Helper.setItemParam(Constants.PAUSE, "1");
+//                    Helper.removeItemParam(Constants.PLAY);
+//                }
                 if (pause) {
                     resumeTimer();
                 } else {
@@ -237,6 +247,23 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void setData() {
+        if (SessionManagerQubes.getOutletHeader() != null) {
+            outletHeader = SessionManagerQubes.getOutletHeader();
+        } else {
+            setToast("Gagal mengambil data");
+            onBackPressed();
+        }
+
+        txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
+        txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
+        txtSisaKreditLimit.setText(format.format(outletHeader.getLimit_kredit()));
+        txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
+        txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
+        txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
+        String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
+        String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
+        txtTypeOutlet.setText(idTypeCust + " - " + nameTypeCust);
+
         fakturList = new ArrayList<>();
         fakturList.add(new Material("Drink", 1));
         fakturList.add(new Material("Redbull", 0));
@@ -252,9 +279,7 @@ public class DailySalesmanActivity extends BaseActivity {
         dctOutletList.add(new Material("Bat ALK", 0));
 
         promoList = new ArrayList<>();
-        promoList.add(new Promotion("Beli 4 Kratingdaeng get discount 10%"));
-        promoList.add(new Promotion("Beli kratingdaeng bisa nonton bola di Madrid"));
-        promoList.add(new Promotion("Dapatkan voucher Buy 1 Get 1 untuk variant Kratingdaeng Bull"));
+        promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
 
 //        if (PARAM_STATUS_OUTLET.equals(Constants.PAUSE)) {
 //            checkInOutRequest.setContinueTime(null);
@@ -262,7 +287,6 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         rvDCTOutlet = findViewById(R.id.rvDCTOutlet);

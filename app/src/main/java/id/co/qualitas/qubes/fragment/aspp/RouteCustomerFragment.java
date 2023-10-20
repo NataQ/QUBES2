@@ -26,6 +26,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.gson.internal.LinkedTreeMap;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -235,10 +237,11 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                     mList = new ArrayList<>();
                     List<Customer> mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
-                    if(result.get("visit") != null) {
-                        int startDay = (int) result.get("visit");
-                        SessionManagerQubes.setStartDay(startDay);
-                    }else{
+                    if (result.get("visit") != null) {
+                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+                        double id = (double) startDay.get("id");
+                        SessionManagerQubes.setStartDay((int) id);
+                    } else {
                         SessionManagerQubes.setStartDay(0);
                     }
                     Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);

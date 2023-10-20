@@ -6,7 +6,7 @@ public class VisitSalesman {
     private String date;
     private String checkInTime;
     private String checkOutTime;
-    private String status;
+    private int status;
     private String resumeTime;
     private String pauseTime;
     private double latCheckIn;
@@ -23,7 +23,7 @@ public class VisitSalesman {
     private String nameCheckOutReason;
     private String descCheckOutReason;
     private String photoCheckOutReason;
-    private boolean isSync;
+    private int isSync;
 
     public String getCustomerId() {
         return customerId;
@@ -65,11 +65,11 @@ public class VisitSalesman {
         this.checkOutTime = checkOutTime;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -201,11 +201,11 @@ public class VisitSalesman {
         this.photoCheckOutReason = photoCheckOutReason;
     }
 
-    public boolean isSync() {
+    public int isSync() {
         return isSync;
     }
 
-    public void setSync(boolean sync) {
+    public void setSync(int sync) {
         isSync = sync;
     }
 }
