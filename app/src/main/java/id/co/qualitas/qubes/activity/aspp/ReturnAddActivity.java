@@ -490,6 +490,6 @@ public class ReturnAddActivity extends BaseActivity {
     private void onSelectFromGalleryResult(Intent data) {
         Uri selectedImage = data.getData();
         mList.get(posPhoto).setPhotoReason(Utils.compressImageUri(this, selectedImage.toString()));
-        mAdapter.notifyItemChanged(posPhoto);
+        mAdapter.notifyItemChanged(posPhoto, mList.get(posPhoto));
     }
 }

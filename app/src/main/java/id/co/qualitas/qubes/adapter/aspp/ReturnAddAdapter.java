@@ -185,6 +185,18 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             String expDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getExpiredDate());
             holder.edtExpDate.setText(expDate);
         }
+        reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, detail.getNameReason());
+        if (reasonDetail.getIs_freetext() == 1) {
+            holder.llReasonDesc.setVisibility(View.VISIBLE);
+        } else {
+            holder.llReasonDesc.setVisibility(View.GONE);
+        }
+
+        if (reasonDetail.getIs_photo() == 1) {
+            holder.llPhoto.setVisibility(View.VISIBLE);
+        } else {
+            holder.llPhoto.setVisibility(View.GONE);
+        }
 
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {
             @Override
