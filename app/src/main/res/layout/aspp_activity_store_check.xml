@@ -95,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".7"
-                android:background="@drawable/edit_text_default"
+                android:background="@drawable/editbox_disable"
                 android:drawableRight="@drawable/ic_calendar_aspp"
                 android:hint="01/01/2023"
                 android:padding="8dp"

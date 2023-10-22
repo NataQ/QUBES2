@@ -37,6 +37,14 @@ public class Material implements Cloneable{
     private String material_group_name;
     private int id_product_group;
     private String name_product_group;
+    private String date;
+    //return
+    private String condition;
+    private String idReason;
+    private String nameReason;
+    private String descReason;
+    private String photoReason;
+    private String expiredDate;
 
     public Material() {
     }
@@ -107,6 +115,62 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
+    public String getIdReason() {
+        return idReason;
+    }
+
+    public void setIdReason(String idReason) {
+        this.idReason = idReason;
+    }
+
+    public String getNameReason() {
+        return nameReason;
+    }
+
+    public void setNameReason(String nameReason) {
+        this.nameReason = nameReason;
+    }
+
+    public String getDescReason() {
+        return descReason;
+    }
+
+    public void setDescReason(String descReason) {
+        this.descReason = descReason;
+    }
+
+    public String getPhotoReason() {
+        return photoReason;
+    }
+
+    public void setPhotoReason(String photoReason) {
+        this.photoReason = photoReason;
+    }
+
+    public String getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(String expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getId_customer() {

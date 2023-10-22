@@ -113,7 +113,7 @@
                     android:id="@+id/txtJabatanArea"
                     style="@style/TextView_Small"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:text="SR TO JATINEGARA - KRAMAT JATI"
                     android:textColor="@color/black_aspp" />

@@ -118,7 +118,7 @@ public class StockRequestAddActivity extends BaseActivity {
         headerRequest.setReq_date(date);
         headerRequest.setStatus(Constants.STATUS_PENDING);
         headerRequest.setEnabled(1);
-        headerRequest.setSync(0);
+        headerRequest.setIs_sync(0);
         headerRequest.setMaterialList(mList);
     }
 

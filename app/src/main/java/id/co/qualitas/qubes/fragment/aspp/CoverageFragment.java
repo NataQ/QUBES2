@@ -53,7 +53,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
     private ImageView imgBack;
     private Button btnZoom, btCenterMap;
     private IMapController mapController;
-    private static final String TAG = "CoverageActivity";
+    private static final String TAG = "CoverageFragment";
     private static final int PERMISSION_REQUEST_CODE = 1;
     private MyLocationNewOverlay mLocationOverlay;
     private CompassOverlay mCompassOverlay;

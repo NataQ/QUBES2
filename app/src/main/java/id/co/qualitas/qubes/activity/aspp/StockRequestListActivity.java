@@ -42,8 +42,12 @@ public class StockRequestListActivity extends BaseActivity {
         initialize();
 
         btnAdd.setOnClickListener(v -> {
-            intent = new Intent(this, StockRequestAddActivity.class);
-            startActivity(intent);
+            if(database.checkUnloadingRequest()) {
+                intent = new Intent(this, StockRequestAddActivity.class);
+                startActivity(intent);
+            }else{
+                setToast("Silahkan melakukan uUnloading terlebih dahulu");
+            }
         });
 
         imgLogOut.setOnClickListener(v -> {

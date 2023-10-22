@@ -1,25 +1,41 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -31,40 +47,42 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class ReturnAddActivity extends BaseActivity {
     private ReturnAddAdapter mAdapter;
     private List<Material> mList;
     private Button btnAdd, btnSave;
     private TextView txtReturnDate;
-
     private List<Material> listSpinner, listFilteredSpinner;
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
     private SpinnerProductReturnAdapter spinnerAdapter;
+    private Material detailMatPhoto;
+    private int posPhoto;
+    public static final int GALLERY_PERM_CODE = 101;
+    public static final int CAMERA_PERM_CODE = 102;
+    public static final int GALLERY_REQUEST_CODE = 105;
+    private ImageType imageType;
+    private String today;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_return_add);
 
-        initProgress();
         initialize();
-        initData();
-
-        mAdapter = new ReturnAddAdapter(this, mList, header -> {
-        });
-
-        recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(v -> {
             addProduct();
         });
 
         btnSave.setOnClickListener(v -> {
-            onBackPressed();
+            validateData();
         });
 
         imgBack.setOnClickListener(v -> {
@@ -74,6 +92,59 @@ public class ReturnAddActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(ReturnAddActivity.this);
         });
+    }
+
+    private void validateData() {
+        int param = 0;
+
+        if (mList.isEmpty() || mList == null) {
+            param++;
+            setToast(getString(R.string.emptyMaterial));
+        }
+
+        if (param == 0) {
+            progress.show();
+            new RequestUrl().execute();//1
+        }
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Map header = new HashMap();
+                header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
+                header.put("date", today);
+                header.put("username", user.getUsername());
+                database.deleteReturn(header);
+
+                for (Material material : mList) {
+                    database.addReturn(material, header);
+                }
+                return true;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("Return", ex.getMessage());
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progress.dismiss();
+            if (result) {
+                setToast("Save Success");
+                onBackPressed();
+            } else {
+                setToast("Save Failed");
+            }
+        }
     }
 
     private void addNew(List<Material> addedList) {
@@ -94,14 +165,19 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     private void initData() {
+        today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
         mList = new ArrayList<>();
+        mList.addAll(database.getAllReturn());
         txtReturnDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+
+        mAdapter = new ReturnAddAdapter(this, mList, header -> {
+        });
+
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-
         txtReturnDate = findViewById(R.id.txtReturnDate);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
@@ -115,11 +191,20 @@ public class ReturnAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-    }
+        initData();
+        if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
+            imageType = new ImageType();
+            imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
+        } else {
+            imageType = new ImageType();
+        }
 
-    public void delete(Material detail, int pos) {
-        mList.remove(pos);
-        mAdapter.notifyItemRemoved(pos);
+        if (getIntent().getExtras() != null) {
+            Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
+            getIntent().removeExtra(Constants.OUTPUT_CAMERA);
+            mList.get(imageType.getPosMaterial()).setPhotoReason(Utils.compressImageUri(this, uri.toString()));
+        }
+
     }
 
     private void addProduct() {
@@ -263,10 +348,148 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
-        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
-        return mList;
+        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listMat = new ArrayList<>();
+        listMat.addAll(database.getAllMasterMaterial());
+
+        for (Material param : listMat) {
+            int exist = 0;
+            for (Material param1 : mList) {
+                if (param.getId() == param1.getId()) {
+                    exist++;
+                }
+            }
+            if (exist == 0) {
+                listSpinner.add(param);
+            }
+        }
+
+        return listSpinner;
+    }
+
+    public void delete(int pos) {
+        mList.remove(pos);
+        mAdapter.notifyItemRemoved(pos);
+    }
+
+    public void openDialogPhoto(Material detail, int pos) {
+        detailMatPhoto = detail;
+        posPhoto = pos;
+        ImageType imageType = new ImageType();
+        imageType.setPosImage(7);
+        imageType.setPosMaterial(posPhoto);
+        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_attach_photo);
+
+        LinearLayout layoutUpload = dialog.findViewById(R.id.layoutUpload);
+        LinearLayout layoutGallery = dialog.findViewById(R.id.layoutGallery);
+        LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
+        ImageView photo = dialog.findViewById(R.id.photo);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+        btnSave.setVisibility(View.GONE);
+
+        photo.setImageURI(detailMatPhoto.getPhotoReason() != null ? Uri.parse(detailMatPhoto.getPhotoReason()) : null);
+
+        layoutGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                askPermission();
+            }
+        });
+
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                askPermissionCamera();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void askPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
+            }, GALLERY_PERM_CODE);
+        } else {
+            openGallery();
+        }
+    }
+
+    public void askPermissionCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, CAMERA_PERM_CODE);
+        } else {
+            Helper.takePhoto(ReturnAddActivity.this);
+        }
+    }
+
+    public void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == GALLERY_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openGallery();
+        } else if (requestCode == CAMERA_PERM_CODE
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            Helper.takePhoto(ReturnAddActivity.this);
+        } else {
+            setToast("This permission(s) required");
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            if (data.getData() != null) {
+                onSelectFromGalleryResult(data);
+            }
+        } else {
+            setToast("Failed to Get Image");
+        }
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Uri selectedImage = data.getData();
+        mList.get(posPhoto).setPhotoReason(Utils.compressImageUri(this, selectedImage.toString()));
+        mAdapter.notifyItemChanged(posPhoto);
     }
 }

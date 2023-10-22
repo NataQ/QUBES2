@@ -15,11 +15,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -40,6 +42,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.internal.LinkedTreeMap;
+
 import org.osmdroid.config.Configuration;
 
 import java.io.File;
@@ -47,7 +51,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -59,13 +66,16 @@ import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Attachment;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
@@ -118,11 +128,8 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
 
         btnSave.setOnClickListener(v -> {
             if (validateData() == 0) {
-                saveDataNoo();
-                database.addNoo(customerNoo, user.getUsername());
-                SessionManagerQubes.clearCustomerNooSession();
-                Helper.removeItemParam(Constants.IMAGE_TYPE);
-                onBackPressed();
+                progress.show();
+                new RequestUrl().execute();
             }
         });
 
@@ -245,8 +252,12 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
             customerNoo.setRute(txtRoute.getText().toString().trim());
         }
         if (!Helper.isEmptyEditText(txtCreditLimit)) {
-            customerNoo.setCredit_limit(Double.parseDouble(txtCreditLimit.getText().toString().trim().replace(".", "")));
+            customerNoo.setLimit_kredit(Double.parseDouble(txtCreditLimit.getText().toString().trim().replace(".", "")));
         }
+        customerNoo.setSisaCreditLimit(0);
+        customerNoo.setTotalTagihan(0);
+        customerNoo.setIs_sync(0);
+        customerNoo.setStatus(0);
 
         SessionManagerQubes.setCustomerNoo(customerNoo);
     }
@@ -473,13 +484,13 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    if (customerNoo == null) {
-                        customerNoo = new Customer();
-                    }
-                    String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setSuku(text);
+//                if (i != 0) {
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
                 }
+                String text = adapterView.getItemAtPosition(i).toString();
+                customerNoo.setSuku(text);
+//                }
             }
 
             @Override
@@ -527,14 +538,14 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         spnUdf5.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    if (customerNoo == null) {
-                        customerNoo = new Customer();
-                    }
-                    String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setUdf_5_desc(text);
-                    customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
+//                if (i != 0) {
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
                 }
+                String text = adapterView.getItemAtPosition(i).toString();
+                customerNoo.setUdf_5_desc(text);
+                customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
+//                }
             }
 
             @Override
@@ -1213,6 +1224,46 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
             customerNoo.setLongitude(currentLocation.getLongitude());
             customerNoo.setLatitude(currentLocation.getLatitude());
             txtGPSLocation.setText(String.valueOf(currentLocation.getLatitude()) + "," + String.valueOf(currentLocation.getLongitude()));
+        }
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                boolean result = false;
+                saveDataNoo();
+                int header = database.addNoo(customerNoo, user.getUsername());
+                if (header == -1) {
+                    result = false;
+                } else {
+                    result = true;
+                }
+                return result;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("CustomerNoo", ex.getMessage());
+                }
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progress.dismiss();
+            if (result) {
+                SessionManagerQubes.clearCustomerNooSession();
+                Helper.removeItemParam(Constants.IMAGE_TYPE);
+                onBackPressed();
+            } else {
+                setToast(getString(R.string.failedSaveData));
+            }
         }
     }
 }

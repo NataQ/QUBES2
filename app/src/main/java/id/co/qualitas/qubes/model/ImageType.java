@@ -10,8 +10,17 @@ public class ImageType {
     private Uri photoSelesai;
     private Uri photoKmAwal;
     private int posImage;
+    private int posMaterial;
     private String kmAwal;
     private String kmAkhir;
+
+    public int getPosMaterial() {
+        return posMaterial;
+    }
+
+    public void setPosMaterial(int posMaterial) {
+        this.posMaterial = posMaterial;
+    }
 
     public Uri getPhotoAkhir() {
         return photoAkhir;

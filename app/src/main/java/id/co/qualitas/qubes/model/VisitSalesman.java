@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.model;
 
 public class VisitSalesman {
+    private String idHeader;
     private String customerId;
     private String idSalesman;
     private String date;
@@ -23,7 +24,24 @@ public class VisitSalesman {
     private String nameCheckOutReason;
     private String descCheckOutReason;
     private String photoCheckOutReason;
+    private String timer;//new
     private int isSync;
+
+    public String getTimer() {
+        return timer;
+    }
+
+    public void setTimer(String timer) {
+        this.timer = timer;
+    }
+
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
+    }
 
     public String getCustomerId() {
         return customerId;

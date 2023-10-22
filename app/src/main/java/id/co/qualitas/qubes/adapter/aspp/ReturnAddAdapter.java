@@ -1,24 +1,33 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
+import android.net.Uri;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
@@ -34,7 +43,11 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
     private LayoutInflater mInflater;
     private ReturnAddActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private ArrayAdapter<String> spn1Adapter, spn2Adapter, spn3Adapter;
+    private ArrayAdapter<String> uomAdapter, conditionAdapter;
+    private ArrayAdapter<String> reasonAdapter;
+    private Reason reasonDetail;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public ReturnAddAdapter(ReturnAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -94,15 +107,21 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 //        EditText edtTxtQtyStock1, edtTxtQtyStock2, edtTxtQtyStock3;
 //        Spinner spinnerUom1, spinnerUom2, spinnerUom3;
 //        ImageView imgDelete;
-        EditText edtProduct, edtQty, edtExpDate;
+        EditText edtProduct, edtQty, edtExpDate, edtDescReason;
         AutoCompleteTextView autoCompleteUom, autoCompleteCondition, autoCompleteReason;
-        LinearLayout llDelete;
+        LinearLayout llDelete, llReasonDesc;
+        RelativeLayout llPhoto;
+        ImageView imgAdd, img;
         TextView txtNo;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            imgAdd = itemView.findViewById(R.id.imgAdd);
+            img = itemView.findViewById(R.id.img);
+            llPhoto = itemView.findViewById(R.id.llPhoto);
             edtProduct = itemView.findViewById(R.id.edtProduct);
+            edtDescReason = itemView.findViewById(R.id.edtDescReason);
             edtExpDate = itemView.findViewById(R.id.edtExpDate);
             edtQty = itemView.findViewById(R.id.edtQty);
             txtNo = itemView.findViewById(R.id.txtNo);
@@ -110,143 +129,10 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             autoCompleteCondition = itemView.findViewById(R.id.autoCompleteCondition);
             autoCompleteReason = itemView.findViewById(R.id.autoCompleteReason);
             llDelete = itemView.findViewById(R.id.llDelete);
+            llReasonDesc = itemView.findViewById(R.id.llReasonDesc);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
 
-//            spnReason.setOnClickListener(v -> {
-//                Dialog alertDialog = new Dialog(mContext);
-//
-//                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-//                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                alertDialog.show();
-//
-//                EditText editText = alertDialog.findViewById(R.id.edit_text);
-//                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-//
-//                List<String> groupList = new ArrayList<>();
-//                groupList.add("01 - Produk Lama");
-//                groupList.add("02 - Produk Rusak");
-//
-//                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-//                    spnReason.setText(nameItem);
-//                    alertDialog.dismiss();
-//                });
-//
-//                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-//                listView.setLayoutManager(mManager);
-//                listView.setHasFixedSize(true);
-//                listView.setNestedScrollingEnabled(false);
-//                listView.setAdapter(spinnerAdapter);
-//
-//                editText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        spinnerAdapter.getFilter().filter(s);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                });
-//            });
-//
-//            spnGroupName.setOnClickListener(v -> {
-//                Dialog alertDialog = new Dialog(mContext);
-//
-//                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-//                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                alertDialog.show();
-//
-//                EditText editText = alertDialog.findViewById(R.id.edit_text);
-//                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-//
-//                List<String> groupList = new ArrayList<>();
-//                groupList.add("11_KTD R");
-//                groupList.add("12 - REDBULL");
-//                groupList.add("13 - KTD PRO");
-//                groupList.add("14 - KTD S");
-//                groupList.add("31 - VIT");
-//
-//                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-//                    spnGroupName.setText(nameItem);
-//                    alertDialog.dismiss();
-//                });
-//
-//                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-//                listView.setLayoutManager(mManager);
-//                listView.setHasFixedSize(true);
-//                listView.setNestedScrollingEnabled(false);
-//                listView.setAdapter(spinnerAdapter);
-//
-//                editText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        spinnerAdapter.getFilter().filter(s);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                });
-//            });
-//
-//            spnProduct.setOnClickListener(v -> {
-//                Dialog alertDialog = new Dialog(mContext);
-//
-//                alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-//                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                alertDialog.show();
-//
-//                EditText editText = alertDialog.findViewById(R.id.edit_text);
-//                RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-//
-//                List<String> groupList = new ArrayList<>();
-//                groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-//                groupList.add("11007_KRATINGDAENG - MT");
-//                groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-//                groupList.add("11005_KRATINGDAENG LUAR PULAU");
-//                groupList.add("11001_KRATINGDAENG");
-//
-//                FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-//                    spnProduct.setText(nameItem);
-//                    alertDialog.dismiss();
-//                });
-//
-//                LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-//                listView.setLayoutManager(mManager);
-//                listView.setHasFixedSize(true);
-//                listView.setNestedScrollingEnabled(false);
-//                listView.setAdapter(spinnerAdapter);
-//
-//                editText.addTextChangedListener(new TextWatcher() {
-//                    @Override
-//                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                        spinnerAdapter.getFilter().filter(s);
-//                    }
-//
-//                    @Override
-//                    public void afterTextChanged(Editable s) {
-//
-//                    }
-//                });
-//            });
         }
 
         @Override
@@ -263,25 +149,42 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
 
-        List<String> uomList = new ArrayList<>();
-        uomList.add("BTL");
-        uomList.add("SLOP");
-        uomList.add("KRT");
+        if (detail.getPhotoReason() != null) {
+            holder.img.setImageURI(detail.getPhotoReason() != null ? Uri.parse(detail.getPhotoReason()) : null);
+            holder.img.setVisibility(View.VISIBLE);
+            holder.imgAdd.setVisibility(View.GONE);
+        } else {
+            holder.img.setVisibility(View.GONE);
+            holder.imgAdd.setVisibility(View.VISIBLE);
+        }
+
+        List<String> listSpinner = new Database(mContext).getUom(detail.getId());
+        if (listSpinner == null || listSpinner.size() == 0) {
+            listSpinner.add("BTL");
+            listSpinner.add("SLOP");
+            listSpinner.add("KRT");
+        }
 
         List<String> conditionList = new ArrayList<>();
         conditionList.add("Good");
         conditionList.add("Bad");
 
-        List<Reason> reasonList = new ArrayList<>();
-        reasonList.addAll(new Database(mContext).getAllReason("Return"));
+        List<String> reasonList = new ArrayList<>();
+        reasonList.addAll(new Database(mContext).getAllStringReason(Constants.REASON_TYPE_RETURN));
 
-        String productName = !Helper.isNullOrEmpty(detail.getMaterialCode()) ? detail.getMaterialCode() : null;
+        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);
+        holder.edtQty.setText(format.format(detail.getQty()));
+        if (!Helper.isNullOrEmpty(detail.getExpiredDate())) {
+            String expDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getExpiredDate());
+            holder.edtExpDate.setText(expDate);
+        }
 
         holder.edtExpDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,6 +202,8 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
                         calendar.set(Calendar.MONTH, month);
                         calendar.set(Calendar.DATE, dayOfMonth);
                         String expDate = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(calendar.getTime());
+                        String expDate2 = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+                        detail.setExpiredDate(expDate2);
                         holder.edtExpDate.setText(expDate);
                         holder.edtExpDate.setError(null);
 //                        materialArrayListFiltered.get(getAdapterPosition()).setExpDate(expDateBE);
@@ -309,59 +214,123 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
                 dialog.show();
             }
         });
+        uomAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        uomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uomAdapter.addAll(listSpinner);
+        holder.autoCompleteUom.setAdapter(uomAdapter);
+        holder.autoCompleteUom.setText(detail.getUom());
 
-//        holder.edtProduct.setOnClickListener(v -> {
-//            Dialog alertDialog = new Dialog(mContext);
-//
-//            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-//            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//            alertDialog.show();
-//
-//            EditText editText = alertDialog.findViewById(R.id.edit_text);
-//            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-//
-//            List<String> groupList = new ArrayList<>();
-//            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-//            groupList.add("11007_KRATINGDAENG - MT");
-//            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-//            groupList.add("11005_KRATINGDAENG LUAR PULAU");
-//            groupList.add("11001_KRATINGDAENG");
-//
-//            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-//                holder.edtProduct.setText(nameItem);
-//                alertDialog.dismiss();
-//            });
-//
-//            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-//            listView.setLayoutManager(mManager);
-//            listView.setHasFixedSize(true);
-//            listView.setNestedScrollingEnabled(false);
-//            listView.setAdapter(spinnerAdapter);
-//
-//            editText.addTextChangedListener(new TextWatcher() {
-//                @Override
-//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                }
-//
-//                @Override
-//                public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                    spinnerAdapter.getFilter().filter(s);
-//                }
-//
-//                @Override
-//                public void afterTextChanged(Editable s) {
-//
-//                }
-//            });
-//        });
+        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        conditionAdapter.addAll(conditionList);
+        holder.autoCompleteCondition.setAdapter(conditionAdapter);
+        holder.autoCompleteCondition.setText(detail.getCondition());
 
-        mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
-        mContext.setAutoCompleteAdapter(conditionList, holder.autoCompleteCondition);
-        mContext.setAutoCompleteAdapterReason(reasonList, holder.autoCompleteReason);
+        reasonAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        reasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        reasonAdapter.addAll(reasonList);
+        holder.autoCompleteReason.setAdapter(reasonAdapter);
+        holder.autoCompleteReason.setText(detail.getNameReason());
+
+//        mContext.setAutoCompleteAdapterReason(reasonList, holder.autoCompleteReason);
 
         holder.llDelete.setOnClickListener(v -> {
-            mContext.delete(detail, holder.getAbsoluteAdapterPosition());
+            mList.remove(holder.getAbsoluteAdapterPosition());
+            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+        });
+
+        holder.edtQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Helper.setDotCurrency(holder.edtQty, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    detail.setQty(qty);
+                } else {
+                    detail.setQty(0);
+                }
+            }
+        });
+
+        holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
+            String selected = listSpinner.get(i).toString();
+            detail.setUom(selected);
+        });
+
+        holder.autoCompleteCondition.setOnItemClickListener((adapterView, view, i, l) -> {
+            String selected = conditionList.get(i).toString();
+            detail.setCondition(selected);
+        });
+
+        holder.autoCompleteReason.setOnItemClickListener((adapterView, view, i, l) -> {
+            String selected = reasonList.get(i).toString();
+            detail.setCondition(selected);
+            detail.setNameReason(selected);
+            reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, selected);
+            detail.setIdReason(String.valueOf(reasonDetail.getId()));
+            if (reasonDetail.getIs_freetext() == 1) {
+                holder.llReasonDesc.setVisibility(View.VISIBLE);
+            } else {
+                holder.llReasonDesc.setVisibility(View.GONE);
+            }
+
+            if (reasonDetail.getIs_photo() == 1) {
+                holder.llPhoto.setVisibility(View.VISIBLE);
+            } else {
+                holder.llPhoto.setVisibility(View.GONE);
+            }
+        });
+
+        holder.edtDescReason.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    detail.setDescReason(s.toString());
+                }
+            }
+        });
+
+        holder.llPhoto.setOnClickListener(v -> {
+            mContext.openDialogPhoto(detail, holder.getAbsoluteAdapterPosition());
         });
     }
 
@@ -372,5 +341,13 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

@@ -32,7 +32,6 @@ public class ReturnActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_return);
 
-        initProgress();
         initialize();
         initData();
 

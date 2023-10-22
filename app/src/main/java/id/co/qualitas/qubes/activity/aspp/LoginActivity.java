@@ -112,9 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         txtSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                showDialogSetting();
-                Intent intent = new Intent(getApplicationContext(), ConnectorActivity.class);
-                startActivity(intent);
+                showDialogSetting();
             }
         });
 
@@ -259,6 +257,7 @@ public class LoginActivity extends AppCompatActivity {
                         List<DepoRegion> arrayList = new ArrayList<>();
                         DepoRegion[] paramArray = Helper.ObjectToGSON(response.getDepoRegion(), DepoRegion[].class);
                         Collections.addAll(arrayList, paramArray);
+                        userResponse.setDepoRegionList(arrayList);
                         SessionManagerQubes.setUserProfile(userResponse);
                         SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
                         saveDataSuccess = true;
@@ -422,9 +421,6 @@ public class LoginActivity extends AppCompatActivity {
                         saveDataSuccess = false;
                         PARAM = 4;
                         new RequestUrl().execute();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
                     } else {
                         progress.dismiss();
                         setToast(getString(R.string.failedSaveData));

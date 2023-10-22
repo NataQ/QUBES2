@@ -109,7 +109,7 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtName.setText("\u2022 " + detail.getMaterialCode());
+        holder.txtName.setText("\u2022 " + detail.getNama());
         holder.txtQty.setText(format.format(detail.getQty()));
     }
 

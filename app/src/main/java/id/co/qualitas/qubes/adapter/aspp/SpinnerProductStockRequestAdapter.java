@@ -55,7 +55,7 @@ public class SpinnerProductStockRequestAdapter extends RecyclerView.Adapter<Spin
                 } else {
                     List<Material> filteredList = new ArrayList<>();
                     for (Material row : mList) {
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getId()).contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase()) || String.valueOf(row.getId()).contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }

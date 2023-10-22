@@ -59,13 +59,13 @@ public class StoreCheckActivity extends BaseActivity {
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
     private SpinnerProductStoreCheckAdapter spinnerAdapter;
+    private String today;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_store_check);
 
-        initProgress();
         initialize();
         initData();
 
@@ -90,18 +90,18 @@ public class StoreCheckActivity extends BaseActivity {
             logOut(StoreCheckActivity.this);
         });
 
-        setDate();
+//        setDate();
     }
 
     private void validateData() {
         int param = 0;
 
-        if (Helper.isEmpty(txtDate)) {
-            param++;
-            txtDate.setError(getString(R.string.emptyField));
-        } else {
-            txtDate.setError(null);
-        }
+//        if (Helper.isEmpty(txtDate)) {
+//            param++;
+//            txtDate.setError(getString(R.string.emptyField));
+//        } else {
+//            txtDate.setError(null);
+//        }
 
         if (mList.isEmpty() || mList == null) {
             param++;
@@ -120,8 +120,10 @@ public class StoreCheckActivity extends BaseActivity {
             try {
                 Map header = new HashMap();
                 header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
-                header.put("date", txtDate.getText().toString().trim());
+                header.put("date", today);
                 header.put("username", user.getUsername());
+                database.deleteStoreCheck(header);
+
                 for (Material material : mList) {
                     database.addStoreCheck(material, header);
                 }
@@ -151,46 +153,55 @@ public class StoreCheckActivity extends BaseActivity {
         }
     }
 
-    private void setDate() {
-        fromDate = Helper.getTodayDate();
-        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(fromDate);
-        txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
-        txtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard();
-                todayDate = Calendar.getInstance();
-                final Calendar calendar = Calendar.getInstance();
-                calendar.setTime(fromDate);
-                final int year = calendar.get(Calendar.YEAR);
-                final int month = calendar.get(Calendar.MONTH);
-                final int date = calendar.get(Calendar.DATE);
-
-                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DATE, dayOfMonth);
-
-                        fromDate = calendar.getTime();
-                        fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                        txtDate.setText(fromDateString);
-                        txtDate.setError(null);
-                    }
-                };
-                DatePickerDialog dialog = new DatePickerDialog(StoreCheckActivity.this, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.getDatePicker().setLayoutParams(params);
-                dialog.show();
-            }
-        });
-    }
+//    private void setDate() {
+//        fromDate = Helper.getTodayDate();
+//        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(fromDate);
+//
+//        txtDate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                hideKeyboard();
+//                todayDate = Calendar.getInstance();
+//                final Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(fromDate);
+//                final int year = calendar.get(Calendar.YEAR);
+//                final int month = calendar.get(Calendar.MONTH);
+//                final int date = calendar.get(Calendar.DATE);
+//
+//                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+//                    @Override
+//                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+//                        calendar.set(Calendar.YEAR, year);
+//                        calendar.set(Calendar.MONTH, month);
+//                        calendar.set(Calendar.DATE, dayOfMonth);
+//
+//                        fromDate = calendar.getTime();
+//                        fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
+//                        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+//                        txtDate.setText(fromDateString);
+//                        txtDate.setError(null);
+//                    }
+//                };
+//                DatePickerDialog dialog = new DatePickerDialog(StoreCheckActivity.this, dateSetListener, year, month, date);
+//                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
+//                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                dialog.getDatePicker().setLayoutParams(params);
+//                dialog.show();
+//            }
+//        });
+//    }
 
     private void initData() {
+        today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
+
         mList = new ArrayList<>();
+        mList.addAll(database.getAllStoreCheck());
+        if (mList != null && mList.size() != 0) {
+            today = mList.get(0).getDate();
+            txtDate.setText(Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, today));
+        } else {
+            txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
+        }
     }
 
     private void addNew(List<Material> addedList) {
@@ -369,11 +380,23 @@ public class StoreCheckActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
-        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
-        return mList;
+        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listMat = new ArrayList<>();
+        listMat.addAll(database.getAllMasterMaterial());
+
+        for (Material param : listMat) {
+            int exist = 0;
+            for (Material param1 : mList) {
+                if (param.getId() == param1.getId()) {
+                    exist++;
+                }
+            }
+            if (exist == 0) {
+                listSpinner.add(param);
+            }
+        }
+
+        return listSpinner;
     }
 
     public void delete(int pos) {

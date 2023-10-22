@@ -12,6 +12,10 @@ public class Constants {
     public static final String STATUS_UNLOADING = "unloading";
     public static final String UNAUTHORIZED = "401 Unauthorized";
     public static final String FROM_VISIT = "FROM VISIT";
+    public static final String REASON_TYPE_PAUSE = "Pause";
+    public static final String REASON_TYPE_NOT_VISIT = "Not Visit";
+    public static final String REASON_TYPE_NOT_BUY = "Not Buy";
+    public static final String REASON_TYPE_RETURN = "Return";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String LOG_EXCEPTION = "log exception";
     public static final int COMPRESS_IMAGE = 80;
@@ -115,8 +119,8 @@ public class Constants {
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    public static String URL = "http://192.168.1.12:8282";
-    public static String IP = "192.168.1.12:8282";
+    public static String URL = "http://192.168.1.4:8282";
+    public static String IP = "192.168.1.4:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 

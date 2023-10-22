@@ -41,7 +41,6 @@ public class Customer {
     private String type_customer;
     private String name_type_customer;
     private String type_price;
-    private double credit_limit;
     private String rute;
     private String photoKtp;
     private String photoNpwp;
@@ -49,31 +48,17 @@ public class Customer {
     private int is_sync;
     private List<Promotion> promoList;
     private boolean route;
-    private LatLng position;
+//    private LatLng position;
     private double limit_kredit;
     private double sisaCreditLimit;
     private double totalTagihan;
+    private boolean noo;
     private String mileage;
 //    private Uri photoKTPUri;
 //    private Uri photoNPWPUri;
 //    private Uri photoOutletUri;
 
     public Customer() {
-    }
-
-    public Customer(String id, String nama, String nama_pemilik, String address, String no_tlp, double limit_kredit, String nik, String no_npwp, boolean route, double latitude, double longitude, int isSync) {
-        this.id = id;
-        this.nama_pemilik = nama_pemilik;
-        this.nama = nama;
-        this.address = address;
-        this.no_tlp = no_tlp;
-        this.limit_kredit = limit_kredit;
-        this.nik = nik;
-        this.no_npwp = no_npwp;
-        this.route = route;
-        this.latitude = latitude;
-        this.latitude = longitude;
-        this.is_sync = isSync;
     }
 
     public Customer(String id, String nama, String address, boolean route, double latitude, double longitude) {
@@ -83,21 +68,6 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-    public Customer(String id, String nama, String address, boolean route, LatLng position) {
-        this.id = id;
-        this.nama = nama;
-        this.address = address;
-        this.route = route;
-        this.position = position;
-    }
-    public Customer(String id, String nama, String address, boolean route, LatLng position, int status) {
-        this.id = id;
-        this.nama = nama;
-        this.address = address;
-        this.route = route;
-        this.position = position;
-        this.status = status;
     }
 
 //    public Uri getPhotoKTPUri() {
@@ -123,6 +93,15 @@ public class Customer {
 //    public void setPhotoOutletUri(Uri photoOutletUri) {
 //        this.photoOutletUri = photoOutletUri;
 //    }
+
+
+    public boolean isNoo() {
+        return noo;
+    }
+
+    public void setNoo(boolean noo) {
+        this.noo = noo;
+    }
 
     public String getIdHeader() {
         return idHeader;
@@ -396,14 +375,6 @@ public class Customer {
         this.type_price = type_price;
     }
 
-    public double getCredit_limit() {
-        return credit_limit;
-    }
-
-    public void setCredit_limit(double credit_limit) {
-        this.credit_limit = credit_limit;
-    }
-
     public String getRute() {
         return rute;
     }
@@ -458,14 +429,6 @@ public class Customer {
 
     public void setRoute(boolean route) {
         this.route = route;
-    }
-
-    public LatLng getPosition() {
-        return position;
-    }
-
-    public void setPosition(LatLng position) {
-        this.position = position;
     }
 
     public double getLimit_kredit() {

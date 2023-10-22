@@ -128,6 +128,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private Map startDay, endDay;
     private String kmAwal, kmAkhir;
     private VisitSalesman visitSalesman;
+    private boolean fromNoo = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -231,16 +232,28 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void setAdapterVisit() {
         mAdapterVisit = new VisitListAdapter(this, mList, header -> {
+            header.setNoo(false);
             outletClicked = header;
+            fromNoo = false;
             if (SessionManagerQubes.getStartDay() != 0) {
-                if (header.getStatus() == 0) {//belum check in
-                    checkLocationPermission();
+                if (header.getStatus() == 1) {
+                    SessionManagerQubes.setOutletHeader(outletClicked);
+                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                    startActivity(intent);
                 } else {
                     if (checkOutletStatus()) {
-                        outletClicked.setStatus(Constants.CHECK_IN_VISIT);
-                        SessionManagerQubes.setOutletHeader(outletClicked);
-                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                        startActivity(intent);
+                        if (!header.isRoute() && checkNonRouteCheckIn()) {//sudah mencapai max non rute
+                            if (header.getStatus() == 0) {//belum check in
+                                checkLocationPermission();
+                            } else {
+                                SessionManagerQubes.setOutletHeader(outletClicked);
+                                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                startActivity(intent);
+                            }
+                        } else {
+                            setToast("Anda sudah mencapai max visit non route");
+                        }
+
                     } else {
                         setToast("Selesaikan customer yang sedang check in");
                     }
@@ -255,20 +268,33 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private boolean checkOutletStatus() {
         int statusCheckIn = 0;
-        for (Customer customer : mList) {
-            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
-            if (customer.getStatus() == 1) {
-                statusCheckIn++;
-            }
-        }
-
-        for (Customer customer : mListNoo) {
-            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
-            if (customer.getStatus() == 1) {
-                statusCheckIn++;
-            }
-        }
+        int statusCheckInVisit = database.getCountCheckInVisit();
+        int statusCheckInNoo = database.getCountCheckInNoo();
+        statusCheckIn = statusCheckInVisit + statusCheckInNoo;
+//        for (Customer customer : mList) {
+//            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
+//            if (customer.getStatus() == 1) {
+//                statusCheckIn++;
+//            }
+//        }
+//
+//        for (Customer customer : mListNoo) {
+//            //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
+//            if (customer.getStatus() == 1) {
+//                statusCheckIn++;
+//            }
+//        }
         return (statusCheckIn == 0);
+    }
+
+    private boolean checkNonRouteCheckIn() {
+        int nonRouteCust = database.getCountCheckInVisitNonRoute();
+        int nonRouteMax = user.getMax_visit();
+        if (nonRouteCust <= nonRouteMax) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void checkLocationPermission() {
@@ -302,31 +328,31 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         ImageView btCenterMap = dialog.findViewById(R.id.btCenterMap);
 
         btnCheckIn.setOnClickListener(v -> {
-            dialog.dismiss();
-            Location locCustomer = null;
-            locCustomer.setLatitude(outletClicked.getLatitude());
-            locCustomer.setLongitude(outletClicked.getLongitude());
-            outRadius = Helper.checkRadius(currentLocation, locCustomer);
+            if (currentLocation != null) {
+                dialog.dismiss();
+                Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
+                locCustomer.setLatitude(outletClicked.getLatitude());
+                locCustomer.setLongitude(outletClicked.getLongitude());
+                outRadius = Helper.checkRadius(currentLocation, locCustomer);
 
-            visitSalesman = new VisitSalesman();
-            visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
-            visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            visitSalesman.setLatCheckIn(currentLocation.getLatitude());
-            visitSalesman.setLongCheckIn(currentLocation.getLongitude());
-            visitSalesman.setInside(outRadius);
-            visitSalesman.setIdSalesman(user.getUsername());
-            visitSalesman.setCustomerId(outletClicked.getId());
-            visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
-            visitSalesman.setSync(0);
+                visitSalesman = new VisitSalesman();
+                visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
+                visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                visitSalesman.setLatCheckIn(currentLocation.getLatitude());
+                visitSalesman.setLongCheckIn(currentLocation.getLongitude());
+                visitSalesman.setInside(outRadius);
+                visitSalesman.setIdSalesman(user.getUsername());
+                visitSalesman.setCustomerId(outletClicked.getId());
+                visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+                visitSalesman.setSync(0);
 
-            if (outRadius) {
-                openDialogOutRadius();
+                if (outRadius) {
+                    openDialogOutRadius();
+                } else {
+                    moveVisitSalesman();
+                }
             } else {
-                database.addVisitSalesman(visitSalesman, user.getUsername());
-                outletClicked.setStatus(Constants.CHECK_IN_VISIT);
-                SessionManagerQubes.setOutletHeader(outletClicked);
-                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                startActivity(intent);
+                setToast("Can't get your location.. Please try again..");
             }
         });
 
@@ -346,7 +372,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         mapView.getOverlays().add(mCompassOverlay);
 
         final List<Customer>[] custList = new List[]{new ArrayList<>()};
-        custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+        custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getLatitude(), outletClicked.getLongitude()));
         if (currentLocation != null) {
             GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
             custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
@@ -388,7 +414,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     mapView.getController().animateTo(myPosition);
 
                     custList[0].clear();
-                    custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getPosition().latitude, outletClicked.getPosition().longitude));
+                    custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getLatitude(), outletClicked.getLongitude()));
                     custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
 
                     items[0] = Helper.setOverLayItems(custList[0], VisitActivity.this);
@@ -406,6 +432,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     }, VisitActivity.this)};
                     mapView.getOverlays().add(mOverlay[0][0]);
                     mapView.invalidate();
+                } else {
+                    setToast("Can't get your location.. Please try again..");
                 }
             }
         });
@@ -423,11 +451,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         btnYes.setOnClickListener(v -> {
             dialog.dismiss();
-            database.addVisitSalesman(visitSalesman, user.getUsername());
-            outletClicked.setStatus(Constants.CHECK_IN_VISIT);
-            SessionManagerQubes.setOutletHeader(outletClicked);
-            Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-            startActivity(intent);
+            moveVisitSalesman();
         });
 
         btnNo.setOnClickListener(v -> {
@@ -435,6 +459,21 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         dialog.show();
+    }
+
+    private void moveVisitSalesman() {
+        outletClicked.setStatus(Constants.CHECK_IN_VISIT);
+        database.addVisitSalesman(visitSalesman, user.getUsername());
+        if (fromNoo) {
+//            database.addVisitSalesmanNoo(visitSalesman, user.getUsername());
+            database.updateStatusOutletNoo(outletClicked, user.getUsername());
+        } else {
+            database.updateStatusOutletVisit(outletClicked, user.getUsername());
+        }
+        SessionManagerQubes.setOutletHeader(outletClicked);
+
+        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+        startActivity(intent);
     }
 
     private void setViewNoo() {
@@ -490,17 +529,23 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
     private void setAdapterNoo() {
         mAdapterNoo = new NooListAdapter(this, mListNoo, header -> {
+            header.setNoo(true);
             outletClicked = header;
-
+            fromNoo = true;
             if (SessionManagerQubes.getStartDay() != 0) {
-                if (header.getStatus() == 0) {//belum check in
-                    checkLocationPermission();
+                if (header.getStatus() == 1) {
+                    SessionManagerQubes.setOutletHeader(outletClicked);
+                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                    startActivity(intent);
                 } else {
                     if (checkOutletStatus()) {
-                        outletClicked.setStatus(Constants.CHECK_IN_VISIT);
-                        SessionManagerQubes.setOutletHeader(outletClicked);
-                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                        startActivity(intent);
+                        if (header.getStatus() == 0) {//belum check in
+                            checkLocationPermission();
+                        } else {
+                            SessionManagerQubes.setOutletHeader(outletClicked);
+                            Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                            startActivity(intent);
+                        }
                     } else {
                         setToast("Selesaikan customer yang sedang check in");
                     }
@@ -595,7 +640,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setPhotoAkhir(uriPulang);
             imageType.setPhotoSelesai(uriSelesai);
             imageType.setPosImage(5);
-            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
@@ -606,7 +651,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
             imageType.setPhotoAkhir(uriPulang);
             imageType.setPhotoSelesai(uriSelesai);
-            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
@@ -664,7 +709,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             imageType.setKmAwal(txtKmAwal.getText().toString().trim());
             imageType.setPosImage(4);
             imageType.setPhotoKmAwal(uriBerangkat);
-            Helper.setItemParam(Constants.IMAGE_TYPE,imageType);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
 //            Intent camera = new Intent(this, Camera3PLActivity.class);//3
@@ -1189,7 +1234,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Helper.setItemParam(Constants.FROM_VISIT,"1");
+        Helper.setItemParam(Constants.FROM_VISIT, "1");
         intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

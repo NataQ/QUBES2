@@ -144,10 +144,10 @@ public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestLi
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.green2_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
-                    if (detail.isIsverif() == 1) {
+                    if (detail.getIs_verif() == 1) {
                         holder.txtStatus.setText("Verification");
                     }
-                    if (detail.isIsunloading() == 1) {
+                    if (detail.getIs_unloading() == 1) {
                         holder.txtStatus.setText("Unloading");
                     }
                     break;

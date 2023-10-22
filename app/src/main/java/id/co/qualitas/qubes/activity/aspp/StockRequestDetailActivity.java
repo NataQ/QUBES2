@@ -196,8 +196,8 @@ public class StockRequestDetailActivity extends BaseActivity {
                     case Constants.STATUS_APPROVE:
                         btnVerification.setVisibility(View.VISIBLE);
                         btnUnloading.setVisibility(View.GONE);
-                        if (header.isIsverif() == 1) {
-                            if (header.isIsunloading() == 1) {
+                        if (header.getIs_verif() == 1) {
+                            if (header.getIs_unloading() == 1) {
                                 btnUnloading.setVisibility(View.GONE);
                                 btnVerification.setVisibility(View.GONE);
                             } else {

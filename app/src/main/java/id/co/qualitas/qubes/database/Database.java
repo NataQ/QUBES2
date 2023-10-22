@@ -223,8 +223,8 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_JENIS_USAHA = "jenisUsaha";
     private static final String KEY_LAMA_USAHA = "lamaUsaha";
     private static final String KEY_SUKU = "suku";
-    private static final String KEY_TYPE_TOKO_OUTLET = "typeTokoOutlet";
-    private static final String KEY_PRICE_LIST_TYPE = "priceListType";
+    //    private static final String KEY_TYPE_CUSTOMER = "typeTokoOutlet";
+//    private static final String KEY_TYPE_PRICE = "priceListType";
     private static final String KEY_CREDIT_LIMIT = "creditLimit";
     private static final String KEY_ROUTE = "route";
     private static final String KEY_PHOTO_KTP = "photoKtp";
@@ -628,6 +628,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_REQUEST_DATE + ", " + KEY_ID_SALESMAN + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_STOCK_REQUEST_DETAIL = "CREATE TABLE " + TABLE_STOCK_REQUEST_DETAIL + "("
@@ -648,7 +649,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER + "("
@@ -681,7 +683,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
@@ -701,7 +704,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
     public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE " + TABLE_INVOICE_HEADER + "("
@@ -721,7 +725,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_INVOICE_NO + ")"
             + ")";
 
     public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE " + TABLE_INVOICE_DETAIL + "("
@@ -738,13 +743,15 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_INVOICE_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_NOO = "CREATE TABLE " + TABLE_NOO + "("
             + KEY_ID_NOO_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_NAME_NOO + " TEXT,"
             + KEY_ADDRESS_NOO + " TEXT,"
+            + KEY_STATUS + " INTEGER,"
             + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL,"
             + KEY_KODE_POS + " TEXT,"
@@ -771,9 +778,12 @@ public class Database extends SQLiteOpenHelper {
             + KEY_JENIS_USAHA + " TEXT,"
             + KEY_LAMA_USAHA + " TEXT,"
             + KEY_SUKU + " TEXT,"
-            + KEY_TYPE_TOKO_OUTLET + " TEXT,"
-            + KEY_PRICE_LIST_TYPE + " TEXT,"
-            + KEY_CREDIT_LIMIT + " TEXT,"
+            + KEY_TYPE_CUSTOMER + " TEXT,"
+            + KEY_TYPE_CUSTOMER_NAME + " TEXT,"
+            + KEY_TYPE_PRICE + " TEXT,"
+            + KEY_CREDIT_LIMIT + " REAL,"
+            + KEY_SISA_KREDIT_LIMIT + " REAL,"
+            + KEY_TOTAL_TAGIHAN + " REAL,"
             + KEY_ROUTE + " TEXT,"
             + KEY_PHOTO_KTP + " TEXT,"
             + KEY_PHOTO_NPWP + " TEXT,"
@@ -783,6 +793,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ID_NOO_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER = "CREATE TABLE " + TABLE_CUSTOMER + "("
@@ -790,6 +801,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
             + KEY_CUSTOMER_ADDRESS + " TEXT,"
+            + KEY_STATUS + " INTEGER,"
             + KEY_TYPE_CUSTOMER + " TEXT,"
             + KEY_TYPE_CUSTOMER_NAME + " TEXT,"
             + KEY_TYPE_PRICE + " TEXT,"
@@ -815,7 +827,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_CUSTOMER_PROMOTION + "("
@@ -834,7 +847,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
     public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE " + TABLE_VISIT_SALESMAN + "("
@@ -865,7 +879,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
 
     public static String CREATE_TABLE_VISIT_SALESMAN_NOO = "CREATE TABLE " + TABLE_VISIT_SALESMAN_NOO + "("
@@ -896,7 +911,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_NOO_DB + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
 
     public static String CREATE_TABLE_STORE_CHECK = "CREATE TABLE " + TABLE_STORE_CHECK + "("
@@ -915,7 +931,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_HEADER = "CREATE TABLE " + TABLE_ORDER_HEADER + "("
@@ -930,6 +947,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE " + TABLE_ORDER_DETAIL + "("
@@ -951,7 +969,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_EXTRA = "CREATE TABLE " + TABLE_ORDER_DETAIL_EXTRA + "("
@@ -973,7 +992,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_CUSTOMER_ID + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE " + TABLE_ORDER_DETAIL_DISCOUNT + "("
@@ -989,7 +1009,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_CUSTOMER_ID + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_PAYMENT_HEADER = "CREATE TABLE " + TABLE_ORDER_PAYMENT_HEADER + "("
@@ -1003,6 +1024,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_PAYMENT_DETAIL = "CREATE TABLE " + TABLE_ORDER_PAYMENT_DETAIL + "("
@@ -1027,6 +1049,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ID_ORDER_PAYMENT_HEADER_DB + ", " + KEY_TYPE_PAYMENT + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_PAYMENT_ITEM = "CREATE TABLE " + TABLE_ORDER_PAYMENT_ITEM + "("
@@ -1040,7 +1063,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_ORDER_PAYMENT_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_RETURN = "CREATE TABLE " + TABLE_RETURN + "("
@@ -1065,7 +1089,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE " + TABLE_COLLECTION_HEADER + "("
@@ -1079,6 +1104,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE " + TABLE_COLLECTION_DETAIL + "("
@@ -1103,6 +1129,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE " + TABLE_COLLECTION_ITEM + "("
@@ -1120,7 +1147,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE " + TABLE_MASTER_REASON + "("
@@ -1136,7 +1164,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_REASON_BE + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_PROMOTION + "("
@@ -1154,7 +1183,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_PROMOTION + ")"
             + ")";
 
     public static String CREATE_TABLE_LOG = "CREATE TABLE " + TABLE_LOG + "("
@@ -1167,6 +1197,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_BANK = "CREATE TABLE " + TABLE_MASTER_BANK + "("
@@ -1180,7 +1211,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_BANK_BE + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_MATERIAL = "CREATE TABLE " + TABLE_MASTER_MATERIAL + "("
@@ -1196,7 +1228,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_UOM = "CREATE TABLE " + TABLE_MASTER_UOM + "("
@@ -1208,7 +1241,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_UOM_ID + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE " + TABLE_MASTER_DAERAH_TINGKAT + "("
@@ -1226,7 +1260,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_KODE_POS + ", " + KEY_ID_DESA_KELURAHAN + "," + KEY_ID_KECAMATAN + "," + KEY_ID_KOTA_KABUPATEN + "," + KEY_ID_PROVINSI + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE " + TABLE_MASTER_PRICE_CODE + "("
@@ -1236,7 +1271,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UDF_5_DESC + " TEXT,"
             + KEY_PRICE_LIST_CODE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_HEADER + "("
@@ -1244,7 +1280,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TOP + " TEXT,"
             + KEY_PRICE_LIST_CODE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_PRICE_LIST_CODE + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_SALES_PRICE_DETAIL = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_DETAIL + "("
@@ -1255,7 +1292,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_QTY + " REAL,"
             + SELLING_PRICE + " REAL,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_MATERIAL_ID + ", " + KEY_PRICE_LIST_CODE + ")"
             + ")";
 
     public static String CREATE_TABLE_PARAMETER = "CREATE TABLE " + TABLE_MASTER_PARAMETER + "("
@@ -1264,7 +1302,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_VALUE + " TEXT,"
             + KEY_DESC + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_KEY_PARAMETER + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_TYPE = "CREATE TABLE " + TABLE_MASTER_CUSTOMER_TYPE + "("
@@ -1272,7 +1311,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_TYPE_PRICE + " TEXT,"
             + KEY_NAME_TYPE_PRICE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
             + ")";
 
     @Override
@@ -1368,13 +1408,18 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_SURAT_JALAN, param.getNo_surat_jalan());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_UNLOADING, param.isIsunloading());
-        values.put(KEY_IS_VERIF, param.isIsverif());
+        values.put(KEY_IS_UNLOADING, param.getIs_unloading());
+        values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_STOCK_REQUEST_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_STOCK_REQUEST_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1396,10 +1441,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_QTY_SISA, param.getQtySisa());
         values.put(KEY_UOM_SISA, param.getUomSisa());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_STOCK_REQUEST_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_STOCK_REQUEST_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1420,10 +1470,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_IS_ROUTE, param.getIs_route());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_INVOICE_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_INVOICE_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1441,10 +1496,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
         values.put(KEY_PRICE, param.getAmount());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_INVOICE_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_INVOICE_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1482,18 +1542,23 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_JENIS_USAHA, param.getJenis_usaha());
         values.put(KEY_LAMA_USAHA, param.getLama_usaha());
         values.put(KEY_SUKU, param.getSuku());
-        values.put(KEY_TYPE_TOKO_OUTLET, param.getType_customer());
-        values.put(KEY_PRICE_LIST_TYPE, param.getType_price());
-        values.put(KEY_CREDIT_LIMIT, param.getCredit_limit());
+        values.put(KEY_TYPE_CUSTOMER, param.getType_customer());
+        values.put(KEY_TYPE_PRICE, param.getType_price());
+        values.put(KEY_CREDIT_LIMIT, param.getLimit_kredit());
         values.put(KEY_ROUTE, param.getRute());
         values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
         values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
         values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_NOO, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_NOO, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1505,6 +1570,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CUSTOMER_ID, param.getId());
         values.put(KEY_CUSTOMER_NAME, param.getNama());
         values.put(KEY_CUSTOMER_ADDRESS, param.getAddress());
+        values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_TYPE_CUSTOMER, param.getType_customer());
         values.put(KEY_TYPE_CUSTOMER_NAME, param.getName_type_customer());
         values.put(KEY_TYPE_PRICE, param.getType_price());
@@ -1522,10 +1588,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_NPWP, param.getNo_npwp());
         values.put(KEY_IS_ROUTE, param.isRoute());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_CUSTOMER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_CUSTOMER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1553,10 +1624,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_KTP, param.getNik());
         values.put(KEY_NO_NPWP, param.getNo_npwp());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1577,10 +1653,16 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1600,10 +1682,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1615,30 +1702,21 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CUSTOMER_ID, param.getCustomerId());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_DATE, param.getDate());
-        values.put(KEY_CHECK_IN_TIME, param.getCheckInTime());
-//        values.put(KEY_CHECK_OUT_TIME, param.getCheckOutTime());
+        values.put(KEY_CHECK_IN_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_STATUS, param.getStatus());
-//        values.put(KEY_RESUME_TIME, param.getResumeTime());
-//        values.put(KEY_PAUSE_TIME, param.getPauseTime());
         values.put(KEY_LAT_CHECK_IN, param.getLatCheckIn());
         values.put(KEY_LONG_CHECK_IN, param.getLongCheckIn());
-//        values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
-//        values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
         values.put(KEY_INSIDE, param.isInside());
-//        values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
-//        values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
-//        values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
-//        values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
-//        values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
-//        values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-//        values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-//        values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-//        values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_VISIT_SALESMAN, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_VISIT_SALESMAN, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1650,30 +1728,119 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_NOO_DB, param.getCustomerId());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_DATE, param.getDate());
-        values.put(KEY_CHECK_IN_TIME, param.getCheckInTime());
-        values.put(KEY_CHECK_OUT_TIME, param.getCheckOutTime());
+        values.put(KEY_CHECK_IN_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_STATUS, param.getStatus());
-        values.put(KEY_RESUME_TIME, param.getResumeTime());
-        values.put(KEY_PAUSE_TIME, param.getPauseTime());
         values.put(KEY_LAT_CHECK_IN, param.getLatCheckIn());
         values.put(KEY_LONG_CHECK_IN, param.getLongCheckIn());
-        values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
-        values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
         values.put(KEY_INSIDE, param.isInside());
-        values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
-        values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
-        values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
-        values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
-        values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
-        values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-        values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-        values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-        values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_VISIT_SALESMAN_NOO, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_VISIT_SALESMAN_NOO, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int insertUpdateReturn(Material material, Map header) {
+        SQLiteDatabase db = getWritableDatabase();
+        Integer id = null;
+
+        try {
+            String queryUpdateInsert = "INSERT OR IGNORE INTO " + TABLE_RETURN + " ("
+                    + KEY_CUSTOMER_ID + ", " + KEY_DATE + ", " + KEY_MATERIAL_ID + ", "
+                    + KEY_MATERIAL_NAME + ", " + KEY_MATERIAL_GROUP_ID + ", "
+                    + KEY_MATERIAL_GROUP_NAME + ", " + KEY_MATERIAL_PRODUCT_ID + ", "
+                    + KEY_MATERIAL_PRODUCT_NAME + ", " + KEY_QTY + ", " + KEY_UOM + ", "
+                    + KEY_EXPIRED_DATE + ", " + KEY_CONDITION + ", " + KEY_ID_REASON_RETURN + ", "
+                    + KEY_NAME_REASON_RETURN + ", " + KEY_DESC_REASON_RETURN + ", " + KEY_PHOTO_REASON_RETURN + ", "
+                    + KEY_CREATED_BY + ", " + KEY_CREATED_DATE + ") "
+
+                    + "VALUES (" + header.get("id_customer").toString() + ", " + header.get("date").toString() + ", " + material.getId()
+                    + ", " + material.getNama() + ", " + material.getId_material_group()
+                    + ", " + material.getMaterial_group_name() + ", " + material.getId_product_group()
+                    + ", " + material.getName_product_group() + ", " + material.getQty() + ", " + material.getUom()
+                    + ", " + material.getExpiredDate() + ", " + material.getCondition() + ", " + material.getIdReason()
+                    + ", " + material.getNameReason() + ", " + material.getDescReason() + ", " + material.getPhotoReason()
+                    + ", " + header.get("username").toString() + "," + Helper.getTodayDate(Constants.DATE_FORMAT_2) + ")";
+
+            String update = "UPDATE " + TABLE_RETURN + " SET "
+                    + KEY_QTY + " = " + material.getQty() + ","
+                    + KEY_UOM + " = " + material.getUom() + ", "
+                    + KEY_EXPIRED_DATE + " = " + material.getExpiredDate() + ", "
+                    + KEY_CONDITION + " = " + material.getCondition() + ", "
+                    + KEY_ID_REASON_RETURN + " = " + material.getIdReason() + ", "
+                    + KEY_NAME_REASON_RETURN + " = " + material.getNameReason() + ", "
+                    + KEY_DESC_REASON_RETURN + " = " + material.getDescReason() + ", "
+                    + KEY_PHOTO_REASON_RETURN + " = " + material.getPhotoReason() + ", "
+                    + KEY_UPDATED_BY + " = " + header.get("username").toString() + ","
+                    + KEY_UPDATED_DATE + " = " + Helper.getTodayDate(Constants.DATE_FORMAT_2)
+                    + " WHERE " + KEY_CUSTOMER_ID + "= " + header.get("id_customer").toString()
+                    + " and " + KEY_MATERIAL_ID + " = " + material.getId()
+                    + " and " + KEY_DATE + " = " + header.get("date").toString();
+
+            db.execSQL(queryUpdateInsert, null);
+
+            db.execSQL(update, null);
+
+            Cursor cursor = db.query(TABLE_RETURN, new String[]{KEY_ID_RETURN_DB}, KEY_DATE + " = ? and "
+                            + KEY_MATERIAL_ID + " = ? and " + KEY_CUSTOMER_ID + " = ? ",
+                    new String[]{header.get("date").toString(), String.valueOf(material.getId()),
+                            header.get("id_customer").toString()}, null, null, null, null);
+
+            if (cursor != null)
+                cursor.moveToFirst();
+
+            if (cursor.getCount() != 0) {
+                id = Integer.parseInt(cursor.getString(0));
+            }
+            db.close();
+        } catch (Exception ex) {
+            id = null;
+        }
+        return id;
+    }
+
+    public int addUpdateStoreCheck(Material param, Map header) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
+        values.put(KEY_DATE, header.get("date").toString());
+        values.put(KEY_MATERIAL_ID, param.getId());
+        values.put(KEY_MATERIAL_NAME, param.getNama());
+        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
+        values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
+        values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
+        values.put(KEY_QTY, param.getQty());
+        values.put(KEY_UOM, param.getUom());
+        values.put(KEY_CREATED_BY, header.get("username").toString());
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+
+        int id = -1;
+        try {
+            id = (int) db.insertWithOnConflict(TABLE_STORE_CHECK, null, values, SQLiteDatabase.CONFLICT_IGNORE);//return id yg ud d create
+
+            if (id == -1) {
+                ContentValues valuesUpdate = new ContentValues();
+                valuesUpdate.put(KEY_QTY, param.getQty());
+                valuesUpdate.put(KEY_UOM, param.getUom());
+                valuesUpdate.put(KEY_UPDATED_BY, header.get("username").toString());
+                valuesUpdate.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+                db.update(TABLE_STORE_CHECK, values, KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? and " + KEY_MATERIAL_ID + " = ?",
+                        new String[]{header.get("id_customer").toString(), header.get("date").toString(), String.valueOf(param.getId())});
+            }
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1693,10 +1860,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_QTY, param.getQty());
         values.put(KEY_UOM, param.getUom());
         values.put(KEY_CREATED_BY, header.get("username").toString());
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_STORE_CHECK, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_STORE_CHECK, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1711,10 +1883,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_OMZET, param.getOmzet());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1737,10 +1914,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TOTAL_DISCOUNT, param.getTotalDiscount());
         values.put(KEY_TOTAL, param.getTotal());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1763,10 +1945,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TOTAL_DISCOUNT, param.getTotalDiscount());
         values.put(KEY_TOTAL, param.getTotal());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_DETAIL_EXTRA, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_DETAIL_EXTRA, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1783,10 +1970,15 @@ public class Database extends SQLiteOpenHelper {
 //        values.put(KEY_DISCOUNT_PRICE, param.getUom());
 //        values.put(KEY_TOTAL, param.getPrice());
 //        values.put(KEY_CREATED_BY, idSales);
-//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 //        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1802,10 +1994,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1822,10 +2019,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_TRANSFER_DATE, param.getTglTransfer());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1848,10 +2050,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1874,10 +2081,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_PAYMENT_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1896,22 +2108,27 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PRICE, param.getPrice());
         values.put(KEY_AMOUNT_PAID, param.getAmountPaid());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_ORDER_PAYMENT_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_ORDER_PAYMENT_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
 
-    public int addReturn(Return param, String idSales) {
+    public int addReturn(Material param, Map header) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_CUSTOMER_ID, param.getCustomerId());
-        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
+        values.put(KEY_DATE, header.get("date").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
-        values.put(KEY_MATERIAL_NAME, param.getName());
+        values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
         values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
         values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
@@ -1924,11 +2141,16 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_REASON_RETURN, param.getNameReason());
         values.put(KEY_DESC_REASON_RETURN, param.getDescReason());
         values.put(KEY_PHOTO_REASON_RETURN, param.getPhotoReason());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_BY, header.get("username").toString());
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_RETURN, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_RETURN, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1944,10 +2166,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1964,10 +2191,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_TRANSFER_DATE, param.getTglTransfer());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -1990,10 +2222,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2016,10 +2253,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2038,10 +2280,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PRICE, param.getPrice());
         values.put(KEY_AMOUNT_PAID, param.getAmountPaid());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2058,10 +2305,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_BARCODE, param.getIs_barcode());
         values.put(KEY_IS_SIGNATURE, param.getIs_signature());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_MASTER_REASON, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_REASON, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2080,10 +2332,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_MASTER_PROMOTION, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2096,10 +2353,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_DATE_LOG, param.getDateLog());
         values.put(KEY_TIME_LOG, param.getTimeLog());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_LOG, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_LOG, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2114,10 +2376,15 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CATEGORY, param.getCategory());
         values.put(KEY_NO_REK, param.getNo_rek());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
-        int id = (int) db.insert(TABLE_MASTER_BANK, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_BANK, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2130,9 +2397,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_ID, param.getId_material());
         values.put(KEY_CONVERSION, param.getConversion());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_UOM, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_UOM, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2149,9 +2421,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_MATERIAL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_MATERIAL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2170,9 +2447,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_PROVINSI, param.getKode_provinsi());
         values.put(KEY_NAME_PROVINSI, param.getNama_provinsi());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_DAERAH_TINGKAT, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_DAERAH_TINGKAT, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2186,9 +2468,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
         values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_PRICE_CODE, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_PRICE_CODE, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2200,9 +2487,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TOP, param.getTop());
         values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_SALES_PRICE_HEADER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_HEADER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2217,9 +2509,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_QTY, param.getQty());
         values.put(SELLING_PRICE, param.getSelling_price());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_SALES_PRICE_DETAIL, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_DETAIL, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2232,9 +2529,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_TYPE_PRICE, param.getType_price());
         values.put(KEY_NAME_TYPE_PRICE, param.getName());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_CUSTOMER_TYPE, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_CUSTOMER_TYPE, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2247,9 +2549,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALUE, param.getValue());
         values.put(KEY_DESC, param.getDescription());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        int id = (int) db.insert(TABLE_MASTER_PARAMETER, null, values);//return id yg ud d create
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_PARAMETER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
         //db.close();
         return id;
     }
@@ -2316,6 +2623,70 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Material> getAllReturn() {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " order by " + KEY_ID_RETURN_DB + " desc";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_RETURN_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setExpiredDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_EXPIRED_DATE)));
+                paramModel.setCondition(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CONDITION)));
+                paramModel.setIdReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_REASON_RETURN)));
+                paramModel.setNameReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_REASON_RETURN)));
+                paramModel.setDescReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_REASON_RETURN)));
+                paramModel.setPhotoReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_REASON_RETURN)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllStoreCheck() {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " order by " + KEY_ID_STORE_CHECK_DB + " desc";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STORE_CHECK_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<StockRequest> getAllStockRequestHeader() {
         List<StockRequest> arrayList = new ArrayList<>();
         // Select All Query
@@ -2335,7 +2706,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
-                paramModel.setSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
 
@@ -2371,6 +2742,37 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public boolean checkUnloadingRequest() {
+        // Select All Query
+        boolean result = false;
+        StockRequest request = null;
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc limit 1 ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                request = new StockRequest();
+                request.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
+            }
+        }
+
+        if (request != null) {
+            if (request.getIs_unloading() == 1) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } else {
+            result = true;
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
     public StockRequest getStockRequestHeader(String idHeader) {
         // Select All Query
         StockRequest result = null;
@@ -2390,7 +2792,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 result.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 result.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
-                result.setSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                result.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 result.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 result.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
             }
@@ -2507,6 +2909,7 @@ public class Database extends SQLiteOpenHelper {
                 Customer paramModel = new Customer();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
                 paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
@@ -2558,21 +2961,32 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Customer paramModel = new Customer();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
-                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NOO)));
-                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NOO)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+                paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
+                paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
                 paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
                 paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
+                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
-                paramModel.setCredit_limit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
+                paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
+                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
                 paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
                 paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
                 paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
-                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
-                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -2605,6 +3019,24 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<String> getAllStringReason(String param) {
+        List<String> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_NAME_REASON + " FROM " + TABLE_MASTER_REASON + " WHERE " + KEY_CATEGORY_REASON + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{param});
+
+        if (cursor.moveToFirst()) {
+            do {
+                String paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_REASON));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Reason> getAllReason(String param) {
         List<Reason> arrayList = new ArrayList<>();
         // Select All Query
@@ -2629,6 +3061,30 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public Reason getDetailReason(String param, String nameReason) {
+        Reason paramModel = new Reason();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_REASON + " WHERE " + KEY_CATEGORY_REASON + " = ? and " + KEY_NAME_REASON + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{param, nameReason});
+
+        if (cursor.moveToFirst()) {
+//            do {
+            paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_REASON_BE)));
+            paramModel.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_REASON)));
+            paramModel.setCategory(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CATEGORY_REASON)));
+            paramModel.setIs_photo(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PHOTO)));
+            paramModel.setIs_freetext(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_FREE_TEXT)));
+            paramModel.setIs_barcode(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_BARCODE)));
+            paramModel.setIs_signature(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SIGNATURE)));
+//                arrayList.add(paramModel);
+//            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return paramModel;
     }
 
     public List<Customer> getAllNonRouteCustomer() {
@@ -2674,6 +3130,51 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public int getCountCheckInVisitNonRoute() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE (" + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT
+                + " or " + KEY_STATUS + " = " + Constants.PAUSE_VISIT
+                + " or " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT
+                + ") and " + KEY_IS_ROUTE + " = 1 ";
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountCheckInVisit() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT;
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountCheckInNoo() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT;
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
     }
 
     public int getCountRouteCustomer(boolean allRoute) {
@@ -2725,7 +3226,7 @@ public class Database extends SQLiteOpenHelper {
     public List<String> getUom(int idMat) {
         List<String> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT " + KEY_UOM_ID + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ?";
+        String selectQuery = "SELECT " + KEY_UOM_ID + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(idMat)});
@@ -2831,12 +3332,12 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         selectQuery = "select * from " + TABLE_MASTER_DAERAH_TINGKAT
-                + " where " + KEY_KODE_POS + " = ? "
+//                + " where " + KEY_KODE_POS + " = ? "
 //                + KEY_NAME_KECAMATAN + " like ? and "
 //                + KEY_NAME_KOTA_KABUPATEN + " like ? and "
 //                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_ID_DESA_KELURAHAN;
-        cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(daerahTingkat.getKode_pos())});
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -2871,7 +3372,7 @@ public class Database extends SQLiteOpenHelper {
 //                + KEY_NAME_PROVINSI + " like ? "
                 + " group by " + KEY_ID_KECAMATAN;
 
-        cursor = db.rawQuery(selectQuery,null);
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -3018,17 +3519,188 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public VisitSalesman getVisitSalesmanNoo(Customer request) {
+        VisitSalesman result = new VisitSalesman();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_VISIT_SALESMAN_NOO + " WHERE " + KEY_ID_NOO_DB + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.getId()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                result = new VisitSalesman();
+                result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT_SALESMAN_DB)));
+                result.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                result.setIdSalesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
+                result.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                result.setCheckInTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_IN_TIME)));
+                result.setCheckOutTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_OUT_TIME)));
+                result.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                result.setResumeTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESUME_TIME)));
+                result.setPauseTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PAUSE_TIME)));
+                result.setLatCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_IN)));
+                result.setLongCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_IN)));
+                result.setLatCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_OUT)));
+                result.setLongCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_OUT)));
+                result.setInside(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)) != 0);
+                result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
+                result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
+                result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
+                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
+                result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
+                result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
+                result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
+                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
+                result.setPhotoCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_CHECK_OUT_REASON)));
+            }
+        }
+        cursor.close();
+        return result;
+    }
+
+    public VisitSalesman getVisitSalesman(Customer request) {
+        VisitSalesman result = new VisitSalesman();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_VISIT_SALESMAN + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.getId()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                result = new VisitSalesman();
+                result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT_SALESMAN_DB)));
+                result.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                result.setIdSalesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
+                result.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                result.setCheckInTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_IN_TIME)));
+                result.setCheckOutTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_OUT_TIME)));
+                result.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                result.setResumeTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESUME_TIME)));
+                result.setPauseTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PAUSE_TIME)));
+                result.setLatCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_IN)));
+                result.setLongCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_IN)));
+                result.setLatCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_OUT)));
+                result.setLongCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_OUT)));
+                result.setInside(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)) != 0);
+                result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
+                result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
+                result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
+                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
+                result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
+                result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
+                result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
+                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
+                result.setPhotoCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_CHECK_OUT_REASON)));
+            }
+        }
+        cursor.close();
+        return result;
+    }
+
     //update
+    public void updateVisit(VisitSalesman param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        switch (param.getStatus()) {
+            case Constants.PAUSE_VISIT:
+                values.put(KEY_PAUSE_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
+                values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
+                values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
+                values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
+                break;
+            case Constants.CHECK_IN_VISIT:
+                values.put(KEY_RESUME_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                break;
+            case Constants.CHECK_OUT_VISIT:
+                values.put(KEY_CHECK_OUT_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
+                values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
+                values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
+                values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
+                values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
+                values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
+                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
+                break;
+        }
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_VISIT_SALESMAN, values, KEY_CUSTOMER_ID + " = ? ", new String[]{param.getCustomerId()});
+        //db.close();
+    }
+
+    public void updateVisitNoo(VisitSalesman param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        switch (param.getStatus()) {
+            case Constants.PAUSE_VISIT:
+                values.put(KEY_PAUSE_TIME, param.getPauseTime());
+                values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
+                values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
+                values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
+                values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
+                values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
+                break;
+            case Constants.CHECK_IN_VISIT:
+                values.put(KEY_RESUME_TIME, param.getResumeTime());
+                break;
+            case Constants.CHECK_OUT_VISIT:
+                values.put(KEY_CHECK_OUT_TIME, param.getResumeTime());
+                values.put(KEY_LAT_CHECK_OUT, param.getResumeTime());
+                values.put(KEY_LONG_CHECK_OUT, param.getResumeTime());
+                values.put(KEY_INSIDE_CHECK_OUT, param.getResumeTime());
+                values.put(KEY_ID_CHECK_OUT_REASON, param.getResumeTime());
+                values.put(KEY_NAME_CHECK_OUT_REASON, param.getResumeTime());
+                values.put(KEY_DESC_CHECK_OUT_REASON, param.getResumeTime());
+                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getResumeTime());
+                break;
+        }
+
+        db.update(TABLE_VISIT_SALESMAN_NOO, values, KEY_ID_NOO_DB + " = ? ", new String[]{param.getCustomerId()});
+        //db.close();
+    }
+
+    public void updateStatusOutletNoo(Customer param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
+
+    public void updateStatusOutletVisit(Customer param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_CUSTOMER, values, KEY_ID_CUSTOMER_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
+
     public void updateStockRequestVerification(StockRequest param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_IS_VERIF, param.isIsverif());
+        values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_SYNC, param.isSync());
+        values.put(KEY_IS_SYNC, param.getIs_sync());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_UPDATED_BY, username);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         db.update(TABLE_STOCK_REQUEST_HEADER, values, KEY_ID_STOCK_REQUEST_HEADER_DB + " = ?",
                 new String[]{param.getIdHeader()});
@@ -3039,11 +3711,11 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_IS_UNLOADING, param.isIsunloading());
-        values.put(KEY_IS_SYNC, param.isSync());
+        values.put(KEY_IS_UNLOADING, param.getIs_unloading());
+        values.put(KEY_IS_SYNC, param.getIs_sync());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_UPDATED_BY, username);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         db.update(TABLE_STOCK_REQUEST_HEADER, values, KEY_ID_STOCK_REQUEST_HEADER_DB + " = ?",
                 new String[]{param.getIdHeader()});
@@ -3058,7 +3730,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_SIGN, param.getSignature());
         values.put(KEY_IS_SYNC, param.getIs_sync());
         values.put(KEY_UPDATED_BY, username);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_6));
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         db.update(TABLE_INVOICE_HEADER, values, KEY_ID_INVOICE_HEADER_DB + " = ?",
                 new String[]{param.getIdHeader()});
@@ -3070,6 +3742,18 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_STOCK_REQUEST_HEADER); //+ " WHERE " + KEY_SHIPMENT_CATEGORY + " = \'" + type + "\'");
         //db.close();
+    }
+
+    public void deleteStoreCheck(Map header) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_STORE_CHECK, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ",new String[]{header.get("date").toString(), header.get("id_customer").toString()});
+        db.close();
+    }
+
+    public void deleteReturn(Map header) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_RETURN, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ",new String[]{header.get("date").toString(), header.get("id_customer").toString()});
+        db.close();
     }
 
     public void deleteStockRequestDetail() {

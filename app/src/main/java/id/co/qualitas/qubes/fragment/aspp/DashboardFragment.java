@@ -15,6 +15,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.User;
 
 public class DashboardFragment extends BaseFragment {
@@ -92,11 +93,25 @@ public class DashboardFragment extends BaseFragment {
         txtRoute.setText(Helper.getTodayRoute());
         txtName.setText(Helper.isEmpty(user.getFull_name(), "-"));
         txtDriver.setText(Helper.isEmpty(user.getDriver_name(), "-"));
-        txtJabatanArea.setText("");
+        txtJabatanArea.setText(getDepoRegion());
 
         txtAsset.setText(format.format(database.getCountRouteCustomer(true)));//all
         txtAssetRoute.setText(format.format(database.getCountRouteCustomer(false)));//route
         txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
+    }
+
+    private String getDepoRegion() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + String.valueOf(depoRegion.getId_depo()) + " - " + depoRegion.getDepo_name() + " (" + String.valueOf(depoRegion.getId_region()) + " - " + depoRegion.getRegion_name()+ ")";
+                if (i != user.getDepoRegionList().size() - 1) {
+                    depo = depo.concat("\n");
+                }
+            }
+        }
+        return depo;
     }
 
 }

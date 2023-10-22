@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -45,13 +46,14 @@ import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class DailySalesmanActivity extends BaseActivity {
     private TextView txtOutlet, txtTypeOutlet, txtStatus;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
-    private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn;
+    private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
     private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
     private RecyclerView rvPromo, rvOutstandingFaktur, rvDCTOutlet;
@@ -73,6 +75,7 @@ public class DailySalesmanActivity extends BaseActivity {
     public String checkInTime, pauseTime, curTime, continueTime, timeDuration;
     public boolean pause = false;
     private Customer outletHeader;
+    private VisitSalesman visitSales;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -98,17 +101,26 @@ public class DailySalesmanActivity extends BaseActivity {
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            List<String> groupList = new ArrayList<>();
-            groupList.add("01 - Stock Masih Cukup");
-            groupList.add("02 - Beli dari luar");
-            groupList.add("03 - Tukar Faktur");
-            groupList.add("04 - Toko Tutup");
-            groupList.add("05 - Harga Tidak Cocok");
+            List<Reason> reasonList = new ArrayList<>();
+            reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_NOT_BUY));
 
             txtTitle.setText("Reason Not Buy");
 
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(this, groupList, (nameItem, adapterPosition) -> {
+            FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
                 alertDialog.dismiss();
+                outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
+                database.updateStatusOutletVisit(outletHeader, user.getUsername());
+
+                visitSales.setStatus(Constants.CHECK_OUT_VISIT);
+                visitSales.setLatCheckOut(0);
+                visitSales.setLongCheckOut(0);
+                visitSales.setInsideCheckOut(true);
+                visitSales.setIdCheckOutReason(String.valueOf(reason.getId()));
+                visitSales.setNameCheckOutReason(reason.getDescription());
+                visitSales.setDescCheckOutReason("Desccccc");
+                visitSales.setPhotoCheckOutReason(null);
+                database.updateVisit(visitSales, user.getUsername());
+                SessionManagerQubes.setOutletHeader(outletHeader);
             });
 
             LinearLayoutManager mManager = new LinearLayoutManager(this);
@@ -152,15 +164,11 @@ public class DailySalesmanActivity extends BaseActivity {
 //            groupList.add("P3 - Toko Pindah");
 
             List<Reason> reasonList = new ArrayList<>();
-            reasonList.addAll(database.getAllReason("Pause"));
+            reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_PAUSE));
 
             txtTitle.setText("Reason Pause");
 
             FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (nameItem, adapterPosition) -> {
-//                spnBankTransfer.setText(nameItem);
-                outletHeader.setStatus(Constants.PAUSE_VISIT);
-                SessionManagerQubes.setOutletHeader(outletHeader);
-
 //                if (Helper.getItemParam(Constants.PAUSE) != null) {
 //                    Helper.setItemParam(Constants.PLAY, "1");
 //                    Helper.removeItemParam(Constants.PAUSE);
@@ -168,9 +176,11 @@ public class DailySalesmanActivity extends BaseActivity {
 //                    Helper.setItemParam(Constants.PAUSE, "1");
 //                    Helper.removeItemParam(Constants.PLAY);
 //                }
-                if (pause) {
+                if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
                     resumeTimer();
                 } else {
+                    visitSales.setIdPauseReason(String.valueOf(nameItem.getId()));
+                    visitSales.setNamePauseReason(nameItem.getDescription());
                     pauseTimer();
                 }
                 alertDialog.dismiss();
@@ -249,41 +259,59 @@ public class DailySalesmanActivity extends BaseActivity {
     private void setData() {
         if (SessionManagerQubes.getOutletHeader() != null) {
             outletHeader = SessionManagerQubes.getOutletHeader();
+
+//            if (outletHeader.isNoo()) {
+//                visitSales = database.getVisitSalesmanNoo(outletHeader);
+//            } else {
+            visitSales = database.getVisitSalesman(outletHeader);
+//            }
+
+            if (visitSales != null) {
+                txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
+                txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
+                txtSisaKreditLimit.setText(format.format(outletHeader.getSisaCreditLimit()));
+                txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
+                txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
+                txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
+                String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
+                String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
+                txtTypeOutlet.setText(idTypeCust + " - " + nameTypeCust);
+
+
+                fakturList = new ArrayList<>();
+                dctOutletList = new ArrayList<>();
+                promoList = new ArrayList<>();
+
+                if (!outletHeader.isNoo()) {
+                    promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
+
+                    fakturList.add(new Material("Drink", 1));
+                    fakturList.add(new Material("Redbull", 0));
+                    fakturList.add(new Material("Drink UC", 1));
+                    fakturList.add(new Material("Battery", 1));
+
+                    dctOutletList.add(new Material("Kratingdaeng", 1));
+                    dctOutletList.add(new Material("Redbull", 0));
+                    dctOutletList.add(new Material("Vitamin", 2));
+                    dctOutletList.add(new Material("Water", 0));
+                    dctOutletList.add(new Material("Bat CZ", 1));
+                    dctOutletList.add(new Material("Bat ALK", 0));
+                }
+
+                if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
+                    visitSales.setResumeTime(null);
+                } else if (outletHeader.getStatus() == Constants.CHECK_OUT_VISIT) {
+                    llPause.setVisibility(View.GONE);
+                    llTimer.setVisibility(View.GONE);
+                }
+            } else {
+                setToast("Gagal mengambil data");
+                onBackPressed();
+            }
         } else {
             setToast("Gagal mengambil data");
             onBackPressed();
         }
-
-        txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
-        txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
-        txtSisaKreditLimit.setText(format.format(outletHeader.getLimit_kredit()));
-        txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
-        txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
-        txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
-        String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
-        String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
-        txtTypeOutlet.setText(idTypeCust + " - " + nameTypeCust);
-
-        fakturList = new ArrayList<>();
-        fakturList.add(new Material("Drink", 1));
-        fakturList.add(new Material("Redbull", 0));
-        fakturList.add(new Material("Drink UC", 1));
-        fakturList.add(new Material("Battery", 1));
-
-        dctOutletList = new ArrayList<>();
-        dctOutletList.add(new Material("Kratingdaeng", 1));
-        dctOutletList.add(new Material("Redbull", 0));
-        dctOutletList.add(new Material("Vitamin", 2));
-        dctOutletList.add(new Material("Water", 0));
-        dctOutletList.add(new Material("Bat CZ", 1));
-        dctOutletList.add(new Material("Bat ALK", 0));
-
-        promoList = new ArrayList<>();
-        promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
-
-//        if (PARAM_STATUS_OUTLET.equals(Constants.PAUSE)) {
-//            checkInOutRequest.setContinueTime(null);
-//        }
     }
 
     private void initialize() {
@@ -315,6 +343,7 @@ public class DailySalesmanActivity extends BaseActivity {
         txtTypeOutlet = findViewById(R.id.txtTypeOutlet);
         txtOutlet = findViewById(R.id.txtOutlet);
         llPause = findViewById(R.id.llPause);
+        llTimer = findViewById(R.id.llTimer);
         imgBack = findViewById(R.id.imgBack);
         llStoreCheck = findViewById(R.id.llStoreCheck);
         llOrder = findViewById(R.id.llOrder);
@@ -333,9 +362,18 @@ public class DailySalesmanActivity extends BaseActivity {
 
     private void pauseTimer() {
         timerValue.stop();
-//            OutletResponse pause = new OutletResponse();
-//            pause.setIdOutlet(outletResponse.getIdOutlet());
-//            pause.setTimer(String.valueOf(timerValue.getBase()));
+
+        outletHeader.setStatus(Constants.PAUSE_VISIT);
+        database.updateStatusOutletVisit(outletHeader, user.getUsername());
+
+        visitSales.setTimer(String.valueOf(timerValue.getBase()));
+        visitSales.setStatus(Constants.PAUSE_VISIT);
+        database.updateVisit(visitSales, user.getUsername());
+        SessionManagerQubes.setOutletHeader(outletHeader);
+
+//        OutletResponse pause = new OutletResponse();
+//        pause.setIdOutlet(outletResponse.getIdOutlet());
+//        pause.setTimer(String.valueOf(timerValue.getBase()));
 
         txtStatus.setText("Resume");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
@@ -349,6 +387,14 @@ public class DailySalesmanActivity extends BaseActivity {
         formatResumeTime();
         timerValue.start();
         Helper.resume = false;
+
+        outletHeader.setStatus(Constants.CHECK_IN_VISIT);
+        database.updateStatusOutletVisit(outletHeader, user.getUsername());
+
+        visitSales.setTimer(String.valueOf(timerValue.getBase()));
+        visitSales.setStatus(Constants.CHECK_IN_VISIT);
+        database.updateVisit(visitSales, user.getUsername());
+        SessionManagerQubes.setOutletHeader(outletHeader);
 
         txtStatus.setText("Pause");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
@@ -388,12 +434,17 @@ public class DailySalesmanActivity extends BaseActivity {
 
     private void playTimerBy(long time) {
         timerValue.setBase(time);
-        if (!PARAM_STATUS_OUTLET.equals(Constants.PAUSE)
-                && !PARAM_STATUS_OUTLET.equals(Constants.FINISHED)) {
+        if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
             timerValue.start();
         } else {
             timerValue.stop();
         }
+//        if (!PARAM_STATUS_OUTLET.equals(Constants.PAUSE)
+//                && !PARAM_STATUS_OUTLET.equals(Constants.FINISHED)) {
+//            timerValue.start();
+//        } else {
+//            timerValue.stop();
+//        }
     }
 
     private void setTimerValue() {
@@ -408,40 +459,40 @@ public class DailySalesmanActivity extends BaseActivity {
             dCurrent = null;
         }
 
-//        if (checkInOutRequest.getCheckInTime() != null) {
-//            try {
-//                String date = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getCheckInTime());
-//                checkInTime = getTimeFromDate(date);
-//            } catch (Exception ignored) {
-//                checkInTime = null;
-//            }
-//        } else {
-        checkInTime = null;
-//        }
+        if (visitSales.getCheckInTime() != null) {
+            try {
+                String date = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getCheckInTime());
+                checkInTime = getTimeFromDate(date);
+            } catch (Exception ignored) {
+                checkInTime = null;
+            }
+        } else {
+            checkInTime = null;
+        }
 
-//        if (checkInOutRequest.getPauseTime() != null) {
-//            try {
-//                String pauseDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getPauseTime());
-//                pauseTime = getTimeFromDate(pauseDate);
-//            } catch (Exception ignored) {
-//                pauseTime = null;
-//            }
-//        } else {
-        pauseTime = null;
-//        }
+        if (visitSales.getPauseTime() != null) {
+            try {
+                String pauseDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getPauseTime());
+                pauseTime = getTimeFromDate(pauseDate);
+            } catch (Exception ignored) {
+                pauseTime = null;
+            }
+        } else {
+            pauseTime = null;
+        }
 
-//        if (checkInOutRequest.getContinueTime() != null) {
-//            try {
-//                String continueDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(checkInOutRequest.getContinueTime());
-//                continueTime = getTimeFromDate(continueDate);
-//            } catch (Exception ignored) {
-//                continueTime = null;
-//                dResume = null;
-//            }
-//        } else {
-        continueTime = null;
-        dResume = null;
-//        }
+        if (visitSales.getResumeTime() != null) {
+            try {
+                String continueDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getResumeTime());
+                continueTime = getTimeFromDate(continueDate);
+            } catch (Exception ignored) {
+                continueTime = null;
+                dResume = null;
+            }
+        } else {
+            continueTime = null;
+            dResume = null;
+        }
 
         try {
             if (checkInTime != null) {
@@ -459,12 +510,11 @@ public class DailySalesmanActivity extends BaseActivity {
         //in milliseconds
         long elapseTimeNow = dCheckIn != null ? dCurrent.getTime() - dCheckIn.getTime() : 0;
 
-        switch (PARAM_STATUS_OUTLET) {
-            case Constants.CHECK_IN:
+        switch (outletHeader.getStatus()) {
+            case Constants.CHECK_IN_VISIT:
                 playTimerBy(SystemClock.elapsedRealtime() - elapseTimeNow);
                 break;
-            case Constants.PAUSE:
-            case Constants.RESUME:
+            case Constants.PAUSE_VISIT:
                 if (timeDuration != null) {
                     try {
                         playTimerBy(SystemClock.elapsedRealtime() - (Long.parseLong(timeDuration) + (dResume != null ? dCurrent.getTime() - dResume.getTime() : 0)));
@@ -472,7 +522,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     }
                 }
                 break;
-            case Constants.FINISHED:
+            case Constants.CHECK_OUT_VISIT:
                 if (timeDuration != null) {
                     try {
                         playTimerBy(SystemClock.elapsedRealtime() - Long.parseLong(timeDuration));

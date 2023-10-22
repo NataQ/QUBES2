@@ -86,15 +86,16 @@
                 android:orientation="vertical"
                 android:padding="@dimen/padding_inner">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_weight="1"
                         android:orientation="vertical">
 
                         <TextView
@@ -122,34 +123,14 @@
                             <TextView
                                 android:id="@+id/txtTypeOutlet"
                                 style="@style/TextView_Small"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:layout_weight="1"
                                 android:text="Type Outlet"
                                 android:textColor="@color/gray8_aspp" />
+
                         </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/bg_timer"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        android:paddingStart="16dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="16dp"
-                        android:paddingBottom="5dp">
-
-                        <Chronometer
-                            android:id="@+id/timerValue"
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/gray8_aspp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -186,7 +167,29 @@
 
                     </LinearLayout>
 
-                </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_timer"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="5dp">
+
+                    <Chronometer
+                        android:id="@+id/timerValue"
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/gray8_aspp" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -433,7 +436,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="Sukirno"
+                                android:text=""
                                 android:textColor="@color/black_aspp" />
 
                         </LinearLayout>
@@ -460,7 +463,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="08123456789"
+                                android:text=""
                                 android:textColor="@color/black_aspp" />
 
                         </LinearLayout>
@@ -487,7 +490,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="924,000"
+                                android:text=""
                                 android:textColor="@color/orange_aspp" />
 
                         </LinearLayout>
@@ -514,7 +517,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="1,075,000"
+                                android:text=""
                                 android:textColor="@color/orange_aspp" />
 
                         </LinearLayout>
@@ -541,7 +544,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="3174254866632001"
+                                android:text=""
                                 android:textColor="@color/black_aspp" />
 
                         </LinearLayout>
@@ -568,7 +571,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2dp"
                                 android:layout_weight=".75"
-                                android:text="3174.2548.6663.2001"
+                                android:text=""
                                 android:textColor="@color/black_aspp" />
 
                         </LinearLayout>

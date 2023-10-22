@@ -252,14 +252,29 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void gotoConfirmPhoto(Uri uri) {
-        Intent resultIntent;
+        Intent resultIntent = null;
 //        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
         ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
-        if (imageType.getPosImage() > 3) {
-            resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
-        } else {
-            resultIntent = new Intent(CameraActivity.this, CreateNooActivity.class);
+        switch (imageType.getPosImage()){
+            case 1:
+            case 2:
+            case 3:
+                resultIntent = new Intent(CameraActivity.this, CreateNooActivity.class);
+                break;
+            case 4:
+            case 5:
+            case 6:
+                resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
+                break;
+            case 7:
+                resultIntent = new Intent(CameraActivity.this, ReturnAddActivity.class);
+                break;
         }
+//        if (imageType.getPosImage() > 3) {
+//            resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
+//        } else {
+//            resultIntent = new Intent(CameraActivity.this, CreateNooActivity.class);
+//        }
 
         if (uri != null) {
             resultIntent.putExtra(Constants.OUTPUT_CAMERA, uri);

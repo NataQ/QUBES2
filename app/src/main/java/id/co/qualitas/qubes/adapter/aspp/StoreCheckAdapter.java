@@ -37,6 +37,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
     private ArrayAdapter<String> spn1Adapter;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    private ArrayAdapter<String> mAdapter;
 
     public StoreCheckAdapter(StoreCheckActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -135,11 +136,25 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
 
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
-
         holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(format.format(detail.getQty()));
-        mContext.setSpinnerData(listSpinner, holder.spinnerUom);
+
+        mAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        mAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mAdapter.addAll(listSpinner);
+        holder.spinnerUom.setAdapter(mAdapter);
+        int spinnerPosition = mAdapter.getPosition(detail.getUom());
+        holder.spinnerUom.setSelection(spinnerPosition);
+
+//        mContext.setSpinnerData(listSpinner, holder.spinnerUom);
 
         holder.imgDelete.setOnClickListener(v -> {
             mList.remove(holder.getAbsoluteAdapterPosition());
