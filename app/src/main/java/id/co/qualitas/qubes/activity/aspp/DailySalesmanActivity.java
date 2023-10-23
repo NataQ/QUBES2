@@ -211,8 +211,13 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llStoreCheck.setOnClickListener(v -> {
-            Intent intent = new Intent(this, StoreCheckActivity.class);
-            startActivity(intent);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                Intent intent = new Intent(this, StoreCheckActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, StoreCheckDetailActivity.class);
+                startActivity(intent);
+            }
         });
 
         llOrder.setOnClickListener(v -> {

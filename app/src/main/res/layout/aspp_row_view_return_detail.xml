@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/card_view"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:layout_margin="8dp"
-    card_view:cardCornerRadius="4dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,198 +11,216 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
+        <TextView
+            android:id="@+id/txtNo"
+            style="@style/TextView_Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1."
+            android:textAlignment="center"
+            android:textColor="@color/black_aspp"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Group" />
-
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterialDisable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    android:hint="Product"
+                    app:hintAnimationEnabled="true">
 
-                <TextView
-                    android:id="@+id/txtGroupName"
+                    <EditText
+                        android:id="@+id/edtProduct"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:padding="0dp"
+                        android:textColor="@color/black_aspp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterialDisable"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight=".2"
+                    android:hint="Qty"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
+
+                    <EditText
+                        android:id="@+id/edtQty"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:inputType="numberDecimal"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterialDisable"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight=".3"
+                    android:hint="@string/uom"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
+
+                    <EditText
+                        android:id="@+id/autoCompleteUom"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/TextInputLayoutMaterialDisable"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:hint="Expired Date"
+                    app:hintAnimationEnabled="true">
+
+                    <EditText
+                        android:id="@+id/edtExpDate"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:inputType="date"
+                        android:padding="0dp"
+                        android:textColor="@color/black_aspp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpinnerInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight=".3"
+                    android:hint="Condition"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
+
+                    <EditText
+                        android:id="@+id/autoCompleteCondition"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/SpinnerInputLayoutMaterial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight=".4"
-                    android:text="Product" />
+                    android:hint="Reason"
+                    android:padding="3dp"
+                    app:hintAnimationEnabled="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+                    <EditText
+                        android:id="@+id/autoCompleteReason"
+                        style="@style/TextView_Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusableInTouchMode="false"
+                        android:padding="3dp"
+                        android:textColor="@color/black_aspp" />
 
-                <TextView
-                    android:id="@+id/txtMaterial"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/llReasonDesc"
+                style="@style/TextInputLayoutMaterialDisable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_marginBottom="5dp"
+                android:hint="Reason Description"
+                android:visibility="gone"
+                app:hintAnimationEnabled="true">
 
-                <TextView
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/edtDescReason"
+                    style="@style/TextView_Small"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Reason" />
+                    android:focusableInTouchMode="false"
+                    android:padding="0dp"
+                    android:textColor="@color/black_aspp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/txtReason"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:text="Rusak"
-                    android:padding="8dp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/llPhoto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:background="@drawable/bg_add_image_alert"
+                android:minHeight="100dp"
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:visibility="gone">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".4"
-                    android:text="Quantity" />
-
-                <TextView
+                <ImageView
+                    android:id="@+id/img"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".6"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/txtQty1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="BTL" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/txtQty2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="SLOP" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/txtQty3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="0"
-                            android:padding="8dp"
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_weight=".3"
-                            android:text="BTL" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
+                    android:layout_height="80dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp" />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/gray9_aspp" />
+</LinearLayout>
