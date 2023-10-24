@@ -291,6 +291,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox_alert"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -317,6 +318,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox_alert"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -537,6 +539,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="numberDecimal"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -563,6 +566,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -588,6 +592,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -666,6 +671,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox_alert"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -692,6 +698,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="numberDecimal"
                             android:background="@drawable/editbox_alert"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -747,6 +754,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -773,6 +781,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />
@@ -799,6 +808,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:inputType="text"
                             android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:textColor="@color/black_aspp" />

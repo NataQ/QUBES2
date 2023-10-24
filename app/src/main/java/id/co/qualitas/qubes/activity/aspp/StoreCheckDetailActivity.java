@@ -71,7 +71,7 @@ public class StoreCheckDetailActivity extends BaseActivity {
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
 
         mList = new ArrayList<>();
-        mList.addAll(database.getAllStoreCheck());
+        mList.addAll(database.getAllStoreCheck(SessionManagerQubes.getOutletHeader().getId()));
         if (mList != null && mList.size() != 0) {
             today = mList.get(0).getDate();
             txtDate.setText(Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, today));

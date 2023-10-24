@@ -244,7 +244,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    int qty = Integer.parseInt(s.toString().replace(".", "").replace(",", ""));
                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                 } else {
                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);

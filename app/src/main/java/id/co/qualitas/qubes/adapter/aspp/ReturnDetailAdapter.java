@@ -1,20 +1,34 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.ReturnDetailActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapter.Holder> implements Filterable {
     private List<Material> mList;
@@ -22,6 +36,9 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
     private LayoutInflater mInflater;
     private ReturnDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
+    private Reason reasonDetail;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public ReturnDetailAdapter(ReturnDetailActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -55,7 +72,7 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
                     for (Material row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -77,17 +94,26 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtGroupName, txtMaterial, txtQty1, txtQty2, txtQty3, txtReason;
+        EditText edtProduct, edtQty, edtUom, edtExpDate, edtCondition, edtReason, edtDescReason;
+        RelativeLayout llPhoto;
+        ImageView img;
+        TextView txtNo;
+        TextInputLayout llReasonDesc;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtGroupName = itemView.findViewById(R.id.txtGroupName);
-            txtMaterial = itemView.findViewById(R.id.txtMaterial);
-            txtReason = itemView.findViewById(R.id.txtReason);
-            txtQty3 = itemView.findViewById(R.id.txtQty3);
-            txtQty1 = itemView.findViewById(R.id.txtQty1);
-            txtQty2 = itemView.findViewById(R.id.txtQty2);
+            llReasonDesc = itemView.findViewById(R.id.llReasonDesc);
+            txtNo = itemView.findViewById(R.id.txtNo);
+            edtProduct = itemView.findViewById(R.id.edtProduct);
+            edtQty = itemView.findViewById(R.id.edtQty);
+            edtReason = itemView.findViewById(R.id.edtReason);
+            edtCondition = itemView.findViewById(R.id.edtCondition);
+            edtUom = itemView.findViewById(R.id.edtUom);
+            edtExpDate = itemView.findViewById(R.id.edtExpDate);
+            edtDescReason = itemView.findViewById(R.id.edtDescReason);
+            llPhoto = itemView.findViewById(R.id.llPhoto);
+            img = itemView.findViewById(R.id.img);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -106,14 +132,43 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtGroupName.setText(detail.getKlasifikasi());
-        holder.txtMaterial.setText(detail.getMaterialCode());
-        holder.txtQty1.setText(String.valueOf(detail.getQty()));
-        holder.txtQty2.setText(String.valueOf(detail.getQty()));
-        holder.txtQty3.setText(String.valueOf(detail.getQty()));
-//        holder.txtReason.setText();
+        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
+        String productId = String.valueOf(detail.getId());
+        holder.edtProduct.setText(productId + " - " + productName);
+        holder.edtQty.setText(format.format(detail.getQty()));
+        holder.edtUom.setText(Helper.isEmpty(detail.getUom(), ""));
+        holder.edtCondition.setText(Helper.isEmpty(detail.getCondition(), ""));
+        holder.edtReason.setText(Helper.isEmpty(detail.getNameReason(), ""));
+        Utils.loadImageFit(mContext, detail.getPhotoReason(), holder.img);
 
+        if (!Helper.isNullOrEmpty(detail.getExpiredDate())) {
+            String expDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getExpiredDate());
+            holder.edtExpDate.setText(expDate);
+        }
+        if (!Helper.isNullOrEmpty(detail.getNameReason())) {
+            reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, detail.getNameReason());
+            if (reasonDetail.getIs_freetext() == 1) {
+                holder.llReasonDesc.setVisibility(View.VISIBLE);
+            } else {
+                holder.llReasonDesc.setVisibility(View.GONE);
+            }
+
+            if (reasonDetail.getIs_photo() == 1) {
+                holder.llPhoto.setVisibility(View.VISIBLE);
+            } else {
+                holder.llPhoto.setVisibility(View.GONE);
+            }
+        } else {
+            holder.llReasonDesc.setVisibility(View.GONE);
+            holder.llPhoto.setVisibility(View.GONE);
+        }
+
+        holder.llPhoto.setOnClickListener(v -> {
+            mContext.openDialogPhoto(detail, holder.getAbsoluteAdapterPosition());
+        });
     }
 
     @Override
@@ -123,6 +178,14 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
 
     public interface OnAdapterListener {
         void onAdapterClick(Material Material);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }
 

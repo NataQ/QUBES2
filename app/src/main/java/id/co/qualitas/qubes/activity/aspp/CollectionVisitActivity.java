@@ -37,10 +37,14 @@ public class CollectionVisitActivity extends BaseActivity {
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
             SessionManagerQubes.setCollectionHeader(header);
             SessionManagerQubes.setCollectionSource(2);
-//            Intent intent = new Intent(this, CollectionFormActivity.class);
-//            startActivity(intent);
-            Intent intent = new Intent(this, CollectionDetailActivity.class);
-            startActivity(intent);
+
+            if (header.getTotal_paid() == header.getAmount()) {
+                Intent intent = new Intent(this, CollectionDetailActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(this, CollectionFormActivity.class);
+                startActivity(intent);
+            }
         });
 
         recyclerView.setAdapter(mAdapter);
@@ -56,9 +60,7 @@ public class CollectionVisitActivity extends BaseActivity {
 
     private void initData() {
         mList = new ArrayList<>();
-        mList.add(new Invoice("DKA495486", "TOKO SIDIK HALIM", "0GV43", 884736, 0, "1 June 2023", true));
-        mList.add(new Invoice("DKA496933", "TOKO SIDIK HALIM", "0GV43", 39294, 0, "2 June 2023", false));
-        mList.add(new Invoice("DKA402541", "TOKO SIDIK HALIM", "0WJ42", 9363600, 0, "4 June 2023", true));
+        mList.addAll(database.getAllInvoiceCustomer(SessionManagerQubes.getOutletHeader().getId()));
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
@@ -66,12 +68,11 @@ public class CollectionVisitActivity extends BaseActivity {
         }
 
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
-        txtTotalPaid.setText(Helper.toRupiahFormat(String.valueOf(totalPaid)));
-        txtTotalInvoice.setText(String.valueOf(totalInvoice));
+        txtTotalPaid.setText("Rp. " + format.format(totalPaid));
+        txtTotalInvoice.setText(format.format(totalInvoice));
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         txtDate = findViewById(R.id.txtDate);

@@ -95,9 +95,23 @@ public class DashboardFragment extends BaseFragment {
         txtDriver.setText(Helper.isEmpty(user.getDriver_name(), "-"));
         txtJabatanArea.setText(getDepoRegion());
 
-        txtAsset.setText(format.format(database.getCountRouteCustomer(true)));//all
+        int today = database.getCountRouteCustomer(true);
+        int nonRoute = database.getCountNonRoute();
+        txtAsset.setText(format.format(today + nonRoute));//all
         txtAssetRoute.setText(format.format(database.getCountRouteCustomer(false)));//route
         txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
+
+        txtECS.setText(format.format(database.getECS()));
+        txtAT.setText(format.format(0));
+
+        txtTotalInvoiceAmount.setText(format.format(database.getTotalInvoiceAmount()));
+        txtPaymentAmount.setText(format.format(database.getTotalPaymentAmount()));
+        txtOutstandingAmount.setText(format.format(database.getTotalOutstandingAmount()));
+
+        txtCallRute.setText(format.format(database.getCallRoute(1)));
+        txtCallNonRute.setText(format.format(database.getCallRoute(2)));
+        txtTotalCall.setText(format.format(database.getCallRoute(3)));
+        txtNonVisit.setText(format.format(database.getCallRoute(4)));
     }
 
     private String getDepoRegion() {
@@ -105,7 +119,7 @@ public class DashboardFragment extends BaseFragment {
         if (user.getDepoRegionList() != null) {
             for (int i = 0; i < user.getDepoRegionList().size(); i++) {
                 DepoRegion depoRegion = user.getDepoRegionList().get(i);
-                depo = depo + String.valueOf(depoRegion.getId_depo()) + " - " + depoRegion.getDepo_name() + " (" + String.valueOf(depoRegion.getId_region()) + " - " + depoRegion.getRegion_name()+ ")";
+                depo = depo + String.valueOf(depoRegion.getId_depo()) + " - " + depoRegion.getDepo_name() + " (" + String.valueOf(depoRegion.getId_region()) + " - " + depoRegion.getRegion_name() + ")";
                 if (i != user.getDepoRegionList().size() - 1) {
                     depo = depo.concat("\n");
                 }

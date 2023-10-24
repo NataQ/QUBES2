@@ -215,7 +215,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
-            totalAmount = totalAmount + inv.getAmount();
+            totalAmount = totalAmount + (inv.getAmount() - inv.getTotal_paid());
         }
 
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));

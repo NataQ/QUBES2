@@ -1,15 +1,26 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
@@ -18,10 +29,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +57,7 @@ import id.co.qualitas.qubes.fragment.TimerFragment;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Promotion;
@@ -48,6 +65,7 @@ import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class DailySalesmanActivity extends BaseActivity {
     private TextView txtOutlet, txtTypeOutlet, txtStatus;
@@ -56,6 +74,8 @@ public class DailySalesmanActivity extends BaseActivity {
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
     private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
+    private ImageView imgDeleteKTP, imgDeleteNPWP, imgDeleteOutlet;
+    private ImageView imgAddKTP, imgAddNPWP, imgAddOutlet;
     private RecyclerView rvPromo, rvOutstandingFaktur, rvDCTOutlet;
     private CustomerInfoPromoAdapter promoAdapter;
     private CustomerInfoOutstandingFakturAdapter fakturAdapter;
@@ -76,6 +96,20 @@ public class DailySalesmanActivity extends BaseActivity {
     public boolean pause = false;
     private Customer outletHeader;
     private VisitSalesman visitSales;
+    private static final int PERMISSION_REQUEST_CODE = 1;
+    private final static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    public static final int GALLERY_PERM_CODE = 101;
+    public static final int CAMERA_PERM_CODE = 102;
+    public static final int GALLERY_REQUEST_CODE = 105;
+    private ImageType imageType;
+    private String today;
+    private String imagepath;
+    private int typeImage = 0;
+
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -109,7 +143,11 @@ public class DailySalesmanActivity extends BaseActivity {
             FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
                 alertDialog.dismiss();
                 outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
-                database.updateStatusOutletVisit(outletHeader, user.getUsername());
+                if (outletHeader.isNoo()) {
+                    database.updateStatusOutletNoo(outletHeader, user.getUsername());
+                } else {
+                    database.updateStatusOutletVisit(outletHeader, user.getUsername());
+                }
 
                 visitSales.setStatus(Constants.CHECK_OUT_VISIT);
                 visitSales.setLatCheckOut(0);
@@ -231,8 +269,91 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llReturn.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ReturnAddActivity.class);
-            startActivity(intent);
+            if (checkPermission()) {
+                moveReturn();
+            } else {
+                setToast(getString(R.string.pleaseEnablePermission));
+                requestPermission();
+            }
+        });
+
+        llKTP.setOnClickListener(view -> {
+            typeImage = 8;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+//            SessionManagerQubes.setImageType(imageType);
+            openDialogPhoto();
+        });
+
+        llNPWP.setOnClickListener(view -> {
+            typeImage = 9;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            openDialogPhoto();
+        });
+
+        llOutlet.setOnClickListener(view -> {
+            typeImage = 10;
+            imageType.setPosImage(typeImage);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            openDialogPhoto();
+        });
+
+        imgDeleteKTP.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoKTP(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(DailySalesmanActivity.this, null, imgKTP);
+            imgAddKTP.setVisibility(View.VISIBLE);
+            imgDeleteKTP.setVisibility(View.GONE);
+            imgKTP.setVisibility(View.GONE);
+            outletHeader.setPhotoKtp(null);
+            SessionManagerQubes.setOutletHeader(outletHeader);
+            if (outletHeader.isNoo()) {
+                database.updatePhotoNoo(outletHeader, user.getUsername());
+            } else {
+                database.updatePhoto(outletHeader, user.getUsername());
+            }
+        });
+
+        imgDeleteNPWP.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoNPWP(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(DailySalesmanActivity.this, null, imgNPWP);
+            imgAddNPWP.setVisibility(View.VISIBLE);
+            imgDeleteNPWP.setVisibility(View.GONE);
+            imgNPWP.setVisibility(View.GONE);
+            outletHeader.setPhotoNpwp(null);
+            SessionManagerQubes.setOutletHeader(outletHeader);
+            if (outletHeader.isNoo()) {
+                database.updatePhotoNoo(outletHeader, user.getUsername());
+            } else {
+                database.updatePhoto(outletHeader, user.getUsername());
+            }
+        });
+
+        imgDeleteOutlet.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoOutlet(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(DailySalesmanActivity.this, null, imgOutlet);
+            imgAddOutlet.setVisibility(View.VISIBLE);
+            imgDeleteOutlet.setVisibility(View.GONE);
+            imgOutlet.setVisibility(View.GONE);
+            outletHeader.setPhotoOutlet(null);
+            SessionManagerQubes.setOutletHeader(outletHeader);
+            if (outletHeader.isNoo()) {
+                database.updatePhotoNoo(outletHeader, user.getUsername());
+            } else {
+                database.updatePhoto(outletHeader, user.getUsername());
+            }
         });
 
         imgBack.setOnClickListener(v -> {
@@ -242,6 +363,18 @@ public class DailySalesmanActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(DailySalesmanActivity.this);
         });
+    }
+
+    private void moveReturn() {
+        if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+            Intent intent = new Intent(this, ReturnAddActivity.class);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);//for show image from picker
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, ReturnDetailActivity.class);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivity(intent);
+        }
     }
 
     private void setView() {
@@ -264,24 +397,20 @@ public class DailySalesmanActivity extends BaseActivity {
     private void setData() {
         if (SessionManagerQubes.getOutletHeader() != null) {
             outletHeader = SessionManagerQubes.getOutletHeader();
-
-//            if (outletHeader.isNoo()) {
-//                visitSales = database.getVisitSalesmanNoo(outletHeader);
-//            } else {
             visitSales = database.getVisitSalesman(outletHeader);
-//            }
 
             if (visitSales != null) {
                 txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
                 txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
+                txtTotalTagihan.setText(format.format(database.getTotalTagihanCustomer(outletHeader.getId())));
                 txtSisaKreditLimit.setText(format.format(outletHeader.getSisaCreditLimit()));
                 txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
                 txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
                 txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
+
                 String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
                 String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
                 txtTypeOutlet.setText(idTypeCust + " - " + nameTypeCust);
-
 
                 fakturList = new ArrayList<>();
                 dctOutletList = new ArrayList<>();
@@ -289,11 +418,7 @@ public class DailySalesmanActivity extends BaseActivity {
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
-
-                    fakturList.add(new Material("Drink", 1));
-                    fakturList.add(new Material("Redbull", 0));
-                    fakturList.add(new Material("Drink UC", 1));
-                    fakturList.add(new Material("Battery", 1));
+                    fakturList.addAll(database.getOutstandingProductFaktur(outletHeader.getId()));
 
                     dctOutletList.add(new Material("Kratingdaeng", 1));
                     dctOutletList.add(new Material("Redbull", 0));
@@ -333,10 +458,16 @@ public class DailySalesmanActivity extends BaseActivity {
         rvPromo.setHasFixedSize(true);
         imgOutlet = findViewById(R.id.imgOutlet);
         llOutlet = findViewById(R.id.llOutlet);
+        imgAddOutlet = findViewById(R.id.imgAddOutlet);
+        imgDeleteOutlet = findViewById(R.id.imgDeleteOutlet);
         imgNPWP = findViewById(R.id.imgNPWP);
         llNPWP = findViewById(R.id.llNPWP);
+        imgAddNPWP = findViewById(R.id.imgAddNPWP);
+        imgDeleteNPWP = findViewById(R.id.imgDeleteNPWP);
         imgKTP = findViewById(R.id.imgKTP);
         llKTP = findViewById(R.id.llKTP);
+        imgAddKTP = findViewById(R.id.imgAddKTP);
+        imgDeleteKTP = findViewById(R.id.imgDeleteKTP);
         txtNPWP = findViewById(R.id.txtNPWP);
         txtKTP = findViewById(R.id.txtKTP);
         txtTotalTagihan = findViewById(R.id.txtTotalTagihan);
@@ -363,13 +494,62 @@ public class DailySalesmanActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         setTimerValue();
+        if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
+            imageType = new ImageType();
+            imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
+        } else {
+            imageType = new ImageType();
+        }
+        typeImage = imageType.getPosImage();
+        if (getIntent().getExtras() != null) {
+            Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
+            getIntent().removeExtra(Constants.OUTPUT_CAMERA);
+//            }
+            switch (typeImage) {
+                case 8:
+                    imageType.setPhotoKTP(uri.toString());
+                    outletHeader.setPhotoKtp(uri.toString());
+                    break;
+                case 9:
+                    imageType.setPhotoNPWP(uri.toString());
+                    outletHeader.setPhotoNpwp(uri.toString());
+                    break;
+                case 10:
+                    imageType.setPhotoOutlet(uri.toString());
+                    outletHeader.setPhotoOutlet(uri.toString());
+                    break;
+            }
+        }
+        if (outletHeader.getPhotoKtp() != null) {
+            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), imgKTP);
+            imgDeleteKTP.setVisibility(View.VISIBLE);
+        }
+        if (outletHeader.getPhotoNpwp() != null) {
+            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), imgNPWP);
+            imgDeleteNPWP.setVisibility(View.VISIBLE);
+        }
+        if (outletHeader.getPhotoOutlet() != null) {
+            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), imgOutlet);
+            imgDeleteOutlet.setVisibility(View.VISIBLE);
+        }
+        if (outletHeader.isNoo()) {
+            database.updatePhotoNoo(outletHeader, user.getUsername());
+        } else {
+            database.updatePhoto(outletHeader, user.getUsername());
+        }
+        SessionManagerQubes.setOutletHeader(outletHeader);
+        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
     }
 
     private void pauseTimer() {
         timerValue.stop();
 
         outletHeader.setStatus(Constants.PAUSE_VISIT);
-        database.updateStatusOutletVisit(outletHeader, user.getUsername());
+        if (outletHeader.isNoo()) {
+            database.updateStatusOutletNoo(outletHeader, user.getUsername());
+        } else {
+            database.updateStatusOutletVisit(outletHeader, user.getUsername());
+        }
 
         visitSales.setTimer(String.valueOf(timerValue.getBase()));
         visitSales.setStatus(Constants.PAUSE_VISIT);
@@ -394,7 +574,11 @@ public class DailySalesmanActivity extends BaseActivity {
         Helper.resume = false;
 
         outletHeader.setStatus(Constants.CHECK_IN_VISIT);
-        database.updateStatusOutletVisit(outletHeader, user.getUsername());
+        if (outletHeader.isNoo()) {
+            database.updateStatusOutletNoo(outletHeader, user.getUsername());
+        } else {
+            database.updateStatusOutletVisit(outletHeader, user.getUsername());
+        }
 
         visitSales.setTimer(String.valueOf(timerValue.getBase()));
         visitSales.setStatus(Constants.CHECK_IN_VISIT);
@@ -544,5 +728,264 @@ public class DailySalesmanActivity extends BaseActivity {
     private String getTimeFromDate(String date) {
         String[] part = date.split(Constants.SPACE);
         return part[1];
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, VisitActivity.class);
+        startActivity(intent);
+    }
+
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            boolean check =
+                    Environment.isExternalStorageManager();
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+//                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+            return check;
+        } else {
+            if (
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private void requestPermission() {
+        //  if(!Environment.isExternalStorageManager()){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse(String.format("package:%s", new Object[]{getApplicationContext().getPackageName()})));
+                    startActivityForResult(intent, 2296);
+                } catch (Exception e) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivityForResult(intent, 2296);
+                }
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            //below android 11
+            ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2296) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, PERMISSION_REQUEST_CODE);
+                } else {
+                    setToast("Allow permission for storage access!");
+                }
+            }
+        } else if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            if (data.getData() != null) {
+                onSelectFromGalleryResult(data);
+            }
+        } else {
+            setToast("Failed to Get Image");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+            moveReturn();
+        } else if (requestCode == GALLERY_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            openGallery();
+        } else if (requestCode == CAMERA_PERM_CODE
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            Helper.takePhoto(DailySalesmanActivity.this);
+        } else {
+            setToast("This permission(s) required");
+        }
+    }
+
+    public void openDialogPhoto() {
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_attach_photo);
+
+        LinearLayout layoutUpload = dialog.findViewById(R.id.layoutUpload);
+        LinearLayout layoutGallery = dialog.findViewById(R.id.layoutGallery);
+        LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
+        ImageView photo = dialog.findViewById(R.id.photo);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+        btnSave.setVisibility(View.GONE);
+
+        switch (typeImage) {
+            case 8:
+                if (outletHeader.getPhotoKtp() != null) {
+                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), photo);
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 9:
+                if (outletHeader.getPhotoNpwp() != null) {
+                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), photo);
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+            case 10:
+                if (outletHeader.getPhotoOutlet() != null) {
+                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), photo);
+                    photo.setVisibility(View.VISIBLE);
+                    layoutUpload.setVisibility(View.GONE);
+                } else {
+                    photo.setVisibility(View.GONE);
+                    layoutUpload.setVisibility(View.VISIBLE);
+                }
+                break;
+        }
+
+        layoutGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                askPermission();
+            }
+        });
+
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                askPermissionCamera();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void askPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
+            }, GALLERY_PERM_CODE);
+        } else {
+            openGallery();
+        }
+    }
+
+    public void askPermissionCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        ) {
+            ActivityCompat.requestPermissions(this, new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+            }, CAMERA_PERM_CODE);
+        } else {
+            Helper.takePhoto(DailySalesmanActivity.this);
+        }
+    }
+
+    public void openGallery() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        switch (typeImage) {
+            case 8:
+                imagepath = getDirLoc(getApplicationContext()) + "/ktp" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+            case 9:
+                imagepath = getDirLoc(getApplicationContext()) + "/npwp" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+            case 10:
+                imagepath = getDirLoc(getApplicationContext()) + "/outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+        }
+        Uri uriImagePath = Uri.fromFile(new File(imagepath));
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagePath);
+        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.name());
+        photoPickerIntent.putExtra("return-data", true);
+        startActivityForResult(photoPickerIntent, GALLERY_REQUEST_CODE);
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+        Log.d("onActivityResult", "uriImagePathGallery :" + data.getData().toString());
+        File f = new File(imagepath);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+                Utils.copyFile(new File(Utils.getRealPathFromURI(DailySalesmanActivity.this, data.getData())), f);
+
+                switch (typeImage) {
+                    case 8:
+                        imageType.setPhotoKTP(imagepath);
+                        Utils.loadImageFit(DailySalesmanActivity.this, imagepath, imgKTP);
+                        outletHeader.setPhotoKtp(imagepath);
+                        imgKTP.setVisibility(View.VISIBLE);
+                        imgDeleteKTP.setVisibility(View.VISIBLE);
+                        imgAddKTP.setVisibility(View.GONE);
+                        break;
+                    case 9:
+                        imageType.setPhotoNPWP(imagepath);
+                        Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoNPWP(), imgNPWP);
+                        outletHeader.setPhotoNpwp(imagepath);
+                        imgNPWP.setVisibility(View.VISIBLE);
+                        imgDeleteNPWP.setVisibility(View.VISIBLE);
+                        imgAddNPWP.setVisibility(View.GONE);
+                        break;
+                    case 10:
+                        imageType.setPhotoOutlet(imagepath);
+                        Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoOutlet(), imgOutlet);
+                        outletHeader.setPhotoOutlet(imagepath);
+                        imgOutlet.setVisibility(View.VISIBLE);
+                        imgDeleteOutlet.setVisibility(View.VISIBLE);
+                        imgAddOutlet.setVisibility(View.GONE);
+                        break;
+                }
+                SessionManagerQubes.setOutletHeader(outletHeader);
+                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                if (outletHeader.isNoo()) {
+                    database.updatePhotoNoo(outletHeader, user.getUsername());
+                } else {
+                    database.updatePhoto(outletHeader, user.getUsername());
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 }

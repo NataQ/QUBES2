@@ -7,10 +7,15 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
+import java.util.Arrays;
+import java.util.List;
+
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Return;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 
@@ -23,6 +28,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
     private static final String PREF_START_DAY = "pref_start_day";
     private static final String PREF_LOGIN = "pref_login";
+    private static final String PREF_RETURN = "pref_return";
     private static final String PREF_STOCK_REQUEST_HEADER = "pref_stock_request_header";
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
@@ -39,8 +45,10 @@ public abstract class SessionManagerQubes {
     private static final String KEY_TOKEN = "key_token";
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
+    private static final String KEY_RETURN = "key_return";
     private static SharedPreferences customerNooPrefs;
     private static SharedPreferences imageTypePrefs;
+    private static SharedPreferences returnPrefs;
     private static SharedPreferences outletHeaderPrefs;
     private static SharedPreferences startDayPrefs;
     private static SharedPreferences prefs;
@@ -61,6 +69,7 @@ public abstract class SessionManagerQubes {
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
+        returnPrefs = context.getSharedPreferences(PREF_RETURN, Context.MODE_PRIVATE);
     }
 
     public static void setStartDay(int param) {
@@ -72,6 +81,12 @@ public abstract class SessionManagerQubes {
     public static void setUrl(String url) {
         synchronized (sync) {
             prefs.edit().putString(KEY_URL, url).apply();
+        }
+    }
+
+    public static void setReturn(List<Material> param) {
+        synchronized (sync) {
+            returnPrefs.edit().putString(KEY_RETURN, gson.toJson(param)).apply();
         }
     }
 
@@ -151,6 +166,10 @@ public abstract class SessionManagerQubes {
 
     //---------------------------------------------------------------------------------------------------------------------------------------
 
+    public static List<Material> getReturn() {
+        return Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class));
+    }
+
     public static Invoice getCollectionHeader() {
         return gson.fromJson(collectionHeaderPrefs.getString(KEY_COLLECTION_HEADER, null), Invoice.class);
     }
@@ -200,6 +219,10 @@ public abstract class SessionManagerQubes {
     }
 
     //------------------------------------------------------------------------------
+
+    public static void clearReturnSession() {
+        returnPrefs.edit().clear().apply();
+    }
 
     public static void clearImageTypeSession() {
         imageTypePrefs.edit().clear().apply();

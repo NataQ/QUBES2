@@ -175,7 +175,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    int qty = Integer.parseInt(s.toString().replace(".", "").replace(",", ""));
                     detail.setQty(qty);
                 } else {
                     detail.setQty(0);

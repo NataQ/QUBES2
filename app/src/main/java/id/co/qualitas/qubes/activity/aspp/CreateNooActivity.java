@@ -102,6 +102,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
     private ArrayAdapter<String> sukuAdapter, statusNpwpAdapter, statusTokoAdapter, udf5Adapter;
     private LocationManager lm;
     private Location currentLocation;
+    private String selectedImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -351,7 +352,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         switch (typeImage) {
             case 1:
                 if (imageType.getPhotoKTP() != null) {
-                    photo.setImageURI(imageType.getPhotoKTP());
+                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -361,7 +362,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
                 break;
             case 2:
                 if (imageType.getPhotoNPWP() != null) {
-                    photo.setImageURI(imageType.getPhotoNPWP());
+                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -371,7 +372,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
                 break;
             case 3:
                 if (imageType.getPhotoOutlet() != null) {
-                    photo.setImageURI(imageType.getPhotoOutlet());
+                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -1020,39 +1021,34 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
 //            }
             switch (typeImage) {
                 case 1:
-                    imageType.setPhotoKTP(uri);
+                    imageType.setPhotoKTP(uri.toString());
                     break;
                 case 2:
-                    imageType.setPhotoNPWP(uri);
+                    imageType.setPhotoNPWP(uri.toString());
                     break;
                 case 3:
-                    imageType.setPhotoOutlet(uri);
+                    imageType.setPhotoOutlet(uri.toString());
                     break;
             }
         }
         if (imageType.getPhotoKTP() != null) {
-            customerNoo.setPhotoKtp(Utils.compressImageUri(getApplicationContext(), imageType.getPhotoKTP().toString()));
-            imgKTP.setImageURI(imageType.getPhotoKTP());
+            customerNoo.setPhotoKtp(imageType.getPhotoKTP());
+            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
             imgDeleteKTP.setVisibility(View.VISIBLE);
         }
         if (imageType.getPhotoNPWP() != null) {
-            customerNoo.setPhotoNpwp(Utils.compressImageUri(getApplicationContext(), imageType.getPhotoNPWP().toString()));
-            imgNPWP.setImageURI(imageType.getPhotoNPWP());
+            customerNoo.setPhotoNpwp(imageType.getPhotoNPWP());
+            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
             imgDeleteNPWP.setVisibility(View.VISIBLE);
         }
         if (imageType.getPhotoOutlet() != null) {
-            customerNoo.setPhotoOutlet(Utils.compressImageUri(getApplicationContext(), imageType.getPhotoOutlet().toString()));
-            imgOutlet.setImageURI(imageType.getPhotoOutlet());
+            customerNoo.setPhotoOutlet(imageType.getPhotoOutlet());
+            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
             imgDeleteOutlet.setVisibility(View.VISIBLE);
         }
 
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-//        SessionManagerQubes.setImageType(imageType);
         SessionManagerQubes.setCustomerNoo(customerNoo);
-
-//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
-//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
-//        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
     }
 
     private void setDataToView() {
@@ -1122,11 +1118,29 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
     }
 
     public void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST_CODE);
+//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        intent.setType("image/*");
+////        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST_CODE);
+        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        switch (typeImage) {
+            case 1:
+                selectedImage = getDirLoc(getApplicationContext()) + "/ktp" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+            case 2:
+                selectedImage = getDirLoc(getApplicationContext()) + "/npwp" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+            case 3:
+                selectedImage = getDirLoc(getApplicationContext()) + "/outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+                break;
+        }
+        Uri uriImagePath = Uri.fromFile(new File(selectedImage));
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagePath);
+        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.name());
+        photoPickerIntent.putExtra("return-data", true);
+        startActivityForResult(photoPickerIntent, GALLERY_REQUEST_CODE);
     }
 
     @Override
@@ -1156,56 +1170,46 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
     }
 
     private void onSelectFromGalleryResult(Intent data) {
-        Uri selectedImage = data.getData();
-//        String path = getImageFilePath(selectedImage);
-//        File pathImg = new File(path);
-//        byte[] imgByte = getByteArrayFromUriGallery(Uri.fromFile(pathImg));
+        Log.d("onActivityResult", "uriImagePathGallery :" + data.getData().toString());
+        File f = new File(selectedImage);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+                Utils.copyFile(new File(Utils.getRealPathFromURI(CreateNooActivity.this, data.getData())), f);
 
-        switch (typeImage) {
-            case 1:
-                imageType.setPhotoKTP(selectedImage);
-                imgKTP.setImageURI(selectedImage);
-//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
-                imgKTP.setVisibility(View.VISIBLE);
-                imgDeleteKTP.setVisibility(View.VISIBLE);
-                imgAddKTP.setVisibility(View.GONE);
-                break;
-            case 2:
-                imageType.setPhotoNPWP(selectedImage);
-                imgNPWP.setImageURI(selectedImage);
-//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
-                imgNPWP.setVisibility(View.VISIBLE);
-                imgDeleteNPWP.setVisibility(View.VISIBLE);
-                imgAddNPWP.setVisibility(View.GONE);
-                break;
-            case 3:
-                imageType.setPhotoOutlet(selectedImage);
-                imgOutlet.setImageURI(selectedImage);
-//                Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
-                imgOutlet.setVisibility(View.VISIBLE);
-                imgDeleteOutlet.setVisibility(View.VISIBLE);
-                imgAddOutlet.setVisibility(View.GONE);
-                break;
-        }
+                switch (typeImage) {
+                    case 1:
+                        imageType.setPhotoKTP(selectedImage);
+                        Utils.loadImageFit(CreateNooActivity.this, selectedImage, imgKTP);
+                        imgKTP.setVisibility(View.VISIBLE);
+                        imgDeleteKTP.setVisibility(View.VISIBLE);
+                        imgAddKTP.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        imageType.setPhotoNPWP(selectedImage);
+//                imgNPWP.setImageURI(selectedImage);
+                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
+                        imgNPWP.setVisibility(View.VISIBLE);
+                        imgDeleteNPWP.setVisibility(View.VISIBLE);
+                        imgAddNPWP.setVisibility(View.GONE);
+                        break;
+                    case 3:
+                        imageType.setPhotoOutlet(selectedImage);
+//                imgOutlet.setImageURI(selectedImage);
+                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
+                        imgOutlet.setVisibility(View.VISIBLE);
+                        imgDeleteOutlet.setVisibility(View.VISIBLE);
+                        imgAddOutlet.setVisibility(View.GONE);
+                        break;
+                }
 
-        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //        SessionManagerQubes.setImageType(imageType);
-    }
-
-    public String getImageFilePath(Uri uri) {
-        File file = new File(uri.getPath());
-        String[] filePath = file.getPath().split(":");
-        String image_id = filePath[filePath.length - 1];
-
-        Cursor cursor = getContentResolver().query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media._ID + " = ? ", new String[]{image_id}, null);
-        if (cursor != null) {
-            cursor.moveToFirst();
-            @SuppressLint("Range") String imagePath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-
-            cursor.close();
-            return imagePath;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
-        return null;
     }
 
     @Override

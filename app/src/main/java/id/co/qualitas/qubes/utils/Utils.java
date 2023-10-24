@@ -47,10 +47,12 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -744,8 +746,8 @@ public class Utils {
         Glide.with(mContext)
                 .load(res)
                 .fitCenter()
-                .error(R.drawable.ic_map)
-                .placeholder(R.drawable.ic_qubes_new)
+                .error(R.drawable.ic_no_picture)
+                .placeholder(R.drawable.ic_placeholder_img)
                 .into(image);
     }
 
@@ -808,5 +810,32 @@ public class Utils {
         byte[] b = baos.toByteArray();
         //Base64.de
         return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!sourceFile.exists()) {
+            return;
+        }
+        FileChannel source = null;
+        FileChannel destination = null;
+        source = new FileInputStream(sourceFile).getChannel();
+        destination = new FileOutputStream(destFile).getChannel();
+        if (destination != null && source != null) {
+            destination.transferFrom(source, 0, source.size());
+        }
+        if (source != null) {
+            source.close();
+        }
+        if (destination != null) {
+            destination.close();
+        }
+    }
+
+    public static String getRealPathFromURI(Activity act, Uri contentUri) {
+        String[] proj = {MediaStore.Video.Media.DATA};
+        Cursor cursor = act.managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 }

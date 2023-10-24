@@ -465,7 +465,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         outletClicked.setStatus(Constants.CHECK_IN_VISIT);
         database.addVisitSalesman(visitSalesman, user.getUsername());
         if (fromNoo) {
-//            database.addVisitSalesmanNoo(visitSalesman, user.getUsername());
             database.updateStatusOutletNoo(outletClicked, user.getUsername());
         } else {
             database.updateStatusOutletVisit(outletClicked, user.getUsername());
@@ -620,13 +619,15 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         ImageView imgAddPulang = dialog.findViewById(R.id.imgAddPulang);
 
         if (uriSelesai != null) {
-            imgSelesai.setImageURI(uriSelesai);
+            Utils.loadImageFit(VisitActivity.this, uriSelesai.toString(), imgSelesai);
+//            imgSelesai.setImageURI(uriSelesai);
             imgAddSelesai.setVisibility(View.GONE);
         } else {
             imgAddSelesai.setVisibility(View.VISIBLE);
         }
         if (uriPulang != null) {
-            imgPulang.setImageURI(uriPulang);
+            Utils.loadImageFit(VisitActivity.this, uriPulang.toString(), imgPulang);
+//            imgPulang.setImageURI(uriPulang);
             imgAddPulang.setVisibility(View.GONE);
         } else {
             imgAddPulang.setVisibility(View.VISIBLE);
@@ -637,8 +638,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         llImgPulang.setOnClickListener(v -> {
             ImageType imageType = new ImageType();
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang);
-            imageType.setPhotoSelesai(uriSelesai);
+            imageType.setPhotoAkhir(uriPulang.toString());
+            imageType.setPhotoSelesai(uriSelesai.toString());
             imageType.setPosImage(5);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -649,8 +650,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             ImageType imageType = new ImageType();
             imageType.setPosImage(6);
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang);
-            imageType.setPhotoSelesai(uriSelesai);
+            imageType.setPhotoAkhir(uriPulang.toString());
+            imageType.setPhotoSelesai(uriSelesai.toString());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
@@ -696,7 +697,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         LinearLayout llImgBerangkat = dialog.findViewById(R.id.llImgBerangkat);
 
         if (uriBerangkat != null) {
-            imgBerangkat.setImageURI(uriBerangkat);
+            Utils.loadImageFit(VisitActivity.this, uriBerangkat.toString(), imgBerangkat);
+//            imgBerangkat.setImageURI(uriBerangkat);
             imgAdd.setVisibility(View.GONE);
         } else {
             imgAdd.setVisibility(View.VISIBLE);
@@ -708,7 +710,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             ImageType imageType = new ImageType();
             imageType.setKmAwal(txtKmAwal.getText().toString().trim());
             imageType.setPosImage(4);
-            imageType.setPhotoKmAwal(uriBerangkat);
+            imageType.setPhotoKmAwal(uriBerangkat.toString());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
@@ -943,20 +945,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         }
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode) {
-//            case PERMISSION_REQUEST_CODE:
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-//                    new AsyncTaskGeneratePDF().execute();
-//                } else {
-//                    setToast(getString(R.string.pleaseEnablePermission));
-//                }
-//                break;
-//        }
-//    }
-
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected void onPreExecute() {
@@ -985,12 +973,12 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
                     btnEndDay.setVisibility(View.GONE);
                     btnNextDay.setVisibility(View.VISIBLE);
+                    Helper.deleteFolder(getDirLoc(getApplicationContext()).getPath());
                     Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
                     startActivity(intent);
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi");
                 }
-
             }
 
         }

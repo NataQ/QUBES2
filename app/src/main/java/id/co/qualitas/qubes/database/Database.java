@@ -2623,13 +2623,13 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Material> getAllReturn() {
+    public List<Material> getAllReturn(String idCust) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " order by " + KEY_ID_RETURN_DB + " desc";
+        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " WHERE  " + KEY_CUSTOMER_ID + " = ?  order by " + KEY_ID_RETURN_DB + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -2658,13 +2658,13 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Material> getAllStoreCheck() {
+    public List<Material> getAllStoreCheck(String idCust) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " order by " + KEY_ID_STORE_CHECK_DB + " desc";
+        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ?  order by " + KEY_ID_STORE_CHECK_DB + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -2801,6 +2801,37 @@ public class Database extends SQLiteOpenHelper {
         assert cursor != null;
         cursor.close();
         return result;
+    }
+
+    public List<Invoice> getAllInvoiceCustomer(String idCust) {
+        List<Invoice> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice paramModel = new Invoice();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+                paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+                paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
+                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
     }
 
     public List<Invoice> getAllInvoiceHeaderNotVerif() {
@@ -3037,6 +3068,29 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Material> getOutstandingProductFaktur(String param) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select id." + KEY_MATERIAL_PRODUCT_ID + ", id." + KEY_MATERIAL_PRODUCT_NAME + " from " + TABLE_INVOICE_DETAIL + " id " +
+                "join " + TABLE_INVOICE_HEADER + " ih on id." + KEY_ID_INVOICE_HEADER_DB + " = ih." + KEY_ID_INVOICE_HEADER_DB + " " +
+                "where ih." + KEY_CUSTOMER_ID + " = ? and (ih." + KEY_INVOICE_TOTAL + " - ih." + KEY_PAID + " > 0)";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{param});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Reason> getAllReason(String param) {
         List<Reason> arrayList = new ArrayList<>();
         // Select All Query
@@ -3085,6 +3139,78 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return paramModel;
+    }
+
+    public double getTotalTagihanCustomer(String idCust) {
+        double result = 0.0;
+        // Select All Query
+        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("total"));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public double getTotalPaymentAmount() {
+        double result = 0.0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_HEADER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("total"));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public double getTotalOutstandingAmount() {
+        double result = 0.0;
+        // Select All Query
+        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("total"));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public double getTotalInvoiceAmount() {
+        double result = 0.0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_INVOICE_TOTAL + " FROM " + TABLE_INVOICE_HEADER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
     }
 
     public List<Customer> getAllNonRouteCustomer() {
@@ -3177,6 +3303,65 @@ public class Database extends SQLiteOpenHelper {
         return count;
     }
 
+    public int getCountNonRoute() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER;
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getECS() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+
+        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " group by " + KEY_CUSTOMER_ID;
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCallRoute(int type) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor = null;
+        switch (type) {
+            case 1://rute check in
+                countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " != 0 and " + KEY_IS_ROUTE + " = 1";
+                cursor = db.rawQuery(countQuery, null);
+                break;
+            case 2: // non rute check in
+                countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " != 0 and " + KEY_IS_ROUTE + " = 0";
+                cursor = db.rawQuery(countQuery, null);
+                break;
+            case 3: // all rute check in
+                countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " != 0 ";
+                cursor = db.rawQuery(countQuery, null);
+                break;
+            case 4: // all rute belum check in
+                countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = 0 ";
+                cursor = db.rawQuery(countQuery, null);
+                break;
+        }
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
     public int getCountRouteCustomer(boolean allRoute) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
@@ -3184,7 +3369,7 @@ public class Database extends SQLiteOpenHelper {
         if (allRoute) {
             countQuery = "SELECT * FROM " + TABLE_CUSTOMER;
             cursor = db.rawQuery(countQuery, null);
-        } else {
+        } else {// today route
             countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
             cursor = db.rawQuery(countQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
         }
@@ -3687,7 +3872,35 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
+        db.update(TABLE_CUSTOMER, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
+
+    public void updatePhoto(Customer param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
+        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
+        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
         db.update(TABLE_CUSTOMER, values, KEY_ID_CUSTOMER_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
+
+    public void updatePhotoNoo(Customer param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
+        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
+        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
         //db.close();
     }
 
@@ -3746,13 +3959,13 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteStoreCheck(Map header) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_STORE_CHECK, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ",new String[]{header.get("date").toString(), header.get("id_customer").toString()});
+        db.delete(TABLE_STORE_CHECK, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{header.get("date").toString(), header.get("id_customer").toString()});
         db.close();
     }
 
     public void deleteReturn(Map header) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_RETURN, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ",new String[]{header.get("date").toString(), header.get("id_customer").toString()});
+        db.delete(TABLE_RETURN, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{header.get("date").toString(), header.get("id_customer").toString()});
         db.close();
     }
 

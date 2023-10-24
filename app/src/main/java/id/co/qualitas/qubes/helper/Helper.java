@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -33,6 +35,7 @@ import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.io.FileUtils;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.springframework.http.HttpEntity;
@@ -562,6 +565,28 @@ public class Helper extends BaseFragment {
         }
     }
 
+    public static String getPath(Uri uri, Activity activity) {
+        // just some safety built in
+        if (uri == null) {
+            // TODO perform some logging or show user feedback
+            return null;
+        }
+        // try to retrieve the image from the media store first
+        // this will only work for images selected from gallery
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = activity.managedQuery(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String path = cursor.getString(column_index);
+            cursor.close();
+            return path;
+        }
+        // this is our fallback here
+        return uri.getPath();
+    }
+
     public static <T> T ObjectToGSON(Object object, Class<T> responseType) {
         final Gson gson = new GsonBuilder().setExclusionStrategies(new AnnotationExclusionStrategy()).create();
         String json = gson.toJson(object);
@@ -819,6 +844,15 @@ public class Helper extends BaseFragment {
             Log.e("Delete img : ", String.valueOf(path).toString() + " success");
         } catch (Exception e) {
             Log.e("Delete img : ", e.getMessage());
+        }
+    }
+
+    public static void deleteFolder(String path) {
+        File dir = new File(path);
+        try {
+            FileUtils.cleanDirectory(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -228,6 +228,7 @@ public class Constants {
     public static final String DATE_TYPE_14 = "yyyy-MM-dd mm:ss";
     public static final String DATE_TYPE_16 = "yyyy/MM/dd HH:mm:ss";
     public static final String DATE_TYPE_17 = "EEE dd MMMM yyyy";
+    public static final String DATE_TYPE_18 = "ddMMyyyyHHmmss";
     public static final String FLAG_DELETE = "del";
 
     public static final String POSITION = "pos";

@@ -1,9 +1,11 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +38,7 @@ import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Holder> implements Filterable {
     private List<Material> mList;
@@ -155,9 +158,16 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
 
         if (detail.getPhotoReason() != null) {
-            holder.img.setImageURI(detail.getPhotoReason() != null ? Uri.parse(detail.getPhotoReason()) : null);
+            Utils.loadImageFit(mContext, detail.getPhotoReason(), holder.img);
+//            try {
+//                mContext.getContentResolver().takePersistableUriPermission(Uri.parse(detail.getPhotoReason()), (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+//                holder.img.setImageURI(Uri.parse(detail.getPhotoReason()));
+//            } catch (SecurityException e) {
+//                e.printStackTrace();
+//            }
             holder.img.setVisibility(View.VISIBLE);
             holder.imgAdd.setVisibility(View.GONE);
+
         } else {
             holder.img.setVisibility(View.GONE);
             holder.imgAdd.setVisibility(View.VISIBLE);
@@ -180,21 +190,29 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(format.format(detail.getQty()));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
+        holder.edtDescReason.setText(Helper.isEmpty(detail.getDescReason(), ""));
         if (!Helper.isNullOrEmpty(detail.getExpiredDate())) {
             String expDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getExpiredDate());
             holder.edtExpDate.setText(expDate);
+        } else {
+            holder.edtExpDate.setText(null);
         }
-        reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, detail.getNameReason());
-        if (reasonDetail.getIs_freetext() == 1) {
-            holder.llReasonDesc.setVisibility(View.VISIBLE);
+        if (!Helper.isNullOrEmpty(detail.getNameReason())) {
+            reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, detail.getNameReason());
+            if (reasonDetail.getIs_freetext() == 1) {
+                holder.llReasonDesc.setVisibility(View.VISIBLE);
+            } else {
+                holder.llReasonDesc.setVisibility(View.GONE);
+            }
+
+            if (reasonDetail.getIs_photo() == 1) {
+                holder.llPhoto.setVisibility(View.VISIBLE);
+            } else {
+                holder.llPhoto.setVisibility(View.GONE);
+            }
         } else {
             holder.llReasonDesc.setVisibility(View.GONE);
-        }
-
-        if (reasonDetail.getIs_photo() == 1) {
-            holder.llPhoto.setVisibility(View.VISIBLE);
-        } else {
             holder.llPhoto.setVisibility(View.GONE);
         }
 
@@ -237,7 +255,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         uomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         uomAdapter.addAll(listSpinner);
         holder.autoCompleteUom.setAdapter(uomAdapter);
-        holder.autoCompleteUom.setText(detail.getUom());
+        holder.autoCompleteUom.setText(detail.getUom(), false);
 
         conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override
@@ -250,7 +268,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         conditionAdapter.addAll(conditionList);
         holder.autoCompleteCondition.setAdapter(conditionAdapter);
-        holder.autoCompleteCondition.setText(detail.getCondition());
+        holder.autoCompleteCondition.setText(detail.getCondition(), false);
 
         reasonAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override
@@ -263,36 +281,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         reasonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         reasonAdapter.addAll(reasonList);
         holder.autoCompleteReason.setAdapter(reasonAdapter);
-        holder.autoCompleteReason.setText(detail.getNameReason());
-
-//        mContext.setAutoCompleteAdapterReason(reasonList, holder.autoCompleteReason);
-
-        holder.llDelete.setOnClickListener(v -> {
-            mList.remove(holder.getAbsoluteAdapterPosition());
-            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-        });
-
-        holder.edtQty.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(holder.edtQty, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(",", ""));
-                    detail.setQty(qty);
-                } else {
-                    detail.setQty(0);
-                }
-            }
-        });
+        holder.autoCompleteReason.setText(detail.getNameReason(), false);
 
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = listSpinner.get(i).toString();
@@ -306,10 +295,12 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
         holder.autoCompleteReason.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = reasonList.get(i).toString();
-            detail.setCondition(selected);
             detail.setNameReason(selected);
             reasonDetail = new Database(mContext).getDetailReason(Constants.REASON_TYPE_RETURN, selected);
             detail.setIdReason(String.valueOf(reasonDetail.getId()));
+            detail.setDescReason(null);
+            detail.setPhotoReason(null);
+
             if (reasonDetail.getIs_freetext() == 1) {
                 holder.llReasonDesc.setVisibility(View.VISIBLE);
             } else {
@@ -343,6 +334,34 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
         holder.llPhoto.setOnClickListener(v -> {
             mContext.openDialogPhoto(detail, holder.getAbsoluteAdapterPosition());
+        });
+
+        holder.llDelete.setOnClickListener(v -> {
+            mList.remove(holder.getAbsoluteAdapterPosition());
+            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+        });
+
+        holder.edtQty.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+//                s.toString().replace(".", "");
+                Helper.setDotCurrency(holder.edtQty, this, s);
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    detail.setQty(qty);
+                } else {
+                    detail.setQty(0);
+                }
+            }
         });
     }
 

@@ -1,14 +1,12 @@
 package id.co.qualitas.qubes.model;
 
-import android.net.Uri;
-
 public class ImageType {
-    private Uri photoKTP;
-    private Uri photoNPWP;
-    private Uri photoOutlet;
-    private Uri photoAkhir;
-    private Uri photoSelesai;
-    private Uri photoKmAwal;
+    private String photoKTP;
+    private String photoNPWP;
+    private String photoOutlet;
+    private String photoAkhir;
+    private String photoSelesai;
+    private String photoKmAwal;
     private int posImage;
     private int posMaterial;
     private String kmAwal;
@@ -22,27 +20,27 @@ public class ImageType {
         this.posMaterial = posMaterial;
     }
 
-    public Uri getPhotoAkhir() {
+    public String getPhotoAkhir() {
         return photoAkhir;
     }
 
-    public void setPhotoAkhir(Uri photoAkhir) {
+    public void setPhotoAkhir(String photoAkhir) {
         this.photoAkhir = photoAkhir;
     }
 
-    public Uri getPhotoSelesai() {
+    public String getPhotoSelesai() {
         return photoSelesai;
     }
 
-    public void setPhotoSelesai(Uri photoSelesai) {
+    public void setPhotoSelesai(String photoSelesai) {
         this.photoSelesai = photoSelesai;
     }
 
-    public Uri getPhotoKmAwal() {
+    public String getPhotoKmAwal() {
         return photoKmAwal;
     }
 
-    public void setPhotoKmAwal(Uri photoKmAwal) {
+    public void setPhotoKmAwal(String photoKmAwal) {
         this.photoKmAwal = photoKmAwal;
     }
 
@@ -70,27 +68,27 @@ public class ImageType {
         this.posImage = posImage;
     }
 
-    public Uri getPhotoKTP() {
+    public String getPhotoKTP() {
         return photoKTP;
     }
 
-    public void setPhotoKTP(Uri photoKTP) {
+    public void setPhotoKTP(String photoKTP) {
         this.photoKTP = photoKTP;
     }
 
-    public Uri getPhotoNPWP() {
+    public String getPhotoNPWP() {
         return photoNPWP;
     }
 
-    public void setPhotoNPWP(Uri photoNPWP) {
+    public void setPhotoNPWP(String photoNPWP) {
         this.photoNPWP = photoNPWP;
     }
 
-    public Uri getPhotoOutlet() {
+    public String getPhotoOutlet() {
         return photoOutlet;
     }
 
-    public void setPhotoOutlet(Uri photoOutlet) {
+    public void setPhotoOutlet(String photoOutlet) {
         this.photoOutlet = photoOutlet;
     }
 }

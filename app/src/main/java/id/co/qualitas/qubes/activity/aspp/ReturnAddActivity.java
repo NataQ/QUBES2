@@ -1,16 +1,21 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import static android.app.PendingIntent.getActivity;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +37,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +79,7 @@ public class ReturnAddActivity extends BaseActivity {
     public static final int GALLERY_REQUEST_CODE = 105;
     private ImageType imageType;
     private String today;
+    private String imagepath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,6 +151,7 @@ public class ReturnAddActivity extends BaseActivity {
             progress.dismiss();
             if (result) {
                 setToast("Save Success");
+                SessionManagerQubes.clearReturnSession();
                 onBackPressed();
             } else {
                 setToast("Save Failed");
@@ -166,10 +178,17 @@ public class ReturnAddActivity extends BaseActivity {
 
     private void initData() {
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
-        mList = new ArrayList<>();
-        mList.addAll(database.getAllReturn());
-        txtReturnDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_4));
+        if (mList != null && mList.size() != 0) {
+            today = mList.get(0).getDate();
+            txtReturnDate.setText(Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, today));
+        } else {
+            txtReturnDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
+        }
 
+        setAdapter();
+    }
+
+    private void setAdapter() {
         mAdapter = new ReturnAddAdapter(this, mList, header -> {
         });
 
@@ -191,7 +210,6 @@ public class ReturnAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        initData();
         if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
             imageType = new ImageType();
             imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
@@ -202,9 +220,15 @@ public class ReturnAddActivity extends BaseActivity {
         if (getIntent().getExtras() != null) {
             Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
             getIntent().removeExtra(Constants.OUTPUT_CAMERA);
-            mList.get(imageType.getPosMaterial()).setPhotoReason(Utils.compressImageUri(this, uri.toString()));
+            mList = new ArrayList<>();
+            mList = SessionManagerQubes.getReturn();
+            mList.get(imageType.getPosMaterial()).setPhotoReason(uri.toString());
+        } else {
+            mList = new ArrayList<>();
+            mList.addAll(database.getAllReturn(SessionManagerQubes.getOutletHeader().getId()));
         }
 
+        initData();
     }
 
     private void addProduct() {
@@ -393,7 +417,14 @@ public class ReturnAddActivity extends BaseActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
         btnSave.setVisibility(View.GONE);
 
-        photo.setImageURI(detailMatPhoto.getPhotoReason() != null ? Uri.parse(detailMatPhoto.getPhotoReason()) : null);
+        if (detailMatPhoto.getPhotoReason() != null) {
+            layoutUpload.setVisibility(View.GONE);
+            photo.setVisibility(View.VISIBLE);
+            Utils.loadImageFit(ReturnAddActivity.this, detailMatPhoto.getPhotoReason(), photo);
+        } else {
+            photo.setVisibility(View.GONE);
+            layoutUpload.setVisibility(View.VISIBLE);
+        }
 
         layoutGallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -407,6 +438,7 @@ public class ReturnAddActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                SessionManagerQubes.setReturn(mList);
                 askPermissionCamera();
             }
         });
@@ -454,11 +486,14 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     public void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_REQUEST_CODE);
+        Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        imagepath = getDirLoc(getApplicationContext()) + "/return" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
+        Uri uriImagePath = Uri.fromFile(new File(imagepath));
+        photoPickerIntent.setType("image/*");
+        photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagePath);
+        photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.name());
+        photoPickerIntent.putExtra("return-data", true);
+        startActivityForResult(photoPickerIntent, GALLERY_REQUEST_CODE);
     }
 
     @Override
@@ -488,8 +523,25 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     private void onSelectFromGalleryResult(Intent data) {
-        Uri selectedImage = data.getData();
-        mList.get(posPhoto).setPhotoReason(Utils.compressImageUri(this, selectedImage.toString()));
-        mAdapter.notifyItemChanged(posPhoto, mList.get(posPhoto));
+        Log.d("onActivityResult", "uriImagePath Gallery :" + data.getData().toString());
+        File f = new File(imagepath);
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+                Utils.copyFile(new File(Utils.getRealPathFromURI(ReturnAddActivity.this, data.getData())), f);
+                mList.get(posPhoto).setPhotoReason(imagepath);
+                mAdapter.notifyItemChanged(posPhoto, mList.get(posPhoto));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, DailySalesmanActivity.class);
+        startActivity(intent);
     }
 }
