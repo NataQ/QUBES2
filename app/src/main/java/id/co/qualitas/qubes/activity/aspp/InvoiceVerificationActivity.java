@@ -76,15 +76,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setAdapter();
+                requestData();
                 swipeLayout.setRefreshing(false);
             }
-        });
-
-        txtTitle.setOnClickListener(view -> {
-            database.deleteInvoiceHeader();
-            database.deleteInvoiceDetail();
-            getFirstDataOffline();
         });
     }
 
@@ -188,10 +182,15 @@ public class InvoiceVerificationActivity extends BaseActivity {
         setTotal();
 
         if (mList == null || mList.isEmpty()) {
-            progressCircle.setVisibility(View.VISIBLE);
-            PARAM = 1;
-            new RequestUrl().execute();//1
+            requestData();
         }
+    }
+
+    private void requestData() {
+        progressCircle.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        PARAM = 1;
+        new RequestUrl().execute();//1
     }
 
     private void getData() {
@@ -305,6 +304,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
                 }
             } else if (PARAM == 2) {
                 progressCircle.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     setTotal();
                     mAdapter.setData(mList);

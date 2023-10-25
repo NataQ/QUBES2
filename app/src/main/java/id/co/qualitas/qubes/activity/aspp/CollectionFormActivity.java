@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +25,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -82,6 +86,14 @@ public class CollectionFormActivity extends BaseActivity {
     private List<AbstractConnector> mConnectorList;
     private ConnectorAdapter mConnectorAdapter;
 
+    List<Material> cashList = new ArrayList<>();
+    List<Material> tfList = new ArrayList<>();
+    List<Material> giroList = new ArrayList<>();
+    List<Material> chequeList = new ArrayList<>();
+    List<Material> lainList = new ArrayList<>();
+
+    boolean kredit = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,28 +103,20 @@ public class CollectionFormActivity extends BaseActivity {
 
         btnSubmit.setOnClickListener(v -> {
             if (colLFrom == 3) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-                } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-                } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
-                    }
-                } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                    }
-
-                } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                if (kredit) {
+                    onBackPressed();
+//                    database.updateOrderPayment("KREDIT");
                 } else {
-                    intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
-                    startActivity(intent);
+                    if (validate()) {
+                        progress.show();
+                        new RequestUrl().execute();
+                    }
                 }
             } else {
-                validate();
-                onBackPressed();
+                if (validate()) {
+                    progress.show();
+                    new RequestUrl().execute();
+                }
             }
         });
 
@@ -125,51 +129,182 @@ public class CollectionFormActivity extends BaseActivity {
         });
     }
 
-    private void validate() {
-        List<Material> cashList = new ArrayList<>();
-        List<Material> tfList = new ArrayList<>();
-        List<Material> giroList = new ArrayList<>();
-        List<Material> chequeList = new ArrayList<>();
-        List<Material> lainList = new ArrayList<>();
+    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Map requestHeader = new HashMap();
+                requestHeader.put("no_invoice", header.getNo_invoice());
+                requestHeader.put("invoice_date", header.getInvoice_date());
+                requestHeader.put("status", "paid");
+                requestHeader.put("amount", header.getAmount());
+                requestHeader.put("username", user.getUsername());
+                int idCollHeader = database.addCollectionHeader(requestHeader);
 
-        for (Material material: mListCash){
-            if(material.isChecked() && material.getAmountPaid() != 0){
-                cashList.add(material);
+                Map requestDetail = new HashMap();
+                requestDetail.put("id_header", idCollHeader);
+                requestDetail.put("status", "paid");
+                requestDetail.put("username", user.getUsername());
+
+                if (cashList.size() != 0) {
+                    requestDetail.put("type_payment", "cash");
+                    requestDetail.put("total_payment", totalPaymentCash);
+                    requestDetail.put("left", leftCash);
+                    int idDetail = database.addCollectionCashLain(requestDetail);
+
+                    for (Material material : cashList) {
+                        database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                    }
+                }
+
+                if (lainList.size() != 0) {
+                    requestDetail.put("type_payment", "lain");
+                    requestDetail.put("total_payment", totalPaymentLain);
+                    requestDetail.put("left", leftLain);
+
+                    int idDetail = database.addCollectionCashLain(requestDetail);
+
+                    for (Material material : cashList) {
+                        database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                    }
+                }
+
+                if (tfList.size() != 0) {
+                    for (CollectionTransfer collection : mListTransfer) {
+                        int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
+
+                        for (Material material : collection.getCheckedMaterialList()) {
+                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                        }
+                    }
+                }
+
+                if (giroList.size() != 0) {
+                    for (CollectionGiro collection : mListGiro) {
+                        int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
+
+                        for (Material material : collection.getCheckedMaterialList()) {
+                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                        }
+                    }
+                }
+
+                if (chequeList.size() != 0) {
+                    for (CollectionCheque collection : mListCheque) {
+                        int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
+
+                        for (Material material : collection.getCheckedMaterialList()) {
+                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                        }
+                    }
+                }
+
+                return true;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("Collection", ex.getMessage());
+                }
+                return false;
             }
         }
 
-        for(CollectionTransfer collection : mListTransfer) {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progress.dismiss();
+            if (result) {
+                setToast("Save Success");
+                if (colLFrom == 3) {
+                    if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                        }
+                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                        }
+                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                    } else {
+                        intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
+                        startActivity(intent);
+                    }
+                }
+                onBackPressed();
+            } else {
+                setToast("Save Failed");
+            }
+        }
+    }
+
+    private boolean validate() {
+        int totalMat = 0;
+        cashList = new ArrayList<>();
+        tfList = new ArrayList<>();
+        giroList = new ArrayList<>();
+        chequeList = new ArrayList<>();
+        lainList = new ArrayList<>();
+
+        for (Material material : mListCash) {
+//            if(material.isChecked() && material.getAmountPaid() != 0){
+            if (material.getAmountPaid() != 0) {
+                cashList.add(material);
+                totalMat++;
+            }
+        }
+
+        for (CollectionTransfer collection : mListTransfer) {
+            tfList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
-                if (material.isChecked() && material.getAmountPaid() != 0) {
+//                if (material.isChecked() && material.getAmountPaid() != 0) {
+                if (material.getAmountPaid() != 0) {
                     tfList.add(material);
+                    totalMat++;
                 }
             }
             collection.setCheckedMaterialList(tfList);
         }
 
-        for(CollectionGiro collection : mListGiro) {
+        for (CollectionGiro collection : mListGiro) {
+            giroList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
-                if (material.isChecked() && material.getAmountPaid() != 0) {
+//                if (material.isChecked() && material.getAmountPaid() != 0) {
+                if (material.getAmountPaid() != 0) {
                     giroList.add(material);
+                    totalMat++;
                 }
             }
             collection.setCheckedMaterialList(giroList);
         }
 
-        for(CollectionCheque collection : mListCheque) {
+        for (CollectionCheque collection : mListCheque) {
+            chequeList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
-                if (material.isChecked() && material.getAmountPaid() != 0) {
+//                if (material.isChecked() && material.getAmountPaid() != 0) {
+                if (material.getAmountPaid() != 0) {
                     chequeList.add(material);
+                    totalMat++;
                 }
             }
             collection.setCheckedMaterialList(chequeList);
         }
 
-        for (Material material: mListLain){
-            if(material.isChecked() && material.getAmountPaid() != 0){
+        for (Material material : mListLain) {
+//            if(material.isChecked() && material.getAmountPaid() != 0){
+            if (material.getAmountPaid() != 0) {
                 lainList.add(material);
+                totalMat++;
             }
         }
+        return totalMat > 0;
     }
 
     private void setCashView() {
@@ -218,7 +353,66 @@ public class CollectionFormActivity extends BaseActivity {
         recyclerViewKredit.setAdapter(mAdapterKredit);
 
         buttonKredit.setOnClickListener(v -> {
-            setSelectView(6);
+            //kalau kredit nya true, yg lain gak boleh di pilih
+            //kalau di klik lagi kreditnya, enable nya baru bisa lepas
+            if (kredit) {
+                kredit = false;
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+
+                llCash.setVisibility(View.GONE);
+                llTransfer.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.VISIBLE);
+
+                buttonCash.setEnabled(true);
+                buttonTransfer.setEnabled(true);
+                buttonGiro.setEnabled(true);
+                buttonCheq.setEnabled(true);
+                buttonLain.setEnabled(true);
+            } else {
+                kredit = true;
+                buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_disable));
+                buttonTransfer.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_disable));
+                buttonGiro.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_disable));
+                buttonCheq.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_disable));
+                buttonLain.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_disable));
+                buttonKredit.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type_select));
+
+                txtCash.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtTransfer.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtGiro.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtCheq.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
+                txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.new_blue));
+
+                llCash.setVisibility(View.GONE);
+                llTransfer.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
+                llKredit.setVisibility(View.VISIBLE);
+
+                buttonCash.setEnabled(false);
+                buttonTransfer.setEnabled(false);
+                buttonGiro.setEnabled(false);
+                buttonCheq.setEnabled(false);
+                buttonLain.setEnabled(false);
+            }
+
         });
     }
 
@@ -245,7 +439,7 @@ public class CollectionFormActivity extends BaseActivity {
                             try {
                                 cloneMat = (Material) p.clone();
                                 cloneMat.setAmountPaid(0);
-                                cloneMat.setChecked(false);
+//                                cloneMat.setChecked(false);
                             } catch (CloneNotSupportedException e) {
                                 e.printStackTrace();
                             }
@@ -293,7 +487,7 @@ public class CollectionFormActivity extends BaseActivity {
                             try {
                                 cloneMat = (Material) p.clone();
                                 cloneMat.setAmountPaid(0);
-                                cloneMat.setChecked(false);
+//                                cloneMat.setChecked(false);
                             } catch (CloneNotSupportedException e) {
                                 e.printStackTrace();
                             }
@@ -346,7 +540,7 @@ public class CollectionFormActivity extends BaseActivity {
                             try {
                                 cloneMat = (Material) p.clone();
                                 cloneMat.setAmountPaid(0);
-                                cloneMat.setChecked(false);
+//                                cloneMat.setChecked(false);
                             } catch (CloneNotSupportedException e) {
                                 e.printStackTrace();
                             }
@@ -609,7 +803,6 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         recyclerViewCash = findViewById(R.id.recyclerViewCash);
@@ -675,9 +868,9 @@ public class CollectionFormActivity extends BaseActivity {
     public void setLeftCash() {
         double totalPaid = 0;
         for (Material mat : mListCash) {
-            if (mat.isChecked()) {
-                totalPaid = totalPaid + mat.getAmountPaid();
-            }
+//            if (mat.isChecked()) {
+            totalPaid = totalPaid + mat.getAmountPaid();
+//            }
         }
 
         leftCash = totalPaymentCash - totalPaid;
@@ -688,13 +881,13 @@ public class CollectionFormActivity extends BaseActivity {
         double totalPaid = 0;
         for (int i = 0; i < mListCash.size(); i++) {
             Material mat = mListCash.get(i);
-            if (mat.isChecked()) {
-                if (i == pos) {
-                    totalPaid = totalPaid + qty;
-                } else {
-                    totalPaid = totalPaid + mat.getAmountPaid();
-                }
+//            if (mat.isChecked()) {
+            if (i == pos) {
+                totalPaid = totalPaid + qty;
+            } else {
+                totalPaid = totalPaid + mat.getAmountPaid();
             }
+//            }
         }
         leftCash = totalPaymentCash - totalPaid;
         return leftCash;
@@ -711,9 +904,9 @@ public class CollectionFormActivity extends BaseActivity {
     public void setLeftLain() {
         double totalPaid = 0;
         for (Material mat : mListLain) {
-            if (mat.isChecked()) {
-                totalPaid = totalPaid + mat.getAmountPaid();
-            }
+//            if (mat.isChecked()) {
+            totalPaid = totalPaid + mat.getAmountPaid();
+//            }
         }
 
         leftLain = totalPaymentLain - totalPaid;
@@ -724,15 +917,22 @@ public class CollectionFormActivity extends BaseActivity {
         double totalPaid = 0;
         for (int i = 0; i < mListLain.size(); i++) {
             Material mat = mListLain.get(i);
-            if (mat.isChecked()) {
-                if (i == pos) {
-                    totalPaid = totalPaid + qty;
-                } else {
-                    totalPaid = totalPaid + mat.getAmountPaid();
-                }
+//            if (mat.isChecked()) {
+            if (i == pos) {
+                totalPaid = totalPaid + qty;
+            } else {
+                totalPaid = totalPaid + mat.getAmountPaid();
             }
+//            }
         }
         leftLain = totalPaymentLain - totalPaid;
         return leftLain;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, DailySalesmanActivity.class);
+        startActivity(intent);
     }
 }

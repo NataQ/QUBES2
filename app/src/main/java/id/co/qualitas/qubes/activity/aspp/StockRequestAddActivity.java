@@ -209,6 +209,15 @@ public class StockRequestAddActivity extends BaseActivity {
         listSpinner = new ArrayList<>();
         listSpinner.addAll(initDataMaterial());
 
+//        for (int i = 0; i < mList.size(); i++) {
+//            Material mat = mList.get(i);
+//            for (Material spinMat : listSpinner) {
+//                if (mat.getId().equals(spinMat.getId())) {
+//                    mList.remove(i);
+//                }
+//            }
+//        }
+
         spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
         });
 
@@ -309,7 +318,7 @@ public class StockRequestAddActivity extends BaseActivity {
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {
-                if (param.getId() == param1.getId()) {
+                if (param.getId().equals(param1.getId())) {
                     exist++;
                 }
             }

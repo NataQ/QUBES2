@@ -124,9 +124,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getData();
-                filterData(false);//swipe
-//                mAdapter.setData(mListFiltered);
+                requestData();
                 swipeLayout.setRefreshing(false);
             }
         });
@@ -203,13 +201,18 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     private void getFirstDataOffline() {
         getData();
         if (mList == null || mList.isEmpty()) {
-            progressCircle.setVisibility(View.VISIBLE);
-            PARAM = 1;
-            new RequestUrl().execute();
+            requestData();
         } else {
             filterData(false);//getFirstDataOffline
 //            mAdapter.setData(mListFiltered);
         }
+    }
+
+    private void requestData() {
+        progressCircle.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        PARAM = 1;
+        new RequestUrl().execute();
     }
 
     private void setAdapter() {
@@ -316,6 +319,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     filterData(false);//request url
 //                    mAdapter.setData(mListFiltered);

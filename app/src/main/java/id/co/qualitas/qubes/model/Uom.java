@@ -36,7 +36,7 @@ public class Uom implements Serializable {
 
     //aspp
     String idHeader;
-    int id_material;
+    String id_material;
     String id_uom;
     int conversion;
 
@@ -60,11 +60,11 @@ public class Uom implements Serializable {
         return is_return;
     }
 
-    public int getId_material() {
+    public String getId_material() {
         return id_material;
     }
 
-    public void setId_material(int id_material) {
+    public void setId_material(String id_material) {
         this.id_material = id_material;
     }
 

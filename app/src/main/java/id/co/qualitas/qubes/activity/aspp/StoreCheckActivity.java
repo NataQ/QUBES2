@@ -386,7 +386,7 @@ public class StoreCheckActivity extends BaseActivity {
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {
-                if (param.getId() == param1.getId()) {
+                if (param.getId().equals(param1.getId())) {
                     exist++;
                 }
             }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class SalesPriceDetail implements Serializable {
     int idSalesPriceDetailDB;
-    int id_material;
+    String id_material;
     String uom;
     double qty;
     double selling_price;
@@ -18,11 +18,11 @@ public class SalesPriceDetail implements Serializable {
         this.idSalesPriceDetailDB = idSalesPriceDetailDB;
     }
 
-    public int getId_material() {
+    public String getId_material() {
         return id_material;
     }
 
-    public void setId_material(int id_material) {
+    public void setId_material(String id_material) {
         this.id_material = id_material;
     }
 

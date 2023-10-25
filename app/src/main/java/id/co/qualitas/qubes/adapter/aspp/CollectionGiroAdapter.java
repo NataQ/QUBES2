@@ -418,9 +418,9 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     public void setLeft() {
         double totalPaid = 0;
         for (Material mat : materialList) {
-            if (mat.isChecked()) {
+//            if (mat.isChecked()) {
                 totalPaid = totalPaid + mat.getAmountPaid();
-            }
+//            }
         }
 
         left = totalPayment - totalPaid;
@@ -431,13 +431,13 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         double totalPaid = 0;
         for (int i = 0; i < materialList.size(); i++) {
             Material mat = materialList.get(i);
-            if (mat.isChecked()) {
+//            if (mat.isChecked()) {
                 if (i == pos) {
                     totalPaid = totalPaid + qty;
                 } else {
                     totalPaid = totalPaid + mat.getAmountPaid();
                 }
-            }
+//            }
         }
         left = totalPayment - totalPaid;
         return left;

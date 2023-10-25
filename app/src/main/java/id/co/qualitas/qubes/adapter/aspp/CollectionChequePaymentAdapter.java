@@ -131,59 +131,59 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
         holder.txtPrice.setText("Rp." + format.format(detail.getAmount()));
         holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
 
-        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
-            holder.cb.setChecked(false);
-            holder.edtPaid.setEnabled(false);
-            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
-        } else {
-            holder.cb.setChecked(true);
-            holder.edtPaid.setEnabled(true);
-            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
-        }
-
-        if (detail.isChecked()) {
-            holder.cb.setChecked(true);
-            holder.edtPaid.setEnabled(true);
-            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
-        } else {
-            holder.cb.setChecked(false);
-            holder.edtPaid.setEnabled(false);
-            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
-        }
-
-        holder.cb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (headerAdapter.getTotalAmount() != 0) {
-                    if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
-                        holder.cb.setChecked(true);
-                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
-                        detail.setChecked(true);
-                        holder.edtPaid.setEnabled(true);
-                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
-                    } else {
-                        holder.cb.setChecked(false);
-                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
-                        detail.setChecked(false);
-                        detail.setAmountPaid(0);
-                        holder.edtPaid.setText(null);
-                        holder.edtPaid.setEnabled(false);
-                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
-                        headerAdapter.setLeft();
-                    }
-                } else {
-                    Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
-                    holder.cb.setChecked(false);
-                    itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
-                    detail.setChecked(false);
-                    detail.setAmountPaid(0);
-                    holder.edtPaid.setText(null);
-                    holder.edtPaid.setEnabled(false);
-                    holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
-                    headerAdapter.setLeft();
-                }
-            }
-        });
+//        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+//            holder.cb.setChecked(false);
+//            holder.edtPaid.setEnabled(false);
+//            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+//        } else {
+//            holder.cb.setChecked(true);
+//            holder.edtPaid.setEnabled(true);
+//            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+//        }
+//
+//        if (detail.isChecked()) {
+//            holder.cb.setChecked(true);
+//            holder.edtPaid.setEnabled(true);
+//            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+//        } else {
+//            holder.cb.setChecked(false);
+//            holder.edtPaid.setEnabled(false);
+//            holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+//        }
+//
+//        holder.cb.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (headerAdapter.getTotalAmount() != 0) {
+//                    if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+//                        holder.cb.setChecked(true);
+//                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+//                        detail.setChecked(true);
+//                        holder.edtPaid.setEnabled(true);
+//                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+//                    } else {
+//                        holder.cb.setChecked(false);
+//                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+//                        detail.setChecked(false);
+//                        detail.setAmountPaid(0);
+//                        holder.edtPaid.setText(null);
+//                        holder.edtPaid.setEnabled(false);
+//                        holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+//                        headerAdapter.setLeft();
+//                    }
+//                } else {
+//                    Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+//                    holder.cb.setChecked(false);
+//                    itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+//                    detail.setChecked(false);
+//                    detail.setAmountPaid(0);
+//                    holder.edtPaid.setText(null);
+//                    holder.edtPaid.setEnabled(false);
+//                    holder.edtPaid.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+//                    headerAdapter.setLeft();
+//                }
+//            }
+//        });
 
         holder.edtPaid.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,28 +198,34 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
             @Override
             public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(holder.edtPaid, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    double qty = Double.parseDouble((s.toString().replace(",", "")));
-                    if (qty > detail.getPrice()) {
-                        Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
-                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                    } else if (qty < 0) {
-                        Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                    } else if (qty > headerAdapter.getTotalAmount()) {
-                        Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
-                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                    } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
-                        Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                        holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                if (headerAdapter.getTotalAmount() != 0) {
+                    Helper.setDotCurrency(holder.edtPaid, this, s);
+                    if (!s.toString().equals("") && !s.toString().equals("-")) {
+                        double qty = Double.parseDouble((s.toString().replace(",", "")));
+                        if (qty > detail.getPrice()) {
+                            Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                        } else if (qty < 0) {
+                            Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                        } else if (qty > headerAdapter.getTotalAmount()) {
+                            Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                        } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                            Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                        } else {
+                            detail.setAmountPaid(qty);
+                        }
                     } else {
-                        detail.setAmountPaid(qty);
+                        detail.setAmountPaid(0);
                     }
+                    headerAdapter.setLeft();
                 } else {
                     detail.setAmountPaid(0);
+                    holder.edtPaid.setText("0");
+                    Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
                 }
-                headerAdapter.setLeft();
             }
         });
     }

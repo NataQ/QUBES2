@@ -46,7 +46,7 @@ public class StockRequestListActivity extends BaseActivity {
                 intent = new Intent(this, StockRequestAddActivity.class);
                 startActivity(intent);
             }else{
-                setToast("Silahkan melakukan uUnloading terlebih dahulu");
+                setToast("Silahkan melakukan Unloading terlebih dahulu");
             }
         });
 
@@ -65,15 +65,9 @@ public class StockRequestListActivity extends BaseActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setAdapter();
+                requestData();
                 swipeLayout.setRefreshing(false);
             }
-        });
-
-        txtTitle.setOnClickListener(view -> {
-            database.deleteStockRequestHeader();
-            database.deleteStockRequestDetail();
-            getFirstDataOffline();
         });
     }
 
@@ -88,7 +82,6 @@ public class StockRequestListActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         txtTitle = findViewById(R.id.txtTitle);
@@ -113,10 +106,15 @@ public class StockRequestListActivity extends BaseActivity {
         setAdapter();
 
         if (mList == null || mList.isEmpty()) {
-            progressCircle.setVisibility(View.VISIBLE);
-            PARAM = 1;
-            new RequestUrl().execute();
+            requestData();
         }
+    }
+
+    private void requestData() {
+        recyclerView.setVisibility(View.GONE);
+        progressCircle.setVisibility(View.VISIBLE);
+        PARAM = 1;
+        new RequestUrl().execute();
     }
 
     private void getData() {
@@ -189,6 +187,7 @@ public class StockRequestListActivity extends BaseActivity {
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapter.setData(mList);
                 } else {

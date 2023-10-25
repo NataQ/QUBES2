@@ -61,7 +61,8 @@ public class CollectionVisitActivity extends BaseActivity {
     private void initData() {
         mList = new ArrayList<>();
         mList.addAll(database.getAllInvoiceCustomer(SessionManagerQubes.getOutletHeader().getId()));
-
+        totalInvoice = 0;
+        totalPaid = 0;
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
             totalPaid = totalPaid + inv.getTotal_paid();

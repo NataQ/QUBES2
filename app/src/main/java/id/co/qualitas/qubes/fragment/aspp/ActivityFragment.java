@@ -91,7 +91,6 @@ public class ActivityFragment extends BaseFragment {
 
 
     private void initialize() {
-        db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
 //        llUnloading = rootView.findViewById(R.id.llUnloading);
@@ -106,5 +105,11 @@ public class ActivityFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "3");
+
+        if (user.getType_sales().equals("CO")) {
+            llStockRequest.setVisibility(View.VISIBLE);
+        } else {
+            llStockRequest.setVisibility(View.GONE);
+        }
     }
 }

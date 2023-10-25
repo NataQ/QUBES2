@@ -65,9 +65,18 @@ public class User implements Serializable {
     private String userLogin;
     private String position_name;
     private String token;
+    private String type_sales;
     private float radius;
     private int max_visit;
     private List<DepoRegion> depoRegionList;
+
+    public String getType_sales() {
+        return type_sales;
+    }
+
+    public void setType_sales(String type_sales) {
+        this.type_sales = type_sales;
+    }
 
     public List<DepoRegion> getDepoRegionList() {
         return depoRegionList;

@@ -196,8 +196,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getData();
-                setAdapterVisit();
+                requestData();
                 swipeLayoutVisit.setRefreshing(false);
             }
         });
@@ -500,8 +499,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getData();
-                setAdapterNoo();
+                requestData();
                 swipeLayoutNoo.setRefreshing(false);
             }
         });
@@ -992,13 +990,21 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         setAdapterNoo();
 
         if (mList == null || mList.isEmpty()) {
-            progressCircleVisit.setVisibility(View.VISIBLE);
-            PARAM = 1;
-            new RequestUrl().execute();//1
+            requestData();
         }
 
         validateButton();
     }
+
+    private void requestData() {
+        progressCircleVisit.setVisibility(View.VISIBLE);
+        progressCircleNoo.setVisibility(View.VISIBLE);
+        recyclerViewVisit.setVisibility(View.GONE);
+        recyclerViewNoo.setVisibility(View.GONE);
+        PARAM = 1;
+        new RequestUrl().execute();//1
+    }
+
 
     private void getData() {
         mList = new ArrayList<>();
@@ -1125,17 +1131,23 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                         PARAM = 2;
                         new RequestUrl().execute();//2
                     } else {
-                        progressCircle.setVisibility(View.GONE);
+                        progressCircleVisit.setVisibility(View.GONE);
+                        progressCircleNoo.setVisibility(View.GONE);
                         setToast(result.getMessage());
                     }
                 } else {
-                    progressCircle.setVisibility(View.GONE);
+                    progressCircleVisit.setVisibility(View.GONE);
+                    progressCircleNoo.setVisibility(View.GONE);
                     setToast(getString(R.string.failedGetData));
                 }
             } else if (PARAM == 2) {
                 progressCircleVisit.setVisibility(View.GONE);
+                progressCircleNoo.setVisibility(View.GONE);
+                recyclerViewVisit.setVisibility(View.VISIBLE);
+                recyclerViewNoo.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapterVisit.setData(mList);
+                    mAdapterNoo.setData(mListNoo);
                     validateButton();
                 } else {
                     setToast(getString(R.string.failedSaveData));

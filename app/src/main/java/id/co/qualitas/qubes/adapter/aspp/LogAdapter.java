@@ -5,10 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -16,19 +14,17 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
-import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.LastLog;
-import id.co.qualitas.qubes.model.LastLog;
+import id.co.qualitas.qubes.model.LogModel;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implements Filterable {
-    private List<LastLog> mList;
-    private List<LastLog> mFilteredList;
+    private List<LogModel> mList;
+    private List<LogModel> mFilteredList;
     private LayoutInflater mInflater;
     private AccountFragment mContext;
     private OnAdapterListener onAdapterListener;
 
-    public LogAdapter(AccountFragment mContext, List<LastLog> mList, OnAdapterListener onAdapterListener) {
+    public LogAdapter(AccountFragment mContext, List<LogModel> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -41,7 +37,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implemen
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<LastLog> mDataSet) {
+    public void setData(List<LogModel> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -56,11 +52,11 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implemen
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<LastLog> filteredList = new ArrayList<>();
-                    for (LastLog row : mList) {
+                    List<LogModel> filteredList = new ArrayList<>();
+                    for (LogModel row : mList) {
 
                         /*filter by name*/
-                        if (row.getLastMsg().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getDescLog().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -75,7 +71,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implemen
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<LastLog>) filterResults.values;
+                mFilteredList = (ArrayList<LogModel>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -108,10 +104,10 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implemen
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        LastLog detail = mFilteredList.get(position);
-//        holder.txtDate.setText(!Helper.isEmpty(detail.getDate()) ? detail.getDate() : "-");
-//        holder.txtTime.setText(!Helper.isEmpty(detail.getTime()) ? detail.getTime() : "-");
-//        holder.txtDesc.setText(!Helper.isEmpty(detail.getLastMsg()) ? detail.getLastMsg() : "-");
+        LogModel detail = mFilteredList.get(position);
+        holder.txtDate.setText(!Helper.isEmpty(detail.getDateLog()) ? detail.getDateLog() : "-");
+        holder.txtTime.setText(!Helper.isEmpty(detail.getTimeLog()) ? detail.getTimeLog() : "-");
+        holder.txtDesc.setText(!Helper.isEmpty(detail.getDescLog()) ? detail.getDescLog() : "-");
     }
 
     @Override
@@ -120,6 +116,6 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.Holder> implemen
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(LastLog LastLog);
+        void onAdapterClick(LogModel LogModel);
     }
 }

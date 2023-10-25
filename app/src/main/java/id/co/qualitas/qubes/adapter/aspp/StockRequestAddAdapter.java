@@ -138,7 +138,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
 
         holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(format.format(detail.getQty()));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         mContext.setSpinnerData(listSpinner, holder.spinnerUom);
 
         holder.imgDelete.setOnClickListener(v -> {
@@ -160,7 +160,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(".", "").replace(",", ""));
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
                     detail.setQty(qty);
                 } else {
                     detail.setQty(0);

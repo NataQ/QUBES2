@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 public class Material implements Cloneable{
     private String idHeader;//aspp
-    private int id;//aspp
+    private String id;//aspp
     private String id_customer;//aspp
     private String nama;//aspp
     private String materialCode;
@@ -50,14 +50,14 @@ public class Material implements Cloneable{
     }
 
     public Material(String id, String nama, double qty, String uom) {
-        this.id = Integer.parseInt(id);
+        this.id = id;
         this.nama = nama;
         this.qty = qty;
         this.uom = uom;
     }
 
     public Material(String id, String nama, double qty, String uom, double price, double totalDiscount) {
-        this.id = Integer.parseInt(id);
+        this.id = id;
         this.nama = nama;
         this.qty = qty;
         this.price = price;
@@ -66,7 +66,7 @@ public class Material implements Cloneable{
     }
 
     public Material(String id, String nama, double qty, String uom, double price, double totalDiscount, List<Material> extraItem) {
-        this.id = Integer.parseInt(id);
+        this.id =id;
         this.nama = nama;
         this.qty = qty;
         this.price = price;
@@ -76,7 +76,7 @@ public class Material implements Cloneable{
     }
 
     public Material(String id, String nama, double price, double amount) {
-        this.id = Integer.parseInt(id);
+        this.id = id;
         this.nama = nama;
         this.amount = amount;
         this.price = price;
@@ -105,13 +105,13 @@ public class Material implements Cloneable{
     }
 
     public Material(String id, String nama, double price) {
-        this.id = Integer.parseInt(id);
+        this.id = id;
         this.nama = nama;
         this.price = price;
     }
 
     public Material(String id, String nama, String materialQty, String uom) {
-        this.id = Integer.parseInt(id);
+        this.id = id;
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
@@ -213,11 +213,11 @@ public class Material implements Cloneable{
         this.idHeader = idHeader;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

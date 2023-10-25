@@ -1,6 +1,6 @@
 package id.co.qualitas.qubes.model;
 
-public class Log {
+public class LogModel {
     private String descLog;
     private String dateLog;
     private String timeLog;

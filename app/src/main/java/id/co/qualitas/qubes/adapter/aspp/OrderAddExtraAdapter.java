@@ -152,6 +152,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         uomList.add("KRT");
 
         holder.txtNo.setText(String.valueOf(posHeader + 1) + "." + String.valueOf(holder.getAbsoluteAdapterPosition() + 1));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {
@@ -185,7 +186,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
                 String temp[] = nameItem.split("_");
                 holder.edtProduct.setText(nameItem);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setId(Integer.parseInt(temp[0]));
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setId(temp[0]);
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
                 alertDialog.dismiss();
             });
@@ -244,7 +245,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(".", "").replace(",", ""));
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                 } else {
                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);

@@ -1385,7 +1385,7 @@ public class BaseActivity extends AppCompatActivity {
                         if (listMaterialName.contains(edtMaterialName.getText().toString())) {
                             Material material = new Material();
                             material.setMaterialCode(edtMaterialCode.getText().toString());
-                            material.setId(Integer.parseInt(edtMaterialCode.getText().toString()));
+                            material.setId(edtMaterialCode.getText().toString());
                             material.setDesc(edtMaterialName.getText().toString());
                             material.setKlasifikasi(edtKlasifikasi.getText().toString());
 

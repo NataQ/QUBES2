@@ -138,7 +138,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
         String productId = String.valueOf(detail.getId());
         holder.txtNo.setText(format.format(position + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(format.format(detail.getQty()));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
 
         mAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override
@@ -175,7 +175,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(".", "").replace(",", ""));
+                    int qty = Integer.parseInt(s.toString().replace(",", ""));
                     detail.setQty(qty);
                 } else {
                     detail.setQty(0);
