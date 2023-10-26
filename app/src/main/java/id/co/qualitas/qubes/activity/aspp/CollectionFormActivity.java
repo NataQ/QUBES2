@@ -238,8 +238,9 @@ public class CollectionFormActivity extends BaseActivity {
                         intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
                         startActivity(intent);
                     }
+                } else {
+//                    onBackPressed();
                 }
-                onBackPressed();
             } else {
                 setToast("Save Failed");
             }
@@ -689,6 +690,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
+                mAdapterCash.notifyDataSetChanged();
                 break;
             case 2:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -711,6 +713,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
+                mAdapterTransfer.notifyDataSetChanged();
                 break;
             case 3:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -733,6 +736,8 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
+
+                mAdapterGiro.notifyDataSetChanged();
                 break;
             case 4:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -755,6 +760,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.VISIBLE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
+                mAdapterCheque.notifyDataSetChanged();
                 break;
             case 5:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -777,6 +783,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.VISIBLE);
                 llKredit.setVisibility(View.GONE);
+                mAdapterLain.notifyDataSetChanged();
                 break;
             case 6:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -883,19 +890,19 @@ public class CollectionFormActivity extends BaseActivity {
         double paid = 0;
 
         if (mListTransfer != null && mListTransfer.size() != 0) {
-            for (CollectionTransfer collection: mListTransfer){
+            for (CollectionTransfer collection : mListTransfer) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
 
         if (mListGiro != null && mListGiro.size() != 0) {
-            for (CollectionGiro collection: mListGiro){
+            for (CollectionGiro collection : mListGiro) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
 
         if (mListCheque != null && mListCheque.size() != 0) {
-            for (CollectionCheque collection: mListCheque){
+            for (CollectionCheque collection : mListCheque) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
@@ -910,44 +917,93 @@ public class CollectionFormActivity extends BaseActivity {
             kurangBayar = mListCash.get(pos).getPrice() - paid;
             mListCash.get(pos).setSisa(kurangBayar);
         }
-
-        switch (type){
-            case 1:
-//                mAdapterCash.notifyItemChanged(pos);
-                mAdapterTransfer.updateKurangBayar(pos);
-                mAdapterGiro.updateKurangBayar(pos);
-                mAdapterCheque.updateKurangBayar(pos);
-                mAdapterLain.notifyItemChanged(pos);
-                break;
-            case 2:
-                mAdapterCash.notifyItemChanged(pos);
+//
+//        switch (type){
+//            case 1:
+////                mAdapterCash.notifyItemChanged(pos);
 //                mAdapterTransfer.updateKurangBayar(pos);
-                mAdapterGiro.updateKurangBayar(pos);
-                mAdapterCheque.updateKurangBayar(pos);
-                mAdapterLain.notifyItemChanged(pos);
-                break;
-            case 3:
-                mAdapterCash.notifyItemChanged(pos);
-                mAdapterTransfer.updateKurangBayar(pos);
 //                mAdapterGiro.updateKurangBayar(pos);
-                mAdapterCheque.updateKurangBayar(pos);
-                mAdapterLain.notifyItemChanged(pos);
-                break;
-            case 4:
-                mAdapterCash.notifyItemChanged(pos);
-                mAdapterTransfer.updateKurangBayar(pos);
-                mAdapterGiro.updateKurangBayar(pos);
 //                mAdapterCheque.updateKurangBayar(pos);
-                mAdapterLain.notifyItemChanged(pos);
-                break;
-            case 5:
-                mAdapterCash.notifyItemChanged(pos);
-                mAdapterTransfer.updateKurangBayar(pos);
-                mAdapterGiro.updateKurangBayar(pos);
-                mAdapterCheque.updateKurangBayar(pos);
 //                mAdapterLain.notifyItemChanged(pos);
-                break;
+//                break;
+//            case 2:
+//                mAdapterCash.notifyItemChanged(pos);
+////                mAdapterTransfer.updateKurangBayar(pos);
+//                mAdapterGiro.updateKurangBayar(pos);
+//                mAdapterCheque.updateKurangBayar(pos);
+//                mAdapterLain.notifyItemChanged(pos);
+//                break;
+//            case 3:
+//                mAdapterCash.notifyItemChanged(pos);
+//                mAdapterTransfer.updateKurangBayar(pos);
+////                mAdapterGiro.updateKurangBayar(pos);
+//                mAdapterCheque.updateKurangBayar(pos);
+//                mAdapterLain.notifyItemChanged(pos);
+//                break;
+//            case 4:
+//                mAdapterCash.notifyItemChanged(pos);
+//                mAdapterTransfer.updateKurangBayar(pos);
+//                mAdapterGiro.updateKurangBayar(pos);
+////                mAdapterCheque.updateKurangBayar(pos);
+//                mAdapterLain.notifyItemChanged(pos);
+//                break;
+//            case 5:
+//                mAdapterCash.notifyItemChanged(pos);
+//                mAdapterTransfer.updateKurangBayar(pos);
+//                mAdapterGiro.updateKurangBayar(pos);
+//                mAdapterCheque.updateKurangBayar(pos);
+////                mAdapterLain.notifyItemChanged(pos);
+//                break;
+//        }
+    }
+
+    public double getSisaPrice(int pos, int type) {
+//        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
+        double kurangBayar = 0;
+        double paid = 0;
+
+        if (type != 1) {
+            if (mListCash != null && mListCash.size() != 0) {
+                paid = paid + mListCash.get(pos).getAmountPaid();
+            }
         }
+
+        if (type != 2) {
+            if (mListTransfer != null && mListTransfer.size() != 0) {
+                for (CollectionTransfer collection : mListTransfer) {
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                }
+            }
+        }
+
+        if (type != 3) {
+            if (mListGiro != null && mListGiro.size() != 0) {
+                for (CollectionGiro collection : mListGiro) {
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                }
+            }
+        }
+
+        if (type != 4) {
+            if (mListCheque != null && mListCheque.size() != 0) {
+                for (CollectionCheque collection : mListCheque) {
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                }
+            }
+        }
+
+        if (type != 5) {
+            if (mListKredit != null && mListKredit.size() != 0) {
+                paid = paid + mListKredit.get(pos).getAmountPaid();
+            }
+        }
+
+        if (mListCash != null && mListCash.size() != 0) {
+            kurangBayar = mListCash.get(pos).getPrice() - paid;
+            mListCash.get(pos).setSisa(kurangBayar);
+        }
+
+        return kurangBayar;
     }
 
     public double getKurangBayar(int pos) {

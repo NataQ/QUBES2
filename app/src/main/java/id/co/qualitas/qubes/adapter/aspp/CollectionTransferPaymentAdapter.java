@@ -132,7 +132,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-        holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
+        holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
 //        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
 //            holder.cb.setChecked(false);
@@ -201,67 +201,87 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (checked) {
-                    Helper.setDotCurrency(holder.edtPaid, this, s);
-                    if (!s.toString().equals("") && !s.toString().equals("-")) {
-                        double qty = Double.parseDouble(s.toString().replace(",", ""));
-                        if (qty > 0 && headerAdapter.getTotalAmount() > 0) {
-                            if (mContext.getKurangBayar(holder.getAbsoluteAdapterPosition()) == 0) {
-                                checked = false;
-                                Toast.makeText(mContext, "Material ini sudah lunas", Toast.LENGTH_SHORT).show();
-                                String qtyString = s.toString().replace(",", "");
-                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
-                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
-                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
-                            } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
-                                checked = false;
-                                Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                                String qtyString = s.toString().replace(",", "");
-                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
-                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
-                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
-                            } else if (qty < 0) {
-                                checked = false;
-                                Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                                String qtyString = s.toString().replace(",", "");
-                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
-                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
-                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
-                            } else if (qty > headerAdapter.getTotalAmount()) {
-                                checked = false;
-                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
-                                String qtyString = s.toString().replace(",", "");
-                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
-                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
-                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
-                            } else if (qty > detail.getPrice()) {
-                                checked = false;
-                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
-                                String qtyString = s.toString().replace(",", "");
-                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
-                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
-                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
-                            } else {
-                                detail.setAmountPaid(qty);
-                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
-                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                            }
-                        } else {
-                            detail.setAmountPaid(0);
-                            holder.edtPaid.setText(null);
-                            Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
-                            mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
-                            holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                        }
-                    } else {
-                        detail.setAmountPaid(0);
-                        mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
-                        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                    }
-                    headerAdapter.setLeft();
-                } else {
-                    checked = true;
-                }
+//                if (checked) {
+//                    Helper.setDotCurrency(holder.edtPaid, this, s);
+//                    if (!s.toString().equals("") && !s.toString().equals("-")) {
+//                        double qty = Double.parseDouble(s.toString().replace(",", ""));
+//                        if (qty > 0 && headerAdapter.getTotalAmount() > 0) {
+//                            if (mContext.getKurangBayar(holder.getAbsoluteAdapterPosition()) == 0) {
+//                                checked = false;
+//                                Toast.makeText(mContext, "Material ini sudah lunas", Toast.LENGTH_SHORT).show();
+////                                String qtyString = s.toString().replace(",", "");
+////                                if (qtyString.length() > 1) {
+////                                    double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+//                                holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+//                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+////                                } else {
+////                                    holder.edtPaid.setText(null);
+////                                }
+//                            } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+//                                checked = false;
+//                                Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+////                                String qtyString = s.toString().replace(",", "");
+////                                if (qtyString.length() > 1) {
+////                                    double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+//                                holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+//                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+////                                } else {
+////                                    holder.edtPaid.setText(null);
+////                                }
+////                            } else if (qty < 0) {
+////                                checked = false;
+////                                Toast.makeText(mContext, "Tidak boleh di bawah 1", Toast.LENGTH_SHORT).show();
+////                                String qtyString = s.toString().replace(",", "");
+////                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+////                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+////                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+//                            } else if (qty > headerAdapter.getTotalAmount()) {
+//                                checked = false;
+//                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+////                                String qtyString = s.toString().replace(",", "");
+////                                if (qtyString.length() > 1) {
+////                                    double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+//                                holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+//                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+////                                } else {
+////                                    holder.edtPaid.setText(null);
+////                                }
+//                            } else if (qty > detail.getPrice()) {
+//                                checked = false;
+//                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+////                                String qtyString = s.toString().replace(",", "");
+////                                if (qtyString.length() > 1) {
+////                                    double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+//                                holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+//                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+////                                } else {
+////                                    holder.edtPaid.setText(null);
+////                                }
+//                            } else {
+//                                detail.setAmountPaid(qty);
+//                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
+//                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+//                            }
+//                        } else {
+//                            detail.setAmountPaid(0);
+//                            holder.edtPaid.setText(null);
+//                            if (headerAdapter.getTotalAmount() == 0) {
+//                                Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                Toast.makeText(mContext, "Tidak boleh di bawah 1", Toast.LENGTH_SHORT).show();
+//                            }
+//                            mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
+//                            holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+//                        }
+//                    } else {
+//                        detail.setAmountPaid(0);
+//                        mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 2);
+//                        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+//                    }
+//                    headerAdapter.setLeft();
+//                } else {
+//                    checked = true;
+//                }
             }
         });
     }

@@ -71,6 +71,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".2"
+        android:visibility="gone"
+        android:background="@drawable/editbox"
+        android:inputType="numberDecimal"
+        android:padding="5dp"
+        android:textColor="@color/gray8_aspp" />
+
+    <TextView
+        android:id="@+id/txtPaid"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
         android:background="@drawable/editbox"
         android:inputType="numberDecimal"
         android:padding="5dp"

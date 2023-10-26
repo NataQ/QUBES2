@@ -169,6 +169,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         setFormatSeparator();
         database = new Database(mContext);
         CollectionCheque detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        materialList = detail.getMaterialList();
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
         String idBankCust = Helper.isEmpty(detail.getIdBankCust(), "");
@@ -336,7 +337,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             });
         });
 
-        mAdapter = new CollectionChequePaymentAdapter(mContext,CollectionChequeAdapter.this, detail.getMaterialList(), header -> {
+        mAdapter = new CollectionChequePaymentAdapter(mContext,CollectionChequeAdapter.this, materialList, header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);
