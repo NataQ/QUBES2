@@ -114,6 +114,12 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         };
     }
 
+    public void updateKurangBayar(int pos) {
+        if(mAdapter != null) {
+            mAdapter.notifyItemChanged(pos);
+        }
+    }
+
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglGiro, txtPrice, txtTglCair, spnBankASPP, spnBankCust;
         EditText edtPayment, edtNoGiro;

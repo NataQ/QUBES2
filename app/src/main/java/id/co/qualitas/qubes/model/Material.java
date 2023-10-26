@@ -45,6 +45,7 @@ public class Material implements Cloneable{
     private String descReason;
     private String photoReason;
     private String expiredDate;
+    private double sisa;
 
     public Material() {
     }
@@ -115,6 +116,14 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getSisa() {
+        return sisa;
+    }
+
+    public void setSisa(double sisa) {
+        this.sisa = sisa;
     }
 
     public String getDate() {

@@ -116,6 +116,12 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         };
     }
 
+    public void updateKurangBayar(int pos) {
+        if(mAdapter != null) {
+            mAdapter.notifyItemChanged(pos);
+        }
+    }
+
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglTransfer, txtPrice;
         LinearLayout llPayment, layout, llDelete;
@@ -289,7 +295,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         double totalPaid = 0;
         for (Material mat : materialList) {
 //            if (mat.isChecked()) {
-                totalPaid = totalPaid + mat.getAmountPaid();
+            totalPaid = totalPaid + mat.getAmountPaid();
 //            }
         }
 
@@ -302,11 +308,11 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         for (int i = 0; i < materialList.size(); i++) {
             Material mat = materialList.get(i);
 //            if (mat.isChecked()) {
-                if (i == pos) {
-                    totalPaid = totalPaid + qty;
-                } else {
-                    totalPaid = totalPaid + mat.getAmountPaid();
-                }
+            if (i == pos) {
+                totalPaid = totalPaid + qty;
+            } else {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
 //            }
         }
         left = totalPayment - totalPaid;

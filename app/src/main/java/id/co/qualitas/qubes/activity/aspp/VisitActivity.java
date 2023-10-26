@@ -241,7 +241,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     startActivity(intent);
                 } else {
                     if (checkOutletStatus()) {
-                        if (!header.isRoute() && checkNonRouteCheckIn()) {//sudah mencapai max non rute
+                        if (header.isRoute()) {
                             if (header.getStatus() == 0) {//belum check in
                                 checkLocationPermission();
                             } else {
@@ -250,9 +250,18 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                                 startActivity(intent);
                             }
                         } else {
-                            setToast("Anda sudah mencapai max visit non route");
+                            if (checkNonRouteCheckIn()) {
+                                if (header.getStatus() == 0) {//belum check in
+                                    checkLocationPermission();
+                                } else {
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
+                                }
+                            } else {
+                                setToast("Anda sudah mencapai max visit non route");
+                            }
                         }
-
                     } else {
                         setToast("Selesaikan customer yang sedang check in");
                     }
@@ -339,7 +348,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                 visitSalesman.setLatCheckIn(currentLocation.getLatitude());
                 visitSalesman.setLongCheckIn(currentLocation.getLongitude());
-                visitSalesman.setInside(outRadius);
+                visitSalesman.setInside(!outRadius);
                 visitSalesman.setIdSalesman(user.getUsername());
                 visitSalesman.setCustomerId(outletClicked.getId());
                 visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
@@ -636,8 +645,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         llImgPulang.setOnClickListener(v -> {
             ImageType imageType = new ImageType();
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang.toString());
-            imageType.setPhotoSelesai(uriSelesai.toString());
+            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.toString() : null);
+            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.toString() : null);
             imageType.setPosImage(5);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -648,8 +657,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             ImageType imageType = new ImageType();
             imageType.setPosImage(6);
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang.toString());
-            imageType.setPhotoSelesai(uriSelesai.toString());
+            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.toString() : null);
+            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.toString() : null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
@@ -708,7 +717,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             ImageType imageType = new ImageType();
             imageType.setKmAwal(txtKmAwal.getText().toString().trim());
             imageType.setPosImage(4);
-            imageType.setPhotoKmAwal(uriBerangkat.toString());
+            imageType.setPhotoKmAwal(uriBerangkat != null ? uriBerangkat.toString() : null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();

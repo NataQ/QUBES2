@@ -114,6 +114,12 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         };
     }
 
+    public void updateKurangBayar(int pos) {
+        if(mAdapter != null) {
+            mAdapter.notifyItemChanged(pos);
+        }
+    }
+
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglCheque, txtPrice, txtTglCair, spnBankASPP, spnBankCust;
         EditText edtPayment, edtNoCheque;

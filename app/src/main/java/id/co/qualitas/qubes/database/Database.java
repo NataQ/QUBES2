@@ -2894,7 +2894,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
@@ -3909,7 +3910,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        db.update(TABLE_CUSTOMER, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
+        db.update(TABLE_CUSTOMER, values, KEY_CUSTOMER_ID + " = ?", new String[]{param.getId()});
         //db.close();
     }
 
@@ -3923,7 +3924,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        db.update(TABLE_CUSTOMER, values, KEY_ID_CUSTOMER_DB + " = ?", new String[]{param.getIdHeader()});
+        db.update(TABLE_CUSTOMER, values, KEY_CUSTOMER_ID + " = ?", new String[]{param.getId()});
         //db.close();
     }
 

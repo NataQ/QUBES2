@@ -116,6 +116,7 @@ public class StockRequestAddActivity extends BaseActivity {
         headerRequest = new StockRequest();
         String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
         headerRequest.setReq_date(date);
+        headerRequest.setId_salesman(user.getUsername());
         headerRequest.setStatus(Constants.STATUS_PENDING);
         headerRequest.setEnabled(1);
         headerRequest.setIs_sync(0);

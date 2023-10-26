@@ -936,14 +936,14 @@ public class Helper extends BaseFragment {
     }
 
     public static boolean checkRadius(Location currentLocation, Location custLocation) {
-        boolean inside = false;
+        boolean outside = false;
         float radius = database.getRadius(); //in meters
         float distance = custLocation.distanceTo(currentLocation);
         if (distance < radius) {
-            inside = true;
+            outside = false;
         } else {
-            inside = false;
+            outside = true;
         }
-        return inside;
+        return outside;
     }
 }

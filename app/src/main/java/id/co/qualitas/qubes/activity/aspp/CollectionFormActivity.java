@@ -114,8 +114,9 @@ public class CollectionFormActivity extends BaseActivity {
                 }
             } else {
                 if (validate()) {
-                    progress.show();
-                    new RequestUrl().execute();
+                    setToast("success");
+//                    progress.show();
+//                    new RequestUrl().execute();
                 }
             }
         });
@@ -872,9 +873,90 @@ public class CollectionFormActivity extends BaseActivity {
             totalPaid = totalPaid + mat.getAmountPaid();
 //            }
         }
-
         leftCash = totalPaymentCash - totalPaid;
         txtLeftCash.setText("Rp." + format.format(leftCash));
+    }
+
+    public void setKurangBayar(int pos, int type) {
+//        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
+        double kurangBayar = 0;
+        double paid = 0;
+
+        if (mListTransfer != null && mListTransfer.size() != 0) {
+            for (CollectionTransfer collection: mListTransfer){
+                paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+            }
+        }
+
+        if (mListGiro != null && mListGiro.size() != 0) {
+            for (CollectionGiro collection: mListGiro){
+                paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+            }
+        }
+
+        if (mListCheque != null && mListCheque.size() != 0) {
+            for (CollectionCheque collection: mListCheque){
+                paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+            }
+        }
+
+        if (mListKredit != null && mListKredit.size() != 0) {
+            paid = paid + mListKredit.get(pos).getAmountPaid();
+        }
+
+        if (mListCash != null && mListCash.size() != 0) {
+            paid = paid + mListCash.get(pos).getAmountPaid();
+
+            kurangBayar = mListCash.get(pos).getPrice() - paid;
+            mListCash.get(pos).setSisa(kurangBayar);
+        }
+
+        switch (type){
+            case 1:
+//                mAdapterCash.notifyItemChanged(pos);
+                mAdapterTransfer.updateKurangBayar(pos);
+                mAdapterGiro.updateKurangBayar(pos);
+                mAdapterCheque.updateKurangBayar(pos);
+                mAdapterLain.notifyItemChanged(pos);
+                break;
+            case 2:
+                mAdapterCash.notifyItemChanged(pos);
+//                mAdapterTransfer.updateKurangBayar(pos);
+                mAdapterGiro.updateKurangBayar(pos);
+                mAdapterCheque.updateKurangBayar(pos);
+                mAdapterLain.notifyItemChanged(pos);
+                break;
+            case 3:
+                mAdapterCash.notifyItemChanged(pos);
+                mAdapterTransfer.updateKurangBayar(pos);
+//                mAdapterGiro.updateKurangBayar(pos);
+                mAdapterCheque.updateKurangBayar(pos);
+                mAdapterLain.notifyItemChanged(pos);
+                break;
+            case 4:
+                mAdapterCash.notifyItemChanged(pos);
+                mAdapterTransfer.updateKurangBayar(pos);
+                mAdapterGiro.updateKurangBayar(pos);
+//                mAdapterCheque.updateKurangBayar(pos);
+                mAdapterLain.notifyItemChanged(pos);
+                break;
+            case 5:
+                mAdapterCash.notifyItemChanged(pos);
+                mAdapterTransfer.updateKurangBayar(pos);
+                mAdapterGiro.updateKurangBayar(pos);
+                mAdapterCheque.updateKurangBayar(pos);
+//                mAdapterLain.notifyItemChanged(pos);
+                break;
+        }
+    }
+
+    public double getKurangBayar(int pos) {
+        double kurangBayar = 0;
+        if (mListCash != null && mListCash.size() != 0) {
+            Material mat = mListCash.get(pos);
+            kurangBayar = mat.getSisa();
+        }
+        return kurangBayar;
     }
 
     public double calculateLeftCash(double qty, int pos) {

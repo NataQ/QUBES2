@@ -37,6 +37,7 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
     protected CollectionChequeAdapter headerAdapter;
+    protected boolean checked = true;
 
     public CollectionChequePaymentAdapter(CollectionFormActivity mContext, CollectionChequeAdapter headerAdapter, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -93,13 +94,14 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice;
+        TextView txtNo, txtProduct, txtPrice, txtLeft;
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             edtPaid = itemView.findViewById(R.id.edtPaid);
@@ -128,8 +130,9 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
-        holder.txtPrice.setText("Rp." + format.format(detail.getAmount()));
+        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.edtPaid.setText(Helper.setDotCurrencyAmount(detail.getAmountPaid()));
+        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
 
 //        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
 //            holder.cb.setChecked(false);
@@ -198,33 +201,66 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (headerAdapter.getTotalAmount() != 0) {
+                if (checked) {
                     Helper.setDotCurrency(holder.edtPaid, this, s);
                     if (!s.toString().equals("") && !s.toString().equals("-")) {
-                        double qty = Double.parseDouble((s.toString().replace(",", "")));
-                        if (qty > detail.getPrice()) {
-                            Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
-                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                        } else if (qty < 0) {
-                            Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                        } else if (qty > headerAdapter.getTotalAmount()) {
-                            Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
-                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
-                        } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
-                            Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                            holder.edtPaid.setText(s.toString().substring(0, s.toString().length() - 1));
+                        double qty = Double.parseDouble(s.toString().replace(",", ""));
+                        if (qty > 0 && headerAdapter.getTotalAmount() > 0) {
+                            if (mContext.getKurangBayar(holder.getAbsoluteAdapterPosition()) == 0) {
+                                checked = false;
+                                Toast.makeText(mContext, "Material ini sudah lunas", Toast.LENGTH_SHORT).show();
+                                String qtyString = s.toString().replace(",", "");
+                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+                            } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                                checked = false;
+                                Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+                                String qtyString = s.toString().replace(",", "");
+                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+                            } else if (qty < 0) {
+                                checked = false;
+                                Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+                                String qtyString = s.toString().replace(",", "");
+                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+                            } else if (qty > headerAdapter.getTotalAmount()) {
+                                checked = false;
+                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+                                String qtyString = s.toString().replace(",", "");
+                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+                            } else if (qty > detail.getPrice()) {
+                                checked = false;
+                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                                String qtyString = s.toString().replace(",", "");
+                                double qtyR = Double.parseDouble(qtyString.substring(0, qtyString.length() - 1));
+                                holder.edtPaid.setText(Helper.setDotCurrencyAmount(qtyR));
+                                holder.edtPaid.setSelection(holder.edtPaid.getText().length());
+                            } else {
+                                detail.setAmountPaid(qty);
+                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 4);
+                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+                            }
                         } else {
-                            detail.setAmountPaid(qty);
+                            detail.setAmountPaid(0);
+                            holder.edtPaid.setText(null);
+                            Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+                            mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 4);
+                            holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
                         }
                     } else {
                         detail.setAmountPaid(0);
+                        mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 4);
+                        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
                     }
                     headerAdapter.setLeft();
                 } else {
-                    detail.setAmountPaid(0);
-                    holder.edtPaid.setText("0");
-                    Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+                    checked = true;
                 }
             }
         });
