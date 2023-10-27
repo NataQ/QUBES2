@@ -1,11 +1,16 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -38,8 +43,9 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
     protected DecimalFormat format;
     protected CollectionTransferAdapter headerAdapter;
     protected boolean checked = true;
+    protected int idHeader;
 
-    public CollectionTransferPaymentAdapter(CollectionFormActivity mContext, CollectionTransferAdapter headerAdapter, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CollectionTransferPaymentAdapter(CollectionFormActivity mContext, CollectionTransferAdapter headerAdapter, int idHeader, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -47,6 +53,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.idHeader = idHeader;
         this.headerAdapter = headerAdapter;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
@@ -94,7 +101,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice, txtLeft;
+        TextView txtNo, txtProduct, txtPrice, txtLeft, txtPaid;
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
@@ -106,6 +113,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             edtPaid = itemView.findViewById(R.id.edtPaid);
             txtLeft = itemView.findViewById(R.id.txtLeft);
             txtPrice = itemView.findViewById(R.id.txtPrice);
+            txtPaid = itemView.findViewById(R.id.txtPaid);
             cb = itemView.findViewById(R.id.cb);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
@@ -133,6 +141,85 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
         holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+        holder.txtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+
+        holder.txtPaid.setOnClickListener(view -> {
+            if (headerAdapter.getTotalAmount() > 0) {
+                LayoutInflater inflater = LayoutInflater.from(mContext);
+                final Dialog dialog = new Dialog(mContext);
+                View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_paid, null);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(dialogView);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+                TextView txtMaterial = dialog.findViewById(R.id.txtMaterial);
+                TextView txtPrice = dialog.findViewById(R.id.txtPrice);
+                TextView txtLeft = dialog.findViewById(R.id.txtLeft);
+                EditText edtPaid = dialog.findViewById(R.id.edtPaid);
+                Button btnCancel = dialog.findViewById(R.id.btnCancel);
+                Button btnSave = dialog.findViewById(R.id.btnSave);
+
+                txtMaterial.setText(Helper.isEmpty(detail.getNama(), ""));
+                txtPrice.setText("Rp." + format.format(detail.getPrice()));
+                txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+                edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+
+                edtPaid.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        Helper.setDotCurrency(edtPaid, this, s);
+                    }
+                });
+
+                btnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                btnSave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!Helper.isEmptyEditText(edtPaid)) {
+                            double qty = Double.parseDouble(edtPaid.getText().toString().replace(",", ""));
+                            if (qty > mContext.getSisaPrice(holder.getAbsoluteAdapterPosition(), 2, idHeader)) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                            } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                                Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+                            } else if (qty > headerAdapter.getTotalAmount()) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+                            } else if (qty > detail.getPrice()) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                            } else {
+                                holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
+                                detail.setAmountPaid(qty);
+                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
+                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+                                headerAdapter.setLeft();
+                                mContext.updateLeft(2, idHeader);
+                                dialog.dismiss();
+                            }
+                        } else {
+                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
+                        }
+                    }
+                });
+                dialog.show();
+            } else {
+                Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
 //            holder.cb.setChecked(false);
@@ -187,20 +274,20 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
 //                }
 //            }
 //        });
-
-        holder.edtPaid.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+//
+//        holder.edtPaid.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
 //                if (checked) {
 //                    Helper.setDotCurrency(holder.edtPaid, this, s);
 //                    if (!s.toString().equals("") && !s.toString().equals("-")) {
@@ -282,8 +369,8 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
 //                } else {
 //                    checked = true;
 //                }
-            }
-        });
+//            }
+//        });
     }
 
     @Override

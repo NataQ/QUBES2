@@ -2,19 +2,16 @@ package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -37,7 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
@@ -116,12 +112,6 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         };
     }
 
-    public void updateKurangBayar(int pos) {
-        if(mAdapter != null) {
-            mAdapter.notifyItemChanged(pos);
-        }
-    }
-
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglTransfer, txtPrice;
         LinearLayout llPayment, layout, llDelete;
@@ -173,8 +163,12 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         if (!Helper.isNullOrEmpty(detail.getTglTransfer())) {
             String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglTransfer());
             holder.txtTglTransfer.setText(date);
+            holder.edtPayment.setEnabled(true);
+            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
         } else {
             holder.txtTglTransfer.setText(null);
+            holder.edtPayment.setEnabled(false);
+            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
         }
         holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
 
@@ -199,6 +193,8 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     detail.setTglTransfer(tglTf);
                     holder.txtTglTransfer.setText(chooseDateString);
                     holder.txtTglTransfer.setError(null);
+                    holder.edtPayment.setEnabled(true);
+                    holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
                 }
             };
             DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
@@ -237,7 +233,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
             }
         });
 
-        mAdapter = new CollectionTransferPaymentAdapter(mContext, CollectionTransferAdapter.this, materialList, header -> {
+        mAdapter = new CollectionTransferPaymentAdapter(mContext, CollectionTransferAdapter.this, holder.getAbsoluteAdapterPosition(), materialList, header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);
@@ -262,6 +258,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
                     notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    mContext.updateKurangBayarDelete();
                     dialog.dismiss();
                 }
             });

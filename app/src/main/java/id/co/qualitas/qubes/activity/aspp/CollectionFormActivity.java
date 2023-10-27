@@ -38,7 +38,6 @@ import id.co.qualitas.qubes.adapter.aspp.CollectionKreditAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.CollectionCheque;
 import id.co.qualitas.qubes.model.CollectionGiro;
@@ -128,6 +127,29 @@ public class CollectionFormActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(CollectionFormActivity.this);
         });
+    }
+
+    public void updateLeft(int type, int idHeader) {
+//        switch (type) {
+//            case 2:
+//                mAdapterTransfer.notifyDataSetChanged();
+////                if (mListTransfer.size() > idHeader) {
+////                    mAdapterTransfer.notifyItemRangeChanged(idHeader + 1, mListTransfer.size());
+////                }
+//                break;
+//            case 3:
+//                mAdapterGiro.notifyDataSetChanged();
+////                if (mListGiro.size() > idHeader) {
+////                    mAdapterGiro.notifyItemRangeChanged(idHeader + 1, mListGiro.size());
+////                }
+//                break;
+//            case 4:
+//                mAdapterCheque.notifyDataSetChanged();
+////                if (mListCheque.size() > idHeader) {
+////                    mAdapterCheque.notifyItemRangeChanged(idHeader + 1, mListCheque.size());
+////                }
+//                break;
+//        }
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
@@ -884,7 +906,42 @@ public class CollectionFormActivity extends BaseActivity {
         txtLeftCash.setText("Rp." + format.format(leftCash));
     }
 
-    public void setKurangBayar(int pos, int type) {
+    public void updateKurangBayarDelete() {
+//        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
+
+        if (mListCash != null && mListCash.size() != 0) {
+            for (int i = 0; i < mListCash.size(); i++) {
+                double kurangBayar = 0;
+                double paid = 0;
+                paid = paid + mListCash.get(i).getAmountPaid();
+                if (mListTransfer != null && mListTransfer.size() != 0) {
+                    for (CollectionTransfer collection : mListTransfer) {
+                        paid = paid + collection.getMaterialList().get(i).getAmountPaid();
+                    }
+                }
+
+                if (mListGiro != null && mListGiro.size() != 0) {
+                    for (CollectionGiro collection : mListGiro) {
+                        paid = paid + collection.getMaterialList().get(i).getAmountPaid();
+                    }
+                }
+
+                if (mListCheque != null && mListCheque.size() != 0) {
+                    for (CollectionCheque collection : mListCheque) {
+                        paid = paid + collection.getMaterialList().get(i).getAmountPaid();
+                    }
+                }
+
+                if (mListKredit != null && mListKredit.size() != 0) {
+                    paid = paid + mListKredit.get(i).getAmountPaid();
+                }
+                kurangBayar = mListCash.get(i).getPrice() - paid;
+                mListCash.get(i).setSisa(kurangBayar);
+            }
+        }
+    }
+
+    public void setKurangBayar(int pos) {
 //        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
         double kurangBayar = 0;
         double paid = 0;
@@ -957,7 +1014,7 @@ public class CollectionFormActivity extends BaseActivity {
 //        }
     }
 
-    public double getSisaPrice(int pos, int type) {
+    public double getSisaPrice(int pos, int type, int idHeader) {
 //        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
         double kurangBayar = 0;
         double paid = 0;
@@ -968,26 +1025,35 @@ public class CollectionFormActivity extends BaseActivity {
             }
         }
 
-        if (type != 2) {
+        if (type == 2) {
             if (mListTransfer != null && mListTransfer.size() != 0) {
-                for (CollectionTransfer collection : mListTransfer) {
-                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                for (int i = 0; i < mListTransfer.size(); i++) {
+                    CollectionTransfer collection = mListTransfer.get(i);
+                    if (i != idHeader) {
+                        paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                    }
                 }
             }
         }
 
-        if (type != 3) {
+        if (type == 3) {
             if (mListGiro != null && mListGiro.size() != 0) {
-                for (CollectionGiro collection : mListGiro) {
-                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                for (int i = 0; i < mListGiro.size(); i++) {
+                    CollectionGiro collection = mListGiro.get(i);
+                    if (i != idHeader) {
+                        paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                    }
                 }
             }
         }
 
-        if (type != 4) {
+        if (type == 4) {
             if (mListCheque != null && mListCheque.size() != 0) {
-                for (CollectionCheque collection : mListCheque) {
-                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                for (int i = 0; i < mListCheque.size(); i++) {
+                    CollectionCheque collection = mListCheque.get(i);
+                    if (i != idHeader) {
+                        paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
+                    }
                 }
             }
         }
@@ -1000,7 +1066,7 @@ public class CollectionFormActivity extends BaseActivity {
 
         if (mListCash != null && mListCash.size() != 0) {
             kurangBayar = mListCash.get(pos).getPrice() - paid;
-            mListCash.get(pos).setSisa(kurangBayar);
+//            mListCash.get(pos).setSisa(kurangBayar);
         }
 
         return kurangBayar;
@@ -1070,7 +1136,7 @@ public class CollectionFormActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, DailySalesmanActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, CollectionVisitActivity.class);
+//        startActivity(intent);
     }
 }

@@ -4147,7 +4147,7 @@ public class Database extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_PARAMETER);
     }
 
-    public void deleteMasterCustomerTYpe() {
+    public void deleteMasterCustomerType() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_CUSTOMER_TYPE);
     }
 

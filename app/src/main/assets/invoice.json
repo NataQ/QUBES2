@@ -1,0 +1,526 @@
+{
+    "idMessage": 1,
+    "message": null,
+    "result": [
+        {
+            "amount": 35200.00,
+            "nama": "CV. ONEWAY PRODUCTION",
+            "total_paid": 0.00,
+            "id_customer": "0GU11",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "BOX",
+                    "amount": 15200.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Aneka Buah",
+                    "qty": 40.00,
+                    "id": "21030",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV13"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 200,
+                    "uom": "BTL",
+                    "amount": 5000.00,
+                    "name_product_group": "Vitamin",
+                    "nama": "You C Vitamin Water",
+                    "qty": 70.00,
+                    "id": "33001",
+                    "material_group_name": "VIT WTR",
+                    "id_material_group": "33",
+                    "no_invoice": "INV13"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "LSN",
+                    "amount": 15000.00,
+                    "name_product_group": "Battery",
+                    "nama": "9 V CZ 1B",
+                    "qty": 44.00,
+                    "id": "63501",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV13"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV13",
+            "invoice_date": "2023-10-02",
+            "status": null
+        },
+        {
+            "amount": 456000.00,
+            "nama": "CV. ONEWAY PRODUCTION",
+            "total_paid": 0.00,
+            "id_customer": "0GU11",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "CUP",
+                    "amount": 456000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Torpedo Anggur",
+                    "qty": 21.00,
+                    "id": "21020",
+                    "material_group_name": "WTR",
+                    "id_material_group": "32",
+                    "no_invoice": "INV10"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV10",
+            "invoice_date": "2023-09-11",
+            "status": null
+        },
+        {
+            "amount": 2000000.00,
+            "nama": "CELEBRITY FITNESS (FOOD CENTRUM)",
+            "total_paid": 0.00,
+            "id_customer": "0KB82",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "BTL\n",
+                    "amount": 1000000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Kratingdaeng TP",
+                    "qty": 40.00,
+                    "id": "11004",
+                    "material_group_name": "KTD R",
+                    "id_material_group": "11",
+                    "no_invoice": "INV07"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "CUP",
+                    "amount": 500000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Leci",
+                    "qty": 100.00,
+                    "id": "21050",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV07"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "LSN",
+                    "amount": 500000.00,
+                    "name_product_group": "Battery",
+                    "nama": "R20 SPW 2S",
+                    "qty": 23.00,
+                    "id": "61101",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV07"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV07",
+            "invoice_date": "2023-09-11",
+            "status": null
+        },
+        {
+            "amount": 500000.00,
+            "nama": "CELEBRITY FITNESS (FOOD CENTRUM)",
+            "total_paid": 0.00,
+            "id_customer": "0KB82",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "KRT",
+                    "amount": 250000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Kratingdaeng",
+                    "qty": 250.00,
+                    "id": "11001",
+                    "material_group_name": "KTD R",
+                    "id_material_group": "11",
+                    "no_invoice": "INV05"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "BOX",
+                    "amount": 250000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Jeruk",
+                    "qty": 250.00,
+                    "id": "21040",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV05"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-09-20",
+            "no_invoice": "INV05",
+            "invoice_date": "2023-09-25",
+            "status": null
+        },
+        {
+            "amount": 960000.00,
+            "nama": "CATUR UMBARNO (WR)",
+            "total_paid": 0.00,
+            "id_customer": "0A285",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "PCS",
+                    "amount": 360000.00,
+                    "name_product_group": "Battery",
+                    "nama": "R20 SPW 2S",
+                    "qty": 45.00,
+                    "id": "61101",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV15"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "SLOP",
+                    "amount": 300000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Kratingdaeng TP",
+                    "qty": 66.00,
+                    "id": "11004",
+                    "material_group_name": "KTD R",
+                    "id_material_group": "11",
+                    "no_invoice": "INV15"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "BOX",
+                    "amount": 300000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Torpedo Aneka Buah",
+                    "qty": 100.00,
+                    "id": "21001",
+                    "material_group_name": "WTR",
+                    "id_material_group": "32",
+                    "no_invoice": "INV15"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV15",
+            "invoice_date": "2023-10-01",
+            "status": null
+        },
+        {
+            "amount": 1420000.00,
+            "nama": "CATUR UMBARNO (WR)",
+            "total_paid": 0.00,
+            "id_customer": "0A285",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "KRT",
+                    "amount": 1420000.00,
+                    "name_product_group": "Battery",
+                    "nama": "R20 SPW 2S",
+                    "qty": 25.00,
+                    "id": "61101",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV11"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV11",
+            "invoice_date": "2023-10-10",
+            "status": null
+        },
+        {
+            "amount": 780000.00,
+            "nama": "KANTIN SABAR",
+            "total_paid": 0.00,
+            "id_customer": "0GP99",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "CUP",
+                    "amount": 280000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Aneka Buah",
+                    "qty": 30.00,
+                    "id": "21030",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV14"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 200,
+                    "uom": "LSN",
+                    "amount": 250000.00,
+                    "name_product_group": "Vitamin",
+                    "nama": "You C Vitamin Water",
+                    "qty": 10.00,
+                    "id": "33001",
+                    "material_group_name": "VIT WTR",
+                    "id_material_group": "33",
+                    "no_invoice": "INV14"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "LSN",
+                    "amount": 250000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Leci",
+                    "qty": 25.00,
+                    "id": "21050",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV14"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV14",
+            "invoice_date": "2023-10-01",
+            "status": null
+        },
+        {
+            "amount": 2140000.00,
+            "nama": "KANTIN SABAR",
+            "total_paid": 0.00,
+            "id_customer": "0GP99",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "PCS",
+                    "amount": 1140000.00,
+                    "name_product_group": "Battery",
+                    "nama": "9 V CZ 1B",
+                    "qty": 36.00,
+                    "id": "63501",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV12"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "CUP",
+                    "amount": 1000000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Torpedo Aneka Buah",
+                    "qty": 50.00,
+                    "id": "21001",
+                    "material_group_name": "WTR",
+                    "id_material_group": "32",
+                    "no_invoice": "INV12"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 0,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV12",
+            "invoice_date": "2023-09-11",
+            "status": null
+        },
+        {
+            "amount": 1000000.00,
+            "nama": "LIE (TOKO)",
+            "total_paid": 0.00,
+            "id_customer": "0DH30",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "PCS",
+                    "amount": 500000.00,
+                    "name_product_group": "Battery",
+                    "nama": "R20 SPW 2S",
+                    "qty": 15.00,
+                    "id": "61101",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV06"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "HGR",
+                    "amount": 500000.00,
+                    "name_product_group": "Battery",
+                    "nama": "LR03 2B+1",
+                    "qty": 20.00,
+                    "id": "63601",
+                    "material_group_name": "BAT ALK",
+                    "id_material_group": "65",
+                    "no_invoice": "INV06"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV06",
+            "invoice_date": "2023-10-10",
+            "status": null
+        },
+        {
+            "amount": 100000.00,
+            "nama": "LIE (TOKO)",
+            "total_paid": 0.00,
+            "id_customer": "0DH30",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "PCS",
+                    "amount": 50000.00,
+                    "name_product_group": "Battery",
+                    "nama": "9 V CZ 1S",
+                    "qty": 10.00,
+                    "id": "61501",
+                    "material_group_name": "BAT CZ",
+                    "id_material_group": "60",
+                    "no_invoice": "INV02"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "LSN",
+                    "amount": 50000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Redbull",
+                    "qty": 10.00,
+                    "id": "11030",
+                    "material_group_name": "REDBULL",
+                    "id_material_group": "12",
+                    "no_invoice": "INV02"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-09-11",
+            "no_invoice": "INV02",
+            "invoice_date": "2023-10-02",
+            "status": null
+        },
+        {
+            "amount": 350000.00,
+            "nama": "KOPERASI BPJS",
+            "total_paid": 0.00,
+            "id_customer": "0KS02",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 200,
+                    "uom": "KRT",
+                    "amount": 350000.00,
+                    "name_product_group": "Vitamin",
+                    "nama": "You C Vitamin Water",
+                    "qty": 70.00,
+                    "id": "33001",
+                    "material_group_name": "VIT WTR",
+                    "id_material_group": "33",
+                    "no_invoice": "INV08"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV08",
+            "invoice_date": "2023-10-01",
+            "status": null
+        },
+        {
+            "amount": 235000.00,
+            "nama": "BREGAS KLINIK",
+            "total_paid": 0.00,
+            "id_customer": "0WQ21",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 100,
+                    "uom": "BOX",
+                    "amount": 135000.00,
+                    "name_product_group": "Minuman",
+                    "nama": "Isocup Leci",
+                    "qty": 80.00,
+                    "id": "21050",
+                    "material_group_name": "ISOCUP",
+                    "id_material_group": "41",
+                    "no_invoice": "INV09"
+                },
+                {
+                    "material_sales": null,
+                    "id_product_group": 300,
+                    "uom": "LSN",
+                    "amount": 100000.00,
+                    "name_product_group": "Battery",
+                    "nama": "LR03 2B+1",
+                    "qty": 55.00,
+                    "id": "63601",
+                    "material_group_name": "BAT ALK",
+                    "id_material_group": "65",
+                    "no_invoice": "INV09"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-10-17",
+            "no_invoice": "INV09",
+            "invoice_date": "2023-10-10",
+            "status": null
+        },
+        {
+            "amount": 4500.00,
+            "nama": "BREGAS KLINIK",
+            "total_paid": 0.00,
+            "id_customer": "0WQ21",
+            "materialList": [
+                {
+                    "material_sales": null,
+                    "id_product_group": 200,
+                    "uom": "BTL",
+                    "amount": 4500.00,
+                    "name_product_group": "Vitamin",
+                    "nama": "You C Vitamin Water",
+                    "qty": 1.00,
+                    "id": "33001",
+                    "material_group_name": "VIT WTR",
+                    "id_material_group": "33",
+                    "no_invoice": "INV04"
+                }
+            ],
+            "is_verif": 0,
+            "is_route": 1,
+            "tanggal_jatuh_tempo": "2023-09-28",
+            "no_invoice": "INV04",
+            "invoice_date": "2023-10-01",
+            "status": null
+        }
+    ]
+}

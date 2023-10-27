@@ -388,7 +388,7 @@ public class AccountFragment extends BaseFragment {
                     List<CustomerType> cusTypeList = new ArrayList<>();
                     CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
                     Collections.addAll(cusTypeList, paramArray10);
-                    database.deleteMasterCustomerTYpe();
+                    database.deleteMasterCustomerType();
                     for (CustomerType param : cusTypeList) {
                         database.addMasterCustomerType(param, user.getUserLogin());
                     }

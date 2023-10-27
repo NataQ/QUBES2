@@ -1,0 +1,1372 @@
+{
+    "idMessage": 1,
+    "message": null,
+    "result": {
+        "listSalesPriceHeader": [
+            {
+                "deleted": 0,
+                "top": "N28",
+                "price_list_code": "OP - TOP 14\n",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:50:51.522+00:00",
+                "updated_date": "2023-10-16T10:50:51.522+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "top": "N14",
+                "price_list_code": "GT - TOP 14\n",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:50:51.522+00:00",
+                "updated_date": "2023-10-16T10:50:51.522+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "top": "N14",
+                "price_list_code": "OP - TOP 28\n",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:51:34.664+00:00",
+                "updated_date": "2023-10-16T10:51:34.664+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "top": "N28",
+                "price_list_code": "GT - TOP 28\n",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:51:34.664+00:00",
+                "updated_date": "2023-10-16T10:51:34.664+00:00",
+                "created_by": null,
+                "enabled": 1
+            }
+        ],
+        "listSalesPriceDetail": [
+            {
+                "selling_price": 8000.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:53:38.409+00:00",
+                "updated_date": "2023-10-16T10:53:38.409+00:00",
+                "id_material": "11020",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8300.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:53:38.409+00:00",
+                "updated_date": "2023-10-16T10:53:38.409+00:00",
+                "id_material": "11001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 7600.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:53:38.409+00:00",
+                "updated_date": "2023-10-16T10:53:38.409+00:00",
+                "id_material": "11020",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8000.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:53:38.409+00:00",
+                "updated_date": "2023-10-16T10:53:38.409+00:00",
+                "id_material": "11001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 15500.00,
+                "uom": "HGR",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:27:29.235+00:00",
+                "updated_date": "2023-10-19T05:27:29.235+00:00",
+                "id_material": "63601",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25500.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:27:29.235+00:00",
+                "updated_date": "2023-10-19T05:27:29.235+00:00",
+                "id_material": "63501",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25500.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:27:29.235+00:00",
+                "updated_date": "2023-10-19T05:27:29.235+00:00",
+                "id_material": "61501",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25500.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:27:29.235+00:00",
+                "updated_date": "2023-10-19T05:27:29.235+00:00",
+                "id_material": "61101",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 15000.00,
+                "uom": "HGR",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:37:07.989+00:00",
+                "updated_date": "2023-10-19T05:37:07.989+00:00",
+                "id_material": "63601",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25000.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:37:07.989+00:00",
+                "updated_date": "2023-10-19T05:37:07.989+00:00",
+                "id_material": "63501",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25000.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:37:07.989+00:00",
+                "updated_date": "2023-10-19T05:37:07.989+00:00",
+                "id_material": "61501",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 25000.00,
+                "uom": "PCS",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:37:07.989+00:00",
+                "updated_date": "2023-10-19T05:37:07.989+00:00",
+                "id_material": "61101",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 5000.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:39:07.673+00:00",
+                "updated_date": "2023-10-19T05:39:07.673+00:00",
+                "id_material": "33001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 5500.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:39:07.673+00:00",
+                "updated_date": "2023-10-19T05:39:07.673+00:00",
+                "id_material": "33001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 1500.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:39:07.673+00:00",
+                "updated_date": "2023-10-19T05:39:07.673+00:00",
+                "id_material": "21050",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 2000.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:39:07.673+00:00",
+                "updated_date": "2023-10-19T05:39:07.673+00:00",
+                "id_material": "21050",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 1500.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:40:03.804+00:00",
+                "updated_date": "2023-10-19T05:40:03.804+00:00",
+                "id_material": "21040",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 2000.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:40:03.804+00:00",
+                "updated_date": "2023-10-19T05:40:03.804+00:00",
+                "id_material": "21040",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 1500.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:40:03.804+00:00",
+                "updated_date": "2023-10-19T05:40:03.804+00:00",
+                "id_material": "21030",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 2000.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:40:03.804+00:00",
+                "updated_date": "2023-10-19T05:40:03.804+00:00",
+                "id_material": "21030",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 1500.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:41:07.946+00:00",
+                "updated_date": "2023-10-19T05:41:07.946+00:00",
+                "id_material": "21020",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 2000.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:41:07.946+00:00",
+                "updated_date": "2023-10-19T05:41:07.946+00:00",
+                "id_material": "21020",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 1500.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:41:07.946+00:00",
+                "updated_date": "2023-10-19T05:41:07.946+00:00",
+                "id_material": "21001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 2000.00,
+                "uom": "CUP",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:41:07.946+00:00",
+                "updated_date": "2023-10-19T05:41:07.946+00:00",
+                "id_material": "21001",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8000.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:42:12.662+00:00",
+                "updated_date": "2023-10-19T05:42:12.662+00:00",
+                "id_material": "11030",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8300.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:42:12.662+00:00",
+                "updated_date": "2023-10-19T05:42:12.662+00:00",
+                "id_material": "11030",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8000.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:42:12.662+00:00",
+                "updated_date": "2023-10-19T05:42:12.662+00:00",
+                "id_material": "11004",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "selling_price": 8300.00,
+                "uom": "BTL",
+                "deleted": 0,
+                "qty": 1.00,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-19T05:42:12.662+00:00",
+                "updated_date": "2023-10-19T05:42:12.662+00:00",
+                "id_material": "11004",
+                "created_by": null,
+                "enabled": 1
+            }
+        ],
+        "listReason": [
+            {
+                "is_barcode": 0,
+                "is_photo": 1,
+                "is_freetext": 0,
+                "is_signature": 0,
+                "description": "Toko Tutup",
+                "id": 1,
+                "category": "Not Visit"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 1,
+                "is_freetext": 0,
+                "is_signature": 0,
+                "description": "Toko Kebanjiran",
+                "id": 2,
+                "category": "Not Visit"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 0,
+                "is_freetext": 1,
+                "is_signature": 0,
+                "description": "Waktu Tidak Cukup",
+                "id": 3,
+                "category": "Not Visit"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 0,
+                "is_freetext": 1,
+                "is_signature": 0,
+                "description": "Other",
+                "id": 4,
+                "category": "Not Visit"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 1,
+                "is_freetext": 0,
+                "is_signature": 0,
+                "description": "Toko Ramai",
+                "id": 5,
+                "category": "Pause"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 0,
+                "is_freetext": 1,
+                "is_signature": 0,
+                "description": "Pemilik Sedang Keluar",
+                "id": 6,
+                "category": "Pause"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 0,
+                "is_freetext": 1,
+                "is_signature": 0,
+                "description": "Other",
+                "id": 8,
+                "category": "Pause"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 1,
+                "is_freetext": 0,
+                "is_signature": 0,
+                "description": "Barang Masih Banyak",
+                "id": 9,
+                "category": "Not Buy"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 1,
+                "is_freetext": 0,
+                "is_signature": 0,
+                "description": "Barang Expired",
+                "id": 10,
+                "category": "Return"
+            },
+            {
+                "is_barcode": 0,
+                "is_photo": 0,
+                "is_freetext": 1,
+                "is_signature": 0,
+                "description": "Toko Bangkrut",
+                "id": 11,
+                "category": "Return"
+            }
+        ],
+        "listPriceCode": [
+            {
+                "id_product_group": 300,
+                "udf_5": "O",
+                "deleted": 0,
+                "price_list_code": "OP - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "id_product_group": 200,
+                "udf_5": "O",
+                "deleted": 0,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "id_product_group": 100,
+                "udf_5": "O",
+                "deleted": 0,
+                "price_list_code": "OP - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "id_product_group": 300,
+                "udf_5": "G",
+                "deleted": 0,
+                "price_list_code": "GT - TOP 28",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "id_product_group": 200,
+                "udf_5": "G",
+                "deleted": 0,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "id_product_group": 100,
+                "udf_5": "G",
+                "deleted": 0,
+                "price_list_code": "GT - TOP 14",
+                "updated_by": null,
+                "client": null,
+                "created_date": "2023-10-16T10:47:53.421+00:00",
+                "updated_date": "2023-10-16T10:47:53.421+00:00",
+                "created_by": null,
+                "enabled": 1
+            }
+        ],
+        "listBank": [
+            {
+                "name": "BCA ASEMKA",
+                "id_depo": "201",
+                "id": "201RP014",
+                "category": "Bank ASPP",
+                "no_rek": "0013037601"
+            },
+            {
+                "name": "BRI",
+                "id_depo": "201",
+                "id": "CUST001",
+                "category": "Bank Customer",
+                "no_rek": "034101000743002"
+            },
+            {
+                "name": "BNI",
+                "id_depo": "201",
+                "id": "CUST002",
+                "category": "Bank Customer",
+                "no_rek": "0178305710"
+            },
+            {
+                "name": "MAYBANK",
+                "id_depo": "301",
+                "id": "BANK0001",
+                "category": "Bank Customer",
+                "no_rek": null
+            },
+            {
+                "name": "BANK TABUNGAN NEGARA",
+                "id_depo": "401",
+                "id": "BANK0002",
+                "category": "Bank ASPP",
+                "no_rek": "0124578963"
+            },
+            {
+                "name": "BANK DANAMON INDONESIA",
+                "id_depo": "401",
+                "id": "BANK0003",
+                "category": "Bank Customer",
+                "no_rek": null
+            },
+            {
+                "name": "BANK PERMATA",
+                "id_depo": "301",
+                "id": "BANK0004",
+                "category": "Bank ASPP",
+                "no_rek": "4785692123"
+            }
+        ],
+        "parameter": [
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "in meter",
+                "client": null,
+                "created_date": "2023-10-10T04:52:06.647+00:00",
+                "updated_date": "2023-10-10T04:52:06.647+00:00",
+                "value": "50",
+                "created_by": "SYSTEM",
+                "key": "RADIUS",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "maximal visit non route",
+                "client": null,
+                "created_date": "2023-10-12T10:36:29.310+00:00",
+                "updated_date": "2023-10-12T10:36:29.310+00:00",
+                "value": "5",
+                "created_by": "SYSTEM",
+                "key": "MAX_VISIT",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "maximal outlet yang boleh di pause",
+                "client": null,
+                "created_date": "2023-10-13T03:43:50.162+00:00",
+                "updated_date": "2023-10-13T03:43:50.162+00:00",
+                "value": "2",
+                "created_by": "SYSTEM",
+                "key": "MAX_PAUSE",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "limit credit noo",
+                "client": null,
+                "created_date": "2023-10-13T03:48:02.867+00:00",
+                "updated_date": "2023-10-13T03:48:02.867+00:00",
+                "value": "2000000",
+                "created_by": "SYSTEM",
+                "key": "LIMIT_CREDIT",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": null,
+                "client": null,
+                "created_date": "2023-10-13T03:48:02.867+00:00",
+                "updated_date": "2023-10-13T03:48:02.867+00:00",
+                "value": "1.0",
+                "created_by": "SYSTEM",
+                "key": "WEB_VERSION",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": null,
+                "client": null,
+                "created_date": "2023-10-13T03:48:02.867+00:00",
+                "updated_date": "2023-10-13T03:48:02.867+00:00",
+                "value": "1.0",
+                "created_by": "SYSTEM",
+                "key": "APP_VERSION",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "in minute",
+                "client": null,
+                "created_date": "2023-10-13T03:48:02.867+00:00",
+                "updated_date": "2023-10-13T03:48:02.867+00:00",
+                "value": "30",
+                "created_by": "SYSTEM",
+                "key": "SYNC_DATA",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": "in minute",
+                "client": null,
+                "created_date": "2023-10-13T03:48:02.867+00:00",
+                "updated_date": "2023-10-13T03:48:02.867+00:00",
+                "value": "15",
+                "created_by": "SYSTEM",
+                "key": "IDLE",
+                "enabled": 1
+            },
+            {
+                "deleted": 0,
+                "updated_by": null,
+                "description": null,
+                "client": null,
+                "created_date": "2023-10-13T03:43:50.162+00:00",
+                "updated_date": "2023-10-13T03:43:50.162+00:00",
+                "value": "192.168.1.12:8080",
+                "created_by": "SYSTEM",
+                "key": "URL",
+                "enabled": 1
+            }
+        ],
+        "listDaerahTingkat": [
+            {
+                "nama_kelurahan": "Pulau Untung Jawa",
+                "nama_kecamatan": "Kepulauan Seribu Selatan",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Kepulauan Seribu (Kabupaten)",
+                "kode_kabupaten": "3101000000",
+                "kode_pos": 14510,
+                "kode_kelurahan": "3101021001",
+                "kode_kecamatan": "3101020000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Gambir",
+                "nama_kecamatan": "Gambir",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Jakarta Pusat (Kota)",
+                "kode_kabupaten": "3171000000",
+                "kode_pos": 10110,
+                "kode_kelurahan": "3171011001",
+                "kode_kecamatan": "3171010000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Penjaringan",
+                "nama_kecamatan": "Penjaringan",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Jakarta Utara (Kota)",
+                "kode_kabupaten": "3172000000",
+                "kode_pos": 14440,
+                "kode_kelurahan": "3172011001",
+                "kode_kecamatan": "3172010000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Cengkareng Barat",
+                "nama_kecamatan": "Cengkareng",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Jakarta Barat (Kota)",
+                "kode_kabupaten": "3173000000",
+                "kode_pos": 11730,
+                "kode_kelurahan": "3173011001",
+                "kode_kecamatan": "3173010000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Tebet Timur",
+                "nama_kecamatan": "Tebet",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Jakarta Selatan (Kota)",
+                "kode_kabupaten": "3174000000",
+                "kode_pos": 12820,
+                "kode_kelurahan": "3174011001",
+                "kode_kecamatan": "3174010000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Pisangan Baru",
+                "nama_kecamatan": "Matraman",
+                "nama_provinsi": "DKI Jakarta",
+                "nama_kabupaten": "Jakarta Timur (Kota)",
+                "kode_kabupaten": "3175000000",
+                "kode_pos": 34673,
+                "kode_kelurahan": "3175011001",
+                "kode_kecamatan": "3175010000",
+                "kode_provinsi": "3100000000"
+            },
+            {
+                "nama_kelurahan": "Pondok Rajeg",
+                "nama_kecamatan": "Cibinong",
+                "nama_provinsi": "Jawa Barat",
+                "nama_kabupaten": "Bogor (Kabupaten)",
+                "kode_kabupaten": "3201000000",
+                "kode_pos": 16413,
+                "kode_kelurahan": "3201011001",
+                "kode_kecamatan": "3201010000",
+                "kode_provinsi": "3200000000"
+            },
+            {
+                "nama_kelurahan": "Cileunyi Kulon",
+                "nama_kecamatan": "Cileunyi",
+                "nama_provinsi": "Jawa Barat",
+                "nama_kabupaten": "Bandung (Kabupaten)",
+                "kode_kabupaten": "3204000000",
+                "kode_pos": 40621,
+                "kode_kelurahan": "3204052001",
+                "kode_kecamatan": "3204050000",
+                "kode_provinsi": "3200000000"
+            },
+            {
+                "nama_kelurahan": "Sagara Makmur (Segara Makmur)",
+                "nama_kecamatan": "Tarumajaya",
+                "nama_provinsi": "Jawa Barat",
+                "nama_kabupaten": "Bekasi (Kabupaten)",
+                "kode_kabupaten": "3216000000",
+                "kode_pos": 17211,
+                "kode_kelurahan": "3216012001",
+                "kode_kecamatan": "3216010000",
+                "kode_provinsi": "3200000000"
+            }
+        ],
+        "listCustomerType": [
+            {
+                "type_price": "1",
+                "deleted": 0,
+                "name": "BAR/PUB",
+                "updated_by": null,
+                "client": null,
+                "id": "1",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "27",
+                "deleted": 0,
+                "name": "Pujasera/Food",
+                "updated_by": null,
+                "client": null,
+                "id": "27",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "29",
+                "deleted": 0,
+                "name": "SOR/GOR",
+                "updated_by": null,
+                "client": null,
+                "id": "29",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "35",
+                "deleted": 0,
+                "name": "Fitness Centre",
+                "updated_by": null,
+                "client": null,
+                "id": "35",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "36",
+                "deleted": 0,
+                "name": "Futsal",
+                "updated_by": null,
+                "client": null,
+                "id": "36",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "37",
+                "deleted": 0,
+                "name": "Kantin Umum",
+                "updated_by": null,
+                "client": null,
+                "id": "37",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "41",
+                "deleted": 0,
+                "name": "Kantin Sekolah",
+                "updated_by": null,
+                "client": null,
+                "id": "41",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "44",
+                "deleted": 0,
+                "name": "Kantin Rumah Sakit",
+                "updated_by": null,
+                "client": null,
+                "id": "44",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "45",
+                "deleted": 0,
+                "name": "Kantin Transportasi",
+                "updated_by": null,
+                "client": null,
+                "id": "45",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "46",
+                "deleted": 0,
+                "name": "Kantin Perkantoran",
+                "updated_by": null,
+                "client": null,
+                "id": "46",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "49",
+                "deleted": 0,
+                "name": "P&D",
+                "updated_by": null,
+                "client": null,
+                "id": "49",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "51",
+                "deleted": 0,
+                "name": "Kelontong",
+                "updated_by": null,
+                "client": null,
+                "id": "51",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "53",
+                "deleted": 0,
+                "name": "Kanvaser",
+                "updated_by": null,
+                "client": null,
+                "id": "53",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "54",
+                "deleted": 0,
+                "name": "Toserba",
+                "updated_by": null,
+                "client": null,
+                "id": "54",
+                "created_date": "2023-10-06T10:47:31.344+00:00",
+                "updated_date": "2023-10-06T10:47:31.344+00:00",
+                "created_by": null,
+                "enabled": 1
+            },
+            {
+                "type_price": "88",
+                "deleted": 0,
+                "name": "Koperasi Perkantoran",
+                "updated_by": null,
+                "client": null,
+                "id": "88",
+                "created_date": "2023-10-25T07:30:18.676+00:00",
+                "updated_date": "2023-10-25T07:30:18.676+00:00",
+                "created_by": null,
+                "enabled": 1
+            }
+        ],
+        "listMaterial": [
+            {
+                "material_sales": null,
+                "id_product_group": 300,
+                "name_product_group": "Battery",
+                "nama": "R20 SPW 2S",
+                "id": "61101",
+                "material_group_name": "BAT CZ",
+                "id_material_group": "60"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 300,
+                "name_product_group": "Battery",
+                "nama": "9 V CZ 1S",
+                "id": "61501",
+                "material_group_name": "BAT CZ",
+                "id_material_group": "60"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 300,
+                "name_product_group": "Battery",
+                "nama": "9 V CZ 1B",
+                "id": "63501",
+                "material_group_name": "BAT CZ",
+                "id_material_group": "60"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 300,
+                "name_product_group": "Battery",
+                "nama": "LR03 2B+1",
+                "id": "63601",
+                "material_group_name": "BAT ALK",
+                "id_material_group": "65"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Kratingdaeng",
+                "id": "11001",
+                "material_group_name": "KTD R",
+                "id_material_group": "11"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Kratingdaeng TP",
+                "id": "11004",
+                "material_group_name": "KTD R",
+                "id_material_group": "11"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Redbull",
+                "id": "11030",
+                "material_group_name": "REDBULL",
+                "id_material_group": "12"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Torpedo Aneka Buah",
+                "id": "21001",
+                "material_group_name": "WTR",
+                "id_material_group": "32"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Torpedo Anggur",
+                "id": "21020",
+                "material_group_name": "WTR",
+                "id_material_group": "32"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Isocup Aneka Buah",
+                "id": "21030",
+                "material_group_name": "ISOCUP",
+                "id_material_group": "41"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Isocup Jeruk",
+                "id": "21040",
+                "material_group_name": "ISOCUP",
+                "id_material_group": "41"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 100,
+                "name_product_group": "Minuman",
+                "nama": "Isocup Leci",
+                "id": "21050",
+                "material_group_name": "ISOCUP",
+                "id_material_group": "41"
+            },
+            {
+                "material_sales": null,
+                "id_product_group": 200,
+                "name_product_group": "Vitamin",
+                "nama": "You C Vitamin Water",
+                "id": "33001",
+                "material_group_name": "VIT WTR",
+                "id_material_group": "33"
+            }
+        ],
+        "listUom": [
+            {
+                "id_material": "11001",
+                "id_uom": "BTL",
+                "conversion": 1
+            },
+            {
+                "id_material": "11030",
+                "id_uom": "CAN",
+                "conversion": 1
+            },
+            {
+                "id_material": "11030",
+                "id_uom": "LSN",
+                "conversion": 2
+            },
+            {
+                "id_material": "11001",
+                "id_uom": "SLOP",
+                "conversion": 5
+            },
+            {
+                "id_material": "11030",
+                "id_uom": "KRT",
+                "conversion": 24
+            },
+            {
+                "id_material": "11001",
+                "id_uom": "KRT",
+                "conversion": 50
+            },
+            {
+                "id_material": "61101",
+                "id_uom": "PCS",
+                "conversion": 1
+            },
+            {
+                "id_material": "61101",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "61101",
+                "id_uom": "KRT",
+                "conversion": 144
+            },
+            {
+                "id_material": "61501",
+                "id_uom": "PCS",
+                "conversion": 1
+            },
+            {
+                "id_material": "61501",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "61501",
+                "id_uom": "KRT",
+                "conversion": 144
+            },
+            {
+                "id_material": "63501",
+                "id_uom": "PCS",
+                "conversion": 1
+            },
+            {
+                "id_material": "63501",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "63501",
+                "id_uom": "KRT",
+                "conversion": 144
+            },
+            {
+                "id_material": "63601",
+                "id_uom": "HGR",
+                "conversion": 1
+            },
+            {
+                "id_material": "63601",
+                "id_uom": "LSN",
+                "conversion": 4
+            },
+            {
+                "id_material": "63601",
+                "id_uom": "KRT",
+                "conversion": 144
+            },
+            {
+                "id_material": "11004",
+                "id_uom": "BTL",
+                "conversion": 1
+            },
+            {
+                "id_material": "11004",
+                "id_uom": "SLOP",
+                "conversion": 5
+            },
+            {
+                "id_material": "11004",
+                "id_uom": "KRT",
+                "conversion": 50
+            },
+            {
+                "id_material": "21001",
+                "id_uom": "CUP",
+                "conversion": 1
+            },
+            {
+                "id_material": "21001",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "21001",
+                "id_uom": "BOX",
+                "conversion": 24
+            },
+            {
+                "id_material": "21020",
+                "id_uom": "CUP",
+                "conversion": 1
+            },
+            {
+                "id_material": "21020",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "21020",
+                "id_uom": "BOX",
+                "conversion": 24
+            },
+            {
+                "id_material": "21030",
+                "id_uom": "CUP",
+                "conversion": 1
+            },
+            {
+                "id_material": "21030",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "21030",
+                "id_uom": "BOX",
+                "conversion": 24
+            },
+            {
+                "id_material": "21040",
+                "id_uom": "CUP",
+                "conversion": 1
+            },
+            {
+                "id_material": "21040",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "21040",
+                "id_uom": "KRT",
+                "conversion": 24
+            },
+            {
+                "id_material": "21050",
+                "id_uom": "CUP",
+                "conversion": 1
+            },
+            {
+                "id_material": "21050",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "21050",
+                "id_uom": "KRT",
+                "conversion": 24
+            },
+            {
+                "id_material": "33001",
+                "id_uom": "BTL",
+                "conversion": 1
+            },
+            {
+                "id_material": "33001",
+                "id_uom": "LSN",
+                "conversion": 12
+            },
+            {
+                "id_material": "33001",
+                "id_uom": "KRT",
+                "conversion": 24
+            }
+        ]
+    }
+}

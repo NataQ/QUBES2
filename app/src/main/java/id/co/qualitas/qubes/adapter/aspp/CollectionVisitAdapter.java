@@ -17,6 +17,8 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionVisitActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Invoice;
 
 public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisitAdapter.Holder> implements Filterable {
@@ -82,13 +84,15 @@ public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisit
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtInvoiceNo, txtDate, txtAmount, txtPaid;
+        TextView txtInvoiceNo, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtNett = itemView.findViewById(R.id.txtNett);
+            txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
+            txtDueDate = itemView.findViewById(R.id.txtDueDate);
             txtInvoiceNo = itemView.findViewById(R.id.txtInvoiceNo);
-            txtDate = itemView.findViewById(R.id.txtDate);
             txtAmount = itemView.findViewById(R.id.txtAmount);
             txtPaid = itemView.findViewById(R.id.txtPaid);
             this.onAdapterListener = onAdapterListener;
@@ -111,10 +115,20 @@ public class CollectionVisitAdapter extends RecyclerView.Adapter<CollectionVisit
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.txtDate.setText(detail.getInvoice_date());
-        holder.txtInvoiceNo.setText(detail.getNo_invoice());
-        holder.txtAmount.setText(format.format(detail.getAmount()));
-        holder.txtPaid.setText(format.format(detail.getTotal_paid()));
+
+        if (!Helper.isNullOrEmpty(detail.getInvoice_date())) {
+            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoice_date());
+            holder.txtInvoiceDate.setText(invDate);
+        }
+
+        if (!Helper.isNullOrEmpty(detail.getTanggal_jatuh_tempo())) {
+            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggal_jatuh_tempo());
+            holder.txtDueDate.setText(dueDate);
+        }
+        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getNo_invoice(), "-"));
+        holder.txtAmount.setText("Rp. " + format.format(detail.getAmount()));
+        holder.txtNett.setText("Rp. " + format.format(detail.getNett()));
+        holder.txtPaid.setText("Rp. " + format.format(detail.getTotal_paid()));
     }
 
     private void setFormatSeparator() {

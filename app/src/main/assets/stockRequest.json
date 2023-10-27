@@ -1,0 +1,40 @@
+{
+    "idMessage": 1,
+    "message": null,
+    "result": [
+        {
+            "req_date": "2023-10-26",
+            "no_doc": null,
+            "materialList": [
+                {
+                    "id_product_group": 300,
+                    "uom": "LSN",
+                    "name_product_group": "Battery",
+                    "nama": "LR03 2B+1",
+                    "qty": 554.00,
+                    "id": "63601",
+                    "material_group_name": "BAT ALK",
+                    "id_material_group": "65",
+                    "load_number": null
+                },
+                {
+                    "id_product_group": 100,
+                    "uom": "SLOP",
+                    "name_product_group": "Minuman",
+                    "nama": "Kratingdaeng",
+                    "qty": 123.00,
+                    "id": "11001",
+                    "material_group_name": "KTD R",
+                    "id_material_group": "11",
+                    "load_number": null
+                }
+            ],
+            "tanggal_kirim": null,
+            "is_verif": 1,
+            "id": 24,
+            "no_surat_jalan": null,
+            "is_unloading": 1,
+            "status": "Approve"
+        }
+    ]
+}

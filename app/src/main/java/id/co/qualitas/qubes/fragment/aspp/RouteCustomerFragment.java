@@ -26,8 +26,11 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -211,8 +214,65 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        PARAM = 1;
-        new RequestUrl().execute();
+        setDataDummyCustomer();
+//        PARAM = 1;
+//        new RequestUrl().execute();
+    }
+
+    private void setDataDummyCustomer() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(getActivity(), "todayCustomer.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+
+        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
+        mList = new ArrayList<>();
+        List<Customer> mListNonRoute = new ArrayList<>();
+        Map result = (Map) resultWsMessage.getResult();
+        if (result.get("visit") != null) {
+            LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+            double id = (double) startDay.get("id");
+            SessionManagerQubes.setStartDay((int) id);
+        } else {
+            SessionManagerQubes.setStartDay(0);
+        }
+        Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
+        Collections.addAll(mListNonRoute, param1Array);
+        database.deleteMasterNonRouteCustomer();
+        database.deleteMasterNonRouteCustomerPromotion();
+
+        for (Customer param : mListNonRoute) {
+            List<Promotion> arrayList = new ArrayList<>();
+            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+            Collections.addAll(arrayList, matArray);
+            param.setPromoList(arrayList);
+
+            int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+            for (Promotion mat : arrayList) {
+                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+
+        Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
+        Collections.addAll(mList, paramArray);
+        database.deleteCustomer();
+        database.deleteCustomerPromotion();
+
+        for (Customer param : mList) {
+            List<Promotion> arrayList = new ArrayList<>();
+            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+            Collections.addAll(arrayList, matArray);
+            param.setPromoList(arrayList);
+
+            int idHeader = database.addCustomer(param, user.getUserLogin());
+            for (Promotion mat : arrayList) {
+                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+
+        getData();
+        progressCircle.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        filterData(false);//request url
     }
 
     private void setAdapter() {

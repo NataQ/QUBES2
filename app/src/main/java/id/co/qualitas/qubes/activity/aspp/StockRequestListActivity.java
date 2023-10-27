@@ -10,6 +10,10 @@ import android.widget.Button;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,8 +117,37 @@ public class StockRequestListActivity extends BaseActivity {
     private void requestData() {
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
-        PARAM = 1;
-        new RequestUrl().execute();
+//        PARAM = 1;
+//        new RequestUrl().execute();
+        setDataDummyStock();
+    }
+
+    private void setDataDummyStock() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
+        mList = new ArrayList<>();
+        StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
+        Collections.addAll(mList, paramArray);
+        database.deleteStockRequestHeader();
+        database.deleteStockRequestDetail();
+
+        for (StockRequest param : mList) {
+            List<Material> listMat = new ArrayList<>();
+            Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+            Collections.addAll(listMat, matArray);
+            param.setMaterialList(listMat);
+
+            int idHeader = database.addStockRequestHeader(param, user.getUserLogin());
+            for (Material mat : listMat) {
+                database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+        getData();
+        progressCircle.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        mAdapter.setData(mList);
     }
 
     private void getData() {

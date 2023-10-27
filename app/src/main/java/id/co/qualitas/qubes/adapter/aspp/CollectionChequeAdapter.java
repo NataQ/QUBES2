@@ -337,7 +337,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             });
         });
 
-        mAdapter = new CollectionChequePaymentAdapter(mContext,CollectionChequeAdapter.this, materialList, header -> {
+        mAdapter = new CollectionChequePaymentAdapter(mContext,CollectionChequeAdapter.this, holder.getAbsoluteAdapterPosition(), materialList, header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);

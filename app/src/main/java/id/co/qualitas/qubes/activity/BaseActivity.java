@@ -337,6 +337,7 @@ public class BaseActivity extends AppCompatActivity {
         database.deleteMasterReason();
         database.deleteMasterMaterial();
         database.deleteMasterUom();
+        database.deleteMasterCustomerType();
         database.deleteMasterDaerahTingkat();
         database.deleteMasterPriceCode();
         database.deleteMasterSalesPriceHeader();

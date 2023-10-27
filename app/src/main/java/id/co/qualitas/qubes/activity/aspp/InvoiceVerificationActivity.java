@@ -18,7 +18,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -189,8 +192,38 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        PARAM = 1;
-        new RequestUrl().execute();//1
+//        PARAM = 1;
+//        new RequestUrl().execute();//1
+        setDataDummy();
+    }
+
+    private void setDataDummy() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "invoice.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
+        mList = new ArrayList<>();
+        Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
+        Collections.addAll(mList, paramArray);
+        database.deleteInvoiceHeader();
+        database.deleteInvoiceDetail();
+
+        for (Invoice param : mList) {
+            List<Material> listMat = new ArrayList<>();
+            Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+            Collections.addAll(listMat, matArray);
+            param.setMaterialList(listMat);
+
+            int idHeader = database.addInvoiceHeader(param, user.getUserLogin());
+            for (Material mat : listMat) {
+                database.addInvoiceDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+        getData();
+        progressCircle.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        setTotal();
+        mAdapter.setData(mList);
     }
 
     private void getData() {

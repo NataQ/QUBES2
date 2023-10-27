@@ -337,7 +337,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             });
         });
 
-        mAdapter = new CollectionGiroPaymentAdapter(mContext, CollectionGiroAdapter.this, materialList, header -> {
+        mAdapter = new CollectionGiroPaymentAdapter(mContext, CollectionGiroAdapter.this, holder.getAbsoluteAdapterPosition(), materialList, header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);

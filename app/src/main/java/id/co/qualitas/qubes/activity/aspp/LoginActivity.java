@@ -32,7 +32,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -125,9 +128,10 @@ public class LoginActivity extends AppCompatActivity {
             } else if (password.isEmpty()) {
                 edtPassword.setError(getString(R.string.pleaseFillPassword));
             } else {
-                progress.show();
-                PARAM = 1;
-                new RequestUrl().execute();
+                setDataDummyUser();
+//                progress.show();
+//                PARAM = 1;
+//                new RequestUrl().execute();
             }
         });
 
@@ -220,6 +224,129 @@ public class LoginActivity extends AppCompatActivity {
     private void deleteHelper() {
         Helper.removeItemParam(Constants.CURRENTPAGE);
         Helper.removeItemParam(Constants.USER_DETAIL);
+    }
+
+    private void setDataDummyUser() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "detailUser.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+
+        WSMessage result = gson.fromJson(jsonFileString, resultType);
+        if (result != null) {
+            LoginResponse response = Helper.ObjectToGSON(result.getResult(), LoginResponse.class);
+            userResponse = Helper.ObjectToGSON(response.getUserDetail(), User.class);
+            userResponse.setUserLogin(userId);
+            userResponse.setImei(Helper.getImei(getApplicationContext()));
+//            userResponse.setToken(loginResponse.getAccess_token());
+            userResponse.setRegis_id(registerID);
+
+            List<DepoRegion> arrayList = new ArrayList<>();
+            DepoRegion[] paramArray = Helper.ObjectToGSON(response.getDepoRegion(), DepoRegion[].class);
+            Collections.addAll(arrayList, paramArray);
+            userResponse.setDepoRegionList(arrayList);
+            SessionManagerQubes.setUserProfile(userResponse);
+            SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
+            setDataDummyMaster();
+        }else{
+            setToast("failed");
+        }
+    }
+
+    private void setDataDummyMaster() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "masterData.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+
+        WSMessage result = gson.fromJson(jsonFileString, resultType);
+        if (result != null) {
+            Map response = (Map) result.getResult();
+
+            List<Reason> reasonList = new ArrayList<>();
+            Reason[] paramArray = Helper.ObjectToGSON(response.get("listReason"), Reason[].class);
+            Collections.addAll(reasonList, paramArray);
+            database.deleteMasterReason();
+            for (Reason reason : reasonList) {
+                database.addMasterReason(reason, userId);
+            }
+
+            List<Bank> bankList = new ArrayList<>();
+            Bank[] paramArray1 = Helper.ObjectToGSON(response.get("listBank"), Bank[].class);
+            Collections.addAll(bankList, paramArray1);
+            database.deleteMasterBank();
+            for (Bank param : bankList) {
+                database.addMasterBank(param, userId);
+            }
+
+            List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
+            DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.get("listDaerahTingkat"), DaerahTingkat[].class);
+            Collections.addAll(daerahTingkatList, paramArray3);
+            database.deleteMasterDaerahTingkat();
+            for (DaerahTingkat param : daerahTingkatList) {
+                database.addMasterDaerahTingkat(param, userId);
+            }
+
+            List<Material> materialList = new ArrayList<>();
+            Material[] paramArray4 = Helper.ObjectToGSON(response.get("listMaterial"), Material[].class);
+            Collections.addAll(materialList, paramArray4);
+            database.deleteMasterMaterial();
+            for (Material param : materialList) {
+                database.addMasterMaterial(param, userId);
+            }
+
+            List<Uom> uomList = new ArrayList<>();
+            Uom[] paramArray5 = Helper.ObjectToGSON(response.get("listUom"), Uom[].class);
+            Collections.addAll(uomList, paramArray5);
+            database.deleteMasterUom();
+            for (Uom param : uomList) {
+                database.addMasterUom(param, userId);
+            }
+
+            List<PriceCode> priceList = new ArrayList<>();
+            PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
+            Collections.addAll(priceList, paramArray6);
+            database.deleteMasterPriceCode();
+            for (PriceCode param : priceList) {
+                database.addMasterPriceCode(param, userId);
+            }
+
+            List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
+            SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
+            Collections.addAll(salesPriceHeaderList, paramArray7);
+            database.deleteMasterSalesPriceHeader();
+            for (SalesPriceHeader param : salesPriceHeaderList) {
+                database.addMasterSalesPriceHeader(param, userId);
+            }
+
+            List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
+            SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
+            Collections.addAll(salesPriceDetailList, paramArray8);
+            database.deleteMasterSalesPriceDetail();
+            for (SalesPriceDetail param : salesPriceDetailList) {
+                database.addMasterSalesPriceDetail(param, userId);
+            }
+
+            List<Parameter> parameterList = new ArrayList<>();
+            Parameter[] paramArray9 = Helper.ObjectToGSON(response.get("parameter"), Parameter[].class);
+            Collections.addAll(parameterList, paramArray9);
+            database.deleteMasterParameter();
+            for (Parameter param : parameterList) {
+                database.addMasterParameter(param, userId);
+            }
+
+            List<CustomerType> cusTypeList = new ArrayList<>();
+            CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
+            Collections.addAll(cusTypeList, paramArray10);
+            database.deleteMasterCustomerType();
+            for (CustomerType param : cusTypeList) {
+                database.addMasterCustomerType(param, userId);
+            }
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }else{
+            setToast("failed");
+        }
     }
 
 
@@ -350,7 +477,7 @@ public class LoginActivity extends AppCompatActivity {
                     List<CustomerType> cusTypeList = new ArrayList<>();
                     CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
                     Collections.addAll(cusTypeList, paramArray10);
-                    database.deleteMasterCustomerTYpe();
+                    database.deleteMasterCustomerType();
                     for (CustomerType param : cusTypeList) {
                         database.addMasterCustomerType(param, userId);
                     }
@@ -392,7 +519,7 @@ public class LoginActivity extends AppCompatActivity {
                             Helper.setItemParam(Constants.TOKEN, logins.getAccess_token());
                             SessionManagerQubes.setToken(logins.getAccess_token());
                             PARAM = 2;
-                            new RequestUrl().execute();
+                            new RequestUrl().execute();//2
                         }
                     } else {
                         progress.dismiss();
@@ -407,7 +534,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (messageResponse != null) {
                         if (messageResponse.getIdMessage() == 1) {
                             PARAM = 3;
-                            new RequestUrl().execute();//f75c38b1ea8e2416
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
                         } else {
                             progress.dismiss();
                             setToast(getString(R.string.failedGetData));
@@ -420,7 +547,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (saveDataSuccess) {
                         saveDataSuccess = false;
                         PARAM = 4;
-                        new RequestUrl().execute();
+                        new RequestUrl().execute();//4
                     } else {
                         progress.dismiss();
                         setToast(getString(R.string.failedSaveData));
@@ -428,7 +555,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (PARAM == 4) {
                     if (messageResponse != null) {
                         PARAM = 5;
-                        new RequestUrl().execute();
+                        new RequestUrl().execute();//5
                     } else {
                         progress.dismiss();
                         setToast(getString(R.string.failedGetData));

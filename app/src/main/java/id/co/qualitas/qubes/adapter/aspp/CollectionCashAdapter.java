@@ -151,6 +151,7 @@ public class CollectionCashAdapter extends RecyclerView.Adapter<CollectionCashAd
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
                 TextView txtMaterial = dialog.findViewById(R.id.txtMaterial);
+                TextView txtLeft = dialog.findViewById(R.id.txtLeft);
                 TextView txtPrice = dialog.findViewById(R.id.txtPrice);
                 EditText edtPaid = dialog.findViewById(R.id.edtPaid);
                 Button btnCancel = dialog.findViewById(R.id.btnCancel);
@@ -158,6 +159,7 @@ public class CollectionCashAdapter extends RecyclerView.Adapter<CollectionCashAd
 
                 txtMaterial.setText(Helper.isEmpty(detail.getNama(), ""));
                 txtPrice.setText("Rp." + format.format(detail.getPrice()));
+                txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
                 edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
                 edtPaid.addTextChangedListener(new TextWatcher() {
@@ -189,31 +191,25 @@ public class CollectionCashAdapter extends RecyclerView.Adapter<CollectionCashAd
                     public void onClick(View v) {
                         if (!Helper.isEmptyEditText(edtPaid)) {
                             double qty = Double.parseDouble(edtPaid.getText().toString().replace(",", ""));
-                            if (qty > 0) {
-                                if (qty > mContext.getSisaPrice(holder.getAbsoluteAdapterPosition(), 1)) {
-                                    checked = false;
-                                    Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
-                                } else if (mContext.calculateLeftCash(qty, holder.getAbsoluteAdapterPosition()) < 0) {
-                                    checked = false;
-                                    Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                                } else if (qty > mContext.getTotalAmountCash()) {
-                                    checked = false;
-                                    Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
-                                } else if (qty > detail.getPrice()) {
-                                    checked = false;
-                                    Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
-                                    detail.setAmountPaid(qty);
-                                    mContext.setKurangBayar(holder.getAbsoluteAdapterPosition(), 1);
-                                    holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                                    mContext.setLeftCash();
-                                }
+                            if (qty > mContext.getSisaPrice(holder.getAbsoluteAdapterPosition(), 1, 0)) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                            } else if (mContext.calculateLeftCash(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                                Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
+                            } else if (qty > mContext.getTotalAmountCash()) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
+                            } else if (qty > detail.getPrice()) {
+                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(mContext, "Tidak boleh di bawah 1", Toast.LENGTH_SHORT).show();
+                                holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
+                                detail.setAmountPaid(qty);
+                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
+                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+                                mContext.setLeftCash();
+                                dialog.dismiss();
                             }
+                        } else {
+                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
                         }
-                        dialog.dismiss();
                     }
                 });
 

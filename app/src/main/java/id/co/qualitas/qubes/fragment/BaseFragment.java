@@ -379,6 +379,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         database.deleteMasterReason();
         database.deleteMasterMaterial();
         database.deleteMasterUom();
+        database.deleteMasterCustomerType();
         database.deleteMasterDaerahTingkat();
         database.deleteMasterPriceCode();
         database.deleteMasterSalesPriceHeader();

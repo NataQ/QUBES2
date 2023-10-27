@@ -44,6 +44,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -62,6 +63,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -665,7 +667,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnEnd.setOnClickListener(v -> {
-            dialog.dismiss();
             if (Helper.isEmptyEditText(txtKmAkhir)) {
                 txtKmAkhir.setError(getString(R.string.emptyField));
             } else if (uriPulang == null) {
@@ -674,9 +675,11 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 setToast("Harus Foto Selesai");
             } else {
                 kmAkhir = txtKmAkhir.getText().toString().trim();
-                PARAM = 4;
-                new RequestUrl().execute();//4
-                progress.show();
+//                PARAM = 4;
+//                new RequestUrl().execute();//4
+//                progress.show();
+                endDayDayDummy();
+                dialog.dismiss();
             }
         });
 
@@ -726,16 +729,18 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnStart.setOnClickListener(v -> {
-            dialog.dismiss();
+
             if (Helper.isEmptyEditText(txtKmAwal)) {
                 txtKmAwal.setError(getString(R.string.emptyField));
             } else if (uriBerangkat == null) {
                 setToast("Foto KM Awal");
             } else {
                 kmAwal = txtKmAwal.getText().toString().trim();
-                PARAM = 3;
-                new RequestUrl().execute();//3
-                progress.show();
+//                PARAM = 3;
+//                new RequestUrl().execute();//3
+//                progress.show();
+                startDayDummy();
+                dialog.dismiss();
             }
         });
 
@@ -744,6 +749,16 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         dialog.show();
+    }
+
+    private void startDayDummy() {
+        SessionManagerQubes.setStartDay(1);
+        validateButton();
+    }
+
+    private void endDayDayDummy(){
+        SessionManagerQubes.setStartDay(2);
+        validateButton();
     }
 
     public void askPermissionCamera() {
@@ -1010,8 +1025,67 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         progressCircleNoo.setVisibility(View.VISIBLE);
         recyclerViewVisit.setVisibility(View.GONE);
         recyclerViewNoo.setVisibility(View.GONE);
-        PARAM = 1;
-        new RequestUrl().execute();//1
+//        PARAM = 1;
+//        new RequestUrl().execute();//1
+        setDataDummy();
+    }
+
+    private void setDataDummy() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
+        Gson gson = new Gson();
+        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
+        mList = new ArrayList<>();
+        mListNonRoute = new ArrayList<>();
+        Map result = (Map) resultWsMessage.getResult();
+        if (result.get("visit") != null) {
+            LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+            double id = (double) startDay.get("id");
+            SessionManagerQubes.setStartDay((int) id);
+        } else {
+            SessionManagerQubes.setStartDay(0);
+        }
+
+        Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
+        Collections.addAll(mListNonRoute, param1Array);
+        database.deleteMasterNonRouteCustomer();
+        database.deleteMasterNonRouteCustomerPromotion();
+
+        for (Customer param : mListNonRoute) {
+            List<Promotion> arrayList = new ArrayList<>();
+            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+            Collections.addAll(arrayList, matArray);
+            param.setPromoList(arrayList);
+
+            int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+            for (Promotion mat : arrayList) {
+                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+
+        Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
+        Collections.addAll(mList, paramArray);
+        database.deleteCustomer();
+
+        for (Customer param : mList) {
+            List<Promotion> arrayList = new ArrayList<>();
+            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+            Collections.addAll(arrayList, matArray);
+            param.setPromoList(arrayList);
+
+            int idHeader = database.addCustomer(param, user.getUserLogin());
+            for (Promotion mat : arrayList) {
+                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+            }
+        }
+        getData();
+        progressCircleVisit.setVisibility(View.GONE);
+        progressCircleNoo.setVisibility(View.GONE);
+        recyclerViewVisit.setVisibility(View.VISIBLE);
+        recyclerViewNoo.setVisibility(View.VISIBLE);
+        mAdapterVisit.setData(mList);
+        mAdapterNoo.setData(mListNoo);
+        validateButton();
     }
 
 

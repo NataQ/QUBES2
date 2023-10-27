@@ -1,0 +1,49 @@
+{
+    "idMessage": 1,
+    "message": null,
+    "result": {
+        "depoRegion": [
+            {
+                "id_depo": "201",
+                "region_name": "DKI",
+                "depo_name": "Gatsu",
+                "userlogin": "welmax",
+                "username": "50A6",
+                "id_region": "1"
+            },
+            {
+                "id_depo": "301",
+                "region_name": "JABAR",
+                "depo_name": "Bogor",
+                "userlogin": "welmax",
+                "username": "50A6",
+                "id_region": "2"
+            },
+            {
+                "id_depo": "401",
+                "region_name": "JABAR",
+                "depo_name": "Bandung",
+                "userlogin": "welmax",
+                "username": "50A6",
+                "id_region": "2"
+            }
+        ],
+        "userDetail": {
+            "rute_inap": 0,
+            "position_name": "SF",
+            "id_sales_group": "G",
+            "driver_name": "DIKA (SR KHS DM 2)",
+            "type_sales": "CO",
+            "nik": "3576557103910010",
+            "full_name": "WELMAX  L",
+            "sales_group_name": "GT",
+            "id_position": 2,
+            "imei": "a3da974b5a6971e5",
+            "id": "50A6",
+            "tipe": "E",
+            "max_visit": "5",
+            "username": "50A6",
+            "id_driver": "50B7"
+        }
+    }
+}

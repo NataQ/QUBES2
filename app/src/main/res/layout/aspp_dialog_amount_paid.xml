@@ -52,10 +52,35 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".4"
-                android:text="Price " />
+                android:text="Price" />
 
             <TextView
                 android:id="@+id/txtPrice"
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".6"
+                android:gravity="end"
+                android:textColor="@color/darkGray"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <TextView
+                style="@style/TextView_Small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".4"
+                android:text="Left" />
+
+            <TextView
+                android:id="@+id/txtLeft"
                 style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
