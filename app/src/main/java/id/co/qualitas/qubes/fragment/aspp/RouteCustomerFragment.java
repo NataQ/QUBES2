@@ -214,9 +214,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        setDataDummyCustomer();
-//        PARAM = 1;
-//        new RequestUrl().execute();
+//        setDataDummyCustomer();
+        PARAM = 1;
+        new RequestUrl().execute();
     }
 
     private void setDataDummyCustomer() {

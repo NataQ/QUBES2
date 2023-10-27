@@ -117,9 +117,9 @@ public class StockRequestListActivity extends BaseActivity {
     private void requestData() {
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
-//        PARAM = 1;
-//        new RequestUrl().execute();
-        setDataDummyStock();
+        PARAM = 1;
+        new RequestUrl().execute();
+//        setDataDummyStock();
     }
 
     private void setDataDummyStock() {

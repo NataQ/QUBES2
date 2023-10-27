@@ -675,10 +675,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 setToast("Harus Foto Selesai");
             } else {
                 kmAkhir = txtKmAkhir.getText().toString().trim();
-//                PARAM = 4;
-//                new RequestUrl().execute();//4
-//                progress.show();
-                endDayDayDummy();
+                PARAM = 4;
+                new RequestUrl().execute();//4
+                progress.show();
+//                endDayDayDummy();
                 dialog.dismiss();
             }
         });
@@ -736,10 +736,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 setToast("Foto KM Awal");
             } else {
                 kmAwal = txtKmAwal.getText().toString().trim();
-//                PARAM = 3;
-//                new RequestUrl().execute();//3
-//                progress.show();
-                startDayDummy();
+                PARAM = 3;
+                new RequestUrl().execute();//3
+                progress.show();
+//                startDayDummy();
                 dialog.dismiss();
             }
         });
@@ -1025,9 +1025,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         progressCircleNoo.setVisibility(View.VISIBLE);
         recyclerViewVisit.setVisibility(View.GONE);
         recyclerViewNoo.setVisibility(View.GONE);
-//        PARAM = 1;
-//        new RequestUrl().execute();//1
-        setDataDummy();
+        PARAM = 1;
+        new RequestUrl().execute();//1
+//        setDataDummy();
     }
 
     private void setDataDummy() {

@@ -128,10 +128,10 @@ public class LoginActivity extends AppCompatActivity {
             } else if (password.isEmpty()) {
                 edtPassword.setError(getString(R.string.pleaseFillPassword));
             } else {
-                setDataDummyUser();
-//                progress.show();
-//                PARAM = 1;
-//                new RequestUrl().execute();
+//                setDataDummyUser();
+                progress.show();
+                PARAM = 1;
+                new RequestUrl().execute();
             }
         });
 

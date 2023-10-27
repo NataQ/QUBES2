@@ -192,9 +192,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-//        PARAM = 1;
-//        new RequestUrl().execute();//1
-        setDataDummy();
+        PARAM = 1;
+        new RequestUrl().execute();//1
+//        setDataDummy();
     }
 
     private void setDataDummy() {
