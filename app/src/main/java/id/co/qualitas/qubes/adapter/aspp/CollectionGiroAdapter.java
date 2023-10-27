@@ -405,6 +405,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
                     notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    mContext.updateKurangBayarDelete();
                     dialog.dismiss();
                 }
             });

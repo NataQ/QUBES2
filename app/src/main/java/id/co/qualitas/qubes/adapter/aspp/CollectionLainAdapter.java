@@ -193,7 +193,7 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
                                 Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
                             } else if (mContext.calculateLeftLain(qty, holder.getAbsoluteAdapterPosition()) < 0) {
                                 Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                            } else if (qty > mContext.getTotalAmountCash()) {
+                            } else if (qty > mContext.getTotalAmountLain()) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
                             } else if (qty > detail.getPrice()) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
@@ -259,20 +259,20 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
 //                }
 //            }
 //        });
-
-        holder.edtPaid.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+//
+//        holder.edtPaid.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
 //                if (checked) {
 //                    Helper.setDotCurrency(holder.edtPaid, this, s);
 //                    if (!s.toString().equals("") && !s.toString().equals("-")) {
@@ -354,8 +354,8 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
 //                } else {
 //                    checked = true;
 //                }
-            }
-        });
+//            }
+//        });
     }
 
     @Override

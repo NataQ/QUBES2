@@ -15,6 +15,7 @@ public class Material implements Cloneable{
     private double qtySisa;
     private double amount;
     private double amountPaid;
+    private double nett;
     private String desc;
     private String batch;
     private byte[] attachment;
@@ -116,6 +117,14 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getNett() {
+        return nett;
+    }
+
+    public void setNett(double nett) {
+        this.nett = nett;
     }
 
     public double getSisa() {

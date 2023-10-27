@@ -731,6 +731,7 @@ public class Database extends SQLiteOpenHelper {
     public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE " + TABLE_INVOICE_DETAIL + "("
             + KEY_ID_INVOICE_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_INVOICE_HEADER_DB + " TEXT,"
+            + KEY_INVOICE_NO + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " INTEGER,"
@@ -738,6 +739,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_MATERIAL_PRODUCT_ID + " INTEGER,"
             + KEY_MATERIAL_PRODUCT_NAME + " TEXT,"
             + KEY_PRICE + " REAL,"
+            + KEY_PAID + " REAL,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -1494,6 +1496,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
         values.put(KEY_PRICE, param.getAmount());
+        values.put(KEY_PAID, param.getNett());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
@@ -2896,6 +2899,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                 paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
@@ -3887,6 +3891,30 @@ public class Database extends SQLiteOpenHelper {
         }
 
         db.update(TABLE_VISIT_SALESMAN_NOO, values, KEY_ID_NOO_DB + " = ? ", new String[]{param.getCustomerId()});
+        //db.close();
+    }
+
+    public void updatePaidInvoice(Map request) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PAID, (Double) request.get("paid"));
+        values.put(KEY_UPDATED_BY, request.get("username").toString());
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{request.get("no_invoice").toString()});
+        //db.close();
+    }
+
+    public void updateNettPrice(Material request, String username, String invoiceNo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PAID, request.getPrice() - request.getSisa());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and " + KEY_MATERIAL_ID + " = ?", new String[]{invoiceNo, request.getId()});
         //db.close();
     }
 

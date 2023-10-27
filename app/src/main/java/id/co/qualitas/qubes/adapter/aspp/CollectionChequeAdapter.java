@@ -115,7 +115,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     }
 
     public void updateKurangBayar(int pos) {
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.notifyItemChanged(pos);
         }
     }
@@ -265,7 +265,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankASPPList,true, (header, adapterPosition) -> {
+            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankASPPList, true, (header, adapterPosition) -> {
                 detail.setIdBankASPP(header.getId());
                 detail.setBankNameASPP(header.getName());
                 holder.spnBankASPP.setText(header.getId() + " - " + header.getName());
@@ -306,7 +306,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList,false, (header, adapterPosition) -> {
+            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList, false, (header, adapterPosition) -> {
                 detail.setIdBankCust(header.getId());
                 detail.setBankCust(header.getName());
                 holder.spnBankCust.setText(header.getId() + " - " + header.getName());
@@ -337,7 +337,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             });
         });
 
-        mAdapter = new CollectionChequePaymentAdapter(mContext,CollectionChequeAdapter.this, holder.getAbsoluteAdapterPosition(), materialList, header -> {
+        mAdapter = new CollectionChequePaymentAdapter(mContext, CollectionChequeAdapter.this, holder.getAbsoluteAdapterPosition(), materialList, header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);
@@ -405,6 +405,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
                     notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    mContext.updateKurangBayarDelete();
                     dialog.dismiss();
                 }
             });
@@ -426,7 +427,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         double totalPaid = 0;
         for (Material mat : materialList) {
 //            if (mat.isChecked()) {
-                totalPaid = totalPaid + mat.getAmountPaid();
+            totalPaid = totalPaid + mat.getAmountPaid();
 //            }
         }
 
@@ -439,11 +440,11 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         for (int i = 0; i < materialList.size(); i++) {
             Material mat = materialList.get(i);
 //            if (mat.isChecked()) {
-                if (i == pos) {
-                    totalPaid = totalPaid + qty;
-                } else {
-                    totalPaid = totalPaid + mat.getAmountPaid();
-                }
+            if (i == pos) {
+                totalPaid = totalPaid + qty;
+            } else {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
 //            }
         }
         left = totalPayment - totalPaid;

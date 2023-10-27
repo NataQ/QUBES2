@@ -163,12 +163,12 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         if (!Helper.isNullOrEmpty(detail.getTglTransfer())) {
             String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglTransfer());
             holder.txtTglTransfer.setText(date);
-            holder.edtPayment.setEnabled(true);
-            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+//            holder.edtPayment.setEnabled(true);
+//            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
         } else {
             holder.txtTglTransfer.setText(null);
-            holder.edtPayment.setEnabled(false);
-            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
+//            holder.edtPayment.setEnabled(false);
+//            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox_disable));
         }
         holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
 
@@ -193,8 +193,8 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     detail.setTglTransfer(tglTf);
                     holder.txtTglTransfer.setText(chooseDateString);
                     holder.txtTglTransfer.setError(null);
-                    holder.edtPayment.setEnabled(true);
-                    holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
+//                    holder.edtPayment.setEnabled(true);
+//                    holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
                 }
             };
             DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);

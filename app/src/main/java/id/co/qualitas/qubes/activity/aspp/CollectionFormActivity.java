@@ -92,6 +92,7 @@ public class CollectionFormActivity extends BaseActivity {
     List<Material> lainList = new ArrayList<>();
 
     boolean kredit = false;
+    double totalAmountPaid = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,9 +114,9 @@ public class CollectionFormActivity extends BaseActivity {
                 }
             } else {
                 if (validate()) {
-                    setToast("success");
-//                    progress.show();
-//                    new RequestUrl().execute();
+//                    setToast("success");
+                    progress.show();
+                    new RequestUrl().execute();
                 }
             }
         });
@@ -160,9 +161,12 @@ public class CollectionFormActivity extends BaseActivity {
                 requestHeader.put("no_invoice", header.getNo_invoice());
                 requestHeader.put("invoice_date", header.getInvoice_date());
                 requestHeader.put("status", "paid");
-                requestHeader.put("amount", header.getAmount());
+                requestHeader.put("amount", totalAmountPaid);
                 requestHeader.put("username", user.getUsername());
                 int idCollHeader = database.addCollectionHeader(requestHeader);
+
+                requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
+                database.updatePaidInvoice(requestHeader);
 
                 Map requestDetail = new HashMap();
                 requestDetail.put("id_header", idCollHeader);
@@ -177,6 +181,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                     for (Material material : cashList) {
                         database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                        database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());
                     }
                 }
 
@@ -187,7 +192,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                     int idDetail = database.addCollectionCashLain(requestDetail);
 
-                    for (Material material : cashList) {
+                    for (Material material : lainList) {
                         database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
                     }
                 }
@@ -270,7 +275,7 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private boolean validate() {
-        int totalMat = 0;
+        int emptyText = 0, mat = 0;
         cashList = new ArrayList<>();
         tfList = new ArrayList<>();
         giroList = new ArrayList<>();
@@ -281,7 +286,8 @@ public class CollectionFormActivity extends BaseActivity {
 //            if(material.isChecked() && material.getAmountPaid() != 0){
             if (material.getAmountPaid() != 0) {
                 cashList.add(material);
-                totalMat++;
+                mat++;
+                totalAmountPaid = totalAmountPaid + material.getAmountPaid();
             }
         }
 
@@ -291,11 +297,20 @@ public class CollectionFormActivity extends BaseActivity {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
                     tfList.add(material);
-                    totalMat++;
+                    mat++;
+                    totalAmountPaid = totalAmountPaid + material.getAmountPaid();
                 }
             }
+
+            if (tfList.size() != 0) {
+                if (Helper.isEmpty(collection.getTglTransfer())) {
+                    emptyText++;
+                }
+            }
+
             collection.setCheckedMaterialList(tfList);
         }
+
 
         for (CollectionGiro collection : mListGiro) {
             giroList = new ArrayList<>();
@@ -303,9 +318,29 @@ public class CollectionFormActivity extends BaseActivity {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
                     giroList.add(material);
-                    totalMat++;
+                    mat++;
+                    totalAmountPaid = totalAmountPaid + material.getAmountPaid();
                 }
             }
+
+            if (giroList.size() != 0) {
+                if (Helper.isEmpty(collection.getTglGiro())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getTglCair())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getIdBankCust()) || Helper.isEmpty(collection.getBankCust())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getIdBankASPP()) || Helper.isEmpty(collection.getBankNameASPP())) {
+                    emptyText++;
+                }
+            }
+
             collection.setCheckedMaterialList(giroList);
         }
 
@@ -315,9 +350,29 @@ public class CollectionFormActivity extends BaseActivity {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
                     chequeList.add(material);
-                    totalMat++;
+                    totalAmountPaid = totalAmountPaid + material.getAmountPaid();
+                    mat++;
                 }
             }
+
+            if (chequeList.size() != 0) {
+                if (Helper.isEmpty(collection.getTglCheque())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getTglCair())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getIdBankCust()) || Helper.isEmpty(collection.getBankCust())) {
+                    emptyText++;
+                }
+
+                if (Helper.isEmpty(collection.getIdBankASPP()) || Helper.isEmpty(collection.getBankNameASPP())) {
+                    emptyText++;
+                }
+            }
+
             collection.setCheckedMaterialList(chequeList);
         }
 
@@ -325,10 +380,16 @@ public class CollectionFormActivity extends BaseActivity {
 //            if(material.isChecked() && material.getAmountPaid() != 0){
             if (material.getAmountPaid() != 0) {
                 lainList.add(material);
-                totalMat++;
+                totalAmountPaid = totalAmountPaid + material.getAmountPaid();
+                mat++;
             }
         }
-        return totalMat > 0;
+
+        if (mat > 0 && emptyText == 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void setCashView() {
