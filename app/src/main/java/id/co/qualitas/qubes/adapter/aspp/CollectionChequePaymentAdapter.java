@@ -211,7 +211,8 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
                                 dialog.dismiss();
                             }
                         } else {
-                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
+                            dialog.dismiss();
+//                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
                         }
                     }
                 });

@@ -1475,11 +1475,12 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addInvoiceDetail(Material param, String idHeader, String idSales) {
+    public int addInvoiceDetail(Material param, Map header) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID_INVOICE_HEADER_DB, idHeader);
+        values.put(KEY_ID_INVOICE_HEADER_DB, header.get("idHeader").toString());
+        values.put(KEY_INVOICE_NO, header.get("no_invoice").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1488,7 +1489,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
         values.put(KEY_PRICE, param.getAmount());
         values.put(KEY_PAID, param.getNett());
-        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
@@ -2175,6 +2176,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_COLLECTION_HEADER_DB, param.get("id_header").toString());
+        values.put(KEY_INVOICE_NO, param.get("no_invoice").toString());
         values.put(KEY_STATUS, param.get("status").toString());
         values.put(KEY_TYPE_PAYMENT, param.get("type_payment").toString());
         values.put(KEY_TOTAL_PAYMENT, (Double) param.get("total_payment"));
@@ -2198,6 +2200,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
+        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
         values.put(KEY_TYPE_PAYMENT, "transfer");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
@@ -2221,6 +2224,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
+        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
         values.put(KEY_TYPE_PAYMENT, "giro");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
@@ -2250,6 +2254,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
+        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
         values.put(KEY_TYPE_PAYMENT, "cheque");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
@@ -2716,7 +2721,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
-                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -2802,7 +2807,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
                 result.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 result.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
-                result.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+//                result.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
             }
         }
 
@@ -2831,7 +2836,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
-                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
@@ -2862,7 +2867,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
-                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
@@ -2887,7 +2892,12 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+//                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)) - cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                 paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
@@ -2919,7 +2929,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
-                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
@@ -4084,6 +4094,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_PAID, (Double) request.get("paid"));
+        values.put(KEY_NETT, (Double) request.get("paid") );
         values.put(KEY_UPDATED_BY, request.get("username").toString());
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 

@@ -867,6 +867,11 @@ public class Helper extends BaseFragment {
 //        Calendar cal = Calendar.getInstance();
 //        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 //        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (weekYear == 0) {
+            weekYear = 4;
+        } else {
+            weekYear = 0;
+        }
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
         return result;
     }
@@ -882,6 +887,11 @@ public class Helper extends BaseFragment {
 //        Calendar cal = Calendar.getInstance();
 //        cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 //        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
+        if (weekYear == 0) {
+            weekYear = 4;
+        } else {
+            weekYear = 0;
+        }
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
         result2 = "P" + String.valueOf(weekYear + 2) + "H" + String.valueOf(dayWeek);
         return result + "-" + result2;

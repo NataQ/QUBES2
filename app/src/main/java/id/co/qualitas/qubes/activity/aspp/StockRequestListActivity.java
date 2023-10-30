@@ -139,9 +139,9 @@ public class StockRequestListActivity extends BaseActivity {
             Collections.addAll(listMat, matArray);
             param.setMaterialList(listMat);
 
-            int idHeader = database.addStockRequestHeader(param, user.getUserLogin());
+            int idHeader = database.addStockRequestHeader(param, user.getUsername());
             for (Material mat : listMat) {
-                database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUsername());
             }
         }
         getData();
@@ -177,9 +177,9 @@ public class StockRequestListActivity extends BaseActivity {
                         Collections.addAll(listMat, matArray);
                         param.setMaterialList(listMat);
 
-                        int idHeader = database.addStockRequestHeader(param, user.getUserLogin());
+                        int idHeader = database.addStockRequestHeader(param, user.getUsername());
                         for (Material mat : listMat) {
-                            database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUsername());
                         }
                     }
                     getData();

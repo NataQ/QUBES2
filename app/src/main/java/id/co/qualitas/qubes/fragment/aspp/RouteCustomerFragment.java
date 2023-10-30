@@ -246,9 +246,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
             Collections.addAll(arrayList, matArray);
             param.setPromoList(arrayList);
 
-            int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+            int idHeader = database.addNonRouteCustomer(param, user.getUsername());
             for (Promotion mat : arrayList) {
-                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
             }
         }
 
@@ -263,9 +263,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
             Collections.addAll(arrayList, matArray);
             param.setPromoList(arrayList);
 
-            int idHeader = database.addCustomer(param, user.getUserLogin());
+            int idHeader = database.addCustomer(param, user.getUsername());
             for (Promotion mat : arrayList) {
-                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
             }
         }
 
@@ -318,9 +318,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
-                        int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
-                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
                     }
 
@@ -335,9 +335,9 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
-                        int idHeader = database.addCustomer(param, user.getUserLogin());
+                        int idHeader = database.addCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
-                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
                     }
 

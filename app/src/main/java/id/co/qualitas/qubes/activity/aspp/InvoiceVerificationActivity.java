@@ -200,7 +200,8 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void setDataDummy() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(this, "invoice.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
@@ -214,9 +215,13 @@ public class InvoiceVerificationActivity extends BaseActivity {
             Collections.addAll(listMat, matArray);
             param.setMaterialList(listMat);
 
-            int idHeader = database.addInvoiceHeader(param, user.getUserLogin());
+            int idHeader = database.addInvoiceHeader(param, user.getUsername());
+            Map header = new HashMap();
+            header.put("idHeader", String.valueOf(idHeader));
+            header.put("username", user.getUsername());
+            header.put("no_invoice", param.getNo_invoice());
             for (Material mat : listMat) {
-                database.addInvoiceDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addInvoiceDetail(mat, header);
             }
         }
         getData();
@@ -232,6 +237,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
     }
 
     private void setTotal() {
+        totalInvoice = 0;
+        totalAmount = 0;
+
         int verif = 0;
         for (Invoice inv : mList) {
             if (inv.getIs_verif() == 1) {
@@ -277,9 +285,17 @@ public class InvoiceVerificationActivity extends BaseActivity {
                         Collections.addAll(listMat, matArray);
                         param.setMaterialList(listMat);
 
-                        int idHeader = database.addInvoiceHeader(param, user.getUserLogin());
+                        int idHeader = database.addInvoiceHeader(param, user.getUsername());
+
+                        Map header = new HashMap();
+                        header.put("idHeader", String.valueOf(idHeader));
+                        header.put("username", user.getUsername());
+                        header.put("no_invoice", param.getNo_invoice());
                         for (Material mat : listMat) {
-                            database.addInvoiceDetail(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addInvoiceDetail(mat, header);
+                        }
+                        for (Material mat : listMat) {
+                            database.addInvoiceDetail(mat, header);
                         }
                     }
                     getData();

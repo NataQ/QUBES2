@@ -409,7 +409,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
     }
 
     private void setDataDefault() {
-        txtRoute.setText(Helper.getTodayRouteDouble());
+        txtRoute.setText(Helper.getTodayRoute());
         txtCreditLimit.setText(format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
 
         List<String> suku = new ArrayList<>();
@@ -1071,7 +1071,7 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         txtTypeToko.setText(Helper.isEmpty(customerNoo.getType_customer(), ""));
         txtPriceListType.setText(Helper.isEmpty(customerNoo.getType_price(), ""));
         txtCreditLimit.setText(customerNoo.getLimit_kredit() != 0 ? format.format(customerNoo.getLimit_kredit()) : format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
-        txtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRouteDouble()));
+        txtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRoute()));
 
         int spinnerPositionSuku = sukuAdapter.getPosition(customerNoo.getSuku());
         int spinnerPositionStatusToko = statusTokoAdapter.getPosition(customerNoo.getStatus_toko());

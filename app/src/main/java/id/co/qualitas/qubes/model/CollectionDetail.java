@@ -9,6 +9,7 @@ public class CollectionDetail implements Serializable, Cloneable {
     public String idDetail;
     public String idHeader;
     public String customerId;
+    public String invoiceNo;
     public String status;
     public double omzet;
     public String no;
@@ -40,6 +41,14 @@ public class CollectionDetail implements Serializable, Cloneable {
         this.idBankCust = idBankCust;
         this.bankCust = bankCust;
         this.materialList = materialList;
+    }
+
+    public String getInvoiceNo() {
+        return invoiceNo;
+    }
+
+    public void setInvoiceNo(String invoiceNo) {
+        this.invoiceNo = invoiceNo;
     }
 
     public String getStatus() {

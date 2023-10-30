@@ -203,6 +203,8 @@ public class DirectionFragment extends BaseFragment {
     private void setData() {
         if (SessionManagerQubes.getRouteCustomerHeader() != null) {
             routeCustHeader = SessionManagerQubes.getRouteCustomerHeader();
+            custList = new ArrayList<>();
+            custList = database.getAllCustomerVisit(null, false);
 
             txtStore.setText(routeCustHeader.getId() + " - " + routeCustHeader.getNama());
             txtAddress.setText(routeCustHeader.getAddress());
@@ -216,19 +218,23 @@ public class DirectionFragment extends BaseFragment {
             endPointCustomer = new Customer(routeCustHeader.getId(), routeCustHeader.getNama(), routeCustHeader.getAddress(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
             if (startPointCustomer != null && endPointCustomer != null)
                 setMap(startPointCustomer, endPointCustomer);
+        } else {
+            ((MainActivity) getActivity()).changePage(2);
         }
 
-        custList = new ArrayList<>();
-        custList = database.getAllCustomerVisit(null, false);
+
     }
 
     private void setMap(Customer startPointCustomer, Customer endPointCustomer) {
 //        zoomToBounds(custList)
 
         if (mOverlay != null) {
-            mOverlay.removeAllItems();
-            mMapView.getOverlays().add(mOverlay);
-            mMapView.invalidate();
+            try {
+                mOverlay.removeAllItems();
+                mMapView.getOverlays().add(mOverlay);
+                mMapView.invalidate();
+            } catch (Exception e) {
+            }
         }
 
         items = new ArrayList<>();
@@ -272,7 +278,6 @@ public class DirectionFragment extends BaseFragment {
 
     private void initialize() {
         gpsTracker = new GPSTracker(getActivity());
-        db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         mMapView = rootView.findViewById(R.id.mapView);
         btnMaps = rootView.findViewById(R.id.btnMaps);

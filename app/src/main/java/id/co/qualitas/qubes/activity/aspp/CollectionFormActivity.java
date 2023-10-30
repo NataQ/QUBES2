@@ -170,10 +170,12 @@ public class CollectionFormActivity extends BaseActivity {
                 int idCollHeader = database.addCollectionHeader(requestHeader);
 
                 requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
-                database.updatePaidInvoice(requestHeader);
+                requestHeader.put("nett", header.getAmount() - (header.getTotal_paid() + totalAmountPaid));
+                database.updatePaidInvoice(requestHeader);//update paid invoice header
 
                 Map requestDetail = new HashMap();
                 requestDetail.put("id_header", idCollHeader);
+                requestDetail.put("no_invoice", header.getNo_invoice());
                 requestDetail.put("status", "paid");
                 requestDetail.put("username", user.getUsername());
 
@@ -185,7 +187,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                     for (Material material : cashList) {
                         database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                        database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());
+                        database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
                     }
                 }
 
@@ -203,6 +205,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                 if (tfList.size() != 0) {
                     for (CollectionDetail collection : mListTransfer) {
+                        collection.setInvoiceNo(header.getNo_invoice());
                         int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {
@@ -213,6 +216,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                 if (giroList.size() != 0) {
                     for (CollectionDetail collection : mListGiro) {
+                        collection.setInvoiceNo(header.getNo_invoice());
                         int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {
@@ -223,6 +227,7 @@ public class CollectionFormActivity extends BaseActivity {
 
                 if (chequeList.size() != 0) {
                     for (CollectionDetail collection : mListCheque) {
+                        collection.setInvoiceNo(header.getNo_invoice());
                         int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {

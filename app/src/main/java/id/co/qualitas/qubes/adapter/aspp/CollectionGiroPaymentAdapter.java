@@ -211,7 +211,8 @@ public class CollectionGiroPaymentAdapter extends RecyclerView.Adapter<Collectio
                                 dialog.dismiss();
                             }
                         } else {
-                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
+                            dialog.dismiss();
+//                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
                         }
                     }
                 });

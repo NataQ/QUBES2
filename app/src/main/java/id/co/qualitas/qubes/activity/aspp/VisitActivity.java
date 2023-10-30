@@ -184,7 +184,11 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            openDialogStartVisit();
+            if (database.getAllInvoiceHeaderNotPaid().size() == 0) {
+                openDialogStartVisit();
+            } else {
+                setToast("Pastikan invoice sudah di verifikasi");
+            }
         });
 
         btnEndVisit.setOnClickListener(v -> {
@@ -756,7 +760,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         validateButton();
     }
 
-    private void endDayDayDummy(){
+    private void endDayDayDummy() {
         SessionManagerQubes.setStartDay(2);
         validateButton();
     }
@@ -1031,9 +1035,10 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void setDataDummy() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
+        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "todayCustomer.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         mListNonRoute = new ArrayList<>();
@@ -1057,9 +1062,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             Collections.addAll(arrayList, matArray);
             param.setPromoList(arrayList);
 
-            int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+            int idHeader = database.addNonRouteCustomer(param, user.getUsername());
             for (Promotion mat : arrayList) {
-                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
             }
         }
 
@@ -1073,9 +1078,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             Collections.addAll(arrayList, matArray);
             param.setPromoList(arrayList);
 
-            int idHeader = database.addCustomer(param, user.getUserLogin());
+            int idHeader = database.addCustomer(param, user.getUsername());
             for (Promotion mat : arrayList) {
-                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
             }
         }
         getData();
@@ -1128,9 +1133,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
-                        int idHeader = database.addNonRouteCustomer(param, user.getUserLogin());
+                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
-                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
                     }
 
@@ -1144,9 +1149,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
-                        int idHeader = database.addCustomer(param, user.getUserLogin());
+                        int idHeader = database.addCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
-                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUserLogin());
+                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
                     }
                     getData();

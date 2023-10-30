@@ -318,7 +318,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(reasonList, paramArray);
                     database.deleteMasterReason();
                     for (Reason reason : reasonList) {
-                        database.addMasterReason(reason, user.getUserLogin());
+                        database.addMasterReason(reason, user.getUsername());
                     }
 
                     List<Bank> bankList = new ArrayList<>();
@@ -326,7 +326,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(bankList, paramArray1);
                     database.deleteMasterBank();
                     for (Bank param : bankList) {
-                        database.addMasterBank(param, user.getUserLogin());
+                        database.addMasterBank(param, user.getUsername());
                     }
 
                     List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
@@ -334,7 +334,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(daerahTingkatList, paramArray3);
                     database.deleteMasterDaerahTingkat();
                     for (DaerahTingkat param : daerahTingkatList) {
-                        database.addMasterDaerahTingkat(param, user.getUserLogin());
+                        database.addMasterDaerahTingkat(param, user.getUsername());
                     }
 
                     List<Material> materialList = new ArrayList<>();
@@ -342,7 +342,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(materialList, paramArray4);
                     database.deleteMasterMaterial();
                     for (Material param : materialList) {
-                        database.addMasterMaterial(param, user.getUserLogin());
+                        database.addMasterMaterial(param, user.getUsername());
                     }
 
                     List<Uom> uomList = new ArrayList<>();
@@ -350,7 +350,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(uomList, paramArray5);
                     database.deleteMasterUom();
                     for (Uom param : uomList) {
-                        database.addMasterUom(param, user.getUserLogin());
+                        database.addMasterUom(param, user.getUsername());
                     }
 
                     List<PriceCode> priceList = new ArrayList<>();
@@ -358,7 +358,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(priceList, paramArray6);
                     database.deleteMasterPriceCode();
                     for (PriceCode param : priceList) {
-                        database.addMasterPriceCode(param, user.getUserLogin());
+                        database.addMasterPriceCode(param, user.getUsername());
                     }
 
                     List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
@@ -366,7 +366,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(salesPriceHeaderList, paramArray7);
                     database.deleteMasterSalesPriceHeader();
                     for (SalesPriceHeader param : salesPriceHeaderList) {
-                        database.addMasterSalesPriceHeader(param, user.getUserLogin());
+                        database.addMasterSalesPriceHeader(param, user.getUsername());
                     }
 
                     List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
@@ -374,7 +374,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(salesPriceDetailList, paramArray8);
                     database.deleteMasterSalesPriceDetail();
                     for (SalesPriceDetail param : salesPriceDetailList) {
-                        database.addMasterSalesPriceDetail(param, user.getUserLogin());
+                        database.addMasterSalesPriceDetail(param, user.getUsername());
                     }
 
                     List<Parameter> parameterList = new ArrayList<>();
@@ -382,7 +382,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(parameterList, paramArray9);
                     database.deleteMasterParameter();
                     for (Parameter param : parameterList) {
-                        database.addMasterParameter(param, user.getUserLogin());
+                        database.addMasterParameter(param, user.getUsername());
                     }
 
                     List<CustomerType> cusTypeList = new ArrayList<>();
@@ -390,7 +390,7 @@ public class AccountFragment extends BaseFragment {
                     Collections.addAll(cusTypeList, paramArray10);
                     database.deleteMasterCustomerType();
                     for (CustomerType param : cusTypeList) {
-                        database.addMasterCustomerType(param, user.getUserLogin());
+                        database.addMasterCustomerType(param, user.getUsername());
                     }
 
                     saveDataSuccess = true;

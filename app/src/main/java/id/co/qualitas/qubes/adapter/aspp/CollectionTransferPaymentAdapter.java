@@ -211,7 +211,8 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                                 dialog.dismiss();
                             }
                         } else {
-                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
+                            dialog.dismiss();
+//                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
                         }
                     }
                 });
