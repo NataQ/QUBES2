@@ -49,17 +49,13 @@ import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoDctOutletAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
-import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
-import id.co.qualitas.qubes.fragment.TimerFragment;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
@@ -259,11 +255,13 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
+            SessionManagerQubes.clearCollectionHeaderSession();
             Intent intent = new Intent(this, OrderActivity.class);
             startActivity(intent);
         });
 
         llCollection.setOnClickListener(v -> {
+            SessionManagerQubes.clearCollectionHeaderSession();
             Intent intent = new Intent(this, CollectionVisitActivity.class);
             startActivity(intent);
         });

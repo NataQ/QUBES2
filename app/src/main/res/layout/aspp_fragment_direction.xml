@@ -160,6 +160,7 @@
                             android:padding="8dp">
 
                             <TextView
+                                android:id="@+id/txtSelect"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -202,7 +203,7 @@
                                 android:layout_height="@dimen/icon_point"
                                 android:src="@drawable/ic_starting_point" />
 
-                            <AutoCompleteTextView
+                            <TextView
                                 android:id="@+id/edtStartPoint"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -210,12 +211,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:layout_weight="1"
-                                android:background="@color/space_transparent"
-                                android:completionThreshold="1"
                                 android:hint="Choose starting point"
-                                android:imeOptions="actionDone"
-                                android:maxLines="1"
-                                android:singleLine="true"
                                 android:textColor="@color/black_aspp" />
 
                             <ImageView
@@ -247,7 +243,7 @@
                                 android:layout_height="@dimen/icon_point"
                                 android:src="@drawable/ic_end_point" />
 
-                            <AutoCompleteTextView
+                            <TextView
                                 android:id="@+id/edtEndPoint"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -255,12 +251,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_marginEnd="5dp"
                                 android:layout_weight="1"
-                                android:background="@color/space_transparent"
-                                android:completionThreshold="1"
                                 android:hint="Choose end point"
-                                android:imeOptions="actionDone"
-                                android:maxLines="1"
-                                android:singleLine="true"
                                 android:textColor="@color/black_aspp" />
 
                             <ImageView

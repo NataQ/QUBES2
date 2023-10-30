@@ -16,7 +16,6 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.Return;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 
@@ -267,7 +266,7 @@ public abstract class SessionManagerQubes {
         stockRequestHeaderPrefs.edit().clear().apply();
     }
 
-    public static void clearInvoiceHeaderSession() {
+    public static void clearCollectionHeaderSession() {
         collectionHeaderPrefs.edit().clear().apply();
     }
 

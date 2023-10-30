@@ -103,7 +103,6 @@ import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.Return;
-import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
@@ -322,7 +321,7 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearCollectionHistorySession();
         SessionManagerQubes.clearReturnSession();
         SessionManagerQubes.clearCustomerNooSession();
-        SessionManagerQubes.clearInvoiceHeaderSession();
+        SessionManagerQubes.clearCollectionHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
 
         database.deleteStockRequestHeader();

@@ -364,7 +364,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         SessionManagerQubes.clearReturnSession();
         SessionManagerQubes.clearCustomerNooSession();
         SessionManagerQubes.clearOutletHeaderSession();
-        SessionManagerQubes.clearInvoiceHeaderSession();
+        SessionManagerQubes.clearCollectionHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();
 
         database.deleteStockRequestHeader();

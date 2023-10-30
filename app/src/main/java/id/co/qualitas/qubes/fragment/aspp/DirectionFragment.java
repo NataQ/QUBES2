@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +11,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +35,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -54,6 +61,8 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.AutoCompleteRouteAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerBankAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
@@ -78,9 +87,9 @@ public class DirectionFragment extends BaseFragment {
     private BoundingBox boundingBox;
     //    private List<GeoPoint> geoPointList;
     private List<Customer> custList;
-    private AutoCompleteTextView edtStartPoint, edtEndPoint;
+    //    private AutoCompleteTextView edtStartPoint, edtEndPoint;
     private ImageView imgCurrentStartingPoint, imgCurrentEndPoint, imgBack;
-    private TextView txtStore, txtAddress, txtRoute;
+    private TextView txtStore, txtAddress, txtRoute, edtStartPoint, edtEndPoint;
     private Button btnMaps;
     private AutoCompleteRouteAdapter startPointAdapter, endPointAdapter;
     private Customer startPointCustomer, currLocation, endPointCustomer;
@@ -111,29 +120,37 @@ public class DirectionFragment extends BaseFragment {
         initialize();
         setData();
 
-        startPointAdapter = new AutoCompleteRouteAdapter(getContext(), custList);
-        edtStartPoint.setAdapter(startPointAdapter);
-        edtStartPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                //this is the way to find selected object/item
-                startPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
-                if (startPointCustomer != null && endPointCustomer != null)
-                    setMap(startPointCustomer, endPointCustomer);
-            }
+        edtStartPoint.setOnClickListener(view -> {
+            startPoint();
         });
 
-        endPointAdapter = new AutoCompleteRouteAdapter(getContext(), custList);
-        edtEndPoint.setAdapter(endPointAdapter);
-        edtEndPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                //this is the way to find selected object/item
-                endPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
-                if (startPointCustomer != null && endPointCustomer != null)
-                    setMap(startPointCustomer, endPointCustomer);
-            }
+        edtEndPoint.setOnClickListener(view -> {
+            endPoint();
         });
+
+//        startPointAdapter = new AutoCompleteRouteAdapter(getContext(), custList);
+//        edtStartPoint.setAdapter(startPointAdapter);
+//        edtStartPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+//                //this is the way to find selected object/item
+//                startPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
+//                if (startPointCustomer != null && endPointCustomer != null)
+//                    setMap(startPointCustomer, endPointCustomer);
+//            }
+//        });
+//
+//        endPointAdapter = new AutoCompleteRouteAdapter(getContext(), custList);
+//        edtEndPoint.setAdapter(endPointAdapter);
+//        edtEndPoint.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+//                //this is the way to find selected object/item
+//                endPointCustomer = (Customer) adapterView.getItemAtPosition(pos);
+//                if (startPointCustomer != null && endPointCustomer != null)
+//                    setMap(startPointCustomer, endPointCustomer);
+//            }
+//        });
 
         btnMaps.setOnClickListener(v -> {
             try {
@@ -200,6 +217,91 @@ public class DirectionFragment extends BaseFragment {
         return rootView;
     }
 
+
+    private void endPoint() {
+        Dialog alertDialog = new Dialog(getContext());
+
+        alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        EditText editText = alertDialog.findViewById(R.id.edit_text);
+        RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+
+        SpinnerCustomerAdapter spinnerAdapter = new SpinnerCustomerAdapter(getContext(), custList, (header, adapterPosition) -> {
+            endPointCustomer = (Customer) header;
+            edtEndPoint.setText(endPointCustomer.getNama());
+            if (startPointCustomer != null && endPointCustomer != null)
+                setMap(startPointCustomer, endPointCustomer);
+            alertDialog.dismiss();
+        });
+
+        LinearLayoutManager mManager = new LinearLayoutManager(getContext());
+        listView.setLayoutManager(mManager);
+        listView.setHasFixedSize(true);
+        listView.setNestedScrollingEnabled(false);
+        listView.setAdapter(spinnerAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                spinnerAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void startPoint() {
+        Dialog alertDialog = new Dialog(getContext());
+
+        alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        EditText editText = alertDialog.findViewById(R.id.edit_text);
+        RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+
+        SpinnerCustomerAdapter spinnerAdapter = new SpinnerCustomerAdapter(getContext(), custList, (header, adapterPosition) -> {
+            startPointCustomer = (Customer) header;
+            edtStartPoint.setText(startPointCustomer.getNama());
+            if (startPointCustomer != null && endPointCustomer != null)
+                setMap(startPointCustomer, endPointCustomer);
+            alertDialog.dismiss();
+        });
+
+        LinearLayoutManager mManager = new LinearLayoutManager(getContext());
+        listView.setLayoutManager(mManager);
+        listView.setHasFixedSize(true);
+        listView.setNestedScrollingEnabled(false);
+        listView.setAdapter(spinnerAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                spinnerAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
     private void setData() {
         if (SessionManagerQubes.getRouteCustomerHeader() != null) {
             routeCustHeader = SessionManagerQubes.getRouteCustomerHeader();
@@ -216,13 +318,12 @@ public class DirectionFragment extends BaseFragment {
             edtStartPoint.setText("Current Location");
             startPointCustomer = new Customer("", "Current Location", currentLoc.getAddress(), false, currentLoc.getLatitude(), currentLoc.getLongitude());
             endPointCustomer = new Customer(routeCustHeader.getId(), routeCustHeader.getNama(), routeCustHeader.getAddress(), true, routeCustHeader.getLatitude(), routeCustHeader.getLongitude());
-            if (startPointCustomer != null && endPointCustomer != null)
+            if (startPointCustomer != null && endPointCustomer != null) {
                 setMap(startPointCustomer, endPointCustomer);
+            }
         } else {
             ((MainActivity) getActivity()).changePage(2);
         }
-
-
     }
 
     private void setMap(Customer startPointCustomer, Customer endPointCustomer) {
