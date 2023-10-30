@@ -78,6 +78,7 @@ import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
@@ -725,7 +726,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
 //            Intent camera = new Intent(this, Camera3PLActivity.class);//3
-//            startActivityForResult(camera, Constants.REQUEST_CAMERA_CODE);
+//            startActivityForResult(camera, CAMERA_PERM_CODE);
         });
 
         btnStart.setOnClickListener(v -> {
@@ -762,20 +763,83 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     public void askPermissionCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                            != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.READ_MEDIA_IMAGES)) {
+                    ConfirmationDialogFragment
+                            .newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES},
+                                    CAMERA_PERM_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES},
+                            CAMERA_PERM_CODE);
+                }
+            } else {
+                Helper.takePhoto(VisitActivity.this);
+            }
+        }else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ConfirmationDialogFragment
+                            .newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    CAMERA_PERM_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            CAMERA_PERM_CODE);
+                }
+            } else {
+                Helper.takePhoto(VisitActivity.this);
+            }
+        }
+        
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+////                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED){
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        ) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES,
+//                ActivityCompat.requestPermissions(this, new String[]{
+//                        Manifest.permission.CAMERA,
+////                        Manifest.permission.READ_MEDIA_IMAGES,
 //                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //                    Manifest.permission.READ_EXTERNAL_STORAGE
-            }, CAMERA_PERM_CODE);
-        } else {
-            Helper.takePhoto(VisitActivity.this);
-        }
+//                }, CAMERA_PERM_CODE);
+//            } else {
+//                Helper.takePhoto(VisitActivity.this);
+//            }
+//        }else {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+//                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+////                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+////                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ) {
+//                ActivityCompat.requestPermissions(this, new String[]{
+//                        Manifest.permission.CAMERA,
+//                        Manifest.permission.READ_MEDIA_IMAGES,
+////                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                }, CAMERA_PERM_CODE);
+//            } else {
+//                Helper.takePhoto(VisitActivity.this);
+//            }
+//        }
     }
 
     private void openDialogAdd() {
@@ -1031,7 +1095,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     }
 
     private void setDataDummy() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
+        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "todayCustomer.json");
         Gson gson = new Gson();
         Type resultType = new TypeToken<WSMessage>(){}.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);

@@ -48,7 +48,7 @@
                     "no_invoice": "INV13"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 0,
             "tanggal_jatuh_tempo": "2023-10-17",
             "no_invoice": "INV13",
@@ -75,7 +75,7 @@
                     "no_invoice": "INV10"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 0,
             "tanggal_jatuh_tempo": "2023-10-17",
             "no_invoice": "INV10",
@@ -128,7 +128,7 @@
                     "no_invoice": "INV07"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 1,
             "tanggal_jatuh_tempo": "2023-10-17",
             "no_invoice": "INV07",
@@ -168,7 +168,7 @@
                     "no_invoice": "INV05"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 1,
             "tanggal_jatuh_tempo": "2023-09-20",
             "no_invoice": "INV05",
@@ -221,7 +221,7 @@
                     "no_invoice": "INV15"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 0,
             "tanggal_jatuh_tempo": "2023-10-17",
             "no_invoice": "INV15",
@@ -381,7 +381,7 @@
                     "no_invoice": "INV06"
                 }
             ],
-            "is_verif": 0,
+            "is_verif": 1,
             "is_route": 1,
             "tanggal_jatuh_tempo": "2023-10-17",
             "no_invoice": "INV06",
