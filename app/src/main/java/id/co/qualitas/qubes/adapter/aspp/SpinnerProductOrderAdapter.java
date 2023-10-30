@@ -107,7 +107,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
-        holder.text.setText(detail.getId() + " - " + detail.getMaterialCode());
+        holder.text.setText(detail.getId() + " - " + detail.getNama());
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);

@@ -106,9 +106,13 @@ public class StockRequestAddActivity extends BaseActivity {
         }
 
         if (param == 0) {
-            PARAM = 1;
-            progress.show();
-            new RequestUrl().execute();//1
+//            PARAM = 1;
+//            progress.show();
+//            new RequestUrl().execute();//1
+            prepareData();
+            saveDataToDatabase();
+            setToast("Success");
+            onBackPressed();
         }
     }
 

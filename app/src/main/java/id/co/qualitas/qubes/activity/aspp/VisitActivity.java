@@ -339,32 +339,38 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         ImageView btCenterMap = dialog.findViewById(R.id.btCenterMap);
 
         btnCheckIn.setOnClickListener(v -> {
-            if (currentLocation != null) {
-                dialog.dismiss();
-                Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
-                locCustomer.setLatitude(outletClicked.getLatitude());
-                locCustomer.setLongitude(outletClicked.getLongitude());
-                outRadius = Helper.checkRadius(currentLocation, locCustomer);
+//            if (currentLocation != null) {
+            dialog.dismiss();
+            Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
+            locCustomer.setLatitude(outletClicked.getLatitude());
+            locCustomer.setLongitude(outletClicked.getLongitude());
 
-                visitSalesman = new VisitSalesman();
-                visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
-                visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            visitSalesman = new VisitSalesman();
+
+            if (currentLocation != null) {
+                outRadius = Helper.checkRadius(currentLocation, locCustomer);
                 visitSalesman.setLatCheckIn(currentLocation.getLatitude());
                 visitSalesman.setLongCheckIn(currentLocation.getLongitude());
-                visitSalesman.setInside(!outRadius);
-                visitSalesman.setIdSalesman(user.getUsername());
-                visitSalesman.setCustomerId(outletClicked.getId());
-                visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
-                visitSalesman.setSync(0);
-
-                if (outRadius) {
-                    openDialogOutRadius();
-                } else {
-                    moveVisitSalesman();
-                }
             } else {
-                setToast("Can't get your location.. Please try again..");
+                outRadius = true;
             }
+
+            visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
+            visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            visitSalesman.setInside(!outRadius);
+            visitSalesman.setIdSalesman(user.getUsername());
+            visitSalesman.setCustomerId(outletClicked.getId());
+            visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+            visitSalesman.setSync(0);
+
+            if (outRadius) {
+                openDialogOutRadius();
+            } else {
+                moveVisitSalesman();
+            }
+//            } else {
+//                setToast("Can't get your location.. Please try again..");
+//            }
         });
 
         btnNo.setOnClickListener(v -> {
@@ -757,14 +763,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         validateButton();
     }
 
-    private void endDayDayDummy(){
+    private void endDayDayDummy() {
         SessionManagerQubes.setStartDay(2);
         validateButton();
     }
 
     public void askPermissionCamera() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
@@ -786,7 +792,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             } else {
                 Helper.takePhoto(VisitActivity.this);
             }
-        }else {
+        } else {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -809,7 +815,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 Helper.takePhoto(VisitActivity.this);
             }
         }
-        
+
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
 //            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
 ////                    || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED){
@@ -1097,7 +1103,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private void setDataDummy() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(this, "todayCustomer.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         mListNonRoute = new ArrayList<>();

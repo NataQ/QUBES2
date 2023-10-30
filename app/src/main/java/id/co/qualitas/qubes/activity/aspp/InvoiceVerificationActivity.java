@@ -200,7 +200,8 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void setDataDummy() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(this, "invoice.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
@@ -233,6 +234,8 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
     private void setTotal() {
         int verif = 0;
+        totalAmount = 0;
+        totalInvoice = 0;
         for (Invoice inv : mList) {
             if (inv.getIs_verif() == 1) {
                 verif++;

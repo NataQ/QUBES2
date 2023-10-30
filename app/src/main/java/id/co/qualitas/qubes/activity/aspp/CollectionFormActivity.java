@@ -101,23 +101,8 @@ public class CollectionFormActivity extends BaseActivity {
         initialize();
 
         btnSubmit.setOnClickListener(v -> {
-            if (colLFrom == 3) {
-                if (kredit) {
-                    onBackPressed();
-//                    database.updateOrderPayment("KREDIT");
-                } else {
-                    if (validate()) {
-                        progress.show();
-                        new RequestUrl().execute();
-                    }
-                }
-            } else {
-                if (validate()) {
-                    setToast("success");
-//                    progress.show();
-//                    new RequestUrl().execute();
-                }
-            }
+            Intent intent = new Intent(this, DailySalesmanActivity.class);
+            startActivity(intent);
         });
 
         imgBack.setOnClickListener(v -> {

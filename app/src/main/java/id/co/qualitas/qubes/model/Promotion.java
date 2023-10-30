@@ -22,6 +22,12 @@ public class Promotion {
         this.nama_promo = promotionName;
     }
 
+    public Promotion(String nama_promo, String valid_from, String valid_to) {
+        this.nama_promo = nama_promo;
+        this.valid_from = valid_from;
+        this.valid_to = valid_to;
+    }
+
     public Promotion(String promotionName, String keterangan) {
         this.nama_promo = promotionName;
         this.keterangan = keterangan;

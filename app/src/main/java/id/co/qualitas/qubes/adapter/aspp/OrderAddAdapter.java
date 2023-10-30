@@ -156,6 +156,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
         setProgress();
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.edtProduct.setText(Helper.isEmpty(detail.getNama(),""));
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
 
         List<String> uomList = new ArrayList<>();
@@ -163,54 +164,54 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         uomList.add("SLOP");
         uomList.add("KRT");
 
-        holder.edtProduct.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(mContext);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007_KRATINGDAENG - MT");
-            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005_KRATINGDAENG LUAR PULAU");
-            groupList.add("11001_KRATINGDAENG");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                String temp[] = nameItem.split("_");
-                holder.edtProduct.setText(nameItem);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setId(temp[0]);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-        });
+//        holder.edtProduct.setOnClickListener(v -> {
+//            Dialog alertDialog = new Dialog(mContext);
+//
+//            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
+//            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//            alertDialog.show();
+//
+//            EditText editText = alertDialog.findViewById(R.id.edit_text);
+//            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+//
+//            List<String> groupList = new ArrayList<>();
+//            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
+//            groupList.add("11007_KRATINGDAENG - MT");
+//            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
+//            groupList.add("11005_KRATINGDAENG LUAR PULAU");
+//            groupList.add("11001_KRATINGDAENG");
+//
+//            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
+//                String temp[] = nameItem.split("_");
+//                holder.edtProduct.setText(nameItem);
+//                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setId(temp[0]);
+//                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
+//                alertDialog.dismiss();
+//            });
+//
+//            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
+//            listView.setLayoutManager(mManager);
+//            listView.setHasFixedSize(true);
+//            listView.setNestedScrollingEnabled(false);
+//            listView.setAdapter(spinnerAdapter);
+//
+//            editText.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                    spinnerAdapter.getFilter().filter(s);
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//
+//                }
+//            });
+//        });
 
         mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
         mAdapter = new OrderAddExtraAdapter(mContext, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getExtraItem(), holder.getAbsoluteAdapterPosition(), header -> {

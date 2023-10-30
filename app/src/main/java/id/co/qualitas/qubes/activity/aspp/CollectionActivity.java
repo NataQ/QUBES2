@@ -110,6 +110,8 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void getData() {
+        totalInvoice = 0;
+        totalPaid = 0;
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotPaid();
 

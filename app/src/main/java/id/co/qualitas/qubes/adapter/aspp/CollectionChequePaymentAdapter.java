@@ -101,14 +101,13 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice, txtLeft, txtPaid;
+        TextView txtNo, txtProduct, txtPrice, txtPaid;
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             edtPaid = itemView.findViewById(R.id.edtPaid);
@@ -140,7 +139,6 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
         holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
-        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
         holder.txtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
         holder.txtPaid.setOnClickListener(view -> {
@@ -205,13 +203,12 @@ public class CollectionChequePaymentAdapter extends RecyclerView.Adapter<Collect
                                 holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
                                 detail.setAmountPaid(qty);
                                 mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
-                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
                                 headerAdapter.setLeft();
                                 mContext.updateLeft(3, idHeader);
                                 dialog.dismiss();
                             }
                         } else {
-                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
+                            dialog.dismiss();
                         }
                     }
                 });

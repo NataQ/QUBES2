@@ -62,14 +62,13 @@ public class PromotionFragment extends BaseFragment {
 
     private void initData() {
         promotionList = new ArrayList<>();
-        promotionList.add(new Promotion("Buy 7 Get 2 Red Bull Minuman Energi 250ml", "01 June 2023 - 30 June 2023"));
-        promotionList.add(new Promotion("Buy 9 Get 2 Kratingdaeng Regular Minuman Energi 150ml", "01 June 2023 - 30 June 2023"));
-        promotionList.add(new Promotion("Buy 2 Get 1 Kratingdaeng Regular Minuman Energi 150ml", "01 June 2023 - 30 June 2023"));
-        promotionList.add(new Promotion("Buy 2 Get 1 Red Bull Minuman Energi 250ml", "01 June 2023 - 30 June 2023"));
+        promotionList.add(new Promotion("Buy 7 Get 2 Red Bull Minuman Energi 250ml", "01 June 2023", "30 June 2024"));
+        promotionList.add(new Promotion("Buy 9 Get 2 Kratingdaeng Regular Minuman Energi 150ml", "01 June 2023", "30 June 2024"));
+        promotionList.add(new Promotion("Buy 2 Get 1 Kratingdaeng Regular Minuman Energi 150ml", "01 June 2023", "30 June 2024"));
+        promotionList.add(new Promotion("Buy 2 Get 1 Red Bull Minuman Energi 250ml", "01 June 2023", "30 June 2024"));
     }
 
     private void initialize() {
-        db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         recyclerView = rootView.findViewById(R.id.recyclerView);

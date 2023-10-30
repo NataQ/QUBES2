@@ -55,15 +55,15 @@
         android:layout_weight=".2"
         android:textColor="@color/gray8_aspp" />
 
-    <TextView
-        android:id="@+id/txtLeft"
-        style="@style/TextView_Small"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
-        android:layout_weight=".2"
-        android:textColor="@color/gray8_aspp" />
+<!--    <TextView-->
+<!--        android:id="@+id/txtLeft"-->
+<!--        style="@style/TextView_Small"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="2dp"-->
+<!--        android:layout_marginEnd="2dp"-->
+<!--        android:layout_weight=".2"-->
+<!--        android:textColor="@color/gray8_aspp" />-->
 
     <EditText
         android:id="@+id/edtPaid"

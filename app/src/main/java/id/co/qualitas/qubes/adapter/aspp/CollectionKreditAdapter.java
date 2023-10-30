@@ -87,13 +87,14 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice;
+        TextView txtNo, txtProduct, txtPrice, txtPaid;
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtPaid = itemView.findViewById(R.id.txtPaid);
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             edtPaid = itemView.findViewById(R.id.edtPaid);
@@ -122,8 +123,9 @@ public class CollectionKreditAdapter extends RecyclerView.Adapter<CollectionKred
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
-        holder.txtPrice.setText("Rp." + format.format(detail.getAmount()));
+        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
 
+        holder.txtPaid.setVisibility(View.GONE);
         holder.edtPaid.setVisibility(View.GONE);
         holder.cb.setVisibility(View.GONE);
     }

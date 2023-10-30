@@ -159,6 +159,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 visitSales.setPhotoCheckOutReason(null);
                 database.updateVisit(visitSales, user.getUsername());
                 SessionManagerQubes.setOutletHeader(outletHeader);
+                onBackPressed();
             });
 
             LinearLayoutManager mManager = new LinearLayoutManager(this);
@@ -259,11 +260,13 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
+//            SessionManagerQubes.clearInvoiceHeaderSession();
             Intent intent = new Intent(this, OrderActivity.class);
             startActivity(intent);
         });
 
         llCollection.setOnClickListener(v -> {
+            SessionManagerQubes.clearInvoiceHeaderSession();
             Intent intent = new Intent(this, CollectionVisitActivity.class);
             startActivity(intent);
         });
@@ -433,6 +436,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 } else if (outletHeader.getStatus() == Constants.CHECK_OUT_VISIT) {
                     llPause.setVisibility(View.GONE);
                     llTimer.setVisibility(View.GONE);
+                    btnCheckOut.setVisibility(View.GONE);
                 }
             } else {
                 setToast("Gagal mengambil data");

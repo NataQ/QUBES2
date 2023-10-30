@@ -226,9 +226,13 @@ public class DirectionFragment extends BaseFragment {
 //        zoomToBounds(custList)
 
         if (mOverlay != null) {
-            mOverlay.removeAllItems();
-            mMapView.getOverlays().add(mOverlay);
-            mMapView.invalidate();
+            try {
+                mOverlay.removeAllItems();
+                mMapView.getOverlays().add(mOverlay);
+                mMapView.invalidate();
+            } catch (Exception e) {
+
+            }
         }
 
         items = new ArrayList<>();
