@@ -40,12 +40,12 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Bank;
-import id.co.qualitas.qubes.model.CollectionCheque;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionChequeAdapter.Holder> implements Filterable {
-    private List<CollectionCheque> mList;
-    private List<CollectionCheque> mFilteredList;
+    private List<CollectionDetail> mList;
+    private List<CollectionDetail> mFilteredList;
     private LayoutInflater mInflater;
     private CollectionFormActivity mContext;
     private OnAdapterListener onAdapterListener;
@@ -61,7 +61,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     double totalPayment, left;
     private Database database;
 
-    public CollectionChequeAdapter(CollectionFormActivity mContext, List<CollectionCheque> mList, OnAdapterListener onAdapterListener) {
+    public CollectionChequeAdapter(CollectionFormActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -74,7 +74,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionCheque> mDataSet) {
+    public void setData(List<CollectionDetail> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -89,11 +89,11 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionCheque> filteredList = new ArrayList<>();
-                    for (CollectionCheque row : mList) {
+                    List<CollectionDetail> filteredList = new ArrayList<>();
+                    for (CollectionDetail row : mList) {
 
                         /*filter by name*/
-                        if (row.getNoCheque().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -108,7 +108,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionCheque>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -168,7 +168,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
         database = new Database(mContext);
-        CollectionCheque detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         materialList = detail.getMaterialList();
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
@@ -178,8 +178,8 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
         String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
         String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
 
-        if (!Helper.isNullOrEmpty(detail.getTglCheque())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglCheque());
+        if (!Helper.isNullOrEmpty(detail.getTgl())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
             holder.txtTglCheque.setText(date);
         } else {
             holder.txtTglCheque.setText(null);
@@ -217,7 +217,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
 
                     chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                    detail.setTglCheque(tglTf);
+                    detail.setTgl(tglTf);
                     holder.txtTglCheque.setText(chooseDateString);
                     holder.txtTglCheque.setError(null);
                 }
@@ -457,7 +457,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionCheque detail);
+        void onAdapterClick(CollectionDetail detail);
     }
 
     private void setFormatSeparator() {

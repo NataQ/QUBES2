@@ -78,129 +78,290 @@
                 android:padding="16dp">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp"
                     android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Date"
-                        android:textColor="@color/gray8_aspp" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/txtDate"
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/txtInvoice"
+                            style="@style/TextView_Tab"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="3dp"
+                            android:text="Invoice"
+                            android:textAllCaps="true"
+                            android:textColor="@color/blue_aspp" />
+
+                        <TextView
+                            android:id="@+id/txtInvoiceLine"
+                            style="@style/TextView_Tab"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@color/blue_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:gravity="end"
-                        android:text="01/01/2023"
-                        android:textColor="@color/black_aspp" />
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
 
-                </LinearLayout>
+                        <TextView
+                            android:id="@+id/txtHistory"
+                            style="@style/TextView_Tab"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="3dp"
+                            android:text="history"
+                            android:textAllCaps="true"
+                            android:textColor="@color/gray8_aspp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/txtHistoryLine"
+                            style="@style/TextView_Tab"
+                            android:layout_width="match_parent"
+                            android:layout_height="2dp"
+                            android:background="@color/space_transparent" />
 
-                    <TextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Total Invoice"
-                        android:textColor="@color/gray8_aspp" />
-
-                    <TextView
-                        android:id="@+id/txtTotalInvoice"
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:gravity="end"
-                        android:text="2"
-                        android:textColor="@color/black_aspp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".3"
-                        android:text="Total Paid"
-                        android:textColor="@color/darkGray" />
-
-                    <TextView
-                        android:id="@+id/txtTotalPaid"
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".7"
-                        android:gravity="end"
-                        android:text="Rp. 0"
-                        android:textColor="@color/gray8_aspp" />
+                    </LinearLayout>
 
                 </LinearLayout>
 
                 <RelativeLayout
-                    android:id="@+id/f1"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_weight="1">
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
-                        android:id="@+id/tap_to_refresh"
+                        android:id="@+id/llInvoice"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
-                        tools:ignore="UseCompoundDrawables">
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:contentDescription="@string/refresh"
-                            android:src="@drawable/refresh_grey_192x192" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/tap_to_refresh" />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".3"
+                                android:text="Date"
+                                android:textColor="@color/gray8_aspp" />
+
+                            <TextView
+                                android:id="@+id/txtDateInvoice"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".7"
+                                android:gravity="end"
+                                android:text="01/01/2023"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".3"
+                                android:text="Total Invoice"
+                                android:textColor="@color/gray8_aspp" />
+
+                            <TextView
+                                android:id="@+id/txtTotalInvoice"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".7"
+                                android:gravity="end"
+                                android:text="2"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".3"
+                                android:text="Total Paid"
+                                android:textColor="@color/darkGray" />
+
+                            <TextView
+                                android:id="@+id/txtTotalAmountInvoice"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".7"
+                                android:gravity="end"
+                                android:text="Rp. 0"
+                                android:textColor="@color/gray8_aspp" />
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/txtNoDataInvoice"
+                                style="@style/TextView_Small"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="No Data"
+                                android:visibility="gone" />
+
+                            <ProgressBar
+                                android:id="@+id/progressCircleInvoice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:indeterminateDrawable="@drawable/progress"
+                                android:visibility="gone" />
+
+                            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                                android:id="@+id/swipeLayoutInvoice"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerViewInvoice"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:clipToPadding="false"
+                                    tools:listitem="@layout/aspp_row_view_collection_visit"/>
+                            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        </RelativeLayout>
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/txtNoData"
-                        style="@style/TextView_Small"
+                    <LinearLayout
+                        android:id="@+id/llHistory"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="No Data"
-                        android:visibility="gone" />
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".3"
+                                android:text="Date"
+                                android:textColor="@color/gray8_aspp" />
+
+                            <TextView
+                                android:id="@+id/txtDateHistory"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".7"
+                                android:gravity="end"
+                                android:text="01/01/2023"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".3"
+                                android:text="Total Paid"
+                                android:textColor="@color/darkGray" />
+
+                            <TextView
+                                android:id="@+id/txtTotalPaidHistory"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".7"
+                                android:gravity="end"
+                                android:text="Rp. 0"
+                                android:textColor="@color/gray8_aspp" />
+
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/f1"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/txtNoDataHistory"
+                                style="@style/TextView_Small"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:text="No Data"
+                                android:visibility="gone" />
+
+                            <ProgressBar
+                                android:id="@+id/progressCircleHistory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:indeterminateDrawable="@drawable/progress"
+                                android:visibility="gone" />
+
+                            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                                android:id="@+id/swipeLayoutHistory"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerViewHistory"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:clipToPadding="false"
+                                    tools:listitem="@layout/aspp_row_view_collection_visit"/>
+                            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                        </RelativeLayout>
+                    </LinearLayout>
+
                 </RelativeLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

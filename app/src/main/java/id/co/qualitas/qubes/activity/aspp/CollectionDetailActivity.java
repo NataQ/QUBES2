@@ -31,7 +31,9 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.CollectionCheque;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionGiro;
+import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.CollectionTransfer;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
@@ -42,15 +44,17 @@ public class CollectionDetailActivity extends BaseActivity {
     private ImageView imgBack;
     private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain, recyclerViewKredit;
     private TextView txtInvNo, txtDate, txtOrderNo, txtAmount;
+    private TextView txtPaymentLain, txtLeftLain, txtLeftCash, txtPaymentCash;
     private LinearLayout llOrder, llInvoice;
     private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain, txtKredit;
     private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain, buttonKredit;
     private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain, llKredit;
-    private List<CollectionTransfer> mListTransfer;
-    private List<CollectionGiro> mListGiro;
-    private List<CollectionCheque> mListCheque;
+    private List<CollectionDetail> mListTransfer, mListGiro, mListCheque;
+    //    private List<CollectionTransfer> mListTransfer;
+//    private List<CollectionGiro> mListGiro;
+//    private List<CollectionCheque> mListCheque;
     private List<Material> mListCash, mListLain, mListKredit;
-    private Invoice collectionHeader;
+    private CollectionHeader collectionHeader;
     private CollectionPaymentDetailAdapter mAdapterCash, mAdapterLain, mAdapterKredit;
     private CollectionTransferDetailAdapter mAdapterTransfer;
     private CollectionGiroDetailAdapter mAdapterGiro;
@@ -62,7 +66,6 @@ public class CollectionDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_collection_detail);
 
-        initProgress();
         initialize();
         initData();
         setCashView();
@@ -106,9 +109,6 @@ public class CollectionDetailActivity extends BaseActivity {
     }
 
     private void setCashView() {
-        mListCash = new ArrayList<>();
-        mListCash.addAll(initDataMaterial());
-
         mAdapterCash = new CollectionPaymentDetailAdapter(this, mListCash, header -> {
 
         });
@@ -116,9 +116,6 @@ public class CollectionDetailActivity extends BaseActivity {
     }
 
     private void setKreditView() {
-        mListKredit = new ArrayList<>();
-        mListKredit.addAll(initDataMaterial());
-
         mAdapterKredit = new CollectionPaymentDetailAdapter(this, mListKredit, header -> {
 
         });
@@ -147,42 +144,34 @@ public class CollectionDetailActivity extends BaseActivity {
     }
 
     private void setLainView() {
-        mListLain = new ArrayList<>();
-        mListLain.addAll(initDataMaterial());
-
         mAdapterLain = new CollectionPaymentDetailAdapter(this, mListLain, header -> {
 
         });
         recyclerViewLain.setAdapter(mAdapterLain);
     }
 
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
-        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", 890000, 5000000));
-        return mList;
-    }
-
     private void initData() {
         mListTransfer = new ArrayList<>();
         mListGiro = new ArrayList<>();
         mListCheque = new ArrayList<>();
+        mListCash = new ArrayList<>();
+        mListLain = new ArrayList<>();
 
-        mListTransfer.add(new CollectionTransfer(Helper.getTodayDate(Constants.DATE_FORMAT_4), initDataMaterial()));
-        mListTransfer.add(new CollectionTransfer(Helper.getTodayDate(Constants.DATE_FORMAT_4), initDataMaterial()));
-
-        mListGiro.add(new CollectionGiro("000001", "21-04-2023", "17-04-2023", "BM", "Bank MONAS", "BJ", "Bank JAYA", initDataMaterial()));
-        mListGiro.add(new CollectionGiro("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
-
-        mListCheque.add(new CollectionCheque("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
-        mListCheque.add(new CollectionCheque("000002", "27-07-2023", "20-06-2023", "BCA", "Bank Central Asia", "Mandiri", "Bank Mandiri", initDataMaterial()));
-
-        if (SessionManagerQubes.getCollectionHeader() == null) {
+        if (SessionManagerQubes.getCollectionHistoryHeader() == null) {
             onBackPressed();
             setToast("Gagal ambil data. Silahkan coba lagi");
         } else {
-            collectionHeader = SessionManagerQubes.getCollectionHeader();
+            collectionHeader = SessionManagerQubes.getCollectionHistoryHeader();
+
+            txtInvNo.setText(Helper.isEmpty(collectionHeader.getInvoiceNo(), ""));
+            txtOrderNo.setText(Helper.isEmpty(collectionHeader.getInvoiceNo(), ""));
+            txtAmount.setText("Rp." + format.format(collectionHeader.getInvoiceTotal()));
+            if (!Helper.isNullOrEmpty(collectionHeader.getInvoiceDate())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, collectionHeader.getInvoiceDate());
+                txtDate.setText(requestDate);
+            } else {
+                txtDate.setText("-");
+            }
 
             colLFrom = SessionManagerQubes.getCollectionSource();
 
@@ -194,6 +183,20 @@ public class CollectionDetailActivity extends BaseActivity {
                 llOrder.setVisibility(View.GONE);
                 llInvoice.setVisibility(View.VISIBLE);
                 buttonKredit.setVisibility(View.GONE);
+            }
+
+            mListTransfer.addAll(collectionHeader.getTfList());
+            mListGiro.addAll(collectionHeader.getGiroList());
+            mListCheque.addAll(collectionHeader.getChequeList());
+            if (collectionHeader.getCashList() != null || collectionHeader.getCashList().size() != 0) {
+                mListCash.addAll(collectionHeader.getCashList().get(0).getMaterialList());
+                txtPaymentCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getTotalPayment()));
+                txtLeftCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getLeft()));
+            }
+            if (collectionHeader.getLainList() != null || collectionHeader.getLainList().size() != 0) {
+                mListLain.addAll(collectionHeader.getLainList().get(0).getMaterialList());
+                txtPaymentLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getTotalPayment()));
+                txtLeftLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getLeft()));
             }
         }
     }
@@ -336,8 +339,12 @@ public class CollectionDetailActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+
+        txtPaymentLain = findViewById(R.id.txtPaymentLain);
+        txtLeftLain = findViewById(R.id.txtLeftLain);
+        txtPaymentCash = findViewById(R.id.txtPaymentCash);
+        txtLeftCash = findViewById(R.id.txtLeftCash);
 
         recyclerViewCash = findViewById(R.id.recyclerViewCash);
         recyclerViewCash.setLayoutManager(new LinearLayoutManager(this));

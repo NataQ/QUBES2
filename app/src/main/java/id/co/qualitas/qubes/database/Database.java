@@ -18,9 +18,10 @@ import java.util.Map;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Bank;
-import id.co.qualitas.qubes.model.CollectionCheque;
-import id.co.qualitas.qubes.model.CollectionGiro;
-import id.co.qualitas.qubes.model.CollectionTransfer;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionHeader;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
@@ -167,6 +168,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_INVOICE_TOTAL = "invoiceTotal";
     private static final String KEY_DUE_DATE = "dueDate";
     private static final String KEY_PAID = "paid";
+    private static final String KEY_TOTAL_PAID = "totalPaid";
     private static final String KEY_NETT = "nett";
     private static final String KEY_CUSTOMER_ID = "customerId";
     private static final String KEY_CUSTOMER_NAME = "customerName";
@@ -426,16 +428,12 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_TYPE_PAYMENT = "typePayment";
     private static final String KEY_TOTAL_PAYMENT = "totalPayment";
     private static final String KEY_LEFT = "leftPayment";
-    private static final String KEY_TRANSFER_DATE = "transferDate";
-    private static final String KEY_GIRO_NO = "giroNo";
-    private static final String KEY_GIRO_DATE = "giroDate";
+    private static final String KEY_NO = "nomor";
     //    private static final String KEY_DUE_DATE = "dueDate";
     private static final String KEY_ID_BANK = "idBank";
     private static final String KEY_NAME_BANK = "nameBank";
     private static final String KEY_ID_CUST_BANK = "idCustBank";
     private static final String KEY_NAME_CUST_BANK = "nameCustBank";
-    private static final String KEY_CHEQUE_NO = "chequeNo";
-    private static final String KEY_CHEQUE_DATE = "chequeDate";
 //    private static final String KEY_CREATED_BY = "createdBy";
 //    private static final String KEY_CREATED_DATE = "createdDate";
 //    private static final String KEY_UPDATED_BY = "updatedBy";
@@ -494,16 +492,12 @@ public class Database extends SQLiteOpenHelper {
     //    private static final String KEY_TYPE_PAYMENT = "typePayment";
     //    private static final String KEY_TOTAL_PAYMENT = "totalPayment";
     //    private static final String KEY_LEFT = "left";
-    //    private static final String KEY_TRANSFER_DATE = "transferDate";
-    //    private static final String KEY_GIRO_NO = "giroNo";
-    //    private static final String KEY_GIRO_DATE = "giroDate";
+    //    private static final String KEY_NO = "giroNo";
     //    private static final String KEY_DUE_DATE = "dueDate";
     //    private static final String KEY_ID_BANK = "idBank";
     //    private static final String KEY_NAME_BANK = "nameBank";
     //    private static final String KEY_ID_CUST_BANK = "idCustBank";
     //    private static final String KEY_NAME_CUST_BANK = "nameCustBank";
-    //    private static final String KEY_CHEQUE_NO = "chequeNo";
-    //    private static final String KEY_CHEQUE_DATE = "chequeDate";
 //    private static final String KEY_CREATED_BY = "createdBy";
 //    private static final String KEY_CREATED_DATE = "createdDate";
 //    private static final String KEY_UPDATED_BY = "updatedBy";
@@ -1035,16 +1029,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TYPE_PAYMENT + " REAL,"
             + KEY_TOTAL_PAYMENT + " REAL,"
             + KEY_LEFT + " REAL,"
-            + KEY_TRANSFER_DATE + " TEXT,"
-            + KEY_GIRO_NO + " TEXT,"
-            + KEY_GIRO_DATE + " TEXT,"
+            + KEY_DATE + " TEXT,"
+            + KEY_NO + " TEXT,"
             + KEY_DUE_DATE + " TEXT,"
             + KEY_ID_BANK + " TEXT,"
             + KEY_NAME_BANK + " TEXT,"
             + KEY_ID_CUST_BANK + " TEXT,"
             + KEY_NAME_CUST_BANK + " TEXT,"
-            + KEY_CHEQUE_NO + " TEXT,"
-            + KEY_CHEQUE_DATE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -1096,10 +1087,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE " + TABLE_COLLECTION_HEADER + "("
             + KEY_ID_COLLECTION_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
             + KEY_INVOICE_DATE + " TEXT,"
             + KEY_INVOICE_TOTAL + " REAL,"
-            + KEY_STATUS + " REAL,"
+            + KEY_TOTAL_PAID + " REAL,"
+            + KEY_STATUS + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -1111,20 +1104,18 @@ public class Database extends SQLiteOpenHelper {
     public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE " + TABLE_COLLECTION_DETAIL + "("
             + KEY_ID_COLLECTION_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
+            + KEY_INVOICE_NO + " TEXT,"
             + KEY_STATUS + " TEXT,"
             + KEY_TYPE_PAYMENT + " REAL,"
             + KEY_TOTAL_PAYMENT + " REAL,"
             + KEY_LEFT + " REAL,"
-            + KEY_TRANSFER_DATE + " TEXT,"
-            + KEY_GIRO_NO + " TEXT,"
-            + KEY_GIRO_DATE + " TEXT,"
+            + KEY_DATE + " TEXT,"
+            + KEY_NO + " TEXT,"
             + KEY_DUE_DATE + " TEXT,"
             + KEY_ID_BANK + " TEXT,"
             + KEY_NAME_BANK + " TEXT,"
             + KEY_ID_CUST_BANK + " TEXT,"
             + KEY_NAME_CUST_BANK + " TEXT,"
-            + KEY_CHEQUE_NO + " TEXT,"
-            + KEY_CHEQUE_DATE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -1985,19 +1976,19 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderPayment(CollectionTransfer param, String typePayment, String idHeader, String idSales) {
+    public int addOrderPayment(CollectionDetail param, String typePayment, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_ORDER_HEADER_DB, idHeader);
-        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_OMZET, param.getOmzet());
         values.put(KEY_TYPE_PAYMENT, typePayment);
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2009,20 +2000,19 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderPaymentTransfer(CollectionTransfer param, String idHeader, String idSales) {
+    public int addOrderPaymentTransfer(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_ORDER_HEADER_DB, idHeader);
-        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_OMZET, param.getOmzet());
         values.put(KEY_TYPE_PAYMENT, "transfer");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_TRANSFER_DATE, param.getTglTransfer());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2034,18 +2024,17 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderPaymentGiro(CollectionGiro param, String idHeader, String idSales) {
+    public int addOrderPaymentGiro(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_ORDER_HEADER_DB, idHeader);
-        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_OMZET, param.getOmzet());
         values.put(KEY_TYPE_PAYMENT, "giro");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_GIRO_NO, param.getNoGiro());
-        values.put(KEY_GIRO_DATE, param.getTglGiro());
+        values.put(KEY_NO, param.getNo());
         values.put(KEY_DUE_DATE, param.getTglCair());
         values.put(KEY_ID_BANK, param.getIdBankASPP());
         values.put(KEY_NAME_BANK, param.getBankNameASPP());
@@ -2053,7 +2042,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2065,18 +2054,17 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderPaymentCheque(CollectionCheque param, String idHeader, String idSales) {
+    public int addOrderPaymentCheque(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_ORDER_HEADER_DB, idHeader);
-        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_OMZET, param.getOmzet());
         values.put(KEY_TYPE_PAYMENT, "giro");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_CHEQUE_NO, param.getNoCheque());
-        values.put(KEY_CHEQUE_DATE, param.getTglCheque());
+        values.put(KEY_NO, param.getNo());
         values.put(KEY_DUE_DATE, param.getTglCair());
         values.put(KEY_ID_BANK, param.getIdBankASPP());
         values.put(KEY_NAME_BANK, param.getBankNameASPP());
@@ -2084,7 +2072,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2162,10 +2150,12 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, param.get("customer_id").toString());
         values.put(KEY_INVOICE_NO, param.get("no_invoice").toString());
         values.put(KEY_INVOICE_DATE, param.get("invoice_date").toString());
         values.put(KEY_STATUS, param.get("status").toString());
         values.put(KEY_INVOICE_TOTAL, (Double) param.get("amount"));
+        values.put(KEY_TOTAL_PAID, (Double) param.get("total_paid"));
         values.put(KEY_CREATED_BY, param.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, 0);
@@ -2203,7 +2193,7 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addCollectionTransfer(CollectionTransfer param, String idHeader, String idSales) {
+    public int addCollectionTransfer(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -2211,7 +2201,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_PAYMENT, "transfer");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_TRANSFER_DATE, param.getTglTransfer());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, 0); //0 false, 1 true
@@ -2226,7 +2216,7 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addCollectionGiro(CollectionGiro param, String idHeader, String idSales) {
+    public int addCollectionGiro(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -2234,8 +2224,8 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_PAYMENT, "giro");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_GIRO_NO, param.getNoGiro());
-        values.put(KEY_GIRO_DATE, param.getTglGiro());
+        values.put(KEY_NO, param.getNo());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_DUE_DATE, param.getTglCair());
         values.put(KEY_ID_BANK, param.getIdBankASPP());
         values.put(KEY_NAME_BANK, param.getBankNameASPP());
@@ -2255,16 +2245,16 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addCollectionCheque(CollectionCheque param, String idHeader, String idSales) {
+    public int addCollectionCheque(CollectionDetail param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
-        values.put(KEY_TYPE_PAYMENT, "giro");
+        values.put(KEY_TYPE_PAYMENT, "cheque");
         values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
         values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_CHEQUE_NO, param.getNoCheque());
-        values.put(KEY_CHEQUE_DATE, param.getTglCheque());
+        values.put(KEY_NO, param.getNo());
+        values.put(KEY_DATE, param.getTgl());
         values.put(KEY_DUE_DATE, param.getTglCair());
         values.put(KEY_ID_BANK, param.getIdBankASPP());
         values.put(KEY_NAME_BANK, param.getBankNameASPP());
@@ -2272,7 +2262,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -3270,6 +3260,201 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
                 paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
                 paramModel.setRoute(false);
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionHeader> getAllInvoiceHistoryCustomer(String request) {
+        List<CollectionHeader> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{request});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionHeader paramModel = new CollectionHeader();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));
+                paramModel.setTfList(getAllCollectionDetailTransfer(paramModel.getIdHeader()));
+                paramModel.setGiroList(getAllCollectionDetailGiro(paramModel.getIdHeader()));
+                paramModel.setChequeList(getAllCollectionDetailCheque(paramModel.getIdHeader()));
+                paramModel.setLainList(getAllCollectionDetailLain(paramModel.getIdHeader()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetailCash(String id) {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cash\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetailTransfer(String id) {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'transfer\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetailGiro(String id) {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'giro\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO)));
+                paramModel.setTglCair(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setIdBankASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_BANK)));
+                paramModel.setBankNameASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_BANK)));
+                paramModel.setIdBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUST_BANK)));
+                paramModel.setBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CUST_BANK)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetailCheque(String id) {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cheque\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO)));
+                paramModel.setTglCair(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setIdBankASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_BANK)));
+                paramModel.setBankNameASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_BANK)));
+                paramModel.setIdBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUST_BANK)));
+                paramModel.setBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CUST_BANK)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetailLain(String id) {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'lain\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllCollectionItem(String id) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_ID_COLLECTION_DETAIL_DB + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdItem(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_ITEM_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setAmountPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());

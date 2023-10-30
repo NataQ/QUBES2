@@ -101,7 +101,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice, txtLeft, txtPaid;
+        TextView txtNo, txtProduct, txtPrice, txtPaid; //txtLeft
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
@@ -111,7 +111,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             edtPaid = itemView.findViewById(R.id.edtPaid);
-            txtLeft = itemView.findViewById(R.id.txtLeft);
+//            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtPaid = itemView.findViewById(R.id.txtPaid);
             cb = itemView.findViewById(R.id.cb);
@@ -139,7 +139,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
-        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+//        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
         holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
         holder.txtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
@@ -205,9 +205,9 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                                 holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
                                 detail.setAmountPaid(qty);
                                 mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
-                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
+//                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
                                 headerAdapter.setLeft();
-                                mContext.updateLeft(2, idHeader);
+//                                mContext.updateLeft(2, idHeader);
                                 dialog.dismiss();
                             }
                         } else {

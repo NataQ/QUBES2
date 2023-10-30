@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.List;
 public class Material implements Cloneable{
     private String idHeader;//aspp
+    private String idItem;//aspp
     private String id;//aspp
     private String id_customer;//aspp
     private String nama;//aspp
@@ -117,6 +118,14 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getIdItem() {
+        return idItem;
+    }
+
+    public void setIdItem(String idItem) {
+        this.idItem = idItem;
     }
 
     public double getNett() {

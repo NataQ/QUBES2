@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Invoice;
@@ -32,7 +33,8 @@ public abstract class SessionManagerQubes {
     private static final String PREF_STOCK_REQUEST_HEADER = "pref_stock_request_header";
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
-    private static final String PREF_COLLECTION_SOURCE = "pref_collection_source";
+    private static final String PREF_COLLECTION = "PREF_COLLECTION";
+    private static final String PREF_COLLECTION_HISTORY = "PREF_COLLECTION_HISTORY";
     private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
@@ -41,7 +43,8 @@ public abstract class SessionManagerQubes {
     private static final String KEY_STOCK_REQUEST_HEADER = "key_stock_request_header";
     private static final String KEY_ROUTE_CUSTOMER_HEADER = "key_route_customer_header";
     private static final String KEY_COLLECTION_HEADER = "key_collection_header";
-    private static final String KEY_COLLECTION_SOURCE = "key_collection_source";
+    private static final String KEY_COLLECTION = "key_collection";
+    private static final String KEY_COLLECTION_HISTORY = "key_collection_history";
     private static final String KEY_TOKEN = "key_token";
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
@@ -55,15 +58,17 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences loginPrefs;
     private static SharedPreferences stockRequestHeaderPrefs;
     private static SharedPreferences collectionHeaderPrefs;
-    private static SharedPreferences collectionSourcePrefs;
+    private static SharedPreferences collectionPrefs;
+    private static SharedPreferences collectionHistoryPrefs;
     private static SharedPreferences routeCustomerHeaderPrefs;
 
     public static void init(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         loginPrefs = context.getSharedPreferences(PREF_LOGIN, Context.MODE_PRIVATE);
         stockRequestHeaderPrefs = context.getSharedPreferences(PREF_STOCK_REQUEST_HEADER, Context.MODE_PRIVATE);
+        collectionHistoryPrefs = context.getSharedPreferences(PREF_COLLECTION_HISTORY, Context.MODE_PRIVATE);
         collectionHeaderPrefs = context.getSharedPreferences(PREF_COLLECTION_HEADER, Context.MODE_PRIVATE);
-        collectionSourcePrefs = context.getSharedPreferences(PREF_COLLECTION_SOURCE, Context.MODE_PRIVATE);
+        collectionPrefs = context.getSharedPreferences(PREF_COLLECTION, Context.MODE_PRIVATE);
         routeCustomerHeaderPrefs = context.getSharedPreferences(PREF_ROUTE_CUSTOMER_HEADER, Context.MODE_PRIVATE);
         startDayPrefs = context.getSharedPreferences(PREF_START_DAY, Context.MODE_PRIVATE);
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
@@ -146,9 +151,17 @@ public abstract class SessionManagerQubes {
         }
     }
 
+    public static void setCollectionHistoryHeader(CollectionHeader param) {
+        if (param != null) {
+            synchronized (sync) {
+                collectionHistoryPrefs.edit().putString(KEY_COLLECTION_HISTORY, gson.toJson(param)).apply();
+            }
+        }
+    }
+
     public static void setCollectionSource(int param) {
         synchronized (sync) {
-            collectionSourcePrefs.edit().putString(KEY_COLLECTION_SOURCE, gson.toJson(param)).apply();
+            collectionPrefs.edit().putString(KEY_COLLECTION, gson.toJson(param)).apply();
         }
     }
 
@@ -174,6 +187,10 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(collectionHeaderPrefs.getString(KEY_COLLECTION_HEADER, null), Invoice.class);
     }
 
+    public static CollectionHeader getCollectionHistoryHeader() {
+        return gson.fromJson(collectionHistoryPrefs.getString(KEY_COLLECTION_HISTORY, null), CollectionHeader.class);
+    }
+
     public static StockRequest getStockRequestHeader() {
         return gson.fromJson(stockRequestHeaderPrefs.getString(KEY_STOCK_REQUEST_HEADER, null), StockRequest.class);
     }
@@ -187,7 +204,7 @@ public abstract class SessionManagerQubes {
     }
 
     public static int getCollectionSource() {
-        return Integer.parseInt(collectionSourcePrefs.getString(KEY_COLLECTION_SOURCE, null));
+        return Integer.parseInt(collectionPrefs.getString(KEY_COLLECTION, null));
     }
 
     public static User getUserProfile() {
@@ -219,6 +236,10 @@ public abstract class SessionManagerQubes {
     }
 
     //------------------------------------------------------------------------------
+
+    public static void clearCollectionHistorySession() {
+        collectionHistoryPrefs.edit().clear().apply();
+    }
 
     public static void clearReturnSession() {
         returnPrefs.edit().clear().apply();

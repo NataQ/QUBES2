@@ -1088,7 +1088,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         validateButton();
     }
 
-
     private void getData() {
         mList = new ArrayList<>();
         mList = database.getAllCustomerVisit(null, false);

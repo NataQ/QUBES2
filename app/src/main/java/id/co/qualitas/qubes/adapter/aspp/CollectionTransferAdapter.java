@@ -39,12 +39,13 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionTransfer;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTransferAdapter.Holder> implements Filterable {
-    private List<CollectionTransfer> mList;
-    private List<CollectionTransfer> mFilteredList;
+    private List<CollectionDetail> mList;
+    private List<CollectionDetail> mFilteredList;
     private LayoutInflater mInflater;
     private CollectionFormActivity mContext;
     private OnAdapterListener onAdapterListener;
@@ -59,7 +60,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CollectionTransferAdapter(CollectionFormActivity mContext, List<CollectionTransfer> mList, OnAdapterListener onAdapterListener) {
+    public CollectionTransferAdapter(CollectionFormActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -72,7 +73,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionTransfer> mDataSet) {
+    public void setData(List<CollectionDetail> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -87,11 +88,11 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionTransfer> filteredList = new ArrayList<>();
-                    for (CollectionTransfer row : mList) {
+                    List<CollectionDetail> filteredList = new ArrayList<>();
+                    for (CollectionDetail row : mList) {
 
                         /*filter by name*/
-                        if (row.getTglTransfer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getTgl().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -106,7 +107,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionTransfer>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -155,13 +156,13 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
-        CollectionTransfer detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         materialList = detail.getMaterialList();
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
 
-        if (!Helper.isNullOrEmpty(detail.getTglTransfer())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglTransfer());
+        if (!Helper.isNullOrEmpty(detail.getTgl())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
             holder.txtTglTransfer.setText(date);
 //            holder.edtPayment.setEnabled(true);
 //            holder.edtPayment.setBackground(ContextCompat.getDrawable(mContext, R.drawable.editbox));
@@ -190,7 +191,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
 
                     chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                    detail.setTglTransfer(tglTf);
+                    detail.setTgl(tglTf);
                     holder.txtTglTransfer.setText(chooseDateString);
                     holder.txtTglTransfer.setError(null);
 //                    holder.edtPayment.setEnabled(true);
@@ -322,7 +323,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionTransfer detail);
+        void onAdapterClick(CollectionDetail detail);
     }
 
     private void setFormatSeparator() {

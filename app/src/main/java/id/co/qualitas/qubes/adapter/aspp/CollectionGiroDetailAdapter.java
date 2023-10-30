@@ -13,23 +13,30 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
-import id.co.qualitas.qubes.model.CollectionGiro;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.CollectionDetail;
 
 public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<CollectionGiroDetailAdapter.Holder> implements Filterable {
-    private List<CollectionGiro> mList;
-    private List<CollectionGiro> mFilteredList;
+    private List<CollectionDetail> mList;
+    private List<CollectionDetail> mFilteredList;
     private LayoutInflater mInflater;
     private CollectionDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
     private CollectionPaymentDetailAdapter mAdapter;
     private boolean visible = false;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
-    public CollectionGiroDetailAdapter(CollectionDetailActivity mContext, List<CollectionGiro> mList, OnAdapterListener onAdapterListener) {
+    public CollectionGiroDetailAdapter(CollectionDetailActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -42,7 +49,7 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionGiro> mDataSet) {
+    public void setData(List<CollectionDetail> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -57,11 +64,11 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionGiro> filteredList = new ArrayList<>();
-                    for (CollectionGiro row : mList) {
+                    List<CollectionDetail> filteredList = new ArrayList<>();
+                    for (CollectionDetail row : mList) {
 
                         /*filter by name*/
-                        if (row.getNoGiro().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -76,14 +83,14 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionGiro>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTglGiro, txtTglCair, txtBankName, txtBankCust, txtNoGiro;
+        TextView txtTglGiro, txtTglCair, txtBankName, txtBankCust, txtNoGiro, txtPayment, txtLeft;
         RecyclerView recyclerView;
         ImageView imgView;
         LinearLayout llPayment, layout;
@@ -91,6 +98,8 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtLeft = itemView.findViewById(R.id.txtLeft);
+            txtPayment = itemView.findViewById(R.id.txtPayment);
             txtNoGiro = itemView.findViewById(R.id.txtNoGiro);
             txtBankCust = itemView.findViewById(R.id.txtBankCust);
             txtBankName = itemView.findViewById(R.id.txtBankName);
@@ -120,13 +129,34 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
-        CollectionGiro detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        setFormatSeparator();
+        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtTglGiro.setText(detail.getTglGiro());
-        holder.txtTglCair.setText(detail.getTglCair());
-        holder.txtBankName.setText(detail.getIdBankASPP() + " - " + detail.getBankNameASPP());
-        holder.txtBankCust.setText(detail.getIdBankCust() + " - " + detail.getBankCust());
-        holder.txtNoGiro.setText(detail.getNoGiro());
+        String idBankCust = Helper.isEmpty(detail.getIdBankCust(), "");
+        String nameBankCust = Helper.isEmpty(detail.getBankCust(), "");
+
+        String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
+        String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
+        if (!Helper.isNullOrEmpty(detail.getTgl())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
+            holder.txtTglGiro.setText(date);
+        } else {
+            holder.txtTglGiro.setText(null);
+        }
+
+        if (!Helper.isNullOrEmpty(detail.getTglCair())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglCair());
+            holder.txtTglCair.setText(date);
+        } else {
+            holder.txtTglCair.setText(null);
+        }
+
+        holder.txtBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
+        holder.txtBankName.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
+
+        holder.txtNoGiro.setText(Helper.isEmpty(detail.getNo(), ""));
+        holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPayment()));
+        holder.txtLeft.setText("Rp. " + format.format(detail.getLeft()));
 
         mAdapter = new CollectionPaymentDetailAdapter(mContext, detail.getMaterialList(), header -> {
 
@@ -152,6 +182,14 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionGiro detail);
+        void onAdapterClick(CollectionDetail detail);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

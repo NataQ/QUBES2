@@ -319,6 +319,7 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearStartDaySession();
         SessionManagerQubes.clearOutletHeaderSession();
         SessionManagerQubes.clearImageTypeSession();
+        SessionManagerQubes.clearCollectionHistorySession();
         SessionManagerQubes.clearReturnSession();
         SessionManagerQubes.clearCustomerNooSession();
         SessionManagerQubes.clearInvoiceHeaderSession();

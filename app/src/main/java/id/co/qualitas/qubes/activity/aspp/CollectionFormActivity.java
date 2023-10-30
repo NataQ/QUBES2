@@ -39,9 +39,10 @@ import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionCheque;
-import id.co.qualitas.qubes.model.CollectionGiro;
-import id.co.qualitas.qubes.model.CollectionTransfer;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
@@ -61,9 +62,10 @@ public class CollectionFormActivity extends BaseActivity {
     private TextView txtCash, txtTransfer, txtGiro, txtCheq, txtLain, txtKredit;
     private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain, buttonKredit;
     private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain, llKredit;
-    private List<CollectionTransfer> mListTransfer;
-    private List<CollectionGiro> mListGiro;
-    private List<CollectionCheque> mListCheque;
+    private List<CollectionDetail> mListTransfer, mListGiro, mListCheque;
+//    private List<CollectionDetail> mListTransfer;
+//    private List<CollectionDetail> mListGiro;
+//    private List<CollectionDetail> mListCheque;
     private List<Material> mListCash, mListLain, mListKredit, mListMaster;
     private Invoice header;
     private CollectionKreditAdapter mAdapterKredit;
@@ -130,7 +132,7 @@ public class CollectionFormActivity extends BaseActivity {
         });
     }
 
-    public void updateLeft(int type, int idHeader) {
+//    public void updateLeft(int type, int idHeader) {
 //        switch (type) {
 //            case 2:
 //                mAdapterTransfer.notifyDataSetChanged();
@@ -151,17 +153,19 @@ public class CollectionFormActivity extends BaseActivity {
 ////                }
 //                break;
 //        }
-    }
+//    }
 
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
                 Map requestHeader = new HashMap();
+                requestHeader.put("customer_id", header.getId_customer());
                 requestHeader.put("no_invoice", header.getNo_invoice());
                 requestHeader.put("invoice_date", header.getInvoice_date());
                 requestHeader.put("status", "paid");
-                requestHeader.put("amount", totalAmountPaid);
+                requestHeader.put("total_paid", totalAmountPaid);
+                requestHeader.put("amount", header.getAmount());
                 requestHeader.put("username", user.getUsername());
                 int idCollHeader = database.addCollectionHeader(requestHeader);
 
@@ -198,7 +202,7 @@ public class CollectionFormActivity extends BaseActivity {
                 }
 
                 if (tfList.size() != 0) {
-                    for (CollectionTransfer collection : mListTransfer) {
+                    for (CollectionDetail collection : mListTransfer) {
                         int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {
@@ -208,7 +212,7 @@ public class CollectionFormActivity extends BaseActivity {
                 }
 
                 if (giroList.size() != 0) {
-                    for (CollectionGiro collection : mListGiro) {
+                    for (CollectionDetail collection : mListGiro) {
                         int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {
@@ -218,7 +222,7 @@ public class CollectionFormActivity extends BaseActivity {
                 }
 
                 if (chequeList.size() != 0) {
-                    for (CollectionCheque collection : mListCheque) {
+                    for (CollectionDetail collection : mListCheque) {
                         int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
 
                         for (Material material : collection.getCheckedMaterialList()) {
@@ -291,7 +295,7 @@ public class CollectionFormActivity extends BaseActivity {
             }
         }
 
-        for (CollectionTransfer collection : mListTransfer) {
+        for (CollectionDetail collection : mListTransfer) {
             tfList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
@@ -303,7 +307,7 @@ public class CollectionFormActivity extends BaseActivity {
             }
 
             if (tfList.size() != 0) {
-                if (Helper.isEmpty(collection.getTglTransfer())) {
+                if (Helper.isEmpty(collection.getTgl())) {
                     emptyText++;
                 }
             }
@@ -312,7 +316,7 @@ public class CollectionFormActivity extends BaseActivity {
         }
 
 
-        for (CollectionGiro collection : mListGiro) {
+        for (CollectionDetail collection : mListGiro) {
             giroList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
@@ -324,7 +328,7 @@ public class CollectionFormActivity extends BaseActivity {
             }
 
             if (giroList.size() != 0) {
-                if (Helper.isEmpty(collection.getTglGiro())) {
+                if (Helper.isEmpty(collection.getTgl())) {
                     emptyText++;
                 }
 
@@ -344,7 +348,7 @@ public class CollectionFormActivity extends BaseActivity {
             collection.setCheckedMaterialList(giroList);
         }
 
-        for (CollectionCheque collection : mListCheque) {
+        for (CollectionDetail collection : mListCheque) {
             chequeList = new ArrayList<>();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
@@ -356,7 +360,7 @@ public class CollectionFormActivity extends BaseActivity {
             }
 
             if (chequeList.size() != 0) {
-                if (Helper.isEmpty(collection.getTglCheque())) {
+                if (Helper.isEmpty(collection.getTgl())) {
                     emptyText++;
                 }
 
@@ -531,8 +535,8 @@ public class CollectionFormActivity extends BaseActivity {
                             newList.add(cloneMat);
                         }
 
-                        CollectionTransfer colLTf = new CollectionTransfer();
-                        colLTf.setTglTransfer(null);
+                        CollectionDetail colLTf = new CollectionDetail();
+                        colLTf.setTgl(null);
                         colLTf.setTotalPayment(0);
                         colLTf.setLeft(0);
                         colLTf.setMaterialList(newList);
@@ -579,8 +583,8 @@ public class CollectionFormActivity extends BaseActivity {
                             newList.add(cloneMat);
                         }
 
-                        CollectionGiro colLTf = new CollectionGiro();
-                        colLTf.setTglGiro(null);
+                        CollectionDetail colLTf = new CollectionDetail();
+                        colLTf.setTgl(null);
                         colLTf.setTglCair(null);
                         colLTf.setIdBankCust(null);
                         colLTf.setBankCust(null);
@@ -632,8 +636,8 @@ public class CollectionFormActivity extends BaseActivity {
                             newList.add(cloneMat);
                         }
 
-                        CollectionCheque colLTf = new CollectionCheque();
-                        colLTf.setTglCheque(null);
+                        CollectionDetail colLTf = new CollectionDetail();
+                        colLTf.setTgl(null);
                         colLTf.setTglCair(null);
                         colLTf.setIdBankCust(null);
                         colLTf.setBankCust(null);
@@ -773,7 +777,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
-                mAdapterCash.notifyDataSetChanged();
+//                mAdapterCash.notifyDataSetChanged();
                 break;
             case 2:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -796,7 +800,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
-                mAdapterTransfer.notifyDataSetChanged();
+//                mAdapterTransfer.notifyDataSetChanged();
                 break;
             case 3:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -820,7 +824,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
 
-                mAdapterGiro.notifyDataSetChanged();
+//                mAdapterGiro.notifyDataSetChanged();
                 break;
             case 4:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -843,7 +847,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.VISIBLE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
-                mAdapterCheque.notifyDataSetChanged();
+//                mAdapterCheque.notifyDataSetChanged();
                 break;
             case 5:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -866,7 +870,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.VISIBLE);
                 llKredit.setVisibility(View.GONE);
-                mAdapterLain.notifyDataSetChanged();
+//                mAdapterLain.notifyDataSetChanged();
                 break;
             case 6:
                 buttonCash.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.bg_type));
@@ -976,19 +980,19 @@ public class CollectionFormActivity extends BaseActivity {
                 double paid = 0;
                 paid = paid + mListCash.get(i).getAmountPaid();
                 if (mListTransfer != null && mListTransfer.size() != 0) {
-                    for (CollectionTransfer collection : mListTransfer) {
+                    for (CollectionDetail collection : mListTransfer) {
                         paid = paid + collection.getMaterialList().get(i).getAmountPaid();
                     }
                 }
 
                 if (mListGiro != null && mListGiro.size() != 0) {
-                    for (CollectionGiro collection : mListGiro) {
+                    for (CollectionDetail collection : mListGiro) {
                         paid = paid + collection.getMaterialList().get(i).getAmountPaid();
                     }
                 }
 
                 if (mListCheque != null && mListCheque.size() != 0) {
-                    for (CollectionCheque collection : mListCheque) {
+                    for (CollectionDetail collection : mListCheque) {
                         paid = paid + collection.getMaterialList().get(i).getAmountPaid();
                     }
                 }
@@ -1008,19 +1012,19 @@ public class CollectionFormActivity extends BaseActivity {
         double paid = 0;
 
         if (mListTransfer != null && mListTransfer.size() != 0) {
-            for (CollectionTransfer collection : mListTransfer) {
+            for (CollectionDetail collection : mListTransfer) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
 
         if (mListGiro != null && mListGiro.size() != 0) {
-            for (CollectionGiro collection : mListGiro) {
+            for (CollectionDetail collection : mListGiro) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
 
         if (mListCheque != null && mListCheque.size() != 0) {
-            for (CollectionCheque collection : mListCheque) {
+            for (CollectionDetail collection : mListCheque) {
                 paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
             }
         }
@@ -1089,7 +1093,7 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 2) {
             if (mListTransfer != null && mListTransfer.size() != 0) {
                 for (int i = 0; i < mListTransfer.size(); i++) {
-                    CollectionTransfer collection = mListTransfer.get(i);
+                    CollectionDetail collection = mListTransfer.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }
@@ -1100,7 +1104,7 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 3) {
             if (mListGiro != null && mListGiro.size() != 0) {
                 for (int i = 0; i < mListGiro.size(); i++) {
-                    CollectionGiro collection = mListGiro.get(i);
+                    CollectionDetail collection = mListGiro.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }
@@ -1111,7 +1115,7 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 4) {
             if (mListCheque != null && mListCheque.size() != 0) {
                 for (int i = 0; i < mListCheque.size(); i++) {
-                    CollectionCheque collection = mListCheque.get(i);
+                    CollectionDetail collection = mListCheque.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }

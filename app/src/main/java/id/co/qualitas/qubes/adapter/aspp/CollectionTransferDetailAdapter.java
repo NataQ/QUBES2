@@ -16,29 +16,35 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionTransfer;
+import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.CollectionDetail;
 
 public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<CollectionTransferDetailAdapter.Holder> implements Filterable {
-    private List<CollectionTransfer> mList;
-    private List<CollectionTransfer> mFilteredList;
+    private List<CollectionDetail> mList;
+    private List<CollectionDetail> mFilteredList;
     private LayoutInflater mInflater;
     private CollectionDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
     boolean visible = false;
     private CollectionPaymentDetailAdapter mAdapter;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
-    public CollectionTransferDetailAdapter(CollectionDetailActivity mContext, List<CollectionTransfer> mList, OnAdapterListener onAdapterListener) {
+    public CollectionTransferDetailAdapter(CollectionDetailActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -51,7 +57,7 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionTransfer> mDataSet) {
+    public void setData(List<CollectionDetail> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -66,11 +72,11 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionTransfer> filteredList = new ArrayList<>();
-                    for (CollectionTransfer row : mList) {
+                    List<CollectionDetail> filteredList = new ArrayList<>();
+                    for (CollectionDetail row : mList) {
 
                         /*filter by name*/
-                        if (row.getTglTransfer().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getTgl().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -85,14 +91,14 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionTransfer>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTglTransfer, txtPrice;
+        TextView txtTglTransfer, txtPrice, txtPayment, txtLeft;
         LinearLayout llPayment, layout;
         ImageView imgView;
         RecyclerView recyclerView;
@@ -100,6 +106,8 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtLeft = itemView.findViewById(R.id.txtLeft);
+            txtPayment = itemView.findViewById(R.id.txtPayment);
             layout = itemView.findViewById(R.id.layout);
             llPayment = itemView.findViewById(R.id.llPayment);
             imgView = itemView.findViewById(R.id.imgView);
@@ -126,9 +134,18 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
-        CollectionTransfer detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtTglTransfer.setText(detail.getTglTransfer());
+        setFormatSeparator();
+
+        if (!Helper.isNullOrEmpty(detail.getTgl())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
+            holder.txtTglTransfer.setText(date);
+        } else {
+            holder.txtTglTransfer.setText(null);
+        }
+        holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPayment()));
+        holder.txtLeft.setText("Rp. " + format.format(detail.getLeft()));
 
         mAdapter = new CollectionPaymentDetailAdapter(mContext, detail.getMaterialList(), header -> {
 
@@ -154,6 +171,14 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionTransfer detail);
+        void onAdapterClick(CollectionDetail detail);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

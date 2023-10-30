@@ -1,11 +1,8 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -19,21 +16,22 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
-import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionVisitActivity;
+import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.CollectionHeader;
+import id.co.qualitas.qubes.model.CollectionHeader;
 
-public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<CollectionPaymentDetailAdapter.Holder> implements Filterable {
-    private List<Material> mList;
-    private List<Material> mFilteredList;
+public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<CollectionVisitHistoryAdapter.Holder> implements Filterable {
+    private List<CollectionHeader> mList;
+    private List<CollectionHeader> mFilteredList;
     private LayoutInflater mInflater;
-    private CollectionDetailActivity mContext;
+    private CollectionVisitActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CollectionPaymentDetailAdapter(CollectionDetailActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CollectionVisitHistoryAdapter(CollectionVisitActivity mContext, List<CollectionHeader> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -46,7 +44,7 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Material> mDataSet) {
+    public void setData(List<CollectionHeader> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -61,11 +59,11 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Material> filteredList = new ArrayList<>();
-                    for (Material row : mList) {
+                    List<CollectionHeader> filteredList = new ArrayList<>();
+                    for (CollectionHeader row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getInvoiceNo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -80,22 +78,22 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Material>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionHeader>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice, txtPaid;
+        TextView txtAmount, txtPaid, txtInvoiceNo, txtInvoiceDate;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtNo = itemView.findViewById(R.id.txtNo);
-            txtProduct = itemView.findViewById(R.id.txtProduct);
+            txtInvoiceNo = itemView.findViewById(R.id.txtInvoiceNo);
+            txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
+            txtAmount = itemView.findViewById(R.id.txtAmount);
             txtPaid = itemView.findViewById(R.id.txtPaid);
-            txtPrice = itemView.findViewById(R.id.txtPrice);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -108,28 +106,22 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_payment_detail, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_collection_visit_history, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int pos) {
+    public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
-        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        CollectionHeader detail = mFilteredList.get(position);
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null);
-        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-        holder.txtPaid.setText("Rp. " + format.format(detail.getAmountPaid()));
-    }
-
-    @Override
-    public int getItemCount() {
-        return mFilteredList.size();
-    }
-
-    public interface OnAdapterListener {
-        void onAdapterClick(Material Material);
+        if (!Helper.isNullOrEmpty(detail.getInvoiceDate())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoiceDate());
+            holder.txtInvoiceDate.setText(date);
+        }
+        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getInvoiceNo(), "-"));
+        holder.txtAmount.setText("Rp. " + format.format(detail.getInvoiceTotal()));
+        holder.txtPaid.setText("Rp. " + format.format(detail.getTotalPaid()));
     }
 
     private void setFormatSeparator() {
@@ -138,5 +130,14 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
         otherSymbols.setGroupingSeparator('.');
         format = new DecimalFormat("#,###,###,###.###", otherSymbols);
         format.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mFilteredList.size();
+    }
+
+    public interface OnAdapterListener {
+        void onAdapterClick(CollectionHeader CollectionHeader);
     }
 }

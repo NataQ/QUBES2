@@ -40,13 +40,13 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Bank;
-import id.co.qualitas.qubes.model.CollectionGiro;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Material;
 
 public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAdapter.Holder> implements Filterable {
     private Database database;
-    private List<CollectionGiro> mList;
-    private List<CollectionGiro> mFilteredList;
+    private List<CollectionDetail> mList;
+    private List<CollectionDetail> mFilteredList;
     private LayoutInflater mInflater;
     private CollectionFormActivity mContext;
     private OnAdapterListener onAdapterListener;
@@ -61,7 +61,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     private Holder dataObjectHolder;
     double totalPayment, left;
 
-    public CollectionGiroAdapter(CollectionFormActivity mContext, List<CollectionGiro> mList, OnAdapterListener onAdapterListener) {
+    public CollectionGiroAdapter(CollectionFormActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -74,7 +74,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionGiro> mDataSet) {
+    public void setData(List<CollectionDetail> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -89,11 +89,11 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionGiro> filteredList = new ArrayList<>();
-                    for (CollectionGiro row : mList) {
+                    List<CollectionDetail> filteredList = new ArrayList<>();
+                    for (CollectionDetail row : mList) {
 
                         /*filter by name*/
-                        if (row.getNoGiro().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -108,7 +108,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionGiro>) filterResults.values;
+                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -168,7 +168,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
         database = new Database(mContext);
-        CollectionGiro detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         materialList = detail.getMaterialList();
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
@@ -178,8 +178,8 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
         String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
 
-        if (!Helper.isNullOrEmpty(detail.getTglGiro())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglGiro());
+        if (!Helper.isNullOrEmpty(detail.getTgl())) {
+            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
             holder.txtTglGiro.setText(date);
         } else {
             holder.txtTglGiro.setText(null);
@@ -217,7 +217,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
                     chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                    detail.setTglGiro(tglTf);
+                    detail.setTgl(tglTf);
                     holder.txtTglGiro.setText(chooseDateString);
                     holder.txtTglGiro.setError(null);
                 }
@@ -457,7 +457,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionGiro detail);
+        void onAdapterClick(CollectionDetail detail);
     }
 
     private void setFormatSeparator() {
