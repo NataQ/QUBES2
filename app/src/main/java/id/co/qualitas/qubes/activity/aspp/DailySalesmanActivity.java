@@ -215,8 +215,12 @@ public class DailySalesmanActivity extends BaseActivity {
                 if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
                     resumeTimer();
                 } else {
+                    visitSales.setStatus(Constants.PAUSE_VISIT);
                     visitSales.setIdPauseReason(String.valueOf(nameItem.getId()));
                     visitSales.setNamePauseReason(nameItem.getDescription());
+                    visitSales.setPauseTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    visitSales.setResumeTime(null);
+                    visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
                     pauseTimer();
                 }
                 alertDialog.dismiss();

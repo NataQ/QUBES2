@@ -4479,6 +4479,23 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
+    public void pauseVisitSalesman(VisitSalesman param, String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        values.put(KEY_STATUS, param.getIdPauseReason());
+        values.put(KEY_STATUS, param.getNamePauseReason());
+        values.put(KEY_STATUS, param.getPauseTime());
+        values.put(KEY_STATUS, param.getResumeTime());
+        values.put(KEY_STATUS, param.getTimer());
+        values.put(KEY_UPDATED_BY, username);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_VISIT_SALESMAN, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
+
     public void updateStatusOutletVisit(Customer param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
