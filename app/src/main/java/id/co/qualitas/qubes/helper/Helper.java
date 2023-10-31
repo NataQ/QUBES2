@@ -70,6 +70,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -943,6 +944,14 @@ public class Helper extends BaseFragment {
             }
         }
         return false;
+    }
+
+    public static boolean isEmptyOrNull(Collection<?> collection) {
+        return (collection == null || collection.isEmpty());
+    }
+
+    public static boolean isNotEmptyOrNull(Collection<?> collection) {
+        return !isEmptyOrNull(collection);
     }
 
     public static boolean checkRadius(Location currentLocation, Location custLocation) {

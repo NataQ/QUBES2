@@ -63,7 +63,7 @@ public class CollectionFormActivity extends BaseActivity {
     private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain, buttonKredit;
     private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain, llKredit;
     private List<CollectionDetail> mListTransfer, mListGiro, mListCheque;
-//    private List<CollectionDetail> mListTransfer;
+    //    private List<CollectionDetail> mListTransfer;
 //    private List<CollectionDetail> mListGiro;
 //    private List<CollectionDetail> mListCheque;
     private List<Material> mListCash, mListLain, mListKredit, mListMaster;
@@ -159,82 +159,24 @@ public class CollectionFormActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                Map requestHeader = new HashMap();
-                requestHeader.put("customer_id", header.getId_customer());
-                requestHeader.put("no_invoice", header.getNo_invoice());
-                requestHeader.put("invoice_date", header.getInvoice_date());
-                requestHeader.put("status", "paid");
-                requestHeader.put("total_paid", totalAmountPaid);
-                requestHeader.put("amount", header.getAmount());
-                requestHeader.put("username", user.getUsername());
-                int idCollHeader = database.addCollectionHeader(requestHeader);
-
-                requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
-                requestHeader.put("nett", header.getAmount() - (header.getTotal_paid() + totalAmountPaid));
-                database.updatePaidInvoice(requestHeader);//update paid invoice header
-
-                Map requestDetail = new HashMap();
-                requestDetail.put("id_header", idCollHeader);
-                requestDetail.put("no_invoice", header.getNo_invoice());
-                requestDetail.put("status", "paid");
-                requestDetail.put("username", user.getUsername());
-
-                if (cashList.size() != 0) {
-                    requestDetail.put("type_payment", "cash");
-                    requestDetail.put("total_payment", totalPaymentCash);
-                    requestDetail.put("left", leftCash);
-                    int idDetail = database.addCollectionCashLain(requestDetail);
-
-                    for (Material material : cashList) {
-                        database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                        database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
-                    }
-                }
-
-                if (lainList.size() != 0) {
-                    requestDetail.put("type_payment", "lain");
-                    requestDetail.put("total_payment", totalPaymentLain);
-                    requestDetail.put("left", leftLain);
-
-                    int idDetail = database.addCollectionCashLain(requestDetail);
-
-                    for (Material material : lainList) {
-                        database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                    }
-                }
-
-                if (tfList.size() != 0) {
-                    for (CollectionDetail collection : mListTransfer) {
-                        collection.setInvoiceNo(header.getNo_invoice());
-                        int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
-
-                        for (Material material : collection.getCheckedMaterialList()) {
-                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                        }
-                    }
-                }
-
-                if (giroList.size() != 0) {
-                    for (CollectionDetail collection : mListGiro) {
-                        collection.setInvoiceNo(header.getNo_invoice());
-                        int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
-
-                        for (Material material : collection.getCheckedMaterialList()) {
-                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                        }
-                    }
-                }
-
-                if (chequeList.size() != 0) {
-                    for (CollectionDetail collection : mListCheque) {
-                        collection.setInvoiceNo(header.getNo_invoice());
-                        int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
-
-                        for (Material material : collection.getCheckedMaterialList()) {
-                            database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                        }
-                    }
-                }
+                Map request = new HashMap();
+                request.put("user", user);
+                request.put("header", header);
+                request.put("totalAmountPaid", totalAmountPaid);
+                request.put("totalPaymentCash", totalPaymentCash);
+                request.put("leftCash", leftCash);
+                request.put("cashList", cashList);
+                request.put("totalPaymentLain", totalPaymentLain);
+                request.put("leftLain", leftLain);
+                request.put("lainList", lainList);
+                request.put("tfList", tfList);
+                request.put("mListTransfer", mListTransfer);
+                request.put("giroList", giroList);
+                request.put("mListGiro", mListGiro);
+                request.put("chequeList", chequeList);
+                request.put("mListCheque", mListCheque);
+                request.put("mListCash", mListCash);
+                database.addCollection(request);
 
                 return true;
             } catch (Exception ex) {
@@ -275,7 +217,7 @@ public class CollectionFormActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 } else {
-//                    onBackPressed();
+                    onBackPressed();
                 }
             } else {
                 setToast("Save Failed");
@@ -285,6 +227,7 @@ public class CollectionFormActivity extends BaseActivity {
 
     private boolean validate() {
         int emptyText = 0, mat = 0;
+        totalAmountPaid = 0;
         cashList = new ArrayList<>();
         tfList = new ArrayList<>();
         giroList = new ArrayList<>();

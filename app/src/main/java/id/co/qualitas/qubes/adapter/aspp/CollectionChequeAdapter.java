@@ -192,6 +192,25 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
             holder.txtTglCair.setText(null);
         }
 
+        holder.edtNoCheque.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    detail.setNo(s.toString().trim());
+                }
+            }
+        });
+
         holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
         holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);

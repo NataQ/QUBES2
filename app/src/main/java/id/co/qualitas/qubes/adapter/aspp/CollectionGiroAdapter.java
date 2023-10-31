@@ -115,7 +115,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
     }
 
     public void updateKurangBayar(int pos) {
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.notifyItemChanged(pos);
         }
     }
@@ -198,6 +198,25 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
         holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
+
+        holder.edtNoGiro.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    detail.setNo(s.toString().trim());
+                }
+            }
+        });
 
         holder.txtTglGiro.setOnClickListener(v -> {
             mContext.hideKeyboard();
@@ -306,7 +325,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
-            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList,false, (header, adapterPosition) -> {
+            SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList, false, (header, adapterPosition) -> {
                 detail.setIdBankCust(header.getId());
                 detail.setBankCust(header.getName());
                 holder.spnBankCust.setText(header.getId() + " - " + header.getName());
@@ -427,7 +446,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         double totalPaid = 0;
         for (Material mat : materialList) {
 //            if (mat.isChecked()) {
-                totalPaid = totalPaid + mat.getAmountPaid();
+            totalPaid = totalPaid + mat.getAmountPaid();
 //            }
         }
 
@@ -440,11 +459,11 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         for (int i = 0; i < materialList.size(); i++) {
             Material mat = materialList.get(i);
 //            if (mat.isChecked()) {
-                if (i == pos) {
-                    totalPaid = totalPaid + qty;
-                } else {
-                    totalPaid = totalPaid + mat.getAmountPaid();
-                }
+            if (i == pos) {
+                totalPaid = totalPaid + qty;
+            } else {
+                totalPaid = totalPaid + mat.getAmountPaid();
+            }
 //            }
         }
         left = totalPayment - totalPaid;

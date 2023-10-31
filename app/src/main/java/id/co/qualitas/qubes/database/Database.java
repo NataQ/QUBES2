@@ -11,6 +11,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +40,7 @@ import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.Uom;
+import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 
 public class Database extends SQLiteOpenHelper {
@@ -2149,6 +2152,12 @@ public class Database extends SQLiteOpenHelper {
 
     public int addCollectionHeader(Map param) {
         SQLiteDatabase db = getWritableDatabase();
+        /*
+         * According to the docs http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html
+         * Writers should use beginTransactionNonExclusive() or beginTransactionWithListenerNonExclusive(SQLiteTransactionListener)
+         * to start a transaction. Non-exclusive mode allows database file to be in readable by other threads executing queries.
+         */
+        db.beginTransactionNonExclusive();
 
         ContentValues values = new ContentValues();
         values.put(KEY_CUSTOMER_ID, param.get("customer_id").toString());
@@ -2164,11 +2173,334 @@ public class Database extends SQLiteOpenHelper {
         int id = -1;
         try {
             id = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+            db.setTransactionSuccessful();
         } catch (Exception e) {
             id = -1;
         }
         //db.close();
+        db.endTransaction();
         return id;
+    }
+
+    public void addCollection(Map request) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+
+        User user = Helper.ObjectToGSON(request.get("user"), User.class);
+        Invoice header = Helper.ObjectToGSON(request.get("header"), Invoice.class);
+        double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
+        double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
+        double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
+
+        List<Material> cashList = new ArrayList<>();
+        Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
+        Collections.addAll(cashList, cashListArray);
+
+        double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
+        double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
+
+        List<Material> lainList = new ArrayList<>();
+        Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
+        Collections.addAll(lainList, lainListArray);
+
+        List<Material> tfList = new ArrayList<>();
+        Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
+        Collections.addAll(tfList, tfListArray);
+
+        List<CollectionDetail> mListTransfer = new ArrayList<>();
+        CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
+        Collections.addAll(mListTransfer, mListTransferArray);
+
+        List<Material> giroList = new ArrayList<>();
+        Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
+        Collections.addAll(giroList, giroArray);
+
+        List<CollectionDetail> mListGiro = new ArrayList<>();
+        CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
+        Collections.addAll(mListGiro, mListGiroArray);
+
+        List<Material> chequeList = new ArrayList<>();
+        Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
+        Collections.addAll(chequeList, chequeListArray);
+
+        List<CollectionDetail> mListCheque = new ArrayList<>();
+        CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
+        Collections.addAll(mListCheque, mListChequeArray);
+
+        List<Material> mListCash = new ArrayList<>();
+        Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
+        Collections.addAll(mListCash, mListCashArray);
+
+        Map requestHeader = new HashMap();
+        requestHeader.put("customer_id", header.getId_customer());
+        requestHeader.put("no_invoice", header.getNo_invoice());
+        requestHeader.put("invoice_date", header.getInvoice_date());
+        requestHeader.put("status", "paid");
+        requestHeader.put("total_paid", totalAmountPaid);
+        requestHeader.put("amount", header.getAmount());
+        requestHeader.put("username", user.getUsername());
+
+        //addCollectionHeader
+        //int idCollHeader = database.addCollectionHeader(requestHeader);
+        ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
+        values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
+        values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+        values.put(KEY_STATUS, requestHeader.get("status").toString());
+        values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
+        values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
+        values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, 0);
+
+        int idCollHeader = -1;
+        try {
+            idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+
+            //updatePaidInvoice
+            //database.updatePaidInvoice(requestHeader);//update paid invoice header
+            requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
+            requestHeader.put("nett", header.getAmount() - (header.getTotal_paid() + totalAmountPaid));
+
+            values = new ContentValues();
+            values.put(KEY_PAID, (Double) requestHeader.get("paid"));
+            values.put(KEY_NETT, (Double) requestHeader.get("nett"));
+            values.put(KEY_UPDATED_BY, requestHeader.get("username").toString());
+            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{requestHeader.get("no_invoice").toString()});
+            //updatePaidInvoice
+
+            Map requestDetail = new HashMap();
+            requestDetail.put("id_header", idCollHeader);
+            requestDetail.put("no_invoice", header.getNo_invoice());
+            requestDetail.put("status", "paid");
+            requestDetail.put("username", user.getUsername());
+
+            if (cashList.size() != 0) {
+                requestDetail.put("type_payment", "cash");
+                requestDetail.put("total_payment", totalPaymentCash);
+                requestDetail.put("left", leftCash);
+//            int idDetail = database.addCollectionCashLain(requestDetail);
+                values = new ContentValues();
+                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+                values.put(KEY_STATUS, requestDetail.get("status").toString());
+                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                for (Material material : cashList) {
+//                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                    values.put(KEY_MATERIAL_ID, material.getId());
+                    values.put(KEY_MATERIAL_NAME, material.getNama());
+                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                    values.put(KEY_PRICE, material.getNett());
+                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                }
+            }
+
+            if (lainList.size() != 0) {
+                requestDetail.put("type_payment", "lain");
+                requestDetail.put("total_payment", totalPaymentLain);
+                requestDetail.put("left", leftLain);
+
+//            int idDetail = database.addCollectionCashLain(requestDetail);
+                values = new ContentValues();
+                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+                values.put(KEY_STATUS, requestDetail.get("status").toString());
+                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                for (Material material : lainList) {
+//                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
+                    values.put(KEY_MATERIAL_ID, material.getId());
+                    values.put(KEY_MATERIAL_NAME, material.getNama());
+                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                    values.put(KEY_PRICE, material.getNett());
+                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                }
+            }
+
+            if (tfList.size() != 0) {
+                for (CollectionDetail collection : mListTransfer) {
+                    collection.setInvoiceNo(header.getNo_invoice());
+//                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+                    values.put(KEY_TYPE_PAYMENT, "transfer");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Material material : collection.getCheckedMaterialList()) {
+//                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
+                        values.put(KEY_MATERIAL_ID, material.getId());
+                        values.put(KEY_MATERIAL_NAME, material.getNama());
+                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                        values.put(KEY_PRICE, material.getNett());
+                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                        values.put(KEY_CREATED_BY, user.getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                        int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                    }
+                }
+            }
+
+            if (giroList.size() != 0) {
+                for (CollectionDetail collection : mListGiro) {
+                    collection.setInvoiceNo(header.getNo_invoice());
+//                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+                    values.put(KEY_TYPE_PAYMENT, "giro");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_NO, collection.getNo());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_DUE_DATE, collection.getTglCair());
+                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Material material : collection.getCheckedMaterialList()) {
+//                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
+                        values.put(KEY_MATERIAL_ID, material.getId());
+                        values.put(KEY_MATERIAL_NAME, material.getNama());
+                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                        values.put(KEY_PRICE, material.getNett());
+                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                        values.put(KEY_CREATED_BY, user.getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                        int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                    }
+                }
+            }
+
+            if (chequeList.size() != 0) {
+                for (CollectionDetail collection : mListCheque) {
+                    collection.setInvoiceNo(header.getNo_invoice());
+//                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+                    values.put(KEY_TYPE_PAYMENT, "cheque");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_NO, collection.getNo());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_DUE_DATE, collection.getTglCair());
+                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Material material : collection.getCheckedMaterialList()) {
+//                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
+                        values.put(KEY_MATERIAL_ID, material.getId());
+                        values.put(KEY_MATERIAL_NAME, material.getNama());
+                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                        values.put(KEY_PRICE, material.getNett());
+                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                        values.put(KEY_CREATED_BY, user.getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                        int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                    }
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(mListCash)) {
+                for (Material material : mListCash) {
+//                database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
+                    values = new ContentValues();
+                    double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
+                    paid = paid + material.getAmountPaid();
+                    values.put(KEY_PAID, paid);
+                    values.put(KEY_UPDATED_BY, user.getUsername());
+                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+                    db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
+                            + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
+                    //db.close();
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+
+        }
+        db.endTransaction();
+        //addCollectionHeader
     }
 
     public int addCollectionCashLain(Map param) {
@@ -2290,7 +2622,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
         values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
-        values.put(KEY_PRICE, param.getPrice());
+        values.put(KEY_PRICE, param.getNett());
         values.put(KEY_AMOUNT_PAID, param.getAmountPaid());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
@@ -2898,8 +3230,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                 paramModel.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
-                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)) - cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
@@ -3172,6 +3504,24 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("total"));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
+    public double getPaidInvoiceMaterial(String invoiceNo, String idMaterial) {
+        double result = 0.0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_INVOICE_NO + " = ? AND " + KEY_MATERIAL_ID + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoiceNo, idMaterial});
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
                 result = result + amount;
             } while (cursor.moveToNext());
         }
@@ -4094,7 +4444,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_PAID, (Double) request.get("paid"));
-        values.put(KEY_NETT, (Double) request.get("nett") );
+        values.put(KEY_NETT, (Double) request.get("nett"));
         values.put(KEY_UPDATED_BY, request.get("username").toString());
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -4106,7 +4456,9 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_PAID, request.getPrice() - request.getSisa());
+        double paid = getPaidInvoiceMaterial(invoiceNo, request.getId());
+        paid = paid + request.getAmountPaid();
+        values.put(KEY_PAID, paid);
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 

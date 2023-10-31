@@ -188,12 +188,12 @@ public class CollectionDetailActivity extends BaseActivity {
             mListTransfer.addAll(collectionHeader.getTfList());
             mListGiro.addAll(collectionHeader.getGiroList());
             mListCheque.addAll(collectionHeader.getChequeList());
-            if (collectionHeader.getCashList() != null || collectionHeader.getCashList().size() != 0) {
+            if (Helper.isNotEmptyOrNull(collectionHeader.getCashList())) {
                 mListCash.addAll(collectionHeader.getCashList().get(0).getMaterialList());
                 txtPaymentCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getTotalPayment()));
                 txtLeftCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getLeft()));
             }
-            if (collectionHeader.getLainList() != null || collectionHeader.getLainList().size() != 0) {
+            if (Helper.isNotEmptyOrNull(collectionHeader.getLainList())) {
                 mListLain.addAll(collectionHeader.getLainList().get(0).getMaterialList());
                 txtPaymentLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getTotalPayment()));
                 txtLeftLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getLeft()));
