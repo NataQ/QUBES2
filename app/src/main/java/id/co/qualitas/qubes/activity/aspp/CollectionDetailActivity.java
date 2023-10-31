@@ -188,15 +188,58 @@ public class CollectionDetailActivity extends BaseActivity {
             mListTransfer.addAll(collectionHeader.getTfList());
             mListGiro.addAll(collectionHeader.getGiroList());
             mListCheque.addAll(collectionHeader.getChequeList());
+
             if (Helper.isNotEmptyOrNull(collectionHeader.getCashList())) {
+                buttonCash.setVisibility(View.VISIBLE);
                 mListCash.addAll(collectionHeader.getCashList().get(0).getMaterialList());
                 txtPaymentCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getTotalPayment()));
                 txtLeftCash.setText("Rp. " + format.format(collectionHeader.getCashList().get(0).getLeft()));
+            } else {
+                buttonCash.setVisibility(View.GONE);
+                llCash.setVisibility(View.GONE);
             }
+
+            if (Helper.isNotEmptyOrNull(mListTransfer)) {
+                buttonTransfer.setVisibility(View.VISIBLE);
+                if (Helper.isEmptyOrNull(collectionHeader.getCashList())) {
+                    buttonTransfer.callOnClick();
+                }
+            } else {
+                buttonTransfer.setVisibility(View.GONE);
+                llTransfer.setVisibility(View.GONE);
+            }
+
+            if (Helper.isNotEmptyOrNull(mListGiro)) {
+                buttonGiro.setVisibility(View.VISIBLE);
+                if (Helper.isEmptyOrNull(collectionHeader.getCashList()) && Helper.isEmptyOrNull(mListTransfer)) {
+                    buttonGiro.callOnClick();
+                }
+            } else {
+                buttonGiro.setVisibility(View.GONE);
+                llGiro.setVisibility(View.GONE);
+            }
+
+            if (Helper.isNotEmptyOrNull(mListCheque)) {
+                buttonCheq.setVisibility(View.VISIBLE);
+                if (Helper.isEmptyOrNull(collectionHeader.getCashList()) && Helper.isEmptyOrNull(mListTransfer) && Helper.isEmptyOrNull(mListGiro)) {
+                    buttonCheq.callOnClick();
+                }
+            } else {
+                buttonCheq.setVisibility(View.GONE);
+                llCheque.setVisibility(View.GONE);
+            }
+
             if (Helper.isNotEmptyOrNull(collectionHeader.getLainList())) {
+                buttonLain.setVisibility(View.VISIBLE);
                 mListLain.addAll(collectionHeader.getLainList().get(0).getMaterialList());
                 txtPaymentLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getTotalPayment()));
                 txtLeftLain.setText("Rp. " + format.format(collectionHeader.getLainList().get(0).getLeft()));
+                if (Helper.isEmptyOrNull(collectionHeader.getCashList()) && Helper.isEmptyOrNull(mListTransfer) && Helper.isEmptyOrNull(mListGiro) && Helper.isEmptyOrNull(mListCheque)) {
+                    buttonLain.callOnClick();
+                }
+            } else {
+                buttonLain.setVisibility(View.GONE);
+                llLain.setVisibility(View.GONE);
             }
         }
     }
@@ -218,7 +261,9 @@ public class CollectionDetailActivity extends BaseActivity {
                 txtLain.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
                 txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
-                llCash.setVisibility(View.VISIBLE);
+                if (Helper.isNotEmptyOrNull(mListCash)) {
+                    llCash.setVisibility(View.VISIBLE);
+                }
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
@@ -241,7 +286,9 @@ public class CollectionDetailActivity extends BaseActivity {
                 txtKredit.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.gray5_aspp));
 
                 llCash.setVisibility(View.GONE);
-                llTransfer.setVisibility(View.VISIBLE);
+                if (Helper.isNotEmptyOrNull(mListTransfer)) {
+                    llTransfer.setVisibility(View.VISIBLE);
+                }
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
@@ -264,7 +311,9 @@ public class CollectionDetailActivity extends BaseActivity {
 
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
-                llGiro.setVisibility(View.VISIBLE);
+                if (Helper.isNotEmptyOrNull(mListGiro)) {
+                    llGiro.setVisibility(View.VISIBLE);
+                }
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
@@ -287,7 +336,9 @@ public class CollectionDetailActivity extends BaseActivity {
                 llCash.setVisibility(View.GONE);
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
-                llCheque.setVisibility(View.VISIBLE);
+                if (Helper.isNotEmptyOrNull(mListCheque)) {
+                    llCheque.setVisibility(View.VISIBLE);
+                }
                 llLain.setVisibility(View.GONE);
                 llKredit.setVisibility(View.GONE);
                 break;
@@ -310,7 +361,9 @@ public class CollectionDetailActivity extends BaseActivity {
                 llTransfer.setVisibility(View.GONE);
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
-                llLain.setVisibility(View.VISIBLE);
+                if (Helper.isNotEmptyOrNull(mListLain)) {
+                    llLain.setVisibility(View.VISIBLE);
+                }
                 llKredit.setVisibility(View.GONE);
                 break;
             case 6:
