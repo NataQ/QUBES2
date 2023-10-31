@@ -452,6 +452,7 @@ public class CollectionChequeAdapter extends RecyclerView.Adapter<CollectionCheq
 
         left = totalPayment - totalPaid;
         dataObjectHolder.txtLeft.setText("Rp." + format.format(left));
+        mFilteredList.get(dataObjectHolder.getAbsoluteAdapterPosition()).setLeft(left);
     }
 
     public double calculateLeft(double qty, int pos) {

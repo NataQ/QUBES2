@@ -41,8 +41,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -53,6 +55,7 @@ import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
@@ -105,7 +108,6 @@ public class DailySalesmanActivity extends BaseActivity {
     private String today;
     private String imagepath;
     private int typeImage = 0;
-
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -245,6 +247,7 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llStoreCheck.setOnClickListener(v -> {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 Intent intent = new Intent(this, StoreCheckActivity.class);
                 startActivity(intent);
@@ -255,18 +258,21 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             SessionManagerQubes.clearCollectionHeaderSession();
             Intent intent = new Intent(this, OrderActivity.class);
             startActivity(intent);
         });
 
         llCollection.setOnClickListener(v -> {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             SessionManagerQubes.clearCollectionHeaderSession();
             Intent intent = new Intent(this, CollectionVisitActivity.class);
             startActivity(intent);
         });
 
         llReturn.setOnClickListener(v -> {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             if (checkPermission()) {
                 moveReturn();
             } else {
@@ -637,10 +643,13 @@ public class DailySalesmanActivity extends BaseActivity {
     private void setTimerValue() {
         /*Timer*/
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_TYPE_6);
+//        curDate = SecureDate.getInstance().getDate();
+        curDate = Calendar.getInstance(Locale.getDefault()).getTime();
 
         if (curDate != null) {
-            String currentDate = Helper.convertDateToString(Constants.DATE_TYPE_5, curDate);
-            curTime = getTimeFromDate(currentDate);
+//            String currentDate = Helper.convertDateToString(Constants.DATE_TYPE_5, curDate);
+//            curTime = getTimeFromDate(currentDate);
+            dCurrent = curDate;
         } else {
             curTime = null;
             dCurrent = null;
@@ -648,8 +657,10 @@ public class DailySalesmanActivity extends BaseActivity {
 
         if (visitSales.getCheckInTime() != null) {
             try {
-                String date = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getCheckInTime());
-                checkInTime = getTimeFromDate(date);
+                dCheckIn = Helper.convertStringtoDate(Constants.DATE_FORMAT_2, visitSales.getCheckInTime());
+//                dCheckIn = format.parse(Helper.changeDateFormat(Constants.DATE_FORMAT_2, Constants.DATE_TYPE_6, visitSales.getCheckInTime()));
+//                String date = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getCheckInTime());
+//                checkInTime = getTimeFromDate(date);
             } catch (Exception ignored) {
                 checkInTime = null;
             }
@@ -659,8 +670,9 @@ public class DailySalesmanActivity extends BaseActivity {
 
         if (visitSales.getPauseTime() != null) {
             try {
-                String pauseDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getPauseTime());
-                pauseTime = getTimeFromDate(pauseDate);
+                pauseTime = Helper.changeDateFormat(Constants.DATE_FORMAT_2, Constants.DATE_TYPE_6, visitSales.getPauseTime());
+//                String pauseDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getPauseTime());
+//                pauseTime = getTimeFromDate(pauseDate);
             } catch (Exception ignored) {
                 pauseTime = null;
             }
@@ -670,8 +682,10 @@ public class DailySalesmanActivity extends BaseActivity {
 
         if (visitSales.getResumeTime() != null) {
             try {
-                String continueDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getResumeTime());
-                continueTime = getTimeFromDate(continueDate);
+                dResume = Helper.convertStringtoDate(Constants.DATE_FORMAT_2, visitSales.getResumeTime());
+//                dResume = format.parse(Helper.changeDateFormat(Constants.DATE_FORMAT_2, Constants.DATE_TYPE_6, visitSales.getResumeTime()));
+//                String continueDate = CalendarUtils.ConvertMilliSecondsToFormattedDate(visitSales.getResumeTime());
+//                continueTime = getTimeFromDate(continueDate);
             } catch (Exception ignored) {
                 continueTime = null;
                 dResume = null;
@@ -681,18 +695,18 @@ public class DailySalesmanActivity extends BaseActivity {
             dResume = null;
         }
 
-        try {
-            if (checkInTime != null) {
-                dCheckIn = format.parse(checkInTime);
-            }
-            if (curTime != null) {
-                dCurrent = format.parse(curTime);
-            }
-            if (continueTime != null) {
-                dResume = format.parse(continueTime);
-            }
-        } catch (ParseException ignored) {
-        }
+//        try {
+//            if (checkInTime != null) {
+//                dCheckIn = format.parse(checkInTime);
+//            }
+//            if (curTime != null) {
+//                dCurrent = format.parse(curTime);
+//            }
+//            if (continueTime != null) {
+//                dResume = format.parse(continueTime);
+//            }
+//        } catch (ParseException ignored) {
+//        }
 
         //in milliseconds
         long elapseTimeNow = dCheckIn != null ? dCurrent.getTime() - dCheckIn.getTime() : 0;
@@ -807,6 +821,7 @@ public class DailySalesmanActivity extends BaseActivity {
         } else if (requestCode == CAMERA_PERM_CODE
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             Helper.takePhoto(DailySalesmanActivity.this);
         } else {
             setToast("This permission(s) required");
@@ -914,11 +929,13 @@ public class DailySalesmanActivity extends BaseActivity {
 //                    Manifest.permission.READ_EXTERNAL_STORAGE
             }, CAMERA_PERM_CODE);
         } else {
+            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             Helper.takePhoto(DailySalesmanActivity.this);
         }
     }
 
     public void openGallery() {
+        visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
         Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
         switch (typeImage) {
             case 8:
