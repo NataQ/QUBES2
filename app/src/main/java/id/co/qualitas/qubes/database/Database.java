@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.util.Log;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -2482,22 +2483,22 @@ public class Database extends SQLiteOpenHelper {
             if (Helper.isNotEmptyOrNull(mListCash)) {
                 for (Material material : mListCash) {
 //                database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
-                    values = new ContentValues();
-                    double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
-                    paid = paid + material.getAmountPaid();
-                    values.put(KEY_PAID, paid);
-                    values.put(KEY_UPDATED_BY, user.getUsername());
-                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values = new ContentValues();
+                        double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
+                        paid = paid + (material.getNett() - material.getSisa());//material.getNett() - material.getSisa(),ambil semua jumlah paid nya
+                        values.put(KEY_PAID, paid);
+                        values.put(KEY_UPDATED_BY, user.getUsername());
+                        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-                    db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
-                            + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
-                    //db.close();
+                        db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
+                                + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
+                        //db.close();
                 }
             }
 
             db.setTransactionSuccessful();
         } catch (Exception e) {
-
+            Log.e("Collection", e.getMessage());
         }
         db.endTransaction();
         //addCollectionHeader

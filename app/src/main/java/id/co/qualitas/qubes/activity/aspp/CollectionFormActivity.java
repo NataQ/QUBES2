@@ -69,8 +69,8 @@ public class CollectionFormActivity extends BaseActivity {
     private List<Material> mListCash, mListLain, mListKredit, mListMaster;
     private Invoice header;
     private CollectionKreditAdapter mAdapterKredit;
-    private CollectionCashAdapter mAdapterCash;
-    private CollectionTransferAdapter mAdapterTransfer;
+    private CollectionCashAdapter mAdapterCash;//14400
+    private CollectionTransferAdapter mAdapterTransfer;//18000
     private CollectionGiroAdapter mAdapterGiro;
     private CollectionChequeAdapter mAdapterCheque;
     private CollectionLainAdapter mAdapterLain;
@@ -945,8 +945,8 @@ public class CollectionFormActivity extends BaseActivity {
                     }
                 }
 
-                if (mListKredit != null && mListKredit.size() != 0) {
-                    paid = paid + mListKredit.get(i).getAmountPaid();
+                if (mListLain != null && mListLain.size() != 0) {
+                    paid = paid + mListLain.get(i).getAmountPaid();
                 }
                 kurangBayar = mListCash.get(i).getPrice() - paid;
                 mListCash.get(i).setSisa(kurangBayar);
@@ -977,8 +977,8 @@ public class CollectionFormActivity extends BaseActivity {
             }
         }
 
-        if (mListKredit != null && mListKredit.size() != 0) {
-            paid = paid + mListKredit.get(pos).getAmountPaid();
+        if (mListLain != null && mListLain.size() != 0) {
+            paid = paid + mListLain.get(pos).getAmountPaid();
         }
 
         if (mListCash != null && mListCash.size() != 0) {
@@ -1072,8 +1072,8 @@ public class CollectionFormActivity extends BaseActivity {
         }
 
         if (type != 5) {
-            if (mListKredit != null && mListKredit.size() != 0) {
-                paid = paid + mListKredit.get(pos).getAmountPaid();
+            if (mListLain != null && mListLain.size() != 0) {
+                paid = paid + mListLain.get(pos).getAmountPaid();
             }
         }
 
