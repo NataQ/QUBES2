@@ -127,7 +127,11 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestData();
+                if (SessionManagerQubes.getStartDay() == 0) {
+                    requestData();
+                }else{
+                    setToast("Sudah start visit");
+                }
                 swipeLayout.setRefreshing(false);
             }
         });
@@ -328,6 +332,8 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                     Collections.addAll(mList, paramArray);
                     database.deleteCustomer();
                     database.deleteCustomerPromotion();
+                    database.deleteVisitSalesman();
+                    database.deleteNoo();
 
                     for (Customer param : mList) {
                         List<Promotion> arrayList = new ArrayList<>();

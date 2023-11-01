@@ -294,9 +294,6 @@ public class InvoiceVerificationActivity extends BaseActivity {
                         for (Material mat : listMat) {
                             database.addInvoiceDetail(mat, header);
                         }
-                        for (Material mat : listMat) {
-                            database.addInvoiceDetail(mat, header);
-                        }
                     }
                     getData();
                     saveDataSuccess = true;

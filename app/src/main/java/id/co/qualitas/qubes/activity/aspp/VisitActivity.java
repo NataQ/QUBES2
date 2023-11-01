@@ -140,7 +140,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         //set Map
         Configuration.getInstance().load(VisitActivity.this, PreferenceManager.getDefaultSharedPreferences(VisitActivity.this));
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
@@ -202,7 +203,11 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestData();
+                if (SessionManagerQubes.getStartDay() == 0) {
+                    requestData();
+                }else{
+                    setToast("Sudah start visit");
+                }
                 swipeLayoutVisit.setRefreshing(false);
             }
         });
@@ -514,7 +519,11 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestData();
+                if (SessionManagerQubes.getStartDay() == 0) {
+                    requestData();
+                }else{
+                    setToast("Sudah start visit");
+                }
                 swipeLayoutNoo.setRefreshing(false);
             }
         });
@@ -753,16 +762,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         dialog.show();
-    }
-
-    private void startDayDummy() {
-        SessionManagerQubes.setStartDay(1);
-        validateButton();
-    }
-
-    private void endDayDayDummy() {
-        SessionManagerQubes.setStartDay(2);
-        validateButton();
     }
 
     public void askPermissionCamera() {
@@ -1034,65 +1033,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 //        setDataDummy();
     }
 
-    private void setDataDummy() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "todayCustomer.json");
-        Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>() {
-        }.getType();
-        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
-        mList = new ArrayList<>();
-        mListNonRoute = new ArrayList<>();
-        Map result = (Map) resultWsMessage.getResult();
-        if (result.get("visit") != null) {
-            LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
-            double id = (double) startDay.get("id");
-            SessionManagerQubes.setStartDay((int) id);
-        } else {
-            SessionManagerQubes.setStartDay(0);
-        }
-
-        Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
-        Collections.addAll(mListNonRoute, param1Array);
-        database.deleteMasterNonRouteCustomer();
-        database.deleteMasterNonRouteCustomerPromotion();
-
-        for (Customer param : mListNonRoute) {
-            List<Promotion> arrayList = new ArrayList<>();
-            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-            Collections.addAll(arrayList, matArray);
-            param.setPromoList(arrayList);
-
-            int idHeader = database.addNonRouteCustomer(param, user.getUsername());
-            for (Promotion mat : arrayList) {
-                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-
-        Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
-        Collections.addAll(mList, paramArray);
-        database.deleteCustomer();
-
-        for (Customer param : mList) {
-            List<Promotion> arrayList = new ArrayList<>();
-            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-            Collections.addAll(arrayList, matArray);
-            param.setPromoList(arrayList);
-
-            int idHeader = database.addCustomer(param, user.getUsername());
-            for (Promotion mat : arrayList) {
-                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-        getData();
-        progressCircleVisit.setVisibility(View.GONE);
-        progressCircleNoo.setVisibility(View.GONE);
-        recyclerViewVisit.setVisibility(View.VISIBLE);
-        recyclerViewNoo.setVisibility(View.VISIBLE);
-        mAdapterVisit.setData(mList);
-        mAdapterNoo.setData(mListNoo);
-        validateButton();
-    }
-
     private void getData() {
         mList = new ArrayList<>();
         mList = database.getAllCustomerVisit(null, false);
@@ -1142,6 +1082,9 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                     Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
                     Collections.addAll(mList, paramArray);
                     database.deleteCustomer();
+                    database.deleteCustomerPromotion();
+                    database.deleteVisitSalesman();
+                    database.deleteNoo();
 
                     for (Customer param : mList) {
                         List<Promotion> arrayList = new ArrayList<>();
