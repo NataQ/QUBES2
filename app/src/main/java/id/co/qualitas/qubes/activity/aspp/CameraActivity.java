@@ -255,7 +255,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         Intent resultIntent = null;
 //        ImageType imageType = SessionManagerQubes.getImageType() != null ? SessionManagerQubes.getImageType() : new ImageType();
         ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
-        switch (imageType.getPosImage()){
+        switch (imageType.getPosImage()) {
             case 1:
             case 2:
             case 3:
@@ -272,6 +272,8 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 8:
             case 9:
             case 10:
+            case 11:
+            case 12:
                 resultIntent = new Intent(CameraActivity.this, DailySalesmanActivity.class);
                 break;
         }
@@ -294,12 +296,15 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         ImageType imageType = Helper.getItemParam(Constants.IMAGE_TYPE) != null ? (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE) : new ImageType();
         switch (imageType.getPosImage()) {
             case 1:
+            case 8:
                 imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 2:
+            case 9:
                 imageFileName = "NPWP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 3:
+            case 10:
                 imageFileName = "Outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 4:
@@ -308,20 +313,18 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 5:
                 imageFileName = "KM_Akhir" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
+
             case 6:
                 imageFileName = "Completed" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 7:
                 imageFileName = "Return" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
-            case 8:
-                imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+            case 11:
+                imageFileName = "reason_pause" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
-            case 9:
-                imageFileName = "NPWP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
-                break;
-            case 10:
-                imageFileName = "Outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+            case 12:
+                imageFileName = "reason_checkout" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
         }
 

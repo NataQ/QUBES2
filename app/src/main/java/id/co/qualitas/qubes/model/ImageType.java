@@ -7,10 +7,46 @@ public class ImageType {
     private String photoAkhir;
     private String photoSelesai;
     private String photoKmAwal;
+    private String photoReason;
     private int posImage;
     private int posMaterial;
     private String kmAwal;
     private String kmAkhir;
+    private int type;
+    private VisitSalesman visitSalesman;
+    private Reason reason;
+
+    public Reason getReason() {
+        return reason;
+    }
+
+    public void setReason(Reason reason) {
+        this.reason = reason;
+    }
+
+    public String getPhotoReason() {
+        return photoReason;
+    }
+
+    public void setPhotoReason(String photoReason) {
+        this.photoReason = photoReason;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public VisitSalesman getVisitSalesman() {
+        return visitSalesman;
+    }
+
+    public void setVisitSalesman(VisitSalesman visitSalesman) {
+        this.visitSalesman = visitSalesman;
+    }
 
     public int getPosMaterial() {
         return posMaterial;

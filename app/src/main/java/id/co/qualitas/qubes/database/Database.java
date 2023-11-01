@@ -298,6 +298,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_NAME_PAUSE_REASON = "namePauseReason";
     private static final String KEY_DESC_PAUSE_REASON = "descPauseReason";
     private static final String KEY_PHOTO_PAUSE_REASON = "photoPauseReason";
+    private static final String KEY_DURATION = "duration";
     private static final String KEY_ID_CHECK_OUT_REASON = "idCheckOutReason";
     private static final String KEY_NAME_CHECK_OUT_REASON = "nameCheckOutReason";
     private static final String KEY_DESC_CHECK_OUT_REASON = "descCheckOutReason";
@@ -870,6 +871,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
             + KEY_PHOTO_PAUSE_REASON + " TEXT,"
+            + KEY_DURATION + " TEXT,"
             + KEY_ID_CHECK_OUT_REASON + " TEXT,"
             + KEY_NAME_CHECK_OUT_REASON + " TEXT,"
             + KEY_DESC_CHECK_OUT_REASON + " TEXT,"
@@ -902,6 +904,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
             + KEY_PHOTO_PAUSE_REASON + " TEXT,"
+            + KEY_DURATION + " TEXT,"
             + KEY_ID_CHECK_OUT_REASON + " TEXT,"
             + KEY_NAME_CHECK_OUT_REASON + " TEXT,"
             + KEY_DESC_CHECK_OUT_REASON + " TEXT,"
@@ -2483,16 +2486,16 @@ public class Database extends SQLiteOpenHelper {
             if (Helper.isNotEmptyOrNull(mListCash)) {
                 for (Material material : mListCash) {
 //                database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
-                        values = new ContentValues();
-                        double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
-                        paid = paid + (material.getNett() - material.getSisa());//material.getNett() - material.getSisa(),ambil semua jumlah paid nya
-                        values.put(KEY_PAID, paid);
-                        values.put(KEY_UPDATED_BY, user.getUsername());
-                        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values = new ContentValues();
+                    double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
+                    paid = paid + (material.getNett() - material.getSisa());//material.getNett() - material.getSisa(),ambil semua jumlah paid nya
+                    values.put(KEY_PAID, paid);
+                    values.put(KEY_UPDATED_BY, user.getUsername());
+                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-                        db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
-                                + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
-                        //db.close();
+                    db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
+                            + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
+                    //db.close();
                 }
             }
 
@@ -3824,6 +3827,20 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public int getCountOrder(Customer customer) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{customer.getId()});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
     public int getCountCheckInVisitNonRoute() {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
@@ -4322,6 +4339,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
                 result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
                 result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
+                result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
                 result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
                 result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
                 result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
@@ -4362,6 +4380,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
                 result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
                 result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
+                result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
                 result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
                 result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
                 result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
@@ -4385,9 +4404,12 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
                 values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
                 values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
+                values.put(KEY_DURATION, param.getTimer());
+                values.put(KEY_RESUME_TIME, param.getResumeTime());
                 break;
             case Constants.CHECK_IN_VISIT:
                 values.put(KEY_RESUME_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_DURATION, param.getTimer());
                 break;
             case Constants.CHECK_OUT_VISIT:
                 values.put(KEY_CHECK_OUT_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
@@ -4417,22 +4439,24 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_PAUSE_TIME, param.getPauseTime());
                 values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
                 values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
-                values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
                 values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
                 values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
+                values.put(KEY_DURATION, param.getTimer());
+                values.put(KEY_RESUME_TIME, param.getResumeTime());
                 break;
             case Constants.CHECK_IN_VISIT:
                 values.put(KEY_RESUME_TIME, param.getResumeTime());
+                values.put(KEY_DURATION, param.getTimer());
                 break;
             case Constants.CHECK_OUT_VISIT:
-                values.put(KEY_CHECK_OUT_TIME, param.getResumeTime());
-                values.put(KEY_LAT_CHECK_OUT, param.getResumeTime());
-                values.put(KEY_LONG_CHECK_OUT, param.getResumeTime());
-                values.put(KEY_INSIDE_CHECK_OUT, param.getResumeTime());
-                values.put(KEY_ID_CHECK_OUT_REASON, param.getResumeTime());
-                values.put(KEY_NAME_CHECK_OUT_REASON, param.getResumeTime());
-                values.put(KEY_DESC_CHECK_OUT_REASON, param.getResumeTime());
-                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getResumeTime());
+                values.put(KEY_CHECK_OUT_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
+                values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
+                values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
+                values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
+                values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
+                values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
+                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
                 break;
         }
 
@@ -4476,23 +4500,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
-        //db.close();
-    }
-
-    public void pauseVisitSalesman(VisitSalesman param, String username) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_STATUS, param.getStatus());
-        values.put(KEY_STATUS, param.getIdPauseReason());
-        values.put(KEY_STATUS, param.getNamePauseReason());
-        values.put(KEY_STATUS, param.getPauseTime());
-        values.put(KEY_STATUS, param.getResumeTime());
-        values.put(KEY_STATUS, param.getTimer());
-        values.put(KEY_UPDATED_BY, username);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_VISIT_SALESMAN, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
         //db.close();
     }
 

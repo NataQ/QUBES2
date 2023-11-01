@@ -4,16 +4,21 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -31,14 +36,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.osmdroid.config.Configuration;
+
 import java.io.File;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,9 +62,7 @@ import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
@@ -66,7 +73,7 @@ import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class DailySalesmanActivity extends BaseActivity {
+public class DailySalesmanActivity extends BaseActivity implements LocationListener {
     private TextView txtOutlet, txtTypeOutlet, txtStatus;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
@@ -96,10 +103,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private Customer outletHeader;
     private VisitSalesman visitSales;
     private static final int PERMISSION_REQUEST_CODE = 1;
-    private final static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
+    private final static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     public static final int GALLERY_PERM_CODE = 101;
     public static final int CAMERA_PERM_CODE = 102;
@@ -108,6 +112,9 @@ public class DailySalesmanActivity extends BaseActivity {
     private String today;
     private String imagepath;
     private int typeImage = 0;
+    private boolean isLocationPermissionGranted = false;
+    private LocationManager lm;
+    private Location currentLocation = null;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -118,136 +125,27 @@ public class DailySalesmanActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_daily_salesman);
 
+        Configuration.getInstance().load(DailySalesmanActivity.this, PreferenceManager.getDefaultSharedPreferences(DailySalesmanActivity.this));
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(DailySalesmanActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(DailySalesmanActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
+
         initialize();
-        setData();
         setView();
 
         btnCheckOut.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_reason);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<Reason> reasonList = new ArrayList<>();
-            reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_NOT_BUY));
-
-            txtTitle.setText("Reason Not Buy");
-
-            FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
-                alertDialog.dismiss();
-                outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
-                if (outletHeader.isNoo()) {
-                    database.updateStatusOutletNoo(outletHeader, user.getUsername());
-                } else {
-                    database.updateStatusOutletVisit(outletHeader, user.getUsername());
-                }
-
-                visitSales.setStatus(Constants.CHECK_OUT_VISIT);
-                visitSales.setLatCheckOut(0);
-                visitSales.setLongCheckOut(0);
-                visitSales.setInsideCheckOut(true);
-                visitSales.setIdCheckOutReason(String.valueOf(reason.getId()));
-                visitSales.setNameCheckOutReason(reason.getDescription());
-                visitSales.setDescCheckOutReason("Desccccc");
-                visitSales.setPhotoCheckOutReason(null);
-                database.updateVisit(visitSales, user.getUsername());
-                SessionManagerQubes.setOutletHeader(outletHeader);
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+            checkLocationPermission();
         });
 
         llPause.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(this);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_reason);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-//            List<String> groupList = new ArrayList<>();
-//            groupList.add("P1 - Toko Ramai");
-//            groupList.add("P2 - Toko Tutup");
-//            groupList.add("P3 - Toko Pindah");
-
-            List<Reason> reasonList = new ArrayList<>();
-            reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_PAUSE));
-
-            txtTitle.setText("Reason Pause");
-
-            FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (nameItem, adapterPosition) -> {
-//                if (Helper.getItemParam(Constants.PAUSE) != null) {
-//                    Helper.setItemParam(Constants.PLAY, "1");
-//                    Helper.removeItemParam(Constants.PAUSE);
-//                } else {
-//                    Helper.setItemParam(Constants.PAUSE, "1");
-//                    Helper.removeItemParam(Constants.PLAY);
-//                }
-                if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
-                    resumeTimer();
-                } else {
-                    visitSales.setStatus(Constants.PAUSE_VISIT);
-                    visitSales.setIdPauseReason(String.valueOf(nameItem.getId()));
-                    visitSales.setNamePauseReason(nameItem.getDescription());
-                    visitSales.setPauseTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    visitSales.setResumeTime(null);
-                    visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
-                    pauseTimer();
-                }
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(this);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
+            if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
+                resumeTimer();
+            } else {
+                openDialogPause();
+            }
         });
 
         llStoreCheck.setOnClickListener(v -> {
@@ -373,6 +271,250 @@ public class DailySalesmanActivity extends BaseActivity {
         });
     }
 
+    private void openDialogNotOrder() {
+        Dialog alertDialog = new Dialog(this);
+
+        alertDialog.setContentView(R.layout.aspp_dialog_reason);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
+        EditText editText = alertDialog.findViewById(R.id.edit_text);
+        RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+
+        List<Reason> reasonList = new ArrayList<>();
+        reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_NOT_BUY));
+
+        txtTitle.setText("Reason Not Buy");
+
+        FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
+            alertDialog.dismiss();
+            visitSales.setIdCheckOutReason(String.valueOf(reason.getId()));
+            visitSales.setNameCheckOutReason(reason.getDescription());
+            if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
+                typeImage = 11;
+                imageType.setPosImage(typeImage);
+                imageType.setVisitSalesman(visitSales);
+                imageType.setReason(reason);
+                imageType.setType(2);//1 => pause, 2 => checkout
+                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                openDialogPhotoReason(1);
+            } else {
+                checkLocationPermission();
+            }
+        });
+
+        LinearLayoutManager mManager = new LinearLayoutManager(this);
+        listView.setLayoutManager(mManager);
+        listView.setHasFixedSize(true);
+        listView.setNestedScrollingEnabled(false);
+        listView.setAdapter(spinnerAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                spinnerAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void checkOutCustomer() {
+        outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
+        if (outletHeader.isNoo()) {
+            database.updateStatusOutletNoo(outletHeader, user.getUsername());
+        } else {
+            database.updateStatusOutletVisit(outletHeader, user.getUsername());
+        }
+        Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
+        locCustomer.setLatitude(outletHeader.getLatitude());
+        locCustomer.setLongitude(outletHeader.getLongitude());
+        if (currentLocation != null) {
+            boolean outRadius = Helper.checkRadius(currentLocation, locCustomer);
+            visitSales.setInsideCheckOut(!outRadius);
+        }
+
+        visitSales.setStatus(Constants.CHECK_OUT_VISIT);
+        visitSales.setLatCheckOut(currentLocation != null ? currentLocation.getLatitude() : null);
+        visitSales.setLongCheckOut(currentLocation != null ? currentLocation.getLongitude() : null);
+        database.updateVisit(visitSales, user.getUsername());
+        SessionManagerQubes.setOutletHeader(outletHeader);
+        onBackPressed();
+    }
+
+
+    public void openDialogPause() {
+        Dialog alertDialog = new Dialog(this);
+
+        alertDialog.setContentView(R.layout.aspp_dialog_reason);
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+
+        TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
+        EditText editText = alertDialog.findViewById(R.id.edit_text);
+        RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+
+        List<Reason> reasonList = new ArrayList<>();
+        reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_PAUSE));
+
+        txtTitle.setText("Reason Pause");
+
+        FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
+            visitSales.setIdPauseReason(String.valueOf(reason.getId()));
+            visitSales.setNamePauseReason(reason.getDescription());
+            if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
+                typeImage = 11;
+                imageType.setPosImage(typeImage);
+                imageType.setVisitSalesman(visitSales);
+                imageType.setReason(reason);
+                imageType.setType(1);//1 => pause, 2 => checkout
+                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                openDialogPhotoReason(1);
+            } else {
+                pauseTimer();
+            }
+            alertDialog.dismiss();
+        });
+
+        LinearLayoutManager mManager = new LinearLayoutManager(this);
+        listView.setLayoutManager(mManager);
+        listView.setHasFixedSize(true);
+        listView.setNestedScrollingEnabled(false);
+        listView.setAdapter(spinnerAdapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                spinnerAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    public void openDialogPhotoReason(int type) {
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_attach_photo_reason);
+
+        LinearLayout layoutPhoto = dialog.findViewById(R.id.layoutPhoto);
+        CardView layoutPhoto2 = dialog.findViewById(R.id.layoutPhoto2);
+        LinearLayout layoutUpload = dialog.findViewById(R.id.layoutUpload);
+        LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
+        EditText edtDescReason = dialog.findViewById(R.id.edtDescReason);
+        TextInputLayout llReasonDesc = dialog.findViewById(R.id.llReasonDesc);
+        ImageView imgDelete = dialog.findViewById(R.id.imgDelete);
+        ImageView photo = dialog.findViewById(R.id.photo);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+        final String[] descReason = {null};
+        Reason reason = imageType.getReason();
+        if (reason != null) {
+            if (reason.getIs_freetext() == 1) {
+                llReasonDesc.setVisibility(View.VISIBLE);
+            } else {
+                llReasonDesc.setVisibility(View.GONE);
+            }
+            if (reason.getIs_photo() == 1) {
+                layoutPhoto.setVisibility(View.VISIBLE);
+                layoutPhoto2.setVisibility(View.VISIBLE);
+            } else {
+                layoutPhoto.setVisibility(View.GONE);
+                layoutPhoto2.setVisibility(View.GONE);
+            }
+        }
+
+        if (imageType.getPhotoReason() != null) {
+            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoReason(), photo);
+            photo.setVisibility(View.VISIBLE);
+            imgDelete.setVisibility(View.VISIBLE);
+            layoutUpload.setVisibility(View.GONE);
+        } else {
+            photo.setVisibility(View.GONE);
+            imgDelete.setVisibility(View.GONE);
+            layoutUpload.setVisibility(View.VISIBLE);
+        }
+
+        imgDelete.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoReason(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(DailySalesmanActivity.this, null, photo);
+            layoutUpload.setVisibility(View.VISIBLE);
+            imgDelete.setVisibility(View.GONE);
+            photo.setVisibility(View.GONE);
+
+        });
+
+        edtDescReason.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("") && !s.toString().equals("-")) {
+                    descReason[0] = s.toString();
+                }
+            }
+        });
+
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                askPermissionCamera();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSave.setOnClickListener(v -> {
+            if (type == 1) {
+                visitSales.setDescPauseReason(descReason[0]);
+                visitSales.setPhotoPauseReason(imageType.getPhotoReason());
+                pauseTimer();
+            } else {
+                visitSales.setDescCheckOutReason(descReason[0]);
+                visitSales.setPhotoCheckOutReason(imageType.getPhotoReason());
+                checkOutCustomer();
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
     private void moveReturn() {
         if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
             Intent intent = new Intent(this, ReturnAddActivity.class);
@@ -436,11 +578,32 @@ public class DailySalesmanActivity extends BaseActivity {
                     dctOutletList.add(new Material("Bat ALK", 0));
                 }
 
-                if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
-                    visitSales.setResumeTime(null);
-                } else if (outletHeader.getStatus() == Constants.CHECK_OUT_VISIT) {
-                    llPause.setVisibility(View.GONE);
-                    llTimer.setVisibility(View.GONE);
+                switch (outletHeader.getStatus()) {
+                    case Constants.CHECK_IN_VISIT:
+                        txtStatus.setText("Pause");
+                        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
+                        btnCheckOut.setVisibility(View.VISIBLE);
+                        llKTP.setEnabled(true);
+                        llNPWP.setEnabled(true);
+                        llOutlet.setEnabled(true);
+                        break;
+                    case Constants.PAUSE_VISIT:
+                        visitSales.setResumeTime(null);
+                        txtStatus.setText("Resume");
+                        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
+                        btnCheckOut.setVisibility(View.VISIBLE);
+                        llKTP.setEnabled(false);
+                        llNPWP.setEnabled(false);
+                        llOutlet.setEnabled(false);
+                        break;
+                    case Constants.CHECK_OUT_VISIT:
+                        llPause.setVisibility(View.GONE);
+                        llTimer.setVisibility(View.GONE);
+                        btnCheckOut.setVisibility(View.GONE);
+                        llKTP.setEnabled(false);
+                        llNPWP.setEnabled(false);
+                        llOutlet.setEnabled(false);
+                        break;
                 }
             } else {
                 setToast("Gagal mengambil data");
@@ -501,10 +664,14 @@ public class DailySalesmanActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        setData();
         setTimerValue();
         if (Helper.getItemParam(Constants.IMAGE_TYPE) != null) {
             imageType = new ImageType();
             imageType = (ImageType) Helper.getItemParam(Constants.IMAGE_TYPE);
+            if (imageType.getVisitSalesman() != null) {
+                visitSales = imageType.getVisitSalesman();
+            }
         } else {
             imageType = new ImageType();
         }
@@ -526,19 +693,53 @@ public class DailySalesmanActivity extends BaseActivity {
                     imageType.setPhotoOutlet(uri.toString());
                     outletHeader.setPhotoOutlet(uri.toString());
                     break;
+                case 11:
+                    imageType.setPhotoReason(uri.toString());
+                    openDialogPhotoReason(1);
             }
         }
         if (outletHeader.getPhotoKtp() != null) {
             Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), imgKTP);
-            imgDeleteKTP.setVisibility(View.VISIBLE);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgDeleteKTP.setVisibility(View.VISIBLE);
+            } else {
+                imgDeleteKTP.setVisibility(View.GONE);
+            }
+        } else {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgAddKTP.setVisibility(View.VISIBLE);
+            } else {
+                imgAddKTP.setVisibility(View.GONE);
+            }
         }
+
         if (outletHeader.getPhotoNpwp() != null) {
             Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), imgNPWP);
-            imgDeleteNPWP.setVisibility(View.VISIBLE);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgDeleteNPWP.setVisibility(View.VISIBLE);
+            } else {
+                imgDeleteNPWP.setVisibility(View.GONE);
+            }
+        } else {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgAddNPWP.setVisibility(View.VISIBLE);
+            } else {
+                imgAddNPWP.setVisibility(View.GONE);
+            }
         }
         if (outletHeader.getPhotoOutlet() != null) {
             Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), imgOutlet);
-            imgDeleteOutlet.setVisibility(View.VISIBLE);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgDeleteOutlet.setVisibility(View.VISIBLE);
+            } else {
+                imgDeleteOutlet.setVisibility(View.GONE);
+            }
+        } else {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                imgAddOutlet.setVisibility(View.VISIBLE);
+            } else {
+                imgAddOutlet.setVisibility(View.GONE);
+            }
         }
         if (outletHeader.isNoo()) {
             database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -559,14 +760,13 @@ public class DailySalesmanActivity extends BaseActivity {
             database.updateStatusOutletVisit(outletHeader, user.getUsername());
         }
 
-        visitSales.setTimer(String.valueOf(timerValue.getBase()));
-        visitSales.setStatus(Constants.PAUSE_VISIT);
-        database.updateVisit(visitSales, user.getUsername());
         SessionManagerQubes.setOutletHeader(outletHeader);
 
-//        OutletResponse pause = new OutletResponse();
-//        pause.setIdOutlet(outletResponse.getIdOutlet());
-//        pause.setTimer(String.valueOf(timerValue.getBase()));
+        visitSales.setStatus(Constants.PAUSE_VISIT);
+//        visitSales.setPauseTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        visitSales.setResumeTime(null);
+        visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
+        database.updateVisit(visitSales, user.getUsername());
 
         txtStatus.setText("Resume");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
@@ -587,9 +787,10 @@ public class DailySalesmanActivity extends BaseActivity {
         } else {
             database.updateStatusOutletVisit(outletHeader, user.getUsername());
         }
-
-        visitSales.setTimer(String.valueOf(timerValue.getBase()));
         visitSales.setStatus(Constants.CHECK_IN_VISIT);
+//        visitSales.setResumeTime(String.valueOf(curDate.getTime()));
+//        visitSales.setTimer(String.valueOf(timerValue.getBase()));
+
         database.updateVisit(visitSales, user.getUsername());
         SessionManagerQubes.setOutletHeader(outletHeader);
 
@@ -647,6 +848,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private void setTimerValue() {
         /*Timer*/
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_TYPE_6);
+        timeDuration = visitSales.getTimer();
 //        curDate = SecureDate.getInstance().getDate();
         curDate = Calendar.getInstance(Locale.getDefault()).getTime();
 
@@ -717,7 +919,17 @@ public class DailySalesmanActivity extends BaseActivity {
 
         switch (outletHeader.getStatus()) {
             case Constants.CHECK_IN_VISIT:
-                playTimerBy(SystemClock.elapsedRealtime() - elapseTimeNow);
+                if (visitSales.getResumeTime() != null) {
+                    if (timeDuration != null) {
+                        try {
+                            playTimerBy(SystemClock.elapsedRealtime() - (Long.parseLong(timeDuration) + (dResume != null ? dCurrent.getTime() - dResume.getTime() : 0)));
+                        } catch (NumberFormatException ignored) {
+
+                        }
+                    }
+                } else {
+                    playTimerBy(SystemClock.elapsedRealtime() - elapseTimeNow);
+                }
                 break;
             case Constants.PAUSE_VISIT:
                 if (timeDuration != null) {
@@ -735,6 +947,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     }
                 }
                 break;
+
             default:
                 timerValue.start();
                 break;
@@ -755,8 +968,7 @@ public class DailySalesmanActivity extends BaseActivity {
 
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            boolean check =
-                    Environment.isExternalStorageManager();
+            boolean check = Environment.isExternalStorageManager();
 //                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
 //                            && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
             return check;
@@ -822,9 +1034,7 @@ public class DailySalesmanActivity extends BaseActivity {
             moveReturn();
         } else if (requestCode == GALLERY_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openGallery();
-        } else if (requestCode == CAMERA_PERM_CODE
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        } else if (requestCode == CAMERA_PERM_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             Helper.takePhoto(DailySalesmanActivity.this);
         } else {
@@ -910,8 +1120,7 @@ public class DailySalesmanActivity extends BaseActivity {
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         ) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.READ_MEDIA_IMAGES,
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_MEDIA_IMAGES,
 //                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //                    Manifest.permission.READ_EXTERNAL_STORAGE}, GALLERY_PERM_CODE);
             }, GALLERY_PERM_CODE);
@@ -921,25 +1130,20 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     public void askPermissionCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 //                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         ) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES,
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES,
 //                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
 //                    Manifest.permission.READ_EXTERNAL_STORAGE
             }, CAMERA_PERM_CODE);
         } else {
-            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             Helper.takePhoto(DailySalesmanActivity.this);
         }
     }
 
     public void openGallery() {
-        visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
         Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
         switch (typeImage) {
             case 8:
@@ -1004,6 +1208,35 @@ public class DailySalesmanActivity extends BaseActivity {
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+    }
+
+    private void checkLocationPermission() {
+        List<String> permissionRequest = new ArrayList<>();
+        isLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        if (!isLocationPermissionGranted)
+            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (isLocationPermissionGranted) {
+            if (!Helper.isGPSOn(DailySalesmanActivity.this)) {
+                setToast("Please turn on GPS");
+                Helper.turnOnGPS(DailySalesmanActivity.this);
+            } else {
+                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
+                if (currentLocation == null) {
+                    setToast("Can't get your location.. Please try again..");
+                }
+                if (database.getCountOrder(outletHeader) == 0) {
+                    openDialogNotOrder();
+                } else {
+                    checkOutCustomer();
+                }
             }
         }
     }

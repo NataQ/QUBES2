@@ -184,7 +184,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            if (database.getAllInvoiceHeaderNotPaid().size() == 0) {
+            if (database.getAllInvoiceHeaderNotPaid().size() != 0) {
                 openDialogStartVisit();
             } else {
                 setToast("Pastikan invoice sudah di verifikasi");

@@ -119,8 +119,8 @@ public class Constants {
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    public static String URL = "http://192.168.1.14:8282";
-    public static String IP = "192.168.1.14:8282";
+    public static String URL = "http://192.168.1.2:8282";
+    public static String IP = "192.168.1.2:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
