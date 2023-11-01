@@ -1,22 +1,24 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -42,44 +44,40 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.internal.LinkedTreeMap;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 
 import org.osmdroid.config.Configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerDaerahTingkatAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerTypePriceAdapter;
-import id.co.qualitas.qubes.adapter.aspp.NothingSelectedSpinnerAdapter;
-import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
+import id.co.qualitas.qubes.helper.AddressResultReceiver;
+import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.NetworkHelper;
-import id.co.qualitas.qubes.model.Attachment;
+import id.co.qualitas.qubes.interfaces.CallbackOnResult;
+import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
-import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.LiveTracking;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class CreateNooActivity extends BaseActivity implements LocationListener {
+public class CreateNooActivity extends BaseActivity {
     private Button btnSave;
     private TextView txtKodePos, txtKelurahan, txtKecamatan, txtKotaKabupaten, txtProvinsi;
     private TextView txtTypeToko, txtPriceListType, txtCreditLimit, txtRoute, txtGPSLocation;
@@ -100,9 +98,14 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
     private DaerahTingkat daerahTingkat;
     private Customer customerNoo;
     private ArrayAdapter<String> sukuAdapter, statusNpwpAdapter, statusTokoAdapter, udf5Adapter;
-    private LocationManager lm;
-    private Location currentLocation;
     private String selectedImage;
+    //location
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private LocationRequestCallback<String, Location> addressCallback;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,13 +114,22 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
 
         initialize();
 
-        Configuration.getInstance().load(CreateNooActivity.this, PreferenceManager.getDefaultSharedPreferences(CreateNooActivity.this));
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(CreateNooActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(CreateNooActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+            }
+        };
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
@@ -199,15 +211,16 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         });
 
         txtGPSLocation.setOnClickListener(view -> {
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-            if (customerNoo == null) {
-                customerNoo = new Customer();
-                customerNoo.setLongitude(currentLocation.getLongitude());
-                customerNoo.setLatitude(currentLocation.getLatitude());
-                txtGPSLocation.setText(String.valueOf(currentLocation.getLatitude()) + "," + String.valueOf(currentLocation.getLongitude()));
-            } else {
-                setToast("Lokasi tidak di temukan");
-            }
+            getLocationGPS();
+//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
+//            if (customerNoo == null) {
+//                customerNoo = new Customer();
+//                customerNoo.setLongitude(currentLocation.getLongitude());
+//                customerNoo.setLatitude(currentLocation.getLatitude());
+//                txtGPSLocation.setText(String.valueOf(currentLocation.getLatitude()) + "," + String.valueOf(currentLocation.getLongitude()));
+//            } else {
+//                setToast("Lokasi tidak di temukan");
+//            }
         });
     }
 
@@ -1152,6 +1165,14 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             Helper.takePhoto(CreateNooActivity.this);
+        } else if (requestCode == Constants.LOCATION_PERMISSION_REQUEST
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            if (Utils.isGPSOn(this)) {
+                getLocationGPS();
+            } else {
+                Utils.turnOnGPS(this);
+            }
         } else {
             setToast("This permission(s) required");
         }
@@ -1220,17 +1241,6 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
         startActivity(intent);
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-        if (customerNoo == null) {
-            customerNoo = new Customer();
-            customerNoo.setLongitude(currentLocation.getLongitude());
-            customerNoo.setLatitude(currentLocation.getLatitude());
-            txtGPSLocation.setText(String.valueOf(currentLocation.getLatitude()) + "," + String.valueOf(currentLocation.getLongitude()));
-        }
-    }
-
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -1269,5 +1279,126 @@ public class CreateNooActivity extends BaseActivity implements LocationListener 
                 setToast(getString(R.string.failedSaveData));
             }
         }
+    }
+
+    private void getLocationGPS() {
+        getAddressWithPermission((result, location) -> {
+            Utils.backgroundTask(progress,
+//                    () -> Utils.getCurrentAddress(CreateNooActivity.this, location.getLatitude(), location.getLongitude()),
+                    () -> Utils.getCurrentAddressFull(CreateNooActivity.this, location.getLatitude(), location.getLongitude()),
+                    new CallbackOnResult<Address>() {
+                        @Override
+                        public void onFinish(Address result) {
+                            if (location != null) {
+                                if (customerNoo == null) {
+                                    customerNoo = new Customer();
+                                }
+//                                mAdminArea = "Banten"
+//                                mCountryCode = "ID"
+//                                mCountryName = "Indonesia"
+//                                mFeatureName = "WM6W+GV7"
+//                                mLocale = {Locale@32644} "en_US"
+//                                mLocality = "Kecamatan Kosambi"
+//                                mPostalCode = "15213"
+//                                mPremises = null
+//                                mSubAdminArea = "Kabupaten Tangerang"
+//                                mSubLocality = "Kosambi Timur"
+//                                mSubThoroughfare = null
+//                                mThoroughfare = "Jalan Perumahan Taman Dadap Indah"
+//                                mAddressLines = {HashMap@32639}  size = 1
+//                                {Integer@32655} 0 -> "WM6W+GV7, Jl. Perumahan Taman Dadap Indah, Kosambi Tim., Kec. Kosambi, Kabupaten Tangerang, Banten 15213, Indonesia"
+                                customerNoo.setLongitude(location.getLongitude());
+                                customerNoo.setLatitude(location.getLatitude());
+                                customerNoo.setAddress(result.getAddressLine(0));
+                                customerNoo.setKode_pos(result.getPostalCode());
+                                edtAddress.setText(result.getAddressLine(0));
+
+                                DaerahTingkat daerahTingkat = database.getAllDaerahTingkat(result.getPostalCode());
+                                if (daerahTingkat != null) {
+                                    customerNoo.setKode_pos(String.valueOf(daerahTingkat.getKode_pos()));
+                                    customerNoo.setKelurahan(daerahTingkat.getNama_kelurahan());
+                                    customerNoo.setIdKelurahan(daerahTingkat.getKode_kelurahan());
+                                    customerNoo.setKecamatan(daerahTingkat.getNama_kecamatan());
+                                    customerNoo.setIdKecamatan(daerahTingkat.getKode_kecamatan());
+                                    customerNoo.setKota(daerahTingkat.getNama_kabupaten());
+                                    customerNoo.setIdKota(daerahTingkat.getKode_kabupaten());
+                                    customerNoo.setProvinsi(daerahTingkat.getNama_provinsi());
+                                    customerNoo.setIdProvinsi(daerahTingkat.getKode_provinsi());
+
+                                    txtKodePos.setText(String.valueOf(daerahTingkat.getKode_pos()));
+                                    txtKelurahan.setText(daerahTingkat.getNama_kelurahan());
+                                    txtKecamatan.setText(daerahTingkat.getNama_kecamatan());
+                                    txtKotaKabupaten.setText(daerahTingkat.getNama_kabupaten());
+                                    txtProvinsi.setText(daerahTingkat.getNama_provinsi());
+                                }
+                                txtGPSLocation.setText(String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
+                            } else {
+                                setToast("Lokasi tidak di temukan");
+                            }
+                        }
+
+                        @Override
+                        public void onFailed() {
+                            setToast("Lokasi tidak di temukan");
+                        }
+                    });
+        });
+    }
+
+    public void getAddressWithPermission(LocationRequestCallback<String, Location> callbackOnResult) {
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            mResultReceiver.setCallback(callbackOnResult);
+            this.addressCallback = callbackOnResult;
+            getAddress();
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void getAddress() {
+        mFusedLocationClient
+                .getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        mLastLocation = location;
+                        mResultReceiver.setLastLocation(mLastLocation);
+                        if (!Geocoder.isPresent()) {
+                            if (addressCallback != null) {
+                                addressCallback.onFinish("Geocoder not available", location);
+                            }
+                            return;
+                        }
+                        startIntentService();
+                    } else {
+                        addressCallback.onFinish(null, null);
+                        return;
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    addressCallback.onFinish(null, null);
+                });
+    }
+
+    private void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+    }
+
+    public boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMISSION_REQUEST);
     }
 }

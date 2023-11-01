@@ -31,7 +31,7 @@ public class Constants {
     public static final String QUESTION = "?";
     public static final String AND = "&";
     public static final int COMPRESS_SIGN = 100;
-
+    public static final int LOCATION_PERMISSION_REQUEST = 7;
     public static final String TXTPASSWORD = "password";
     public static final String KEY_URL = "key_url";
     public static final String IS_URL = "IsUrl";

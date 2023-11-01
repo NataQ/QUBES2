@@ -10,6 +10,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import android.location.Geocoder;
 import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -38,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
@@ -64,6 +67,8 @@ import java.util.concurrent.TimeUnit;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.interfaces.CallbackBackgroundResult;
+import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
@@ -74,6 +79,7 @@ public class Utils {
     public static final int NOTIFICATION_ID = 22;
     private static final String CHANNEL_ID = "notify";
     private static final String CHANNEL_NAME = "workmanager-reminder";
+    private static BackgroundTask<?> backgroundTask;
 
     @SuppressLint("ShowToast")
     public static void init(Context context) {
@@ -246,6 +252,26 @@ public class Utils {
             String postalCode = addresses.get(0).getPostalCode();
             String knownName = addresses.get(0).getFeatureName();*/
             return addresses.get(0).getAddressLine(0); //+ "\n" + city + "\n" + state;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Address getCurrentAddressFull(Context context, Double lat, Double lng) {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(context, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(lat, lng, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+//            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            //            String city = addresses.get(0).getLocality();
+//            String state = addresses.get(0).getAdminArea();
+            /*String country = addresses.get(0).getCountryName();
+            String postalCode = addresses.get(0).getPostalCode();
+            String knownName = addresses.get(0).getFeatureName();*/
+//            return addresses.get(0).getAddressLine(0); //+ "\n" + city + "\n" + state;
+            return addresses.get(0);
         } catch (Exception e) {
             return null;
         }
@@ -837,5 +863,59 @@ public class Utils {
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+    }
+
+    public static <T> void backgroundTask(final ProgressDialog dialog, @NonNull final CallbackBackgroundResult<T> callbackOnBackground, @NonNull final CallbackOnResult<T> callbackOnResult) {
+        if (backgroundTask != null) {
+            backgroundTask.cancel(true);
+        }
+        backgroundTask = new BackgroundTask<>(dialog, callbackOnBackground, callbackOnResult);
+        backgroundTask.execute();
+    }
+
+    static class BackgroundTask<T> extends AsyncTask<Void, Void, T> {
+        private ProgressDialog dialog;
+        CallbackBackgroundResult<T> callbackOnBackground;
+        CallbackOnResult<T> callbackOnResult;
+        private Boolean isFailed = false;
+
+        BackgroundTask(ProgressDialog dialog, CallbackBackgroundResult<T> callbackOnBackground, CallbackOnResult<T> callbackOnResult) {
+            this.dialog = dialog;
+            this.callbackOnBackground = callbackOnBackground;
+            this.callbackOnResult = callbackOnResult;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if (dialog != null) dialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(T o) {
+            super.onPostExecute(o);
+            if (dialog != null) dialog.dismiss();
+            if (!isFailed) {
+                callbackOnResult.onFinish(o);
+            } else {
+                callbackOnResult.onFailed();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            if (dialog != null) dialog.dismiss();
+        }
+
+        @Override
+        protected T doInBackground(Void[] params) {
+            try {
+                return callbackOnBackground.onBackground();
+            } catch (Exception ignore) {
+                isFailed = true;
+            }
+            return null;
+        }
     }
 }

@@ -339,6 +339,10 @@
             android:foregroundServiceType="location" />
 
         <service
+            android:name=".helper.FetchAddressIntentService"
+            android:exported="false" />
+
+        <service
             android:name=".services.MyFirebaseMessagingService2"
             android:exported="false">
             <intent-filter>

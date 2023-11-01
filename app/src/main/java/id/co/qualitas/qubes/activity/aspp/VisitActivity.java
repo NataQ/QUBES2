@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -15,6 +17,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.Editable;
@@ -42,6 +46,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
@@ -78,10 +88,15 @@ import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.AddressResultReceiver;
+import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.interfaces.CallbackOnResult;
+import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
@@ -93,7 +108,7 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class VisitActivity extends BaseActivity implements LocationListener {
+public class VisitActivity extends BaseActivity {
     private VisitListAdapter mAdapterVisit;
     private NooListAdapter mAdapterNoo;
     private List<Customer> mList, mListNonRoute;
@@ -107,7 +122,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private RecyclerView recyclerViewVisit, recyclerViewNoo;
     private boolean isLocationPermissionGranted = false;
     private LocationManager lm;
-    private Location currentLocation = null;
     private Customer outletClicked;
     private LashPdfUtils pdfUtils;
     private File pdfFile;
@@ -131,6 +145,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
     private String kmAwal, kmAkhir;
     private VisitSalesman visitSalesman;
     private boolean fromNoo = false;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private LocationRequestCallback<String, Location> addressCallback;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    //    private Location currentLocation;
+    private Map currentLocation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,12 +161,23 @@ public class VisitActivity extends BaseActivity implements LocationListener {
 
         //set Map
         Configuration.getInstance().load(VisitActivity.this, PreferenceManager.getDefaultSharedPreferences(VisitActivity.this));
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(VisitActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+            }
+        };
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
 
         initialize();
 //        initData();
@@ -205,7 +238,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             public void onRefresh() {
                 if (SessionManagerQubes.getStartDay() == 0) {
                     requestData();
-                }else{
+                } else {
                     setToast("Sudah start visit");
                 }
                 swipeLayoutVisit.setRefreshing(false);
@@ -327,11 +360,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 setToast("Please turn on GPS");
                 Helper.turnOnGPS(VisitActivity.this);
             } else {
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-                if (currentLocation == null) {
-                    setToast("Can't get your location.. Please try again..");
-                }
-                openDialogMapCheckIn();
+                getLocationGPS();
             }
         }
     }
@@ -341,10 +370,19 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_map_check_in);
+        TextView txtAddress = dialog.findViewById(R.id.txtAddress);
         Button btnCheckIn = dialog.findViewById(R.id.btnCheckIn);
         Button btnNo = dialog.findViewById(R.id.btnNo);
         MapView mapView = dialog.findViewById(R.id.mapView);
         ImageView btCenterMap = dialog.findViewById(R.id.btCenterMap);
+
+        if (currentLocation != null) {
+            txtAddress.setText(currentLocation.get("address") != null
+                    ? currentLocation.get("address").toString()
+                    : "Lokasi tidak di temukan");
+        } else {
+            txtAddress.setText("Lokasi tidak di temukan");
+        }
 
         btnCheckIn.setOnClickListener(v -> {
             if (currentLocation != null) {
@@ -352,14 +390,18 @@ public class VisitActivity extends BaseActivity implements LocationListener {
                 Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
                 locCustomer.setLatitude(outletClicked.getLatitude());
                 locCustomer.setLongitude(outletClicked.getLongitude());
-                outRadius = Helper.checkRadius(currentLocation, locCustomer);
+
+                Location currLoc = new Location(LocationManager.GPS_PROVIDER);
+                currLoc.setLatitude(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
+                currLoc.setLongitude(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
+                outRadius = Helper.checkRadius(currLoc, locCustomer);
 
                 visitSalesman = new VisitSalesman();
                 visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
                 visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                visitSalesman.setLatCheckIn(currentLocation.getLatitude());
-                visitSalesman.setLongCheckIn(currentLocation.getLongitude());
-                visitSalesman.setInside(!outRadius);
+                visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
+                visitSalesman.setLongCheckIn(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
+                visitSalesman.setInside(outRadius);
                 visitSalesman.setIdSalesman(user.getUsername());
                 visitSalesman.setCustomerId(outletClicked.getId());
                 visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
@@ -393,8 +435,8 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         final List<Customer>[] custList = new List[]{new ArrayList<>()};
         custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getLatitude(), outletClicked.getLongitude()));
         if (currentLocation != null) {
-            GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
-            custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
+            GeoPoint myPosition = new GeoPoint((Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude"));
+            custList[0].add(new Customer("", "You", "", false, (Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude")));
             mapView.getController().animateTo(myPosition);
         }
 
@@ -429,12 +471,12 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             @Override
             public void onClick(View v) {
                 if (currentLocation != null) {
-                    GeoPoint myPosition = new GeoPoint(currentLocation.getLatitude(), currentLocation.getLongitude());
+                    GeoPoint myPosition = new GeoPoint((Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude"));
                     mapView.getController().animateTo(myPosition);
 
                     custList[0].clear();
                     custList[0].add(new Customer(outletClicked.getId(), outletClicked.getNama(), outletClicked.getAddress(), true, outletClicked.getLatitude(), outletClicked.getLongitude()));
-                    custList[0].add(new Customer("", "You", "", false, currentLocation.getLatitude(), currentLocation.getLongitude()));
+                    custList[0].add(new Customer("", "You", "", false, (Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude")));
 
                     items[0] = Helper.setOverLayItems(custList[0], VisitActivity.this);
                     mOverlay[0] = new ItemizedOverlayWithFocus[]{new ItemizedOverlayWithFocus<OverlayItem>(items[0], new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -521,7 +563,7 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             public void onRefresh() {
                 if (SessionManagerQubes.getStartDay() == 0) {
                     requestData();
-                }else{
+                } else {
                     setToast("Sudah start visit");
                 }
                 swipeLayoutNoo.setRefreshing(false);
@@ -909,11 +951,6 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-    }
-
     private boolean checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             boolean check =
@@ -1256,6 +1293,14 @@ public class VisitActivity extends BaseActivity implements LocationListener {
             Helper.takePhoto(VisitActivity.this);
         } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
             new AsyncTaskGeneratePDF().execute();
+        } else if (requestCode == Constants.LOCATION_PERMISSION_REQUEST
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            if (Utils.isGPSOn(this)) {
+                getLocationGPS();
+            } else {
+                Utils.turnOnGPS(this);
+            }
         } else {
             setToast(getString(R.string.pleaseEnablePermission));
         }
@@ -1268,5 +1313,90 @@ public class VisitActivity extends BaseActivity implements LocationListener {
         intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+
+    private void getLocationGPS() {
+        getAddressWithPermission((result, location) -> {
+            Utils.backgroundTask(progress,
+//                    () -> Utils.getCurrentAddress(CreateNooActivity.this, location.getLatitude(), location.getLongitude()),
+                    () -> Utils.getCurrentAddressFull(VisitActivity.this, location.getLatitude(), location.getLongitude()),
+                    new CallbackOnResult<Address>() {
+                        @Override
+                        public void onFinish(Address result) {
+                            if (location != null) {
+                                currentLocation = new HashMap();
+                                currentLocation.put("latitude", location.getLatitude());
+                                currentLocation.put("longitude", location.getLongitude());
+                                currentLocation.put("address", result.getAddressLine(0));
+                                openDialogMapCheckIn();
+                            } else {
+                                setToast("Lokasi tidak di temukan");
+                            }
+                        }
+
+                        @Override
+                        public void onFailed() {
+                            setToast("Lokasi tidak di temukan");
+                        }
+                    });
+        });
+    }
+
+    public void getAddressWithPermission(LocationRequestCallback<String, Location> callbackOnResult) {
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            mResultReceiver.setCallback(callbackOnResult);
+            this.addressCallback = callbackOnResult;
+            getAddress();
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void getAddress() {
+        mFusedLocationClient
+                .getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        mLastLocation = location;
+                        mResultReceiver.setLastLocation(mLastLocation);
+                        if (!Geocoder.isPresent()) {
+                            if (addressCallback != null) {
+                                addressCallback.onFinish("Geocoder not available", location);
+                            }
+                            return;
+                        }
+                        startIntentService();
+                    } else {
+                        addressCallback.onFinish(null, null);
+                        return;
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    addressCallback.onFinish(null, null);
+                });
+    }
+
+    private void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+    }
+
+    public boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMISSION_REQUEST);
     }
 }

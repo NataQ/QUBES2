@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +19,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
@@ -42,6 +46,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.osmdroid.config.Configuration;
@@ -52,8 +62,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -62,7 +74,11 @@ import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.AddressResultReceiver;
+import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.interfaces.CallbackOnResult;
+import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
@@ -73,7 +89,7 @@ import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class DailySalesmanActivity extends BaseActivity implements LocationListener {
+public class DailySalesmanActivity extends BaseActivity {
     private TextView txtOutlet, txtTypeOutlet, txtStatus;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
@@ -89,7 +105,6 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
     private List<Material> fakturList;
     private List<Material> dctOutletList;
     private List<Promotion> promoList;
-
     static int h;
     static int m;
     static int s;
@@ -104,7 +119,6 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
     private VisitSalesman visitSales;
     private static final int PERMISSION_REQUEST_CODE = 1;
     private final static String[] PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
     public static final int GALLERY_PERM_CODE = 101;
     public static final int CAMERA_PERM_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
@@ -113,9 +127,13 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
     private String imagepath;
     private int typeImage = 0;
     private boolean isLocationPermissionGranted = false;
-    private LocationManager lm;
-    private Location currentLocation = null;
-
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private LocationRequestCallback<String, Location> addressCallback;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private Map currentLocation;
     public static Chronometer getTimerValue() {
         return timerValue;
     }
@@ -125,14 +143,23 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_daily_salesman);
 
-        Configuration.getInstance().load(DailySalesmanActivity.this, PreferenceManager.getDefaultSharedPreferences(DailySalesmanActivity.this));
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(DailySalesmanActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(DailySalesmanActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+            }
+        };
+        mResultReceiver = new AddressResultReceiver(new Handler());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-
+        
         initialize();
         setView();
 
@@ -338,14 +365,20 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
         Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
         locCustomer.setLatitude(outletHeader.getLatitude());
         locCustomer.setLongitude(outletHeader.getLongitude());
+
+        Location currLoc = new Location(LocationManager.GPS_PROVIDER);
+        currLoc.setLatitude((Double) currentLocation.get("latitude"));
+        currLoc.setLongitude((Double) currentLocation.get("longitude"));
+
         if (currentLocation != null) {
-            boolean outRadius = Helper.checkRadius(currentLocation, locCustomer);
-            visitSales.setInsideCheckOut(!outRadius);
+            boolean outRadius = Helper.checkRadius(currLoc, locCustomer);
+            visitSales.setInsideCheckOut(outRadius);
+            visitSales.setLatCheckOut(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
+            visitSales.setLongCheckOut(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
         }
 
         visitSales.setStatus(Constants.CHECK_OUT_VISIT);
-        visitSales.setLatCheckOut(currentLocation != null ? currentLocation.getLatitude() : null);
-        visitSales.setLongCheckOut(currentLocation != null ? currentLocation.getLongitude() : null);
+
         database.updateVisit(visitSales, user.getUsername());
         SessionManagerQubes.setOutletHeader(outletHeader);
         onBackPressed();
@@ -1212,11 +1245,6 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-    }
-
     private void checkLocationPermission() {
         List<String> permissionRequest = new ArrayList<>();
         isLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -1228,16 +1256,97 @@ public class DailySalesmanActivity extends BaseActivity implements LocationListe
                 setToast("Please turn on GPS");
                 Helper.turnOnGPS(DailySalesmanActivity.this);
             } else {
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-                if (currentLocation == null) {
-                    setToast("Can't get your location.. Please try again..");
-                }
-                if (database.getCountOrder(outletHeader) == 0) {
-                    openDialogNotOrder();
-                } else {
-                    checkOutCustomer();
-                }
+                getLocationGPS();
             }
         }
+    }
+
+    private void getLocationGPS() {
+        getAddressWithPermission((result, location) -> {
+            Utils.backgroundTask(progress,
+//                    () -> Utils.getCurrentAddress(CreateNooActivity.this, location.getLatitude(), location.getLongitude()),
+                    () -> Utils.getCurrentAddressFull(DailySalesmanActivity.this, location.getLatitude(), location.getLongitude()),
+                    new CallbackOnResult<Address>() {
+                        @Override
+                        public void onFinish(Address result) {
+                            if (location != null) {
+                                currentLocation = new HashMap();
+                                currentLocation.put("latitude", location.getLatitude());
+                                currentLocation.put("longitude", location.getLongitude());
+                                currentLocation.put("address", result.getAddressLine(0));
+
+                                if (database.getCountOrder(outletHeader) == 0) {
+                                    openDialogNotOrder();
+                                } else {
+                                    checkOutCustomer();
+                                }
+                            } else {
+                                setToast("Lokasi tidak di temukan");
+                            }
+                        }
+
+                        @Override
+                        public void onFailed() {
+                            setToast("Lokasi tidak di temukan");
+                        }
+                    });
+        });
+    }
+
+    public void getAddressWithPermission(LocationRequestCallback<String, Location> callbackOnResult) {
+        if (!checkPermissions()) {
+            requestPermissions();
+        } else {
+            mResultReceiver.setCallback(callbackOnResult);
+            this.addressCallback = callbackOnResult;
+            getAddress();
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void getAddress() {
+        mFusedLocationClient
+                .getLastLocation()
+                .addOnSuccessListener(this, location -> {
+                    if (location != null) {
+                        mLastLocation = location;
+                        mResultReceiver.setLastLocation(mLastLocation);
+                        if (!Geocoder.isPresent()) {
+                            if (addressCallback != null) {
+                                addressCallback.onFinish("Geocoder not available", location);
+                            }
+                            return;
+                        }
+                        startIntentService();
+                    } else {
+                        addressCallback.onFinish(null, null);
+                        return;
+                    }
+                })
+                .addOnFailureListener(this, e -> {
+                    addressCallback.onFinish(null, null);
+                });
+    }
+
+    private void startIntentService() {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, mLastLocation);
+        startService(intent);
+    }
+
+    public boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            requestPermissions();
+            return false;
+        }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMISSION_REQUEST);
     }
 }
