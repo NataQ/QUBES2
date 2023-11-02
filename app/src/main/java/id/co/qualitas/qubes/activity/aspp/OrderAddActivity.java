@@ -20,7 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -31,6 +33,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -40,18 +43,17 @@ public class OrderAddActivity extends BaseActivity {
     private List<Material> mList;
     private Button btnAdd, btnNext, btnGetDiscount;
     private TextView txtDate, txtOmzet;
-
     private List<Material> listSpinner, listFilteredSpinner;
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
     private SpinnerProductOrderAdapter spinnerAdapter;
+    private Customer outletHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_add);
 
-        initProgress();
         initialize();
         initData();
 
@@ -66,7 +68,6 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         btnNext.setOnClickListener(v -> {
-            onBackPressed();
             SessionManagerQubes.setCollectionSource(3);
             Intent intent = new Intent(this, CollectionFormActivity.class);
             startActivity(intent);
@@ -98,12 +99,12 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private void initData() {
+        outletHeader = SessionManagerQubes.getOutletHeader();
         mList = new ArrayList<>();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         txtOmzet = findViewById(R.id.txtOmzet);
@@ -264,10 +265,35 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 1000000, 1000000));
-        mList.add(new Material("11030", "Redbull", 2000000, 2000000));
-        mList.add(new Material("31020", "You C1000 Vitamin Orange", 8900000, 5000000));
-        return mList;
+        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listMat = new ArrayList<>();
+        if (Helper.isNotEmptyOrNull(mList)) {
+            Map req = new HashMap();
+            req.put("udf5", outletHeader.getUdf_5());
+            req.put("productId", mList.get(0).getId_product_group());
+            listMat.addAll(database.getAllMasterMaterialOrder(req));
+        } else {
+            listMat.addAll(database.getAllMasterMaterial());
+        }
+        for (Material param : listMat) {
+            int exist = 0;
+            for (Material param1 : mList) {
+                if (param.getId().equals(param1.getId())) {
+                    exist++;
+                }
+            }
+            if (exist == 0) {
+                listSpinner.add(param);
+            }
+        }
+
+        return listSpinner;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, DailySalesmanActivity.class);
+        startActivity(intent);
     }
 }

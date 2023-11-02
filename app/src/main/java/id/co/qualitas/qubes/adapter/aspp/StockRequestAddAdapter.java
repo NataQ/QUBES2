@@ -128,9 +128,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
 
         List<String> listSpinner = new Database(mContext).getUom(detail.getId());
         if (listSpinner == null || listSpinner.size() == 0) {
-            listSpinner.add("BTL");
-            listSpinner.add("SLOP");
-            listSpinner.add("KRT");
+            listSpinner.add("-");
         }
 
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;

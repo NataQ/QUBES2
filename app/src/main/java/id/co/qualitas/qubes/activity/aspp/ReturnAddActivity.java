@@ -391,11 +391,6 @@ public class ReturnAddActivity extends BaseActivity {
         return listSpinner;
     }
 
-    public void delete(int pos) {
-        mList.remove(pos);
-        mAdapter.notifyItemRemoved(pos);
-    }
-
     public void openDialogPhoto(Material detail, int pos) {
         detailMatPhoto = detail;
         posPhoto = pos;

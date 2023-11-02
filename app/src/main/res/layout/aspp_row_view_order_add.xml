@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="4dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -94,7 +95,7 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/TextInputLayoutMaterial"
+                        style="@style/TextInputLayoutMaterialDisable"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
@@ -107,7 +108,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:focusableInTouchMode="false"
-                            android:inputType="date"
                             android:padding="0dp"
                             android:textColor="@color/black_aspp" />
 
@@ -390,7 +390,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvExtra"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/aspp_row_view_order_add_extra"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

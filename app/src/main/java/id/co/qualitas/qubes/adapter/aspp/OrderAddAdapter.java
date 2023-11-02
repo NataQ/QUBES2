@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,13 +26,17 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
@@ -47,6 +52,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private Dialog alertDialog;
     private View dialogview;
     private boolean isExpand = false;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
+    private ArrayAdapter<String> uomAdapter;
 
     public OrderAddAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -153,69 +161,41 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
-
+        setFormatSeparator();
         setProgress();
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
+        String productId = String.valueOf(detail.getId());
+        holder.edtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
 
-        List<String> uomList = new ArrayList<>();
-        uomList.add("BTL");
-        uomList.add("SLOP");
-        uomList.add("KRT");
+        List<String> listSpinner = new Database(mContext).getUom(detail.getId());
+        if (listSpinner == null || listSpinner.size() == 0) {
+            listSpinner.add("-");
+        }
 
-        holder.edtProduct.setOnClickListener(v -> {
-            Dialog alertDialog = new Dialog(mContext);
-
-            alertDialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-
-            EditText editText = alertDialog.findViewById(R.id.edit_text);
-            RecyclerView listView = alertDialog.findViewById(R.id.list_view);
-
-            List<String> groupList = new ArrayList<>();
-            groupList.add("11008_KRATINGDAENG LUAR PULAU - MT");
-            groupList.add("11007_KRATINGDAENG - MT");
-            groupList.add("11006_KRATINGDAENG - LAIN-LAIN");
-            groupList.add("11005_KRATINGDAENG LUAR PULAU");
-            groupList.add("11001_KRATINGDAENG");
-
-            FilteredSpinnerAdapter spinnerAdapter = new FilteredSpinnerAdapter(mContext, groupList, (nameItem, adapterPosition) -> {
-                String temp[] = nameItem.split("_");
-                holder.edtProduct.setText(nameItem);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setId(temp[0]);
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setMaterialCode(temp[1]);
-                alertDialog.dismiss();
-            });
-
-            LinearLayoutManager mManager = new LinearLayoutManager(mContext);
-            listView.setLayoutManager(mManager);
-            listView.setHasFixedSize(true);
-            listView.setNestedScrollingEnabled(false);
-            listView.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-        });
-
-        mContext.setAutoCompleteAdapter(uomList, holder.autoCompleteUom);
         mAdapter = new OrderAddExtraAdapter(mContext, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getExtraItem(), holder.getAbsoluteAdapterPosition(), header -> {
         });
         holder.rvExtra.setAdapter(mAdapter);
+
+        //uom
+        uomAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        uomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        uomAdapter.addAll(listSpinner);
+        holder.autoCompleteUom.setAdapter(uomAdapter);
+        holder.autoCompleteUom.setText(detail.getUom(), false);
+        holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
+            String selected = listSpinner.get(i).toString();
+            detail.setUom(selected);
+        });
+        //uom
 
         holder.llAddExtraItem.setOnClickListener(v -> {
             addNew(holder.rvExtra, holder.getAbsoluteAdapterPosition());
@@ -260,21 +240,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             }
         });
 
-        holder.autoCompleteUom.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setUom(s.toString().trim());
-            }
-        });
         holder.edtQty.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -290,9 +255,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
                     int qty = Integer.parseInt(s.toString().replace(",", ""));
-                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                    detail.setQty(qty);
                 } else {
-                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                    detail.setQty(0);
                 }
             }
         });
@@ -360,5 +325,13 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

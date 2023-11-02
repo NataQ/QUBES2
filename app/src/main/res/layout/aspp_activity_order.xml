@@ -53,7 +53,7 @@
                 android:background="@drawable/ic_back_aspp" />
 
             <TextView
-               style="@style/TextView_Title"
+                style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -66,11 +66,11 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_small"
                 android:layout_gravity="end"
                 android:text="Add"
                 android:textAllCaps="true"
                 android:textColor="@color/black_aspp"
+                android:textSize="@dimen/text_small"
                 app:cornerRadius="5dp"
                 app:icon="@drawable/ic_add_aspp"
                 app:iconSize="@dimen/icon_add_inside_btn"
@@ -119,11 +119,27 @@
                 android:textSize="@dimen/smallFont"
                 android:visibility="gone" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <ProgressBar
+                android:id="@+id/progressCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateDrawable="@drawable/progress"
+                android:visibility="gone" />
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false" />
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    tools:listitem="@layout/aspp_row_view_order" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </RelativeLayout>
 
     </LinearLayout>

@@ -39,6 +39,8 @@ public class Material implements Cloneable{
     private String material_group_name;
     private int id_product_group;
     private String name_product_group;
+    private String top;
+    private String priceListCode;
     private String date;
     //return
     private String condition;
@@ -118,6 +120,22 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getTop() {
+        return top;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
+    }
+
+    public String getPriceListCode() {
+        return priceListCode;
+    }
+
+    public void setPriceListCode(String priceListCode) {
+        this.priceListCode = priceListCode;
     }
 
     public String getIdItem() {

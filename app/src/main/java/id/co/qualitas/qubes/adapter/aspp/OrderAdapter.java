@@ -11,8 +11,11 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderActivity;
@@ -25,6 +28,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     private LayoutInflater mInflater;
     private OrderActivity mContext;
     private OnAdapterListener onAdapterListener;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public OrderAdapter(OrderActivity mContext, List<Order> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -108,11 +113,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
-        Order detail = mFilteredList.get(position);
-        holder.txtOrderNo.setText(detail.getTxtOrderCode());
-        holder.txtOmzet.setText(detail.getTxtPriceNett());
-        holder.txtIdMobile.setText(String.valueOf(position + 1));
+    public void onBindViewHolder(Holder holder, int pos) {
+        setFormatSeparator();
+        Order detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        holder.txtOrderNo.setText(Helper.isEmpty(detail.getIdOrderBE(), ""));
+        holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
+        holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
         holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
 
         if (!Helper.isEmpty(detail.getStatus())) {
@@ -161,5 +167,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
 
     public interface OnAdapterListener {
         void onAdapterClick(Order Order);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

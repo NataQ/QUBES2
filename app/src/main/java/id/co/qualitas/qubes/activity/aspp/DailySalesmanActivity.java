@@ -161,7 +161,6 @@ public class DailySalesmanActivity extends BaseActivity {
         }
         
         initialize();
-        setView();
 
         btnCheckOut.setOnClickListener(v -> {
             checkLocationPermission();
@@ -601,7 +600,8 @@ public class DailySalesmanActivity extends BaseActivity {
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
-                    fakturList.addAll(database.getOutstandingProductFaktur(outletHeader.getId()));
+
+                    fakturList.addAll(database.getOutstandingFaktur(outletHeader.getId()));
 
                     dctOutletList.add(new Material("Kratingdaeng", 1));
                     dctOutletList.add(new Material("Redbull", 0));
@@ -638,6 +638,7 @@ public class DailySalesmanActivity extends BaseActivity {
                         llOutlet.setEnabled(false);
                         break;
                 }
+                setView();
             } else {
                 setToast("Gagal mengambil data");
                 onBackPressed();
@@ -810,10 +811,6 @@ public class DailySalesmanActivity extends BaseActivity {
             Helper.tempTime = SystemClock.elapsedRealtime();
             Helper.valTime = 2;
         }
-        formatResumeTime();
-        timerValue.start();
-        Helper.resume = false;
-
         outletHeader.setStatus(Constants.CHECK_IN_VISIT);
         if (outletHeader.isNoo()) {
             database.updateStatusOutletNoo(outletHeader, user.getUsername());
@@ -829,6 +826,7 @@ public class DailySalesmanActivity extends BaseActivity {
 
         txtStatus.setText("Pause");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
+        onResume();
     }
 
     private static void formatTime() {
@@ -838,29 +836,6 @@ public class DailySalesmanActivity extends BaseActivity {
         s = (int) (time - h * 3600000 - m * 60000) / 1000;
         Helper.mm = m < 10 ? "0" + m : m + "";
         Helper.ss = s < 10 ? "0" + s : s + "";
-    }
-
-    private static void formatResumeTime() {
-        timerValue.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onChronometerTick(Chronometer cArg) {
-                formatTime();
-                int finalMinute = Integer.parseInt(Helper.mm) + Helper.tempMinute;
-                int finalSecond = Integer.parseInt(Helper.ss) + Helper.tempSecond;
-
-                if (finalSecond >= 60) {
-                    finalMinute += 1;
-                    finalSecond -= 60;
-                }
-
-                String fnMinute = finalMinute < 10 ? "0" + finalMinute : finalMinute + "";
-                String fnSecond = finalSecond < 10 ? "0" + finalSecond : finalSecond + "";
-                Helper.mm = fnMinute;
-                Helper.ss = fnSecond;
-                cArg.setText(fnMinute + ":" + fnSecond);
-            }
-        });
     }
 
     private void playTimerBy(long time) {

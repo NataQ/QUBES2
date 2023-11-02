@@ -14,8 +14,12 @@ public class Order {
     private String outlet;
     private String idOrderBE;
     private String customerId;
+    private String idHeader;
     private double omzet;
     private boolean isSync;
+
+    public Order() {
+    }
 
     public Order(String txtOrderCode, String txtPriceNett, String outlet, String soNo, String status, String date) {
         this.txtOrderCode = txtOrderCode;
@@ -24,6 +28,14 @@ public class Order {
         this.status = status;
         this.date = date;
         this.outlet = outlet;
+    }
+
+    public String getIdHeader() {
+        return idHeader;
+    }
+
+    public void setIdHeader(String idHeader) {
+        this.idHeader = idHeader;
     }
 
     public boolean isSync() {

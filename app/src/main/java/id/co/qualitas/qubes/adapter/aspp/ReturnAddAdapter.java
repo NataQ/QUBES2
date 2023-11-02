@@ -1,10 +1,15 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -30,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
@@ -51,6 +58,9 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
     private Reason reasonDetail;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    private Dialog alertDialog;
+    private View dialogview;
+    private LayoutInflater inflater;
 
     public ReturnAddAdapter(ReturnAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -175,9 +185,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
         List<String> listSpinner = new Database(mContext).getUom(detail.getId());
         if (listSpinner == null || listSpinner.size() == 0) {
-            listSpinner.add("BTL");
-            listSpinner.add("SLOP");
-            listSpinner.add("KRT");
+            listSpinner.add("-");
         }
 
         List<String> conditionList = new ArrayList<>();
@@ -337,8 +345,30 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         });
 
         holder.llDelete.setOnClickListener(v -> {
-            mList.remove(holder.getAbsoluteAdapterPosition());
-            notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+            inflater = LayoutInflater.from(mContext);
+            alertDialog = new Dialog(mContext);
+            initDialog(R.layout.aspp_dialog_confirmation);
+            TextView txtTitle = alertDialog.findViewById(R.id.txtTitle);
+            TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
+            Button btnNo = alertDialog.findViewById(R.id.btnNo);
+            Button btnYes = alertDialog.findViewById(R.id.btnYes);
+            txtTitle.setText("Delete Extra");
+            txtDialog.setText("Are you sure want to delete the item?");
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    alertDialog.dismiss();
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    alertDialog.dismiss();
+                }
+            });
+            alertDialog.show();
         });
 
         holder.edtQty.addTextChangedListener(new TextWatcher() {
@@ -353,7 +383,6 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
             @Override
             public void afterTextChanged(Editable s) {
-//                s.toString().replace(".", "");
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
                     int qty = Integer.parseInt(s.toString().replace(",", ""));
@@ -380,5 +409,22 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         otherSymbols.setGroupingSeparator('.');
         format = new DecimalFormat("#,###,###,###.###", otherSymbols);
         format.setDecimalSeparatorAlwaysShown(false);
+    }
+
+    private void initDialog(int resource) {
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        dialogview = inflater.inflate(resource, null);
+        alertDialog.setContentView(dialogview);
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCancelable(false);//back di hp
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.getWindow().setLayout((6 * width) / 7, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+//        alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
     }
 }

@@ -109,7 +109,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtName.setText("\u2022 " + detail.getName_product_group());
+        holder.txtName.setText("\u2022 " + detail.getMaterial_group_name());
         holder.txtQty.setText(format.format(detail.getQty()));
     }
 
