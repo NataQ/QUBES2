@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -78,12 +79,14 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout llHeader;
+        RelativeLayout checkBox;
         TextView text;
         CardView cvUncheck, cvCheck;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            checkBox = itemView.findViewById(R.id.checkBox);
             cvUncheck = itemView.findViewById(R.id.cvUncheck);
             text = itemView.findViewById(R.id.text);
             llHeader = itemView.findViewById(R.id.llHeader);

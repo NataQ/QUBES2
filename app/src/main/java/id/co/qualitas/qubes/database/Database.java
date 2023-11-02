@@ -4065,7 +4065,7 @@ public class Database extends SQLiteOpenHelper {
         cursorPriceListCode.close();
 
         if (priceListCode != null) {
-            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%"+priceListCode+"%"});
+            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
 
             if (cursorTop.moveToFirst()) {
                 top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
@@ -4079,10 +4079,10 @@ public class Database extends SQLiteOpenHelper {
                 do {
                     Material paramModel = new Material();
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
                     paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
                     paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
@@ -4115,6 +4115,86 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public double getPrice(Material material) {
+        double price = 0;
+        int conversion = 0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_CONVERSION + " FROM " + TABLE_MASTER_UOM
+                + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM_ID + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{material.getId(), material.getUomSisa()});
+
+        if (cursor.moveToFirst()) {
+            do {
+                conversion = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        if (conversion == 0) {
+            conversion = 1;
+        }
+        price = material.getQty() * conversion * material.getAmount();
+        return price;
+    }
+
+    public Material getPriceMaterial(Map request) {
+        Material result = new Material();
+        String priceListCode = null, top = null;
+
+        // Select All Query
+        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
+
+        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
+
+        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
+                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
+                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
+                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
+                + " WHERE spd." + KEY_PRICE_LIST_CODE + " like ? and spd." + KEY_MATERIAL_ID + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
+
+        if (cursorPriceListCode.moveToFirst()) {
+            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
+        }
+        cursorPriceListCode.close();
+
+        if (priceListCode != null) {
+            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
+
+            if (cursorTop.moveToFirst()) {
+                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
+            }
+            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
+            cursorTop.close();
+
+            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{"%" + priceListCode + "%", request.get("matId").toString()});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    result = new Material();
+                    result.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    result.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    result.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    result.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    result.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+                    result.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+                    result.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                    result.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                    result.setId_product_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    result.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                    result.setTop(top);
+                    result.setPriceListCode(priceListCode);
+
+                } while (cursor.moveToNext());
+            }
+        }
+
+        return result;
     }
 
 //    public List<Uom> getUom(String idMat) {

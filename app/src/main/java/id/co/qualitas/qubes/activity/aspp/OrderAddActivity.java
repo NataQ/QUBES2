@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -57,7 +58,7 @@ public class OrderAddActivity extends BaseActivity {
         initialize();
         initData();
 
-        mAdapter = new OrderAddAdapter(this, mList, header -> {
+        mAdapter = new OrderAddAdapter(this, mList, outletHeader, header -> {
 
         });
 
@@ -134,10 +135,17 @@ public class OrderAddActivity extends BaseActivity {
 
         cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
         cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
+        RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
         EditText editText = dialog.findViewById(R.id.edit_text);
         RecyclerView rv = dialog.findViewById(R.id.rv);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+
+        if (Helper.isNotEmptyOrNull(mList)) {
+            checkbox.setVisibility(View.VISIBLE);
+        } else {
+            checkbox.setVisibility(View.GONE);
+        }
 
         listSpinner = new ArrayList<>();
         listSpinner.addAll(initDataMaterial());
@@ -213,7 +221,16 @@ public class OrderAddActivity extends BaseActivity {
             List<Material> addList = new ArrayList<>();
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
-                    addList.add(mat);
+                    if (Helper.isNullOrEmpty(mat.getUomSisa())) {
+                        Map req = new HashMap();
+                        req.put("udf5", outletHeader.getUdf_5());
+                        req.put("productId", mat.getId_product_group());
+                        req.put("matId", mat.getId());
+                        Material matDetail = database.getPriceMaterial(req);
+                        addList.add(matDetail);
+                    } else {
+                        addList.add(mat);
+                    }
                 }
             }
             addNew(addList);
@@ -293,7 +310,16 @@ public class OrderAddActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, DailySalesmanActivity.class);
+        Intent intent = new Intent(this, OrderActivity.class);
         startActivity(intent);
+    }
+
+    public void calculateOmzet() {
+        double omzet = 0;
+        for (Material material : mList) {
+            omzet = omzet + material.getPrice();
+        }
+
+        txtOmzet.setText("Rp. " + format.format(omzet));
     }
 }

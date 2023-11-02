@@ -13,6 +13,7 @@
         android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -20,7 +21,10 @@
                 android:id="@+id/cvUncheck"
                 android:layout_width="@dimen/icon_check_box"
                 android:layout_height="@dimen/icon_check_box"
-                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
                 android:visibility="visible"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="2dp" />
