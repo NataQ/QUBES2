@@ -219,6 +219,7 @@ public class OrderAddActivity extends BaseActivity {
 
         btnSave.setOnClickListener(v -> {
             List<Material> addList = new ArrayList<>();
+            String priceListCode = null;
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
                     if (Helper.isNullOrEmpty(mat.getUomSisa())) {
@@ -227,7 +228,16 @@ public class OrderAddActivity extends BaseActivity {
                         req.put("productId", mat.getId_product_group());
                         req.put("matId", mat.getId());
                         Material matDetail = database.getPriceMaterial(req);
-                        addList.add(matDetail);
+                        if (priceListCode != null) {
+                            if (priceListCode.equals(matDetail.getPriceListCode())) {
+                                addList.add(matDetail);
+                            } else {
+                                setToast("Harus product yang TOP nya sama");
+                            }
+                        } else {
+                            priceListCode = matDetail.getPriceListCode();
+                            addList.add(matDetail);
+                        }
                     } else {
                         addList.add(mat);
                     }
