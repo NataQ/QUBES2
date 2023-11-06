@@ -19,7 +19,7 @@ public class CollectionHeader implements Serializable, Cloneable {
     public List<CollectionDetail> giroList;
     public List<CollectionDetail> chequeList;
     public List<CollectionDetail> lainList;
-    private int is_sync;
+    private int isSync;
 
     public List<CollectionDetail> getCashList() {
         return cashList;
@@ -128,12 +128,12 @@ public class CollectionHeader implements Serializable, Cloneable {
         this.detailList = detailList;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     @NonNull

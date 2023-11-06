@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.adapter.aspp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -16,19 +17,22 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
-import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
+import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Discount;
+import id.co.qualitas.qubes.model.Discount;
 
-public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerInfoDctOutletAdapter.Holder> implements Filterable {
-    private List<Material> mList;
-    private List<Material> mFilteredList;
+public class OrderDiscountAdapter extends RecyclerView.Adapter<OrderDiscountAdapter.Holder> implements Filterable {
+    private List<Discount> mList;
+    private List<Discount> mFilteredList;
     private LayoutInflater mInflater;
-    private DailySalesmanActivity mContext;
+    private OrderAddActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CustomerInfoDctOutletAdapter(DailySalesmanActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public OrderDiscountAdapter(OrderAddActivity mContext, List<Discount> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -41,7 +45,7 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Material> mDataSet) {
+    public void setData(List<Discount> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -56,11 +60,11 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Material> filteredList = new ArrayList<>();
-                    for (Material row : mList) {
+                    List<Discount> filteredList = new ArrayList<>();
+                    for (Discount row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getKeyDiskon().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -75,20 +79,20 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Material>) filterResults.values;
+                mFilteredList = (ArrayList<Discount>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtQty, txtName;
+        TextView txtLabel, txtAmount;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtQty = itemView.findViewById(R.id.txtQty);
-            txtName = itemView.findViewById(R.id.txtName);
+            txtLabel = itemView.findViewById(R.id.txtLabel);
+            txtAmount = itemView.findViewById(R.id.txtAmount);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -101,24 +105,17 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_outstanding_dct, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_discount, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        Discount detail = mFilteredList.get(position);
         setFormatSeparator();
-        Material detail = mFilteredList.get(position);
-        holder.txtName.setText("\u2022 " + detail.getMaterial_group_name());
-        holder.txtQty.setText(format.format(detail.getQty()));
-    }
-
-    private void setFormatSeparator() {
-        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
-        otherSymbols.setDecimalSeparator(',');
-        otherSymbols.setGroupingSeparator('.');
-        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
-        format.setDecimalSeparatorAlwaysShown(false);
+        holder.txtLabel.setText(Helper.isEmpty(detail.getKeyDiskon(), ""));
+        double amount = Double.parseDouble(detail.getValueDiskon());
+        holder.txtAmount.setText("Rp. " + format.format(amount));
     }
 
     @Override
@@ -127,6 +124,14 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(Material String);
+        void onAdapterClick(Discount Discount);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

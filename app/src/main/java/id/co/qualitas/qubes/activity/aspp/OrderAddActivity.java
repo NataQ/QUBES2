@@ -1,15 +1,21 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.se.omapi.Session;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +41,15 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
+import id.co.qualitas.qubes.model.Parameter;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderAddActivity extends BaseActivity {
@@ -49,6 +62,10 @@ public class OrderAddActivity extends BaseActivity {
     boolean checkedAll = false;
     private SpinnerProductOrderAdapter spinnerAdapter;
     private Customer outletHeader;
+    private boolean saveDiscount = false, saveOrder = false;
+    private WSMessage wsMessage;
+    boolean getDiscount = false;
+    private List<Material> fakturList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,22 +73,27 @@ public class OrderAddActivity extends BaseActivity {
         setContentView(R.layout.aspp_activity_order_add);
 
         initialize();
-        initData();
 
-        mAdapter = new OrderAddAdapter(this, mList, outletHeader, header -> {
-
+        btnGetDiscount.setOnClickListener(v -> {
+            if (isNetworkAvailable()) {
+                progress.show();
+                PARAM = 1;
+                new RequestUrl().execute();
+            } else {
+                setToast("Anda tidak memiliki jaringan internet");
+            }
         });
-
-        recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(v -> {
             addProduct();
         });
 
         btnNext.setOnClickListener(v -> {
-            SessionManagerQubes.setCollectionSource(3);
-            Intent intent = new Intent(this, CollectionFormActivity.class);
-            startActivity(intent);
+            if (checkDiscount()) {
+                dialogConfirm();
+            } else {
+                setToast("Anda belum mengambil diskon");
+            }
         });
 
         imgBack.setOnClickListener(v -> {
@@ -81,6 +103,48 @@ public class OrderAddActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(OrderAddActivity.this);
         });
+    }
+
+    private boolean validateCO() {
+        int validate = 0;
+        //tim sr/gt/on premise:
+        //-> 2 bon produk existing (KTD-R)
+        //-> 2 bon produk existing (Vitamin n Water)
+        //-> 1 bon produk RBG
+        //-> 1 bon produk batterai
+
+        //tim sr batterai
+        //-> 2 bon produk batterai
+
+        return validate == 0;
+    }
+
+    private boolean checkDiscount() {
+        boolean result = false;
+        if (isNetworkAvailable()) {
+            if (getDiscount) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } else {
+            result = true;
+        }
+        return result;
+    }
+
+    private void saveOrderSession() {
+        progress.show();
+        PARAM = 3;
+        new RequestUrl().execute();
+    }
+
+    private void setAdapter() {
+        mAdapter = new OrderAddAdapter(this, mList, outletHeader, header -> {
+
+        });
+
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void addNew(List<Material> addedList) {
@@ -101,8 +165,10 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
+        fakturList = database.getOutstandingFaktur(outletHeader.getId());
         mList = new ArrayList<>();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
+        setAdapter();
     }
 
     private void initialize() {
@@ -123,6 +189,7 @@ public class OrderAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        initData();
     }
 
     private void addProduct() {
@@ -327,9 +394,208 @@ public class OrderAddActivity extends BaseActivity {
     public void calculateOmzet() {
         double omzet = 0;
         for (Material material : mList) {
-            omzet = omzet + material.getPrice();
+            omzet = omzet + material.getPrice() + material.getTotalDiscount();
         }
 
         txtOmzet.setText("Rp. " + format.format(omzet));
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                if (PARAM == 1) {
+                    Map request = new HashMap();
+                    request.put("id_customer", outletHeader.getId());
+                    request.put("tipe_outlet", outletHeader.getType_customer());
+                    request.put("id", null);
+                    request.put("order_date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+
+                    List<Map> listBarang = new ArrayList<>();
+                    for (Material material : mList) {
+                        Map tempBarang = new HashMap<>();
+                        tempBarang.put("id", material.getId());
+                        tempBarang.put("harga", material.getPrice());
+                        tempBarang.put("qty", material.getQty());
+                        tempBarang.put("satuan", material.getUom());
+                        listBarang.add(tempBarang);
+                    }
+                    request.put("listDetail", listBarang);
+                    String URL_ = Constants.API_GET_DISCOUNT_ORDER;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                } else if (PARAM == 2) {
+                    Map resultMap = (Map) wsMessage.getResult();
+                    List<Map> barangList = new ArrayList<>();
+                    barangList = (List<Map>) resultMap.get("barang");
+                    for (Map barangMap : barangList) {
+                        String kodeBarang = barangMap.get("kodeBarang").toString();
+
+                        //diskon
+                        Map<String, String> map = (Map<String, String>) barangMap.get("diskon");
+                        double totalDisc = 0;
+                        List<Discount> discList = new ArrayList<>();
+                        for (Map.Entry<String, String> pair : map.entrySet()) {
+                            Discount disc = new Discount();
+                            disc.setKeyDiskon(pair.getKey());
+                            disc.setValueDiskon(pair.getValue());
+                            totalDisc = totalDisc + Double.parseDouble(pair.getValue());
+                            discList.add(disc);
+                        }
+                        //diskon
+
+                        Discount extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
+
+                        for (Material material : mList) {
+                            if (material.getId().equals(kodeBarang)) {
+//                                material.setDiscount(discount);
+                                material.setExtraDiscount(extra);
+                                material.setTotalDiscount(totalDisc);
+                                material.setDiskonList(discList);
+                            }
+                        }
+                    }
+                    saveDiscount = true;
+                    return null;
+                } else {
+                    Order header = new Order();
+                    header.setCustomerId(outletHeader.getId());
+                    header.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+                    double omzet = 0;
+                    try {
+                        omzet = Double.parseDouble(txtOmzet.getText().toString().replace("Rp. ", "").replace(".", ""));
+                    } catch (Exception e) {
+                        omzet = 0;
+                    }
+                    header.setOmzet(omzet);
+                    header.setStatus("Pending");
+                    header.setIsSync(0);
+                    header.setMaterialList(mList);
+
+                    SessionManagerQubes.setOrder(header);
+
+                    saveOrder = true;
+                    return null;
+                }
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("order", ex.getMessage());
+                }
+                if (PARAM == 2) {
+                    saveDiscount = false;
+                }
+                if (PARAM == 3) {
+                    saveOrder = false;
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage result) {
+            if (PARAM == 1) {
+                if (result != null) {
+                    wsMessage = result;
+                    PARAM = 2;
+                    new RequestUrl().execute();
+                } else {
+                    progress.dismiss();
+                    setToast("Failed get discount");
+                }
+            } else if (PARAM == 2) {
+                progress.dismiss();
+                if (saveDiscount) {
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    setToast("Failed save discount");
+                }
+            } else {
+                progress.dismiss();
+                if (saveOrder) {
+                    SessionManagerQubes.setCollectionSource(3);
+                    Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
+                    startActivity(intent);
+                } else {
+                    setToast("Failed save order");
+                }
+            }
+        }
+    }
+
+    public void dialogKredit() {
+        LayoutInflater inflater = LayoutInflater.from(OrderAddActivity.this);
+        final Dialog dialog = new Dialog(OrderAddActivity.this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_bayar_kredit, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        Button btnKredit = dialog.findViewById(R.id.btnKredit);
+        Button btnBayar = dialog.findViewById(R.id.btnBayar);
+        btnKredit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnBayar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveOrderSession();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void dialogConfirm() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+
+        txtTitle.setText("Order");
+        txtDialog.setText("Anda yakin sudah selesai order?");
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (!Helper.isEmpty(user.getType_sales())) {
+                    if (user.getType_sales().equals("CO")) {
+                        if (validateCO()) {
+                            dialogKredit();
+                        }
+                    } else {
+                        saveOrderSession();
+                    }
+                } else {
+                    saveOrderSession();
+                }
+            }
+        });
+
+        dialog.show();
     }
 }

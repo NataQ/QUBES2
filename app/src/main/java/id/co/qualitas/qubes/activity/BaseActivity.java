@@ -320,6 +320,7 @@ public class BaseActivity extends AppCompatActivity {
         SessionManagerQubes.clearImageTypeSession();
         SessionManagerQubes.clearCollectionHistorySession();
         SessionManagerQubes.clearReturnSession();
+        SessionManagerQubes.clearOrderSession();
         SessionManagerQubes.clearCustomerNooSession();
         SessionManagerQubes.clearCollectionHeaderSession();
         SessionManagerQubes.clearRouteCustomerHeaderSession();

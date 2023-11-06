@@ -57,12 +57,6 @@ public class CollectionActivity extends BaseActivity {
                 swipeLayout.setRefreshing(false);
             }
         });
-
-        txtTitle.setOnClickListener(view -> {
-            database.deleteInvoiceHeader();
-            database.deleteInvoiceDetail();
-            getFirstDataOffline();
-        });
     }
 
     private void setAdapter() {

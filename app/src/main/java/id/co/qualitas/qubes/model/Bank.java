@@ -8,7 +8,7 @@ public class Bank implements Serializable {
     private int id_depo;
     private String category;
     private String no_rek;
-    private int is_sync;
+    private int isSync;
 
     public Bank() {
     }
@@ -53,11 +53,11 @@ public class Bank implements Serializable {
         this.no_rek = no_rek;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 }

@@ -13,7 +13,7 @@ public class Promotion {
     private String valid_from;
     private String valid_to;
     private String segmen;
-    private int is_sync;
+    private int isSync;
 
     public Promotion() {
     }
@@ -123,11 +123,11 @@ public class Promotion {
         this.segmen = segmen;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 }

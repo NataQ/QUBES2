@@ -34,7 +34,6 @@ import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Material;
@@ -119,7 +118,7 @@ public class StockRequestAddActivity extends BaseActivity {
         headerRequest.setId_salesman(user.getUsername());
         headerRequest.setStatus(Constants.STATUS_PENDING);
         headerRequest.setEnabled(1);
-        headerRequest.setIs_sync(0);
+        headerRequest.setIsSync(0);
         headerRequest.setMaterialList(mList);
     }
 

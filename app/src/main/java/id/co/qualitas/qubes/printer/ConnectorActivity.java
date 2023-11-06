@@ -651,7 +651,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     private List<Material> initDataMaterial() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", 1000000, 1000, initDataMaterialExtra()));
+//        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", 1000000, 1000, initDataMaterialExtra()));
 //        mList.add(new Material("11030", "Redbull", 10, "CAN", "1.000.000", 5000, initDataMaterialExtra()));
 //        mList.add(new Material("31020", "You C1000 Vitamin Orange", 24, "BTL", "1.000.000", 2000, initDataMaterialExtra()));
         return mList;
@@ -659,7 +659,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     private List<Material> initDataMaterialExtra() {
         List<Material> mList = new ArrayList<>();
-        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", 0, 0));
+//        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", 0, 0));
         return mList;
     }
 

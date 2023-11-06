@@ -28,7 +28,9 @@ import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -134,6 +136,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Map currentLocation;
+
     public static Chronometer getTimerValue() {
         return timerValue;
     }
@@ -159,7 +162,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
-        
+
         initialize();
 
         btnCheckOut.setOnClickListener(v -> {
@@ -175,7 +178,6 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llStoreCheck.setOnClickListener(v -> {
-            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 Intent intent = new Intent(this, StoreCheckActivity.class);
                 startActivity(intent);
@@ -186,21 +188,30 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
-            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
-            SessionManagerQubes.clearCollectionHeaderSession();
-            Intent intent = new Intent(this, OrderActivity.class);
-            startActivity(intent);
+            if (!Helper.isEmpty(user.getType_sales())) {
+                if (user.getType_sales().equals("CO")) {
+                    if (Helper.isEmptyOrNull(fakturList)) {
+                        moveOrder();
+                    } else {
+                        dialogConfirm();
+                    }
+                } else {
+                    moveOrder();
+                }
+            } else {
+                moveOrder();
+            }
+
+
         });
 
         llCollection.setOnClickListener(v -> {
-            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             SessionManagerQubes.clearCollectionHeaderSession();
             Intent intent = new Intent(this, CollectionVisitActivity.class);
             startActivity(intent);
         });
 
         llReturn.setOnClickListener(v -> {
-            visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
             if (checkPermission()) {
                 moveReturn();
             } else {
@@ -295,6 +306,46 @@ public class DailySalesmanActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(DailySalesmanActivity.this);
         });
+    }
+
+    private void moveOrder() {
+        SessionManagerQubes.clearCollectionHeaderSession();
+        Intent intent = new Intent(this, OrderActivity.class);
+        startActivity(intent);
+    }
+
+    public void dialogConfirm() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+
+        txtTitle.setText("Order");
+        txtDialog.setText("Customer ini memiliki invoice yang belum di bayar. Anda yakin ingin melakukan order?");
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                moveOrder();
+            }
+        });
+
+        dialog.show();
     }
 
     private void openDialogNotOrder() {
@@ -600,15 +651,8 @@ public class DailySalesmanActivity extends BaseActivity {
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
-
+                    dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));
                     fakturList.addAll(database.getOutstandingFaktur(outletHeader.getId()));
-
-                    dctOutletList.add(new Material("Kratingdaeng", 1));
-                    dctOutletList.add(new Material("Redbull", 0));
-                    dctOutletList.add(new Material("Vitamin", 2));
-                    dctOutletList.add(new Material("Water", 0));
-                    dctOutletList.add(new Material("Bat CZ", 1));
-                    dctOutletList.add(new Material("Bat ALK", 0));
                 }
 
                 switch (outletHeader.getStatus()) {

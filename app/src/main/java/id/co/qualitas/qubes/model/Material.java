@@ -3,7 +3,8 @@ package id.co.qualitas.qubes.model;
 import androidx.annotation.NonNull;
 
 import java.util.List;
-public class Material implements Cloneable{
+
+public class Material implements Cloneable {
     private String idHeader;//aspp
     private String idItem;//aspp
     private String id;//aspp
@@ -13,6 +14,7 @@ public class Material implements Cloneable{
     private String materialQty;
     //aspp
     private double qty;
+    private double target;
     private double qtySisa;
     private double amount;
     private double amountPaid;
@@ -27,11 +29,13 @@ public class Material implements Cloneable{
     private String uomSisa;
     private double totalDiscount;
     private double total;
-    private Discount discount;
+    private Discount discount;//from api aspp
+    private Discount extraDiscount;//from api aspp
+
     private List<Discount> extra;
     private List<Material> extraItem;
     private boolean isChecked;
-    private int is_sync;
+    private int isSync;
     private String material_sales;
     private String load_number;
     private String no_invoice;
@@ -49,70 +53,36 @@ public class Material implements Cloneable{
     private String descReason;
     private String photoReason;
     private String expiredDate;
+    private List<Discount> diskonList;//object
     private double sisa;
 
     public Material() {
     }
 
-    public Material(String id, String nama, double qty, String uom) {
+    public Material(String idHeader, String id, String nama, double nett, double price, int id_material_group, String material_group_name, int id_product_group, String name_product_group, double sisa) {
+        this.idHeader = idHeader;
         this.id = id;
         this.nama = nama;
-        this.qty = qty;
-        this.uom = uom;
-    }
-
-    public Material(String id, String nama, double qty, String uom, double price, double totalDiscount) {
-        this.id = id;
-        this.nama = nama;
-        this.qty = qty;
+        this.nett = nett;
         this.price = price;
-        this.uom = uom;
-        this.totalDiscount = totalDiscount;
+        this.id_material_group = id_material_group;
+        this.material_group_name = material_group_name;
+        this.id_product_group = id_product_group;
+        this.name_product_group = name_product_group;
+        this.sisa = sisa;
     }
 
-    public Material(String id, String nama, double qty, String uom, double price, double totalDiscount, List<Material> extraItem) {
-        this.id =id;
-        this.nama = nama;
-        this.qty = qty;
-        this.price = price;
-        this.uom = uom;
-        this.totalDiscount = totalDiscount;
-        this.extraItem = extraItem;
-    }
-
-    public Material(String id, String nama, double price, double amount) {
-        this.id = id;
-        this.nama = nama;
-        this.amount = amount;
-        this.price = price;
-    }
-
-    public Material(String klasifikasi, String nama, double qty, double price, String uom) {
-        this.nama = nama;
-        this.qty = qty;
-        this.klasifikasi = klasifikasi;
-        this.price = price;
-        this.uom = uom;
-    }
-
-    public Material(String klasifikasi, String nama, double qty, double price, String uom, List<Material> extraItem) {
-        this.nama = nama;
-        this.qty = qty;
-        this.klasifikasi = klasifikasi;
-        this.price = price;
-        this.uom = uom;
-        this.extraItem = extraItem;
-    }
-
-    public Material(String nama, double qty) {
-        this.nama = nama;
-        this.qty = qty;
-    }
-
-    public Material(String id, String nama, double price) {
-        this.id = id;
-        this.nama = nama;
-        this.price = price;
+    public Material(Material material) {
+        this.idHeader = material.getIdHeader();
+        this.id = material.getId();
+        this.nama = material.getNama();
+        this.nett = material.getNett();
+        this.price = material.getPrice();
+        this.id_material_group = material.getId_material_group();
+        this.material_group_name = material.getMaterial_group_name();
+        this.id_product_group = material.getId_product_group();
+        this.name_product_group = material.getName_product_group();
+        this.sisa = material.getPrice();
     }
 
     public Material(String id, String nama, String materialQty, String uom) {
@@ -120,6 +90,30 @@ public class Material implements Cloneable{
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getTarget() {
+        return target;
+    }
+
+    public void setTarget(double target) {
+        this.target = target;
+    }
+
+    public List<Discount> getDiskonList() {
+        return diskonList;
+    }
+
+    public void setDiskonList(List<Discount> diskonList) {
+        this.diskonList = diskonList;
+    }
+
+    public Discount getExtraDiscount() {
+        return extraDiscount;
+    }
+
+    public void setExtraDiscount(Discount extraDiscount) {
+        this.extraDiscount = extraDiscount;
     }
 
     public String getTop() {
@@ -434,12 +428,12 @@ public class Material implements Cloneable{
         isChecked = checked;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     public String getMaterial_sales() {
@@ -474,10 +468,14 @@ public class Material implements Cloneable{
         this.id_material_group = id_material_group;
     }
 
-    @NonNull
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+//    @NonNull
+//    @Override
+//    public Object clone() throws CloneNotSupportedException {
+//        return super.clone();
+//    }
 
+    public Material clone() {
+        Material newObj = new Material(this.getIdHeader(), this.getId(), this.getNama(), this.getNett(), this.getPrice(), this.getId_material_group(), this.getMaterial_group_name(), this.getId_product_group(), this.getName_product_group(), this.getSisa());
+        return newObj;
     }
 }

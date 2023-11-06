@@ -98,6 +98,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.StartVisit;
@@ -842,8 +843,15 @@ public class VisitActivity extends BaseActivity {
             for (Promotion promo : promoList) {
                 database.addCustomerPromotion(promo, String.valueOf(idHeader), user.getUsername());
             }
+
+            List<Material> dctList = database.getDctNonRouteByIdCustomer(header.getId());
+            for (Material mat : dctList) {
+                database.addCustomerDct(mat, String.valueOf(idHeader), user.getUsername());
+            }
+
             database.deleteMasterNonRouteCustomerById(header.getIdHeader());
             database.deleteMasterNonRouteCustomerPromotionById(header.getIdHeader());
+            database.deleteMasterNonRouteCustomerDctById(header.getIdHeader());
             getData();
             setAdapterVisit();
             alertDialog.dismiss();
@@ -1103,6 +1111,7 @@ public class VisitActivity extends BaseActivity {
                     Collections.addAll(mListNonRoute, param1Array);
                     database.deleteMasterNonRouteCustomer();
                     database.deleteMasterNonRouteCustomerPromotion();
+                    database.deleteMasterNonRouteCustomerDct();
 
                     for (Customer param : mListNonRoute) {
                         List<Promotion> arrayList = new ArrayList<>();
@@ -1114,12 +1123,22 @@ public class VisitActivity extends BaseActivity {
                         for (Promotion mat : arrayList) {
                             database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
+
+                        List<Material> arrayDctList = new ArrayList<>();
+                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+                        Collections.addAll(arrayDctList, dctArray);
+                        param.setDctList(arrayDctList);
+
+                        for (Material mat : arrayDctList) {
+                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
+                        }
                     }
 
                     Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
                     Collections.addAll(mList, paramArray);
                     database.deleteCustomer();
                     database.deleteCustomerPromotion();
+                    database.deleteCustomerDct();
                     database.deleteVisitSalesman();
                     database.deleteNoo();
 
@@ -1129,9 +1148,18 @@ public class VisitActivity extends BaseActivity {
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
+                        List<Material> arrayDctList = new ArrayList<>();
+                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+                        Collections.addAll(arrayDctList, dctArray);
+                        param.setDctList(arrayDctList);
+
                         int idHeader = database.addCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
                             database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+                        }
+
+                        for (Material mat : arrayDctList) {
+                            database.addCustomerDct(mat, param.getId(), user.getUsername());
                         }
                     }
                     getData();

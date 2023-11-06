@@ -20,7 +20,7 @@ public class CollectionGiro implements Serializable, Cloneable {
     public double left;
     public List<Material> materialList;
     public List<Material> checkedMaterialList;
-    private boolean isSync;
+    private int isSync;
 
     public CollectionGiro() {
     }
@@ -73,12 +73,12 @@ public class CollectionGiro implements Serializable, Cloneable {
         this.omzet = omzet;
     }
 
-    public boolean isSync() {
+    public int getIsSync() {
         return isSync;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     public String getNoGiro() {

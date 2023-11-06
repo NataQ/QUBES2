@@ -39,13 +39,16 @@ import id.co.qualitas.qubes.adapter.aspp.CollectionLainAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CollectionTransferAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.printer.AbstractConnector;
 import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.printer.ConnectorAdapter;
@@ -95,6 +98,8 @@ public class CollectionFormActivity extends BaseActivity {
 
     boolean kredit = false;
     double totalAmountPaid = 0;
+    private boolean saveCollection = false, saveOrder = false;
+    private Order orderHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,22 +109,14 @@ public class CollectionFormActivity extends BaseActivity {
         initialize();
 
         btnSubmit.setOnClickListener(v -> {
-            if (colLFrom == 3) {
-                if (kredit) {
-                    onBackPressed();
-//                    database.updateOrderPayment("KREDIT");
+            if (validate()) {
+                if (colLFrom == 1) {
+                    PARAM = 1;
                 } else {
-                    if (validate()) {
-                        progress.show();
-                        new RequestUrl().execute();
-                    }
+                    PARAM = 2;
                 }
-            } else {
-                if (validate()) {
-//                    setToast("success");
-                    progress.show();
-                    new RequestUrl().execute();
-                }
+                progress.show();
+                new RequestUrl().execute();//1
             }
         });
 
@@ -155,35 +152,51 @@ public class CollectionFormActivity extends BaseActivity {
 //        }
 //    }
 
-    private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected WSMessage doInBackground(Void... voids) {
             try {
-                Map request = new HashMap();
-                request.put("user", user);
-                request.put("header", header);
-                request.put("totalAmountPaid", totalAmountPaid);
-                request.put("totalPaymentCash", totalPaymentCash);
-                request.put("leftCash", leftCash);
-                request.put("cashList", cashList);
-                request.put("totalPaymentLain", totalPaymentLain);
-                request.put("leftLain", leftLain);
-                request.put("lainList", lainList);
-                request.put("tfList", tfList);
-                request.put("mListTransfer", mListTransfer);
-                request.put("giroList", giroList);
-                request.put("mListGiro", mListGiro);
-                request.put("chequeList", chequeList);
-                request.put("mListCheque", mListCheque);
-                request.put("mListCash", mListCash);
-                database.addCollection(request);
-
-                return true;
+                if (PARAM == 1) {
+//                    prepareData();
+                    String URL_ = Constants.API_SAVE_COLLECTION;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    Map request = new HashMap();
+//                    request.put("header", headerRequest);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                } else if (PARAM == 2) {
+                    Map request = new HashMap();
+                    request.put("user", user);
+                    request.put("header", header);
+                    request.put("totalAmountPaid", totalAmountPaid);
+                    request.put("totalPaymentCash", totalPaymentCash);
+                    request.put("leftCash", leftCash);
+                    request.put("cashList", cashList);
+                    request.put("totalPaymentLain", totalPaymentLain);
+                    request.put("leftLain", leftLain);
+                    request.put("lainList", lainList);
+                    request.put("tfList", tfList);
+                    request.put("mListTransfer", mListTransfer);
+                    request.put("giroList", giroList);
+                    request.put("mListGiro", mListGiro);
+                    request.put("chequeList", chequeList);
+                    request.put("mListCheque", mListCheque);
+                    request.put("mListCash", mListCash);
+                    database.addCollection(request);
+                    saveCollection = true;
+                    return null;
+                } else {
+                    database.addOrder(orderHeader, user);
+                    saveOrder = true;
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("Collection", ex.getMessage());
                 }
-                return false;
+                if (PARAM == 2) {
+                    saveCollection = false;
+                }
+                return null;
             }
         }
 
@@ -193,34 +206,57 @@ public class CollectionFormActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(WSMessage messageResponse) {
             progress.dismiss();
-            if (result) {
-                setToast("Save Success");
-                if (colLFrom == 3) {
-                    if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
-                        }
-                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                        }
-                    } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            if (PARAM == 1) {
+                if (messageResponse != null) {
+                    if (messageResponse.getIdMessage() == 1) {
+                        progress.show();
+                        PARAM = 2;
+                        new RequestUrl().execute();//2
                     } else {
-                        intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
-                        startActivity(intent);
+                        setToast(getString(R.string.failedSaveData));
                     }
                 } else {
-                    onBackPressed();
+                    setToast(getString(R.string.failedSaveData));
                 }
             } else {
-                setToast("Save Failed");
+                if (saveCollection) {
+                    setToast("Save Success");
+                    switch (colLFrom) {
+                        case 2:
+                            intent = new Intent(CollectionFormActivity.this, CollectionVisitActivity.class);
+                            startActivity(intent);
+                            break;
+                        case 3:
+                            if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                                }
+                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                                }
+                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                            } else {
+                                intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
+                                startActivity(intent);
+                            }
+                            break;
+                        case 1:
+                        default:
+                            intent = new Intent(CollectionFormActivity.this, CollectionActivity.class);
+                            startActivity(intent);
+                            break;
+                    }
+                } else {
+                    setToast("Save Failed");
+                }
             }
         }
     }
@@ -473,13 +509,13 @@ public class CollectionFormActivity extends BaseActivity {
                         List<Material> newList = new ArrayList<>();
                         for (Material p : mListMaster) {
                             Material cloneMat = null;
-                            try {
-                                cloneMat = (Material) p.clone();
-                                cloneMat.setAmountPaid(0);
+//                            try {
+                            cloneMat = (Material) p.clone();
+                            cloneMat.setAmountPaid(0);
 //                                cloneMat.setChecked(false);
-                            } catch (CloneNotSupportedException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (CloneNotSupportedException e) {
+//                                e.printStackTrace();
+//                            }
                             newList.add(cloneMat);
                         }
 
@@ -521,13 +557,13 @@ public class CollectionFormActivity extends BaseActivity {
                         List<Material> newList = new ArrayList<>();
                         for (Material p : mListMaster) {
                             Material cloneMat = null;
-                            try {
+//                            try {
                                 cloneMat = (Material) p.clone();
                                 cloneMat.setAmountPaid(0);
 //                                cloneMat.setChecked(false);
-                            } catch (CloneNotSupportedException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (CloneNotSupportedException e) {
+//                                e.printStackTrace();
+//                            }
                             newList.add(cloneMat);
                         }
 
@@ -574,13 +610,13 @@ public class CollectionFormActivity extends BaseActivity {
                         List<Material> newList = new ArrayList<>();
                         for (Material p : mListMaster) {
                             Material cloneMat = null;
-                            try {
+//                            try {
                                 cloneMat = (Material) p.clone();
                                 cloneMat.setAmountPaid(0);
 //                                cloneMat.setChecked(false);
-                            } catch (CloneNotSupportedException e) {
-                                e.printStackTrace();
-                            }
+//                            } catch (CloneNotSupportedException e) {
+//                                e.printStackTrace();
+//                            }
                             newList.add(cloneMat);
                         }
 
@@ -652,35 +688,56 @@ public class CollectionFormActivity extends BaseActivity {
             onBackPressed();
             setToast("Gagal ambil data. Silahkan coba lagi");
         } else {
-            header = SessionManagerQubes.getCollectionHeader();
             colLFrom = SessionManagerQubes.getCollectionSource();
 
             mListTransfer = new ArrayList<>();
             mListGiro = new ArrayList<>();
             mListCheque = new ArrayList<>();
+            mListCash = new ArrayList<>();
+            mListLain = new ArrayList<>();
+            mListKredit = new ArrayList<>();
 
             if (colLFrom == 3) {
                 llOrder.setVisibility(View.VISIBLE);
                 llInvoice.setVisibility(View.GONE);
                 buttonKredit.setVisibility(View.VISIBLE);
+                orderHeader = SessionManagerQubes.getOrder();
+
+                mListMaster = orderHeader.getMaterialList();
+
+                for (Material obj : mListMaster) {
+                    mListCash.add(obj.clone());
+                    mListLain.add(obj.clone());
+                    mListKredit.add(obj.clone());
+                }
+
+                txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
+                txtAmount.setText("Rp." + format.format(orderHeader.getOmzet()));
+                if (!Helper.isNullOrEmpty(orderHeader.getDate())) {
+                    String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getDate());
+                    txtDate.setText(requestDate);
+                } else {
+                    txtDate.setText("-");
+                }
             } else {
                 llOrder.setVisibility(View.GONE);
                 llInvoice.setVisibility(View.VISIBLE);
                 buttonKredit.setVisibility(View.GONE);
-            }
 
-            mListMaster = database.getAllInvoiceDetail(header.getIdHeader());
-            mListCash = database.getAllInvoiceDetail(header.getIdHeader());
-            mListLain = database.getAllInvoiceDetail(header.getIdHeader());
-            mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
+                header = SessionManagerQubes.getCollectionHeader();
+                mListMaster = database.getAllInvoiceDetail(header.getIdHeader());
+                mListCash = database.getAllInvoiceDetail(header.getIdHeader());
+                mListLain = database.getAllInvoiceDetail(header.getIdHeader());
+                mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
 
-            txtInvNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
-            txtAmount.setText("Rp." + format.format(header.getAmount()));
-            if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
-                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
-                txtDate.setText(requestDate);
-            } else {
-                txtDate.setText("-");
+                txtInvNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
+                txtAmount.setText("Rp." + format.format(header.getAmount()));
+                if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
+                    String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
+                    txtDate.setText(requestDate);
+                } else {
+                    txtDate.setText("-");
+                }
             }
 
             setCashView();
@@ -1149,7 +1206,21 @@ public class CollectionFormActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        Intent intent = new Intent(this, CollectionVisitActivity.class);
-//        startActivity(intent);
+        switch (colLFrom) {
+            case 2:
+                intent = new Intent(this, CollectionVisitActivity.class);
+                startActivity(intent);
+                break;
+            case 3:
+                intent = new Intent(this, OrderAddActivity.class);
+                startActivity(intent);
+                break;
+            case 1:
+            default:
+                intent = new Intent(this, CollectionActivity.class);
+                startActivity(intent);
+                break;
+        }
+
     }
 }

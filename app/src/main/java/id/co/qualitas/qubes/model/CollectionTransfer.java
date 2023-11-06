@@ -16,7 +16,7 @@ public class CollectionTransfer implements Serializable, Cloneable  {
     public double left;
     public List<Material> materialList;
     public List<Material> checkedMaterialList;
-    private boolean isSync;
+    private int isSync;
 
     public CollectionTransfer() {
     }
@@ -90,12 +90,12 @@ public class CollectionTransfer implements Serializable, Cloneable  {
         this.materialList = materialList;
     }
 
-    public boolean isSync() {
+    public int getIsSync() {
         return isSync;
     }
 
-    public void setSync(boolean sync) {
-        isSync = sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     @NonNull

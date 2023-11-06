@@ -44,6 +44,7 @@ public class OrderActivity extends BaseActivity {
         initialize();
 
         btnAdd.setOnClickListener(y -> {
+            SessionManagerQubes.clearOrderSession();
             Intent intent = new Intent(this, OrderAddActivity.class);
             startActivity(intent);
         });

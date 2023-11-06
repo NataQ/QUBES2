@@ -3,7 +3,6 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,14 +11,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -51,8 +47,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
-import org.osmdroid.config.Configuration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +66,6 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.ImageType;
-import id.co.qualitas.qubes.model.LiveTracking;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
@@ -270,7 +263,7 @@ public class CreateNooActivity extends BaseActivity {
         }
         customerNoo.setSisaCreditLimit(0);
         customerNoo.setTotalTagihan(0);
-        customerNoo.setIs_sync(0);
+        customerNoo.setIsSync(0);
         customerNoo.setStatus(0);
 
         SessionManagerQubes.setCustomerNoo(customerNoo);

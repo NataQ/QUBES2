@@ -341,6 +341,14 @@ public class LoginActivity extends AppCompatActivity {
                 database.addMasterCustomerType(param, userId);
             }
 
+            List<Material> minOrderList = new ArrayList<>();
+            Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
+            Collections.addAll(minOrderList, paramArray11);
+            database.deleteMasterMinimalOrder();
+            for (Material param : minOrderList) {
+                database.addMinimalOrder(param, userId);
+            }
+
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

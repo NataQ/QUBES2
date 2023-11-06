@@ -1,5 +1,7 @@
 package id.co.qualitas.qubes.model;
 
+import java.util.List;
+
 /**
  * Created by Foo on 4/22/2016.
  */
@@ -15,8 +17,9 @@ public class Order {
     private String idOrderBE;
     private String customerId;
     private String idHeader;
+    private List<Material> materialList;
     private double omzet;
-    private boolean isSync;
+    private int isSync;
 
     public Order() {
     }
@@ -30,20 +33,28 @@ public class Order {
         this.outlet = outlet;
     }
 
+    public List<Material> getMaterialList() {
+        return materialList;
+    }
+
+    public void setMaterialList(List<Material> materialList) {
+        this.materialList = materialList;
+    }
+
+    public int getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
+    }
+
     public String getIdHeader() {
         return idHeader;
     }
 
     public void setIdHeader(String idHeader) {
         this.idHeader = idHeader;
-    }
-
-    public boolean isSync() {
-        return isSync;
-    }
-
-    public void setSync(boolean sync) {
-        isSync = sync;
     }
 
     public String getIdOrderBE() {

@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:gravity="center"
-    android:orientation="horizontal"
-    android:padding="5dp">
+    android:orientation="horizontal">
 
     <TextView
+        style="@style/TextView_Small"
         android:id="@+id/txtLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -16,6 +16,7 @@
         android:textColor="@color/gray8_aspp" />
 
     <TextView
+        style="@style/TextView_Small"
         android:id="@+id/txtAmount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

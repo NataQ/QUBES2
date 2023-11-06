@@ -23,7 +23,7 @@ public class CollectionDetail implements Serializable, Cloneable {
     public double left;
     public List<Material> materialList;
     public List<Material> checkedMaterialList;
-    private int is_sync;
+    private int isSync;
 
     public CollectionDetail() {
     }
@@ -179,12 +179,12 @@ public class CollectionDetail implements Serializable, Cloneable {
         this.checkedMaterialList = checkedMaterialList;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     @NonNull

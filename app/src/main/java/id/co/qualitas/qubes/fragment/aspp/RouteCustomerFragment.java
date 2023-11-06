@@ -45,6 +45,7 @@ import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -59,7 +60,6 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     private Spinner spinnerRouteCustomer;
     private WSMessage resultWsMessage;
     private boolean saveDataSuccess = false;
-
     private boolean isLocationPermissionGranted = false;
     private LocationManager lm;
     private Location currentLocation = null;
@@ -177,7 +177,6 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     }
 
     private void initialize() {
-        db = new DatabaseHelper(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         spinnerRouteCustomer = rootView.findViewById(R.id.spinnerRouteCustomer);
@@ -223,62 +222,6 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         new RequestUrl().execute();
     }
 
-    private void setDataDummyCustomer() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(getActivity(), "todayCustomer.json");
-        Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
-
-        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
-        mList = new ArrayList<>();
-        List<Customer> mListNonRoute = new ArrayList<>();
-        Map result = (Map) resultWsMessage.getResult();
-        if (result.get("visit") != null) {
-            LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
-            double id = (double) startDay.get("id");
-            SessionManagerQubes.setStartDay((int) id);
-        } else {
-            SessionManagerQubes.setStartDay(0);
-        }
-        Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
-        Collections.addAll(mListNonRoute, param1Array);
-        database.deleteMasterNonRouteCustomer();
-        database.deleteMasterNonRouteCustomerPromotion();
-
-        for (Customer param : mListNonRoute) {
-            List<Promotion> arrayList = new ArrayList<>();
-            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-            Collections.addAll(arrayList, matArray);
-            param.setPromoList(arrayList);
-
-            int idHeader = database.addNonRouteCustomer(param, user.getUsername());
-            for (Promotion mat : arrayList) {
-                database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-
-        Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
-        Collections.addAll(mList, paramArray);
-        database.deleteCustomer();
-        database.deleteCustomerPromotion();
-
-        for (Customer param : mList) {
-            List<Promotion> arrayList = new ArrayList<>();
-            Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-            Collections.addAll(arrayList, matArray);
-            param.setPromoList(arrayList);
-
-            int idHeader = database.addCustomer(param, user.getUsername());
-            for (Promotion mat : arrayList) {
-                database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-
-        getData();
-        progressCircle.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        filterData(false);//request url
-    }
-
     private void setAdapter() {
         mAdapter = new RouteCustomerAdapter(this, mListFiltered);
         recyclerView.setAdapter(mAdapter);
@@ -315,6 +258,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                     Collections.addAll(mListNonRoute, param1Array);
                     database.deleteMasterNonRouteCustomer();
                     database.deleteMasterNonRouteCustomerPromotion();
+                    database.deleteMasterNonRouteCustomerDct();
 
                     for (Customer param : mListNonRoute) {
                         List<Promotion> arrayList = new ArrayList<>();
@@ -326,12 +270,22 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                         for (Promotion mat : arrayList) {
                             database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
                         }
+
+                        List<Material> arrayDctList = new ArrayList<>();
+                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+                        Collections.addAll(arrayDctList, dctArray);
+                        param.setDctList(arrayDctList);
+
+                        for (Material mat : arrayDctList) {
+                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
+                        }
                     }
 
                     Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
                     Collections.addAll(mList, paramArray);
                     database.deleteCustomer();
                     database.deleteCustomerPromotion();
+                    database.deleteCustomerDct();
                     database.deleteVisitSalesman();
                     database.deleteNoo();
 
@@ -341,9 +295,18 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                         Collections.addAll(arrayList, matArray);
                         param.setPromoList(arrayList);
 
+                        List<Material> arrayDctList = new ArrayList<>();
+                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+                        Collections.addAll(arrayDctList, dctArray);
+                        param.setDctList(arrayDctList);
+
                         int idHeader = database.addCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
                             database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+                        }
+
+                        for (Material mat : arrayDctList) {
+                            database.addCustomerDct(mat, param.getId(), user.getUsername());
                         }
                     }
 

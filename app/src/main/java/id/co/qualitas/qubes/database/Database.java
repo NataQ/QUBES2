@@ -11,7 +11,6 @@ import android.util.Log;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +21,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.CollectionDetail;
-import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionHeader;
-import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
@@ -61,6 +58,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_NOO = "NOO";
     private static final String TABLE_CUSTOMER = "Customer";
     private static final String TABLE_CUSTOMER_PROMOTION = "CustomerPromotion";
+    private static final String TABLE_CUSTOMER_DCT = "CustomerDCT";
     private static final String TABLE_VISIT_SALESMAN = "VisitSalesman";
     private static final String TABLE_VISIT_SALESMAN_NOO = "VisitSalesmanNOO";
     private static final String TABLE_STORE_CHECK = "StoreCheck";
@@ -83,13 +81,14 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_MASTER_DAERAH_TINGKAT = "MasterDaerahTingkat";
     private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER = "MasterNonRouteCustomer";
     private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "MasterNonRouteCustomerPromotion";
+    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT = "MasterNonRouteCustomerDct";
     private static final String TABLE_MASTER_PRICE_CODE = "MasterTopPriceCode";
     private static final String TABLE_MASTER_SALES_PRICE_HEADER = "MasterSalesPriceHeader";
     private static final String TABLE_MASTER_SALES_PRICE_DETAIL = "MasterSalesPriceDetail";
     private static final String TABLE_MASTER_PARAMETER = "MasterParameter";
     private static final String TABLE_MASTER_CUSTOMER_TYPE = "MasterCustomerType";
+    private static final String TABLE_MASTER_MINIMAL_ORDER = "MinimalOrder";
     private static final String TABLE_LOG = "Log";
-
     private static final String KEY_ID_CUSTOMER_TYPE = "idCustomerType";
     private static final String KEY_ID_TYPE_PRICE = "idTypePrice";
     private static final String KEY_NAME_TYPE_PRICE = "nameTypePrice";
@@ -103,27 +102,14 @@ public class Database extends SQLiteOpenHelper {
 
     // column table price code
     private static final String KEY_ID_PRICE_CODE_DB = "idPriceCodeDB";
-    //    private static final String KEY_MATERIAL_PRODUCT_ID = "materialProductId";
-//    private static final String KEY_UDF_5 = "udf5";
-//    private static final String KEY_UDF_5_DESC = "udf5Desc";
     private static final String KEY_PRICE_LIST_CODE = "priceListCode";
 
     //MasterSalesPriceHeader
     private static final String KEY_ID_SALES_PRICE_HEADER_DB = "idSalesPriceHeaderDB";
     private static final String KEY_TOP = "top";
-//    private static final String KEY_PRICE_LIST_CODE = "priceListCode";
-    //    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     //MasterSalesPriceDetail
     private static final String KEY_ID_SALES_PRICE_DETAIL_DB = "idSalesPriceDetailDB";
-    //    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_PRICE_LIST_CODE = "priceListCode";
-//    private static final String KEY_UOM = "uom";
-//    private static final String KEY_QTY = "qty";
     private static final String SELLING_PRICE = "sellingPrice";
 
     // column table StockRequestHeader
@@ -149,21 +135,18 @@ public class Database extends SQLiteOpenHelper {
 
     // column table StockRequestDetail
     private static final String KEY_ID_STOCK_REQUEST_DETAIL_DB = "idStockRequestDetailDB";
-    //    private static final String KEY_ID_STOCK_REQUEST_HEADER_DB = "idStockRequestHeaderDB";
     private static final String KEY_MATERIAL_ID = "materialId";
     private static final String KEY_MATERIAL_NAME = "materialName";
     private static final String KEY_MATERIAL_GROUP_ID = "materialGroupId";
     private static final String KEY_MATERIAL_GROUP_NAME = "materialGroupName";
     private static final String KEY_LOAD_NUMBER = "loadNumber";
     private static final String KEY_QTY = "qty";
+    private static final String KEY_TARGET = "target";
+    private static final String KEY_ID_CUSTOMER_TARGET_DB = "idCustomerTargetDB";
+    private static final String KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB = "idNonRouteCustomerTargetDB";
     private static final String KEY_UOM = "uom";
     private static final String KEY_QTY_SISA = "qtySisa";
     private static final String KEY_UOM_SISA = "uomSisa";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table InvoiceHeader
     private static final String KEY_ID_INVOICE_HEADER_DB = "idInvoiceHeaderDB";
@@ -179,26 +162,11 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_TYPE_CUSTOMER = "typeCustomer";
     private static final String KEY_TYPE_CUSTOMER_NAME = "typeCustomerName";
     private static final String KEY_TYPE_PRICE = "typePrice";
-    //    private static final String KEY_SIGN = "signature";
-//    private static final String KEY_IS_VERIF = "isVerif";
     private static final String KEY_IS_ROUTE = "isRoute";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table InvoiceDetail
     private static final String KEY_ID_INVOICE_DETAIL_DB = "idInvoiceDetailDB";
-    //    private static final String KEY_ID_INVOICE_HEADER_DB = "idInvoiceHeaderDB";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
     private static final String KEY_PRICE = "price";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table NOO
     private static final String KEY_ID_NOO_DB = "idNooDB";
@@ -228,42 +196,22 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_JENIS_USAHA = "jenisUsaha";
     private static final String KEY_LAMA_USAHA = "lamaUsaha";
     private static final String KEY_SUKU = "suku";
-    //    private static final String KEY_TYPE_CUSTOMER = "typeTokoOutlet";
-//    private static final String KEY_TYPE_PRICE = "priceListType";
     private static final String KEY_CREDIT_LIMIT = "creditLimit";
     private static final String KEY_ROUTE = "route";
     private static final String KEY_PHOTO_KTP = "photoKtp";
     private static final String KEY_PHOTO_NPWP = "photoNpwp";
     private static final String KEY_PHOTO_OUTLET = "photoOutlet";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table Customer
     private static final String KEY_ID_CUSTOMER_DB = "idCustomerDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_CUSTOMER_NAME = "customerName";
     private static final String KEY_CUSTOMER_ADDRESS = "customerAddress";
-    //    private static final String KEY_PHONE = "phone";
     private static final String KEY_SISA_KREDIT_LIMIT = "sisaKreditLimit";
-    //    private static final String KEY_CREDIT_LIMIT = "creditLimit";
     private static final String KEY_UDF_5 = "udf5";
     private static final String KEY_UDF_5_DESC = "udf5Desc";
     private static final String KEY_TOTAL_TAGIHAN = "totalTagihan";
-//    private static final String KEY_NO_KTP = "noKtp";
-//    private static final String KEY_NO_NPWP = "noNPWP";
-//    private static final String KEY_IS_ROUTE = "isRoute";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table Customer promotion
     private static final String KEY_ID_CUSTOMER_PROMOTION_DB = "idCustomerPromotionDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
     private static final String KEY_ID_PROMOTION = "idPromotion";
     private static final String KEY_NAME_PROMOTION = "namePromotion";
     private static final String KEY_NO_PROMOTION = "noPromotion";
@@ -272,16 +220,9 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_SEGMEN = "segmen";
     private static final String KEY_VALID_FROM_PROMOTION = "validFromPromotion";
     private static final String KEY_VALID_TO_PROMOTION = "validToPromotion";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table VisitSalesman
     private static final String KEY_ID_VISIT_SALESMAN_DB = "idVisitSalesmanDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_ID_SALESMAN = "idSalesman";
     private static final String KEY_DATE = "date";
     private static final String KEY_CHECK_IN_TIME = "CheckInTime";
     private static final String KEY_CHECK_OUT_TIME = "CheckOutTime";
@@ -303,224 +244,65 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_NAME_CHECK_OUT_REASON = "nameCheckOutReason";
     private static final String KEY_DESC_CHECK_OUT_REASON = "descCheckOutReason";
     private static final String KEY_PHOTO_CHECK_OUT_REASON = "photoCheckOutReason";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
-
     // column table VisitSalesmanNOO
     private static final String KEY_ID_VISIT_SALESMAN_NOO_DB = "idVisitSalesmanNooDB";
-    //    private static final String KEY_ID_NOO_DB = "idNooDB";
-//    private static final String KEY_ID_SALESMAN = "idSalesman";
-//    private static final String KEY_DATE = "date";
-//    private static final String KEY_CHECK_IN_TIME = "CheckInTime";
-//    private static final String KEY_CHECK_OUT_TIME = "CheckOutTime";
-//    private static final String KEY_RESUME_TIME = "resumeTime";
-//    private static final String KEY_PAUSE_TIME = "pauseTime";
-//    private static final String KEY_LAT_CHECK_IN = "latCheckIn";
-//    private static final String KEY_LONG_CHECK_IN = "longCheckIn";
-//    private static final String KEY_LAT_CHECK_OUT = "latCheckOut";
-//    private static final String KEY_LONG_CHECK_OUT = "longCheckOut";
-//    private static final String KEY_INSIDE = "inside";
-//    private static final String KEY_INSIDE_CHECK_OUT = "insideCheckOut";
-//    private static final String KEY_ID_PAUSE_REASON = "pauseReason";
-//    private static final String KEY_NAME_PAUSE_REASON = "pauseReason";
-//    private static final String KEY_DESC_PAUSE_REASON = "descPauseReason";
-//    private static final String KEY_PHOTO_PAUSE_REASON = "photoPauseReason";
-//    private static final String KEY_ID_CHECK_OUT_REASON = "checkOutReason";
-//    private static final String KEY_NAME_CHECK_OUT_REASON = "checkOutReason";
-//    private static final String KEY_DESC_CHECK_OUT_REASON = "descCheckOutReason";
-//    private static final String KEY_PHOTO_CHECK_OUT_REASON = "photoCheckOutReason";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table StoreCheck
     private static final String KEY_ID_STORE_CHECK_DB = "idStoreCheckDB";
-//    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_DATE = "date";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
-//    private static final String KEY_QTY = "qty";
-//    private static final String KEY_UOM = "uom";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderHeader
     private static final String KEY_ID_ORDER_HEADER_DB = "idOrderHeaderDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_DATE = "date";
     private static final String KEY_ID_ORDER_BACK_END = "idOrderBackEnd";
     private static final String KEY_OMZET = "omzet";
-//    private static final String KEY_STATUS = "status";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderDetail
     private static final String KEY_ID_ORDER_DETAIL_DB = "idOrderDetailDB";
-    //    private static final String KEY_ID_ORDER_HEADER_DB = "idOrderHeaderDB";
-//    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
-//    private static final String KEY_QTY = "qty";
-//    private static final String KEY_UOM = "uom";
-//    private static final String KEY_PRICE = "price";
     private static final String KEY_TOTAL_DISCOUNT = "totalDiscount";
     private static final String KEY_TOTAL = "total";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderDetailExtra
     private static final String KEY_ID_ORDER_DETAIL_EXTRA_DB = "idOrderDetailExtraDB";
-    //    private static final String KEY_ID_ORDER_DETAIL_DB = "idOrderDetailDB";
-//    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
-//    private static final String KEY_QTY = "qty";
-//    private static final String KEY_UOM = "uom";
-//    private static final String KEY_PRICE = "price";
-//    private static final String KEY_TOTAL_DISCOUNT = "totalDiscount";
-//    private static final String KEY_TOTAL = "total";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderDetailDiscount
     private static final String KEY_ID_ORDER_DETAIL_DISCOUNT_DB = "idOrderDetailDiscountDB";
-    //    private static final String KEY_ID_ORDER_DETAIL_DB = "idOrderDetailDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
-    //    private static final String KEY_MATERIAL_ID = "materialId";
     private static final String KEY_DISCOUNT_ID = "discountID";
     private static final String KEY_DISCOUNT_NAME = "discountName";
     private static final String KEY_DISCOUNT_PRICE = "discountPrice";
-//    private static final String KEY_TOTAL = "total";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderPaymentHeader
     private static final String KEY_ID_ORDER_PAYMENT_HEADER_DB = "idOrderPaymentHeaderDB";
-    //    private static final String KEY_ID_ORDER_HEADER_DB = "idOrderHeaderDB";
-    //    private static final String KEY_DATE = "date";
-    //    private static final String KEY_OMZET = "omzet";
-    //    private static final String KEY_STATUS = "status";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderPaymentDetail
     private static final String KEY_ID_ORDER_PAYMENT_DETAIL_DB = "idOrderPaymentDetailDB";
-    //    private static final String KEY_ID_ORDER_PAYMENT_HEADER_DB = "idOrderPaymentHeaderDB";`
-    //    private static final String KEY_STATUS = "status";
     private static final String KEY_TYPE_PAYMENT = "typePayment";
     private static final String KEY_TOTAL_PAYMENT = "totalPayment";
     private static final String KEY_LEFT = "leftPayment";
     private static final String KEY_NO = "nomor";
-    //    private static final String KEY_DUE_DATE = "dueDate";
     private static final String KEY_ID_BANK = "idBank";
     private static final String KEY_NAME_BANK = "nameBank";
     private static final String KEY_ID_CUST_BANK = "idCustBank";
     private static final String KEY_NAME_CUST_BANK = "nameCustBank";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table OrderPaymentItem
     private static final String KEY_ID_ORDER_PAYMENT_ITEM_DB = "idOrderPaymentItemDB";
-    //    private static final String KEY_ID_ORDER_PAYMENT_DETAIL_DB = "idOrderPaymentDetailDB";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
-//    private static final String KEY_PRICE = "price";
     private static final String KEY_AMOUNT_PAID = "amountPaid";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";;
 
     // column table Return
     private static final String KEY_ID_RETURN_DB = "idReturnDB";
-    //    private static final String KEY_CUSTOMER_ID = "customerId";
-//    private static final String KEY_DATE = "date";
-//    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
-//    private static final String KEY_QTY = "qty";
-//    private static final String KEY_UOM = "uom";
     private static final String KEY_EXPIRED_DATE = "expiredDate";
     private static final String KEY_CONDITION = "condition";
     private static final String KEY_ID_REASON_RETURN = "idReasonReturn";
     private static final String KEY_NAME_REASON_RETURN = "nameReasonReturn";
     private static final String KEY_DESC_REASON_RETURN = "descReasonReturn";
     private static final String KEY_PHOTO_REASON_RETURN = "photoReasonReturn";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table CollectionHeader
     private static final String KEY_ID_COLLECTION_HEADER_DB = "idCollectionHeaderDB";
-    //    private static final String KEY_INVOICE_NO = "invoiceNo";
-    //    private static final String KEY_INVOICE_DATE = "invoiceDate";
-    //    private static final String KEY_INVOICE_TOTAL = "invoiceTotal";
-    //    private static final String KEY_STATUS = "status";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
-
     // column table CollectionDetail
     private static final String KEY_ID_COLLECTION_DETAIL_DB = "idCollectionDetailDB";
-    //    private static final String KEY_ID_COLLECTION_HEADER_DB = "idCollectionHeaderDB";
-    //    private static final String KEY_STATUS = "status";
-    //    private static final String KEY_TYPE_PAYMENT = "typePayment";
-    //    private static final String KEY_TOTAL_PAYMENT = "totalPayment";
-    //    private static final String KEY_LEFT = "left";
-    //    private static final String KEY_NO = "giroNo";
-    //    private static final String KEY_DUE_DATE = "dueDate";
-    //    private static final String KEY_ID_BANK = "idBank";
-    //    private static final String KEY_NAME_BANK = "nameBank";
-    //    private static final String KEY_ID_CUST_BANK = "idCustBank";
-    //    private static final String KEY_NAME_CUST_BANK = "nameCustBank";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table CollectionItem
     private static final String KEY_ID_COLLECTION_ITEM_DB = "idCollectionItemDB";
-    //    private static final String KEY_ID_COLLECTION_DETAIL_DB = "idCollectionDetailDB";
-    //    private static final String KEY_MATERIAL_ID = "materialId";
-    //    private static final String KEY_MATERIAL_NAME = "materialName";
-    //    private static final String KEY_PRICE = "price";
-    //    private static final String KEY_AMOUNT_PAID = "amountPaid";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table MasterReason
     private static final String KEY_ID_REASON_DB = "idReasonDB";
@@ -531,79 +313,34 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_IS_FREE_TEXT = "isFreeText";
     private static final String KEY_IS_BARCODE = "isBarcode";
     private static final String KEY_IS_SIGNATURE = "isSignature";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     // column table MasterPromotion
     private static final String KEY_ID_PROMOTION_DB = "idPromotionDB";
-//    private static final String KEY_ID_PROMOTION = "idPromotion";
-//    private static final String KEY_NAME_PROMOTION = "namePromotion";
-//    private static final String KEY_VALID_FROM_PROMOTION = "validFromPromotion";
-//    private static final String KEY_VALID_TO_PROMOTION = "validToPromotion";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
-
     // column table LogModel
     private static final String KEY_ID_LOG_DB = "idLogDB";
     private static final String KEY_DESC_LOG = "descLog";
     private static final String KEY_DATE_LOG = "dateLog";
     private static final String KEY_TIME_LOG = "timeLog";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     //column table MasterBank
     private static final String KEY_ID_BANK_DB = "idBankDB";
     private static final String KEY_ID_BANK_BE = "idBankBE";
-    //    private static final String KEY_NAME_BANK = "nameBank";
     private static final String KEY_CATEGORY = "category";
     private static final String KEY_NO_REK = "noRekening";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     //column table MasterMaterial
     private static final String KEY_MATERIAL_ID_DB = "idMaterialDB";
-    //    private static final String KEY_MATERIAL_ID = "materialId";
-//    private static final String KEY_MATERIAL_NAME = "materialName";
     private static final String KEY_MATERIAL_SALES = "materialSales";
-    //    private static final String KEY_MATERIAL_GROUP_ID = "materialGroupId";
-//    private static final String KEY_MATERIAL_GROUP_NAME = "materialGroupName";
     private static final String KEY_MATERIAL_PRODUCT_ID = "materialProductId";
     private static final String KEY_MATERIAL_PRODUCT_NAME = "materialProductName";
-//    private static final String KEY_CREATED_BY = "createdBy";
-//    private static final String KEY_CREATED_DATE = "createdDate";
-//    private static final String KEY_UPDATED_BY = "updatedBy";
-//    private static final String KEY_UPDATED_DATE = "updatedDate";
-//    private static final String KEY_IS_SYNC = "isSync";
 
     //column table MasterUom
     private static final String KEY_UOM_ID_DB = "idUomDB";
     private static final String KEY_UOM_ID = "uomId";
-    //    private static final String KEY_MATERIAL_ID = "materialId";
     private static final String KEY_CONVERSION = "conversion";
 
     //column table MasterDaerahTingkat
     private static final String KEY_DAERAH_TINGKAT_ID_DB = "idDaerahTingkatDB";
-    //    private static final String KEY_KODE_POS = "kodePos";
-//    private static final String KEY_ID_DESA_KELURAHAN = "idDesaKelurahan";
-//    private static final String KEY_NAME_DESA_KELURAHAN = "nameDesaKelurahan";
-//    private static final String KEY_ID_KECAMATAN = "idKecamatan";
-//    private static final String KEY_NAME_KECAMATAN = "nameKecamatan";
-//    private static final String KEY_ID_KOTA_KABUPATEN = "idKotaKabupaten";
-//    private static final String KEY_NAME_KOTA_KABUPATEN = "nameKotaKabupaten";
-//    private static final String KEY_ID_PROVINSI = "idProvinsi";
-//    private static final String KEY_NAME_PROVINSI = "nameProvinsi";
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -704,6 +441,22 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
+            + ")";
+
+    public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
+            + KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " INTEGER,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_MATERIAL_GROUP_ID + " INTEGER,"
+            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
+            + KEY_QTY + " REAL,"
+            + KEY_TARGET + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + KEY_UPDATED_BY + " TEXT,"
+            + KEY_UPDATED_DATE + " TEXT,"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE " + TABLE_INVOICE_HEADER + "("
@@ -851,6 +604,21 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
+    public static String CREATE_TABLE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_CUSTOMER_DCT + "("
+            + KEY_ID_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_MATERIAL_GROUP_ID + " INTEGER,"
+            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
+            + KEY_QTY + " REAL,"
+            + KEY_TARGET + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + KEY_UPDATED_BY + " TEXT,"
+            + KEY_UPDATED_DATE + " TEXT,"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
+            + ")";
+
     public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE " + TABLE_VISIT_SALESMAN + "("
             + KEY_ID_VISIT_SALESMAN_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -995,7 +763,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_CUSTOMER_ID + "," + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE " + TABLE_ORDER_DETAIL_DISCOUNT + "("
@@ -1012,7 +780,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_CUSTOMER_ID + "," + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_PAYMENT_HEADER = "CREATE TABLE " + TABLE_ORDER_PAYMENT_HEADER + "("
@@ -1273,6 +1041,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
             + ")";
+    public static String CREATE_TABLE_MASTER_MINIMAL_ORDER = "CREATE TABLE " + TABLE_MASTER_MINIMAL_ORDER + "("
+            + KEY_MATERIAL_ID + " INTEGER PRIMARY KEY ,"
+            + KEY_QTY + " REAL,"
+            + KEY_UOM + " TEXT,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
+            + ")";
 
     public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_HEADER + "("
             + KEY_ID_SALES_PRICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -1322,9 +1097,11 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_INVOICE_DETAIL);
         db.execSQL(CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER);
         db.execSQL(CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+        db.execSQL(CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT);
         db.execSQL(CREATE_TABLE_NOO);
         db.execSQL(CREATE_TABLE_CUSTOMER);
         db.execSQL(CREATE_TABLE_CUSTOMER_PROMOTION);
+        db.execSQL(CREATE_TABLE_CUSTOMER_DCT);
         db.execSQL(CREATE_TABLE_VISIT_SALESMAN);
         db.execSQL(CREATE_TABLE_VISIT_SALESMAN_NOO);
         db.execSQL(CREATE_TABLE_STORE_CHECK);
@@ -1348,6 +1125,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MASTER_PRICE_CODE);
         db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_HEADER);
         db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_DETAIL);
+        db.execSQL(CREATE_TABLE_MASTER_MINIMAL_ORDER);
         db.execSQL(CREATE_TABLE_PARAMETER);
         db.execSQL(CREATE_TABLE_LOG);
         db.execSQL(CREATE_TABLE_CUSTOMER_TYPE);
@@ -1363,6 +1141,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_PROMOTION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_DCT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VISIT_SALESMAN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VISIT_SALESMAN_NOO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STORE_CHECK);
@@ -1388,6 +1167,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE_CODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MINIMAL_ORDER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PARAMETER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOG);
@@ -1411,7 +1191,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1441,7 +1221,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UOM_SISA, param.getUomSisa());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1470,7 +1250,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_ROUTE, param.getIs_route());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1498,7 +1278,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PAID, param.getNett());
         values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1590,7 +1370,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_ROUTE, param.isRoute());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1626,7 +1406,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_NPWP, param.getNo_npwp());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1655,12 +1435,36 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
 
         int id = -1;
         try {
             id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addNonRouteCustomerDct(Material param, String idHeader, String idSales, String idCust) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB, idHeader);
+        values.put(KEY_CUSTOMER_ID, idCust);
+        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
+        values.put(KEY_QTY, param.getQty());
+        values.put(KEY_TARGET, param.getTarget());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT, null, values);//return id yg ud d create
         } catch (Exception e) {
             id = -1;
         }
@@ -1684,11 +1488,34 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
             id = (int) db.insert(TABLE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addCustomerDct(Material param, String idHeader, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, idHeader);
+        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
+        values.put(KEY_QTY, param.getQty());
+        values.put(KEY_TARGET, param.getTarget());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_CUSTOMER_DCT, null, values);//return id yg ud d create
         } catch (Exception e) {
             id = -1;
         }
@@ -1823,7 +1650,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UOM, param.getUom());
         values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1862,7 +1689,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UOM, param.getUom());
         values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1872,6 +1699,92 @@ public class Database extends SQLiteOpenHelper {
         }
         //db.close();
         return id;
+    }
+
+    public void addOrder(Order request, User user) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        ContentValues values = new ContentValues();
+
+        int idOrderHeader = -1;
+        try {
+            values = new ContentValues();
+            values.put(KEY_ID_ORDER_BACK_END, request.getIdOrderBE());
+            values.put(KEY_CUSTOMER_ID, request.getCustomerId());
+            values.put(KEY_DATE, request.getDate());
+            values.put(KEY_OMZET, request.getOmzet());
+            values.put(KEY_STATUS, request.getStatus());
+            values.put(KEY_CREATED_BY, user.getUsername());
+            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+            idOrderHeader = (int) db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
+
+            for (Material param : request.getMaterialList()) {
+                int idOrderDetail = -1;
+                values = new ContentValues();
+                values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
+                values.put(KEY_CUSTOMER_ID, request.getCustomerId());
+                values.put(KEY_MATERIAL_ID, param.getId());
+                values.put(KEY_MATERIAL_NAME, param.getNama());
+                values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+                values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
+                values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
+                values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
+                values.put(KEY_QTY, param.getQty());
+                values.put(KEY_UOM, param.getUom());
+                values.put(KEY_PRICE, param.getPrice());
+                values.put(KEY_TOTAL_DISCOUNT, param.getTotalDiscount());
+                values.put(KEY_TOTAL, param.getTotal());
+                values.put(KEY_CREATED_BY, user.getUsername());
+                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                idOrderDetail = (int) db.insert(TABLE_ORDER_DETAIL, null, values);//return id yg ud d create
+
+                for (Discount discount : param.getDiskonList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
+                    values.put(KEY_CUSTOMER_ID, request.getCustomerId());
+                    values.put(KEY_MATERIAL_ID, param.getId());
+                    values.put(KEY_DISCOUNT_ID, discount.getKeyDiskon());
+                    values.put(KEY_DISCOUNT_NAME, discount.getKeyDiskon());
+                    values.put(KEY_DISCOUNT_PRICE, discount.getValueDiskon());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);
+                }
+
+                for (Material matExtra : param.getExtraItem()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
+                    values.put(KEY_CUSTOMER_ID, request.getCustomerId());
+                    values.put(KEY_MATERIAL_ID, matExtra.getId());
+                    values.put(KEY_MATERIAL_NAME, matExtra.getNama());
+                    values.put(KEY_MATERIAL_GROUP_ID, matExtra.getId_material_group());
+                    values.put(KEY_MATERIAL_GROUP_NAME, matExtra.getMaterial_group_name());
+                    values.put(KEY_MATERIAL_PRODUCT_ID, matExtra.getId_product_group());
+                    values.put(KEY_MATERIAL_PRODUCT_NAME, matExtra.getName_product_group());
+                    values.put(KEY_QTY, matExtra.getQty());
+                    values.put(KEY_UOM, matExtra.getUom());
+                    values.put(KEY_PRICE, matExtra.getPrice());
+                    values.put(KEY_TOTAL_DISCOUNT, matExtra.getTotalDiscount());
+                    values.put(KEY_TOTAL, matExtra.getTotal());
+                    values.put(KEY_CREATED_BY, user.getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+
+                    int idExtra = (int) db.insert(TABLE_ORDER_DETAIL_EXTRA, null, values);//return id yg ud d create
+                }
+            }
+
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Order", e.getMessage());
+        }
+
+        db.endTransaction();
     }
 
     public int addOrderHeader(Order param, String idSales) {
@@ -1885,7 +1798,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1897,12 +1810,12 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderDetail(Material param, String idHeader, String idCust, String idSales) {
+    public int addOrderDetail(Material param, Map detailHeader) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID_ORDER_HEADER_DB, idHeader);
-        values.put(KEY_CUSTOMER_ID, idCust);
+        values.put(KEY_ID_ORDER_HEADER_DB, detailHeader.get("idHeader").toString());
+        values.put(KEY_CUSTOMER_ID, detailHeader.get("idCust").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1914,9 +1827,9 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PRICE, param.getPrice());
         values.put(KEY_TOTAL_DISCOUNT, param.getTotalDiscount());
         values.put(KEY_TOTAL, param.getTotal());
-        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_BY, detailHeader.get("idSales").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1928,12 +1841,12 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrderDetailExtra(Material param, String idHeader, String idCust, String idSales) {
+    public int addOrderDetailExtra(Material param, Map detailHeader) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_ID_ORDER_DETAIL_DB, idHeader);
-        values.put(KEY_CUSTOMER_ID, idCust);
+        values.put(KEY_ID_ORDER_DETAIL_DB, detailHeader.get("idHeader").toString());
+        values.put(KEY_CUSTOMER_ID, detailHeader.get("idCust").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1945,9 +1858,9 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PRICE, param.getPrice());
         values.put(KEY_TOTAL_DISCOUNT, param.getTotalDiscount());
         values.put(KEY_TOTAL, param.getTotal());
-        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_BY, detailHeader.get("idSales").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1965,14 +1878,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID_ORDER_DETAIL_DB, idHeader);
         values.put(KEY_CUSTOMER_ID, idCust);
-//        values.put(KEY_MATERIAL_ID, param.getMaterialId());
-//        values.put(KEY_DISCOUNT_ID, param.getMaterialName());
-//        values.put(KEY_DISCOUNT_NAME, param.getQty());
-//        values.put(KEY_DISCOUNT_PRICE, param.getUom());
-//        values.put(KEY_TOTAL, param.getPrice());
-//        values.put(KEY_CREATED_BY, idSales);
-//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_MATERIAL_ID, param.getKeyDiskon());
+        values.put(KEY_DISCOUNT_ID, param.getKeyDiskon());
+        values.put(KEY_DISCOUNT_NAME, param.getKeyDiskon());
+        values.put(KEY_DISCOUNT_PRICE, param.getValueDiskon());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1996,7 +1908,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2020,7 +1932,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LEFT, param.getLeft());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2050,7 +1962,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2080,7 +1992,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2107,7 +2019,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_AMOUNT_PAID, param.getAmountPaid());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2141,7 +2053,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PHOTO_REASON_RETURN, param.getPhotoReason());
         values.put(KEY_CREATED_BY, header.get("username").toString());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2190,75 +2102,76 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransactionNonExclusive();
 
-        User user = Helper.ObjectToGSON(request.get("user"), User.class);
-        Invoice header = Helper.ObjectToGSON(request.get("header"), Invoice.class);
-        double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
-        double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
-        double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
-
-        List<Material> cashList = new ArrayList<>();
-        Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
-        Collections.addAll(cashList, cashListArray);
-
-        double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
-        double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
-
-        List<Material> lainList = new ArrayList<>();
-        Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
-        Collections.addAll(lainList, lainListArray);
-
-        List<Material> tfList = new ArrayList<>();
-        Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
-        Collections.addAll(tfList, tfListArray);
-
-        List<CollectionDetail> mListTransfer = new ArrayList<>();
-        CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
-        Collections.addAll(mListTransfer, mListTransferArray);
-
-        List<Material> giroList = new ArrayList<>();
-        Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
-        Collections.addAll(giroList, giroArray);
-
-        List<CollectionDetail> mListGiro = new ArrayList<>();
-        CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
-        Collections.addAll(mListGiro, mListGiroArray);
-
-        List<Material> chequeList = new ArrayList<>();
-        Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
-        Collections.addAll(chequeList, chequeListArray);
-
-        List<CollectionDetail> mListCheque = new ArrayList<>();
-        CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
-        Collections.addAll(mListCheque, mListChequeArray);
-
-        List<Material> mListCash = new ArrayList<>();
-        Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
-        Collections.addAll(mListCash, mListCashArray);
-
-        Map requestHeader = new HashMap();
-        requestHeader.put("customer_id", header.getId_customer());
-        requestHeader.put("no_invoice", header.getNo_invoice());
-        requestHeader.put("invoice_date", header.getInvoice_date());
-        requestHeader.put("status", "paid");
-        requestHeader.put("total_paid", totalAmountPaid);
-        requestHeader.put("amount", header.getAmount());
-        requestHeader.put("username", user.getUsername());
-
-        //addCollectionHeader
-        //int idCollHeader = database.addCollectionHeader(requestHeader);
-        ContentValues values = new ContentValues();
-        values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
-        values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
-        values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
-        values.put(KEY_STATUS, requestHeader.get("status").toString());
-        values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
-        values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
-        values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0);
-
         int idCollHeader = -1;
         try {
+            User user = Helper.ObjectToGSON(request.get("user"), User.class);
+            Invoice header = Helper.ObjectToGSON(request.get("header"), Invoice.class);
+            double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
+            double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
+            double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
+
+            List<Material> cashList = new ArrayList<>();
+            Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
+            Collections.addAll(cashList, cashListArray);
+
+            double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
+            double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
+
+            List<Material> lainList = new ArrayList<>();
+            Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
+            Collections.addAll(lainList, lainListArray);
+
+            List<Material> tfList = new ArrayList<>();
+            Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
+            Collections.addAll(tfList, tfListArray);
+
+            List<CollectionDetail> mListTransfer = new ArrayList<>();
+            CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
+            Collections.addAll(mListTransfer, mListTransferArray);
+
+            List<Material> giroList = new ArrayList<>();
+            Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
+            Collections.addAll(giroList, giroArray);
+
+            List<CollectionDetail> mListGiro = new ArrayList<>();
+            CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
+            Collections.addAll(mListGiro, mListGiroArray);
+
+            List<Material> chequeList = new ArrayList<>();
+            Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
+            Collections.addAll(chequeList, chequeListArray);
+
+            List<CollectionDetail> mListCheque = new ArrayList<>();
+            CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
+            Collections.addAll(mListCheque, mListChequeArray);
+
+            List<Material> mListCash = new ArrayList<>();
+            Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
+            Collections.addAll(mListCash, mListCashArray);
+
+            Map requestHeader = new HashMap();
+            requestHeader.put("customer_id", header.getId_customer());
+            requestHeader.put("no_invoice", header.getNo_invoice());
+            requestHeader.put("invoice_date", header.getInvoice_date());
+            requestHeader.put("status", "paid");
+            requestHeader.put("total_paid", totalAmountPaid);
+            requestHeader.put("amount", header.getAmount());
+            requestHeader.put("username", user.getUsername());
+
+            //addCollectionHeader
+            //int idCollHeader = database.addCollectionHeader(requestHeader);
+            ContentValues values = new ContentValues();
+            values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
+            values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
+            values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+            values.put(KEY_STATUS, requestHeader.get("status").toString());
+            values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
+            values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
+            values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
+            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            values.put(KEY_IS_SYNC, 0);
+
+
             idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
 
             //updatePaidInvoice
@@ -2603,7 +2516,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NAME_CUST_BANK, param.getBankCust());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2655,7 +2568,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_SIGNATURE, param.getIs_signature());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2682,7 +2595,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2726,7 +2639,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_REK, param.getNo_rek());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIs_sync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -2846,6 +2759,23 @@ public class Database extends SQLiteOpenHelper {
         }
         //db.close();
         return id;
+    }
+
+    public void addMinimalOrder(Material param, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_MATERIAL_ID, param.getTop());
+        values.put(KEY_QTY, param.getQty());
+        values.put(KEY_UOM, param.getUom());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        try {
+            db.insert(TABLE_MASTER_MINIMAL_ORDER, null, values);//return id yg ud d create
+        } catch (Exception e) {
+
+        }
     }
 
     public int addMasterSalesPriceDetail(SalesPriceDetail param, String idSales) {
@@ -2972,6 +2902,56 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Material> getDctNonRouteByIdCustomer(String idCust) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setTarget(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TARGET)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getDctByIdCustomer(String idCust) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_CUSTOMER_DCT + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_TARGET_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_material_group(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setTarget(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TARGET)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Material> getAllReturn(String idCust) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
@@ -3055,7 +3035,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
 //                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
 
@@ -3082,7 +3062,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                 paramModel.setQty(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_QTY)));
                 paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -3141,7 +3121,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 result.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 result.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
-                result.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                result.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 result.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
 //                result.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
             }
@@ -3175,7 +3155,7 @@ public class Database extends SQLiteOpenHelper {
 //                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -3206,7 +3186,7 @@ public class Database extends SQLiteOpenHelper {
 //                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -3236,7 +3216,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                 paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)) - cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -3268,7 +3248,7 @@ public class Database extends SQLiteOpenHelper {
 //                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -3319,7 +3299,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
                 paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
                 paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
                 if (currentLocation != null) {
@@ -3372,7 +3352,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
                 paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
                 paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
-                paramModel.setIs_sync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
                 arrayList.add(paramModel);
@@ -4125,7 +4105,7 @@ public class Database extends SQLiteOpenHelper {
                 + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM_ID + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{material.getId(), material.getUomSisa()});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{material.getId(), material.getUom()});
 
         if (cursor.moveToFirst()) {
             do {
@@ -4742,7 +4722,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_SYNC, param.getIs_sync());
+        values.put(KEY_IS_SYNC, param.getIsSync());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
@@ -4757,7 +4737,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_IS_UNLOADING, param.getIs_unloading());
-        values.put(KEY_IS_SYNC, param.getIs_sync());
+        values.put(KEY_IS_SYNC, param.getIsSync());
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
@@ -4773,7 +4753,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_IS_VERIF, param.getIs_verif());
         values.put(KEY_SIGN, param.getSignature());
-        values.put(KEY_IS_SYNC, param.getIs_sync());
+        values.put(KEY_IS_SYNC, param.getIsSync());
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -4823,6 +4803,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteCustomerPromotion() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_PROMOTION);
+    }
+
+    public void deleteCustomerDct() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_DCT);
     }
 
     public void deleteVisitSalesman() {
@@ -4905,12 +4889,22 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
+    public void deleteMasterNonRouteCustomerDctById(String idHeader) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+        //db.close();
+    }
+
     public void deleteMasterNonRouteCustomer() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER);
     }
 
     public void deleteMasterNonRouteCustomerPromotion() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+    }
+
+    public void deleteMasterNonRouteCustomerDct() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
     }
 
     public void deleteMasterMaterial() {
@@ -4935,6 +4929,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteMasterSalesPriceDetail() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_SALES_PRICE_DETAIL);
+    }
+
+    public void deleteMasterMinimalOrder() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MINIMAL_ORDER);
     }
 
     public void deleteMasterParameter() {

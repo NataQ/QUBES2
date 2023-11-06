@@ -93,53 +93,81 @@ public class Discount implements Serializable {
     private List<Discount> barang;
     private String kodeBarang;
     private List<Discount> diskon; //discQty, discValue, discKelipatan
-    private String discQty;
-    private String discValue;
-    private String discKelipatan;
+    //discount aspp
+    private double discCash;
+    private double discExtra;
+    private double discQty;
+    private double discValue;
+    private double discKelipatan;
+    private double discLain;
+    //discount aspp
     private List<Discount> extra;//kodeBarang, qty, diskon
-    private String qty;
+    private double qty;
+    private String keyDiskon;
+    private String valueDiskon;
 
-    public Discount(String name, String cond_type,
-                    String idCustomer, String customer,
-                    String material, String idMaterial,
-                    String price,
-                    String salesDocumentType,
-                    String pers,
-                    String paymentTerms,
-                    String uom,
-                    String valid_from, String valid_to,
-                    String count,
-                    String idPlant, String plant,
-                    String idMaterialGroup3, String materialGroup3) {
-        this.name = name;
-        this.cond_type = cond_type;
+    public String getKeyDiskon() {
+        return keyDiskon;
+    }
 
-        this.idCustomer = idCustomer;
-        this.customer = customer;
+    public void setKeyDiskon(String keyDiskon) {
+        this.keyDiskon = keyDiskon;
+    }
 
-        this.material = material;
-        this.idMaterial = idMaterial;
+    public String getValueDiskon() {
+        return valueDiskon;
+    }
 
-        this.price = price;
+    public void setValueDiskon(String valueDiskon) {
+        this.valueDiskon = valueDiskon;
+    }
 
-        this.salesDocumentType = salesDocumentType;
+    public double getDiscLain() {
+        return discLain;
+    }
 
-        this.pers = pers;
+    public void setDiscLain(double discLain) {
+        this.discLain = discLain;
+    }
 
-        this.pmnsTerms = paymentTerms;
+    public double getDiscCash() {
+        return discCash;
+    }
 
-        this.uom = uom;
+    public void setDiscCash(double discCash) {
+        this.discCash = discCash;
+    }
 
-        this.valid_from = valid_from;
-        this.valid_to = valid_to;
+    public double getDiscExtra() {
+        return discExtra;
+    }
 
-        this.count = count;//Status
+    public void setDiscExtra(double discExtra) {
+        this.discExtra = discExtra;
+    }
 
-        this.idPlant = idPlant;
-        this.plant = plant;
+    public double getDiscQty() {
+        return discQty;
+    }
 
-        this.idMaterialGroup3 = idMaterialGroup3;
-        this.materialGroup3 = materialGroup3;
+    public void setDiscQty(double discQty) {
+        this.discQty = discQty;
+    }
+
+    public double getDiscValue() {
+        return discValue;
+    }
+
+    public void setDiscValue(double discValue) {
+        this.discValue = discValue;
+    }
+
+    public double getDiscKelipatan() {
+        return discKelipatan;
+    }
+
+    public void setDiscKelipatan(double discKelipatan) {
+        this.discKelipatan = discKelipatan;
     }
 
     public String getKodeLangganan() {
@@ -197,31 +225,6 @@ public class Discount implements Serializable {
     public void setDiskon(List<Discount> diskon) {
         this.diskon = diskon;
     }
-
-    public String getDiscQty() {
-        return discQty;
-    }
-
-    public void setDiscQty(String discQty) {
-        this.discQty = discQty;
-    }
-
-    public String getDiscValue() {
-        return discValue;
-    }
-
-    public void setDiscValue(String discValue) {
-        this.discValue = discValue;
-    }
-
-    public String getDiscKelipatan() {
-        return discKelipatan;
-    }
-
-    public void setDiscKelipatan(String discKelipatan) {
-        this.discKelipatan = discKelipatan;
-    }
-
     public List<Discount> getExtra() {
         return extra;
     }
@@ -230,11 +233,11 @@ public class Discount implements Serializable {
         this.extra = extra;
     }
 
-    public String getQty() {
+    public double getQty() {
         return qty;
     }
 
-    public void setQty(String qty) {
+    public void setQty(double qty) {
         this.qty = qty;
     }
 

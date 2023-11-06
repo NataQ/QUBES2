@@ -43,7 +43,9 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 
 public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder> implements Filterable {
     private List<Material> mList;
@@ -52,6 +54,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private OrderAddActivity mContext;
     private OnAdapterListener onAdapterListener;
     private OrderAddExtraAdapter mAdapter;
+    private OrderDiscountAdapter mAdapterDiscount;
     private ProgressDialog progress;
     private LayoutInflater inflater;
     private Dialog alertDialog;
@@ -63,6 +66,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private Holder dataObjectHolder;
     private ArrayAdapter<String> uomAdapter;
     private List<Material> mListExtra;
+    private List<Discount> mListDiskon;
     private List<Material> listSpinner, listFilteredSpinner;
     boolean checkedAll = false;
 
@@ -121,28 +125,24 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout llAddExtraItem, llDelete, llDiscount;
-        LinearLayout llDiscountQty, llDiscountValue, llDiscountKelipatan;
-        RecyclerView rvExtra;
+        LinearLayout llAddExtraItem, llDelete, llDiscountAll;
+        RecyclerView rvExtra, rvDiscount;
         ImageView imgView;
         AutoCompleteTextView autoCompleteUom;
         TextView txtNo, txtPrice, txtTotalDiscount, txtTotal;
-        TextView txtDiscountQty, txtDiscountValue, txtDiscountKelipatan;
         EditText edtProduct, edtQty;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            llDiscountAll = itemView.findViewById(R.id.llDiscountAll);
             rvExtra = itemView.findViewById(R.id.rvExtra);
             rvExtra.setLayoutManager(new LinearLayoutManager(mContext));
             rvExtra.setHasFixedSize(true);
+            rvDiscount = itemView.findViewById(R.id.rvDiscount);
+            rvDiscount.setLayoutManager(new LinearLayoutManager(mContext));
+            rvDiscount.setHasFixedSize(true);
             txtTotal = itemView.findViewById(R.id.txtTotal);
-            txtDiscountKelipatan = itemView.findViewById(R.id.txtDiscountKelipatan);
-            llDiscountKelipatan = itemView.findViewById(R.id.llDiscountKelipatan);
-            txtDiscountValue = itemView.findViewById(R.id.txtDiscountValue);
-            llDiscountValue = itemView.findViewById(R.id.llDiscountValue);
-            txtDiscountQty = itemView.findViewById(R.id.txtDiscountQty);
-            llDiscountQty = itemView.findViewById(R.id.llDiscountQty);
             llAddExtraItem = itemView.findViewById(R.id.llAddExtraItem);
             llDelete = itemView.findViewById(R.id.llDelete);
             txtNo = itemView.findViewById(R.id.txtNo);
@@ -152,7 +152,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtTotalDiscount = itemView.findViewById(R.id.txtTotalDiscount);
             imgView = itemView.findViewById(R.id.imgView);
-            llDiscount = itemView.findViewById(R.id.llDiscount);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -176,8 +175,12 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         setFormatSeparator();
         setProgress();
         mListExtra = new ArrayList<>();
+        mListDiskon = new ArrayList<>();
         if (Helper.isNotEmptyOrNull(detail.getExtraItem())) {
             mListExtra.addAll(detail.getExtraItem());
+        }
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            mListDiskon.addAll(detail.getDiskonList());
         }
         holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
@@ -185,6 +188,16 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         holder.edtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+        holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
+
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            holder.llDiscountAll.setVisibility(View.VISIBLE);
+            mAdapterDiscount = new OrderDiscountAdapter(mContext, mListDiskon, header -> {
+            });
+            holder.rvDiscount.setAdapter(mAdapterDiscount);
+        } else {
+            holder.llDiscountAll.setVisibility(View.GONE);
+        }
 
         List<String> listSpinner = new Database(mContext).getUom(detail.getId());
         if (listSpinner == null || listSpinner.size() == 0) {
@@ -211,10 +224,12 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
-            detail.setPrice(new Database(mContext).getPrice(detail));
-            holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-            mContext.calculateOmzet();
-            calculateTotal(holder.getAbsoluteAdapterPosition());
+            if (!Helper.isNullOrEmpty(detail.getUom())) {
+                detail.setPrice(new Database(mContext).getPrice(detail));
+                holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+                mContext.calculateOmzet();
+                calculateTotal(holder.getAbsoluteAdapterPosition());
+            }
         });
         //uom
 
@@ -231,7 +246,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
             Button btnNo = alertDialog.findViewById(R.id.btnNo);
             Button btnYes = alertDialog.findViewById(R.id.btnYes);
-            txtTitle.setText("Delete Extra");
+            txtTitle.setText("Delete");
             txtDialog.setText("Are you sure want to delete the item?");
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -253,11 +268,11 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
-                holder.llDiscount.setVisibility(View.VISIBLE);
+                holder.rvDiscount.setVisibility(View.VISIBLE);
                 isExpand = true;
             } else {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
-                holder.llDiscount.setVisibility(View.GONE);
+                holder.rvDiscount.setVisibility(View.GONE);
                 isExpand = false;
             }
         });
@@ -278,14 +293,14 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
                     int qty = Integer.parseInt(s.toString().replace(",", ""));
                     detail.setQty(qty);
-                    if (!Helper.isNullOrEmpty(detail.getUom())) {
-                        detail.setPrice(new Database(mContext).getPrice(detail));
-                        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-                        mContext.calculateOmzet();
-                        calculateTotal(holder.getAbsoluteAdapterPosition());
-                    }
                 } else {
                     detail.setQty(0);
+                }
+                if (!Helper.isNullOrEmpty(detail.getUom())) {
+                    detail.setPrice(new Database(mContext).getPrice(detail));
+                    holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+                    mContext.calculateOmzet();
+                    calculateTotal(holder.getAbsoluteAdapterPosition());
                 }
             }
         });
@@ -439,12 +454,13 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     }
 
     private List<Material> initDataMaterial() {
+        //perlu d tany extra item itu bebas, atau sesuai sama top nya
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
         listMat.addAll(new Database(mContext).getAllMasterMaterial());
         for (Material param : listMat) {
             int exist = 0;
-            for (Material param1 : mList) {
+            for (Material param1 : mListExtra) {
                 if (param.getId().equals(param1.getId())) {
                     exist++;
                 }

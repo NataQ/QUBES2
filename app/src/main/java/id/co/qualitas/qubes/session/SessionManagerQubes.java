@@ -16,6 +16,7 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 
@@ -23,6 +24,7 @@ import id.co.qualitas.qubes.model.User;
 public abstract class SessionManagerQubes {
     private static final Gson gson = new Gson();
     private static final Object sync = new Object();
+    private static final String PREF_ORDER = "pref_order";
     private static final String PREF_CUSTOMER_NOO = "pref_customer_noo";
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
@@ -34,6 +36,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
     private static final String PREF_COLLECTION = "PREF_COLLECTION";
     private static final String PREF_COLLECTION_HISTORY = "PREF_COLLECTION_HISTORY";
+    private static final String KEY_ORDER = "key_order";
     private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
@@ -48,6 +51,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
     private static final String KEY_RETURN = "key_return";
+    private static SharedPreferences orderPrefs;
     private static SharedPreferences customerNooPrefs;
     private static SharedPreferences imageTypePrefs;
     private static SharedPreferences returnPrefs;
@@ -74,6 +78,7 @@ public abstract class SessionManagerQubes {
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
         returnPrefs = context.getSharedPreferences(PREF_RETURN, Context.MODE_PRIVATE);
+        orderPrefs = context.getSharedPreferences(PREF_ORDER, Context.MODE_PRIVATE);
     }
 
     public static void setStartDay(int param) {
@@ -91,6 +96,14 @@ public abstract class SessionManagerQubes {
     public static void setReturn(List<Material> param) {
         synchronized (sync) {
             returnPrefs.edit().putString(KEY_RETURN, gson.toJson(param)).apply();
+        }
+    }
+
+    public static void setOrder(Order param) {
+        if (param != null) {
+            synchronized (sync) {
+                orderPrefs.edit().putString(KEY_ORDER, gson.toJson(param)).apply();
+            }
         }
     }
 
@@ -222,6 +235,10 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(customerNooPrefs.getString(KEY_CUSTOMER_NOO, null), Customer.class);
     }
 
+    public static Order getOrder() {
+        return gson.fromJson(orderPrefs.getString(KEY_ORDER, null), Order.class);
+    }
+
     public static String getImei() {
         return loginPrefs.getString(KEY_IMEI, null);
     }
@@ -251,6 +268,11 @@ public abstract class SessionManagerQubes {
     public static void clearCustomerNooSession() {
         customerNooPrefs.edit().clear().apply();
     }
+
+    public static void clearOrderSession() {
+        orderPrefs.edit().clear().apply();
+    }
+
     public static void clearOutletHeaderSession() {
         outletHeaderPrefs.edit().clear().apply();
     }
@@ -258,6 +280,7 @@ public abstract class SessionManagerQubes {
     public static void clearStartDaySession() {
         startDayPrefs.edit().clear().apply();
     }
+
     public static void clearLoginSession() {
         loginPrefs.edit().clear().apply();
     }

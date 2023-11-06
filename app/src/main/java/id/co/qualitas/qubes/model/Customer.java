@@ -1,9 +1,5 @@
 package id.co.qualitas.qubes.model;
 
-import android.net.Uri;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import java.util.List;
 
 public class Customer {
@@ -45,13 +41,15 @@ public class Customer {
     private String photoKtp;
     private String photoNpwp;
     private String photoOutlet;
-    private int is_sync;
+    private int isSync;
     private List<Promotion> promoList;
+    private List<Material> dctList;
     private boolean route;
 //    private LatLng position;
     private double limit_kredit;
     private double sisaCreditLimit;
     private double totalTagihan;
+    private double totalFaktur;
     private boolean noo;
     private String mileage;
 //    private Uri photoKTPUri;
@@ -94,6 +92,22 @@ public class Customer {
 //        this.photoOutletUri = photoOutletUri;
 //    }
 
+
+    public List<Material> getDctList() {
+        return dctList;
+    }
+
+    public void setDctList(List<Material> dctList) {
+        this.dctList = dctList;
+    }
+
+    public double getTotalFaktur() {
+        return totalFaktur;
+    }
+
+    public void setTotalFaktur(double totalFaktur) {
+        this.totalFaktur = totalFaktur;
+    }
 
     public boolean isNoo() {
         return noo;
@@ -407,12 +421,12 @@ public class Customer {
         this.photoOutlet = photoOutlet;
     }
 
-    public int getIs_sync() {
-        return is_sync;
+    public int getIsSync() {
+        return isSync;
     }
 
-    public void setIs_sync(int is_sync) {
-        this.is_sync = is_sync;
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 
     public List<Promotion> getPromoList() {

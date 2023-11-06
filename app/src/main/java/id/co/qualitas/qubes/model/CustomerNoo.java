@@ -40,6 +40,6 @@ public class CustomerNoo {
     private String photoKtp;
     private String photoNpwp;
     private String photoOutlet;
-    private int is_sync;
+    private int isSync;
 
 }
