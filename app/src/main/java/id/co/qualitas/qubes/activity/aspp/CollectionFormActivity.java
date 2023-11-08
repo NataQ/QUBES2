@@ -41,9 +41,6 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.CollectionDetail;
-import id.co.qualitas.qubes.model.CollectionDetail;
-import id.co.qualitas.qubes.model.CollectionDetail;
-import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
@@ -157,11 +154,9 @@ public class CollectionFormActivity extends BaseActivity {
         protected WSMessage doInBackground(Void... voids) {
             try {
                 if (PARAM == 1) {
-//                    prepareData();
+                    Map request = prepareData();
                     String URL_ = Constants.API_SAVE_COLLECTION;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    Map request = new HashMap();
-//                    request.put("header", headerRequest);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                 } else if (PARAM == 2) {
                     Map request = new HashMap();
@@ -259,6 +254,32 @@ public class CollectionFormActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    private Map prepareData() {
+        Map request = new HashMap();
+        request.put("no_invoice", header.getNo_invoice());
+        request.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+        request.put("username", user.getUsername());
+        request.put("totalAmount", totalAmountPaid);
+        if (Helper.isNotEmptyOrNull(cashList)) {
+            request.put("totalPaymentCash", totalPaymentCash);
+            request.put("cashList", cashList);
+        }
+        if (Helper.isNotEmptyOrNull(lainList)) {
+            request.put("totalPaymentLain", totalPaymentLain);
+            request.put("lainList", lainList);
+        }
+        if (Helper.isNotEmptyOrNull(tfList)) {
+            request.put("listTransfer", mListTransfer);
+        }
+        if (Helper.isNotEmptyOrNull(giroList)) {
+            request.put("listGiro", mListGiro);
+        }
+        if (Helper.isNotEmptyOrNull(chequeList)) {
+            request.put("listCheque", mListCheque);
+        }
+        return request;
     }
 
     private boolean validate() {
@@ -558,8 +579,8 @@ public class CollectionFormActivity extends BaseActivity {
                         for (Material p : mListMaster) {
                             Material cloneMat = null;
 //                            try {
-                                cloneMat = (Material) p.clone();
-                                cloneMat.setAmountPaid(0);
+                            cloneMat = (Material) p.clone();
+                            cloneMat.setAmountPaid(0);
 //                                cloneMat.setChecked(false);
 //                            } catch (CloneNotSupportedException e) {
 //                                e.printStackTrace();
@@ -611,8 +632,8 @@ public class CollectionFormActivity extends BaseActivity {
                         for (Material p : mListMaster) {
                             Material cloneMat = null;
 //                            try {
-                                cloneMat = (Material) p.clone();
-                                cloneMat.setAmountPaid(0);
+                            cloneMat = (Material) p.clone();
+                            cloneMat.setAmountPaid(0);
 //                                cloneMat.setChecked(false);
 //                            } catch (CloneNotSupportedException e) {
 //                                e.printStackTrace();
@@ -713,8 +734,8 @@ public class CollectionFormActivity extends BaseActivity {
 
                 txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
                 txtAmount.setText("Rp." + format.format(orderHeader.getOmzet()));
-                if (!Helper.isNullOrEmpty(orderHeader.getDate())) {
-                    String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getDate());
+                if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
+                    String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
                     txtDate.setText(requestDate);
                 } else {
                     txtDate.setText("-");
@@ -731,7 +752,7 @@ public class CollectionFormActivity extends BaseActivity {
                 mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
 
                 txtInvNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
-                txtAmount.setText("Rp." + format.format(header.getAmount()));
+                txtAmount.setText("Rp." + format.format(header.getNett()));
                 if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
                     String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
                     txtDate.setText(requestDate);

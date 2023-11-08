@@ -1,6 +1,9 @@
 package id.co.qualitas.qubes.fragment.aspp;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.se.omapi.Session;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +11,14 @@ import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.gson.internal.LinkedTreeMap;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
@@ -15,8 +26,14 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.DepoRegion;
+import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class DashboardFragment extends BaseFragment {
     TextView txtName, txtDriver, txtTodayDate, txtRoute, txtJabatanArea, txtCoverageArea;
@@ -36,6 +53,19 @@ public class DashboardFragment extends BaseFragment {
         rootView = inflater.inflate(R.layout.aspp_fragment_dashboard, container, false);
         getActivity().setTitle(getString(R.string.navmenu1));
         initialize();
+        requestData();
+
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestData();
+                swipeLayout.setRefreshing(false);
+            }
+        });
 
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -51,8 +81,17 @@ public class DashboardFragment extends BaseFragment {
         return rootView;
     }
 
+    private void requestData() {
+//        progressCircle.setVisibility(View.VISIBLE);
+//        setDataDummyCustomer();
+        PARAM = 1;
+        new RequestUrl().execute();
+    }
+
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        swipeLayout = rootView.findViewById(R.id.swipeLayout);
+        progressCircle = rootView.findViewById(R.id.progressCircle);
         txtName = rootView.findViewById(R.id.txtName);
         txtDriver = rootView.findViewById(R.id.txtDriver);
         txtJabatanArea = rootView.findViewById(R.id.txtJabatanArea);
@@ -102,7 +141,7 @@ public class DashboardFragment extends BaseFragment {
         txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
 
         txtECS.setText(format.format(database.getECS()));
-        txtAT.setText(format.format(0));
+        txtAT.setText(format.format(user.getAt()));
 
         txtTotalInvoiceAmount.setText(format.format(database.getTotalInvoiceAmount()));
         txtPaymentAmount.setText(format.format(database.getTotalPaymentAmount()));
@@ -126,6 +165,48 @@ public class DashboardFragment extends BaseFragment {
             }
         }
         return depo;
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_GET_AT_DASHBOARD;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("routeCustomer", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage wsMessage) {
+//            progressCircle.setVisibility(View.GONE);
+            if (wsMessage != null) {
+                if (wsMessage.getIdMessage() == 1) {
+                    Map res = (Map) wsMessage.getResult();
+                    if(res != null) {
+                        double at = (double) res.get("at");
+                        user.setAt(at);
+                        SessionManagerQubes.setUserProfile(user);
+                        txtAT.setText(format.format(user.getAt()));
+                    }
+                } else {
+                    setToast(wsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.failedGetData));
+            }
+        }
     }
 
 }

@@ -518,4 +518,10 @@ public class Constants {
     public static final String API_GET_END_DAY = "endDay";
     public static final String API_GET_DISCOUNT_ORDER = "getDiscount";
     public static final String API_SAVE_COLLECTION = "saveCollection";
+    public static final String API_GET_TARGET_DASHBOARD = "getTargetDashboard";
+    public static final String API_GET_PROMOTION_DASHBOARD = "getPromotionDashboard";
+    public static final String API_GET_AT_DASHBOARD = "getATDashboard";
+    public static final String API_GET_SUMMARY_HEADER = "getSummaryHeader";
+    public static final String API_GET_SUMMARY_DETAIL = "getSummaryDetail";
+    public static final String API_LOG_OUT = "logOut";
 }

@@ -205,14 +205,18 @@ public class InvoiceVerificationActivity extends BaseActivity {
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
-        Collections.addAll(mList, paramArray);
-        database.deleteInvoiceHeader();
-        database.deleteInvoiceDetail();
+        if (paramArray != null) {
+            Collections.addAll(mList, paramArray);
+            database.deleteInvoiceHeader();
+            database.deleteInvoiceDetail();
+        }
 
         for (Invoice param : mList) {
             List<Material> listMat = new ArrayList<>();
             Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-            Collections.addAll(listMat, matArray);
+            if (matArray != null) {
+                Collections.addAll(listMat, matArray);
+            }
             param.setMaterialList(listMat);
 
             int idHeader = database.addInvoiceHeader(param, user.getUsername());
@@ -275,14 +279,18 @@ public class InvoiceVerificationActivity extends BaseActivity {
                 } else if (PARAM == 2) {
                     mList = new ArrayList<>();
                     Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
-                    Collections.addAll(mList, paramArray);
-                    database.deleteInvoiceHeader();
-                    database.deleteInvoiceDetail();
+                    if (paramArray != null) {
+                        Collections.addAll(mList, paramArray);
+                        database.deleteInvoiceHeader();
+                        database.deleteInvoiceDetail();
+                    }
 
                     for (Invoice param : mList) {
                         List<Material> listMat = new ArrayList<>();
                         Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-                        Collections.addAll(listMat, matArray);
+                        if (matArray != null) {
+                            Collections.addAll(listMat, matArray);
+                        }
                         param.setMaterialList(listMat);
 
                         int idHeader = database.addInvoiceHeader(param, user.getUsername());
@@ -304,6 +312,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
                     Map request = new HashMap();
                     request.put("header", mList);
                     request.put("signature", signature);
+                    request.put("username", user.getUsername());
 
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);

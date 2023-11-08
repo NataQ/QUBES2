@@ -17,8 +17,6 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.TargetFragment;
-import id.co.qualitas.qubes.fragment.aspp.TargetFragment;
-import id.co.qualitas.qubes.model.Target;
 import id.co.qualitas.qubes.model.Target;
 
 public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> implements Filterable {
@@ -60,7 +58,7 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
                     for (Target row : mList) {
 
                         /*filter by name*/
-                        if (row.getGroupMat().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getMaterial_group_name().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -114,16 +112,16 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Target detail = mFilteredList.get(position);
-        holder.txtGroupMat.setText(detail.getGroupMat());
-        holder.txtTgtAt.setText(format.format(detail.getTgtAt()));
+        holder.txtGroupMat.setText(detail.getMaterial_group_name());
+        holder.txtTgtAt.setText(format.format(detail.getTgtat()));
         holder.txtAt.setText(format.format(detail.getAt()));
-        holder.txtTgtOms.setText(format.format(detail.getTgtOms()));
+        holder.txtTgtOms.setText(format.format(detail.getTgtoms()));
         holder.txtOms.setText(format.format(detail.getOms()));
 
-        float totalPercentAT = ((float) detail.getAt() / detail.getTgtAt()) * 100;
-        float totalPercentOMS = ((float) detail.getOms() / detail.getTgtOms()) * 100;
-        float totalAT = detail.getAt() - detail.getTgtAt();
-        float totalOMS = detail.getOms() - detail.getTgtOms();
+        double totalPercentAT = ((double) detail.getAt() / detail.getTgtat()) * 100;
+        double totalPercentOMS = ((double) detail.getOms() / detail.getTgtoms()) * 100;
+        double totalAT = detail.getAt() - detail.getTgtat();
+        double totalOMS = detail.getOms() - detail.getTgtoms();
 
         holder.txtTotalPercentageAT.setText(format.format(Math.round(totalPercentAT)) + "%");
         holder.txtTotalPercentageOMS.setText(format.format(Math.round(totalPercentOMS)) + "%");

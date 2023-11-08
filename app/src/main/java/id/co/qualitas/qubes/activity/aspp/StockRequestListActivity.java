@@ -46,10 +46,10 @@ public class StockRequestListActivity extends BaseActivity {
         initialize();
 
         btnAdd.setOnClickListener(v -> {
-            if(database.checkUnloadingRequest()) {
+            if (database.checkUnloadingRequest()) {
                 intent = new Intent(this, StockRequestAddActivity.class);
                 startActivity(intent);
-            }else{
+            } else {
                 setToast("Silahkan melakukan Unloading terlebih dahulu");
             }
         });
@@ -125,18 +125,23 @@ public class StockRequestListActivity extends BaseActivity {
     private void setDataDummyStock() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
         WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
         mList = new ArrayList<>();
         StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
-        Collections.addAll(mList, paramArray);
-        database.deleteStockRequestHeader();
-        database.deleteStockRequestDetail();
+        if (paramArray != null) {
+            Collections.addAll(mList, paramArray);
+            database.deleteStockRequestHeader();
+            database.deleteStockRequestDetail();
+        }
 
         for (StockRequest param : mList) {
             List<Material> listMat = new ArrayList<>();
             Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-            Collections.addAll(listMat, matArray);
+            if (matArray != null) {
+                Collections.addAll(listMat, matArray);
+            }
             param.setMaterialList(listMat);
 
             int idHeader = database.addStockRequestHeader(param, user.getUsername());
@@ -167,14 +172,18 @@ public class StockRequestListActivity extends BaseActivity {
                 } else {
                     mList = new ArrayList<>();
                     StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
-                    Collections.addAll(mList, paramArray);
-                    database.deleteStockRequestHeader();
-                    database.deleteStockRequestDetail();
+                    if (paramArray != null) {
+                        Collections.addAll(mList, paramArray);
+                        database.deleteStockRequestHeader();
+                        database.deleteStockRequestDetail();
+                    }
 
                     for (StockRequest param : mList) {
                         List<Material> listMat = new ArrayList<>();
                         Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-                        Collections.addAll(listMat, matArray);
+                        if (matArray != null) {
+                            Collections.addAll(listMat, matArray);
+                        }
                         param.setMaterialList(listMat);
 
                         int idHeader = database.addStockRequestHeader(param, user.getUsername());

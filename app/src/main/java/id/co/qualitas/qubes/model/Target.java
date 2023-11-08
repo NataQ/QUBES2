@@ -1,63 +1,63 @@
 package id.co.qualitas.qubes.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class Target implements Serializable {
-    public String groupMat;
-    public int tgtAt;
-    public int at;
-    public int tgtOms;
-    public int oms;
+    public String id_material_group;
+    public String material_group_name;
+    public double tgtat;
+    public double at;
+    public double tgtoms;
+    public double oms;
 
     public Target() {
     }
 
-    public Target(String groupMat, int tgtAt, int at, int tgtOms, int oms) {
-        this.groupMat = groupMat;
-        this.tgtAt = tgtAt;
+    public Target(String material_group_name, double tgtat, double at, double tgtoms, double oms) {
+        this.material_group_name = material_group_name;
+        this.tgtat = tgtat;
         this.at = at;
-        this.tgtOms = tgtOms;
+        this.tgtoms = tgtoms;
         this.oms = oms;
     }
 
-    public String getGroupMat() {
-        return groupMat;
+    public String getMaterial_group_name() {
+        return material_group_name;
     }
 
-    public void setGroupMat(String groupMat) {
-        this.groupMat = groupMat;
+    public void setMaterial_group_name(String material_group_name) {
+        this.material_group_name = material_group_name;
     }
 
-    public int getTgtAt() {
-        return tgtAt;
+    public double getTgtat() {
+        return tgtat;
     }
 
-    public void setTgtAt(int tgtAt) {
-        this.tgtAt = tgtAt;
+    public void setTgtat(double tgtat) {
+        this.tgtat = tgtat;
     }
 
-    public int getAt() {
+    public double getAt() {
         return at;
     }
 
-    public void setAt(int at) {
+    public void setAt(double at) {
         this.at = at;
     }
 
-    public int getTgtOms() {
-        return tgtOms;
+    public double getTgtoms() {
+        return tgtoms;
     }
 
-    public void setTgtOms(int tgtOms) {
-        this.tgtOms = tgtOms;
+    public void setTgtoms(double tgtoms) {
+        this.tgtoms = tgtoms;
     }
 
-    public int getOms() {
+    public double getOms() {
         return oms;
     }
 
-    public void setOms(int oms) {
+    public void setOms(double oms) {
         this.oms = oms;
     }
 }

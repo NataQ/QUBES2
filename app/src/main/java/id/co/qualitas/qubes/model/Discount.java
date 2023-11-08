@@ -103,23 +103,23 @@ public class Discount implements Serializable {
     //discount aspp
     private List<Discount> extra;//kodeBarang, qty, diskon
     private double qty;
-    private String keyDiskon;
-    private String valueDiskon;
+    private String keydiskon;
+    private String valuediskon;
 
-    public String getKeyDiskon() {
-        return keyDiskon;
+    public String getKeydiskon() {
+        return keydiskon;
     }
 
-    public void setKeyDiskon(String keyDiskon) {
-        this.keyDiskon = keyDiskon;
+    public void setKeydiskon(String keydiskon) {
+        this.keydiskon = keydiskon;
     }
 
-    public String getValueDiskon() {
-        return valueDiskon;
+    public String getValuediskon() {
+        return valuediskon;
     }
 
-    public void setValueDiskon(String valueDiskon) {
-        this.valueDiskon = valueDiskon;
+    public void setValuediskon(String valuediskon) {
+        this.valuediskon = valuediskon;
     }
 
     public double getDiscLain() {

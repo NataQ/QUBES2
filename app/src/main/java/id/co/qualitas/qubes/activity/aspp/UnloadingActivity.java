@@ -148,6 +148,7 @@ public class UnloadingActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             try {
                 header = database.getStockRequestHeader(header.getIdHeader());
+                header.setId_salesman(user.getUsername());
                 String pdfName = header.getId_salesman() + "_" + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, header.getReq_date());
                 pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/unloading_" + pdfName + ".pdf");
                 success = pdfUnloadingUtils.createPDF(pdfFile, header, mList);

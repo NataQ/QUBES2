@@ -119,7 +119,7 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
 
-        String idCust = Helper.isEmpty(detail.getNo_invoice(), "");
+        String idCust = Helper.isEmpty(detail.getId_customer(), "");
         String nameCust = Helper.isEmpty(detail.getNama(), "");
 
         if (!Helper.isNullOrEmpty(detail.getInvoice_date())) {

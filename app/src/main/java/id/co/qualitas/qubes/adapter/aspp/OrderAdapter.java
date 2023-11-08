@@ -63,7 +63,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
                     for (Order row : mList) {
 
                         /*filter by name*/
-                        if (row.getTxtOrderCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getId_customer().toLowerCase().contains(charString.toLowerCase()) || row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -116,7 +116,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
         Order detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
-        holder.txtOrderNo.setText(Helper.isEmpty(detail.getIdOrderBE(), ""));
+        holder.txtOrderNo.setText(format.format(detail.getId()));
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
         holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");

@@ -119,6 +119,16 @@ public class CollectionActivity extends BaseActivity {
         txtTotalInvoice.setText(format.format(totalInvoice));
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Helper.setItemParam(Constants.FROM_VISIT, "1");
+        intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+    }
+
 //    private class AsyncLoading extends AsyncTask<Void, Void, Boolean> {
 //
 //        @Override

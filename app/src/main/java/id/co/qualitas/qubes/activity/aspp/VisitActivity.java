@@ -1108,15 +1108,19 @@ public class VisitActivity extends BaseActivity {
                     }
 
                     Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
-                    Collections.addAll(mListNonRoute, param1Array);
-                    database.deleteMasterNonRouteCustomer();
-                    database.deleteMasterNonRouteCustomerPromotion();
-                    database.deleteMasterNonRouteCustomerDct();
+                    if (param1Array != null) {
+                        Collections.addAll(mListNonRoute, param1Array);
+                        database.deleteMasterNonRouteCustomer();
+                        database.deleteMasterNonRouteCustomerPromotion();
+                        database.deleteMasterNonRouteCustomerDct();
+                    }
 
                     for (Customer param : mListNonRoute) {
                         List<Promotion> arrayList = new ArrayList<>();
                         Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        Collections.addAll(arrayList, matArray);
+                        if (matArray != null) {
+                            Collections.addAll(arrayList, matArray);
+                        }
                         param.setPromoList(arrayList);
 
                         int idHeader = database.addNonRouteCustomer(param, user.getUsername());
@@ -1126,7 +1130,9 @@ public class VisitActivity extends BaseActivity {
 
                         List<Material> arrayDctList = new ArrayList<>();
                         Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        Collections.addAll(arrayDctList, dctArray);
+                        if (dctArray != null) {
+                            Collections.addAll(arrayDctList, dctArray);
+                        }
                         param.setDctList(arrayDctList);
 
                         for (Material mat : arrayDctList) {
@@ -1135,22 +1141,28 @@ public class VisitActivity extends BaseActivity {
                     }
 
                     Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
-                    Collections.addAll(mList, paramArray);
-                    database.deleteCustomer();
-                    database.deleteCustomerPromotion();
-                    database.deleteCustomerDct();
-                    database.deleteVisitSalesman();
-                    database.deleteNoo();
+                    if (paramArray != null) {
+                        Collections.addAll(mList, paramArray);
+                        database.deleteCustomer();
+                        database.deleteCustomerPromotion();
+                        database.deleteCustomerDct();
+                        database.deleteVisitSalesman();
+                        database.deleteNoo();
+                    }
 
                     for (Customer param : mList) {
                         List<Promotion> arrayList = new ArrayList<>();
                         Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        Collections.addAll(arrayList, matArray);
+                        if (matArray != null) {
+                            Collections.addAll(arrayList, matArray);
+                        }
                         param.setPromoList(arrayList);
 
                         List<Material> arrayDctList = new ArrayList<>();
                         Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        Collections.addAll(arrayDctList, dctArray);
+                        if (dctArray != null) {
+                            Collections.addAll(arrayDctList, dctArray);
+                        }
                         param.setDctList(arrayDctList);
 
                         int idHeader = database.addCustomer(param, user.getUsername());

@@ -3,7 +3,6 @@ package id.co.qualitas.qubes.adapter.aspp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -18,9 +17,7 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
-import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Discount;
 
 public class OrderDiscountAdapter extends RecyclerView.Adapter<OrderDiscountAdapter.Holder> implements Filterable {
@@ -64,7 +61,7 @@ public class OrderDiscountAdapter extends RecyclerView.Adapter<OrderDiscountAdap
                     for (Discount row : mList) {
 
                         /*filter by name*/
-                        if (row.getKeyDiskon().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getKeydiskon().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -113,8 +110,8 @@ public class OrderDiscountAdapter extends RecyclerView.Adapter<OrderDiscountAdap
     public void onBindViewHolder(Holder holder, int position) {
         Discount detail = mFilteredList.get(position);
         setFormatSeparator();
-        holder.txtLabel.setText(Helper.isEmpty(detail.getKeyDiskon(), ""));
-        double amount = Double.parseDouble(detail.getValueDiskon());
+        holder.txtLabel.setText(Helper.isEmpty(detail.getKeydiskon(), ""));
+        double amount = Double.parseDouble(detail.getValuediskon());
         holder.txtAmount.setText("Rp. " + format.format(amount));
     }
 

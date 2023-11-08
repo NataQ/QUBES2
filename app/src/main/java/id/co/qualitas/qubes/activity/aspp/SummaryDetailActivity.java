@@ -1,62 +1,50 @@
 package id.co.qualitas.qubes.activity.aspp;
 
-import android.app.Dialog;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.github.gcacace.signaturepad.views.SignaturePad;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
-import id.co.qualitas.qubes.adapter.aspp.InvoiceVerificationAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SummaryDetailAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class SummaryDetailActivity extends BaseActivity {
     private SummaryDetailAdapter mAdapter;
-    private List<Material> mList, mListExtra;
-    private ImageView imgBack;
+    private List<Material> mList;
+    private WSMessage resultWsMessage;
+    private boolean saveDataSuccess = false;
+    private Order orderHeader;
+    private LinearLayout llStatus;
+    private TextView txtOrderNo, txtDate, txtInvoiceNo, txtOutlet, txtOmzet, txtStatus;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_summary_detail);
 
-        initProgress();
         initialize();
-        initData();
-        setDataDummy();
-
-        mAdapter = new SummaryDetailAdapter(this, mList, header -> {
-        });
-
-        recyclerView.setAdapter(mAdapter);
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
@@ -65,59 +53,89 @@ public class SummaryDetailActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(SummaryDetailActivity.this);
         });
-    }
 
-    private void setDataDummy() {
-        String jsonFileString = Helper.getJsonFromAssets(getApplicationContext(), "discount.json");
-//        Gson gson = new Gson();
-//        Type listUserType = new TypeToken<List<ShipmentResponse>>() {
-//        }.getType();
-//
-//        shipmentResponseList = new ArrayList<>();
-//        shipmentResponseList = gson.fromJson(jsonFileString, listUserType);
-//        bgTaskFilter(shipmentResponseList);
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = new JSONObject(jsonFileString);
-        } catch (JSONException err) {
-            Log.d("Error", err.toString());
-        }
-
-//        JSONObject json_array = args.optJSONObject(0);
-
-        Iterator<?> keys = jsonObject.keys();
-
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            System.out.println("Key: " + key);
-            try {
-                System.out.println("Value: " + jsonObject.get(key));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestData();
+                swipeLayout.setRefreshing(false);
             }
-        }
+        });
     }
 
-    private void initData() {
+    private void setAdapter() {
+        mAdapter = new SummaryDetailAdapter(this, mList, header -> {
+        });
+
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    private void getData() {
         mList = new ArrayList<>();
-//        mList.add(new Material("11_KTD R", "11008_KRATINGDAENG LUAR PULAU - MT", 1, 1000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11006_KRATINGDAENG - LAIN-LAIN", 1, 3000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL", initDataExtra()));
-    }
+        orderHeader = SessionManagerQubes.getOrder();
+        String idCust = Helper.isEmpty(orderHeader.getId_customer(), "");
+        String nameCust = Helper.isEmpty(orderHeader.getNama(), "");
+        if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
+            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
+            txtDate.setText(requestDate);
+        } else {
+            txtDate.setText("");
+        }
+        txtOrderNo.setText(format.format(orderHeader.getId()));
+        txtInvoiceNo.setText(Helper.isEmpty(orderHeader.getSoNo(), ""));
+        txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
+        txtOutlet.setText(idCust + " - " + nameCust);
+        txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
 
-    private List<Material> initDataExtra() {
-        mListExtra = new ArrayList<>();
-//        mListExtra.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL"));
-//        mListExtra.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL"));
-        return mListExtra;
+        if (!Helper.isEmpty(orderHeader.getStatus())) {
+            switch (orderHeader.getStatus().toLowerCase()) {
+                case "approve":
+                    llStatus.setVisibility(View.VISIBLE);
+                    llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.green3_aspp));
+                    txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_aspp));
+                    break;
+                case "reject":
+                    llStatus.setVisibility(View.VISIBLE);
+                    llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.red_aspp));
+                    txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red2_aspp));
+                    break;
+                case "pending":
+                    llStatus.setVisibility(View.VISIBLE);
+                    llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.yellow3_aspp));
+                    txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.yellow_aspp));
+                    break;
+                case "sync success":
+                    llStatus.setVisibility(View.VISIBLE);
+                    llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue8_aspp));
+                    txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.aspp_blue9));
+                    break;
+                default:
+                    llStatus.setVisibility(View.GONE);
+                    llStatus.setBackgroundTintList(null);
+                    txtStatus.setText("-");
+            }
+        } else {
+            llStatus.setVisibility(View.GONE);
+            llStatus.setBackgroundTintList(null);
+            txtStatus.setText("-");
+        }
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-
+        llStatus = findViewById(R.id.llStatus);
+        txtStatus = findViewById(R.id.txtStatus);
+        txtOutlet = findViewById(R.id.txtOutlet);
+        txtOmzet = findViewById(R.id.txtOmzet);
+        txtInvoiceNo = findViewById(R.id.txtInvoiceNo);
+        txtOrderNo = findViewById(R.id.txtOrderNo);
+        txtDate = findViewById(R.id.txtDate);
+        progressCircle = findViewById(R.id.progressCircle);
+        swipeLayout = findViewById(R.id.swipeLayout);
         imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
         recyclerView = findViewById(R.id.recyclerView);
@@ -128,5 +146,115 @@ public class SummaryDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        getFirstDataOffline();
+    }
+
+    private void getFirstDataOffline() {
+        if (SessionManagerQubes.getOrder() != null) {
+            getData();
+            setAdapter();
+
+            if (mList == null || mList.isEmpty()) {
+                requestData();
+            }
+        } else {
+            onBackPressed();
+            setToast("Gagal mengambil data");
+        }
+    }
+
+    private void requestData() {
+        recyclerView.setVisibility(View.GONE);
+        progressCircle.setVisibility(View.VISIBLE);
+        PARAM = 1;
+        new RequestUrl().execute();
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                if (PARAM == 1) {
+                    Map request = new HashMap();
+                    request.put("id", orderHeader.getId());
+                    request.put("username", user.getUsername());
+                    String URL_ = Constants.API_GET_SUMMARY_DETAIL;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                } else {
+                    mList = new ArrayList<>();
+                    Material[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Material[].class);
+                    if (paramArray != null) {
+                        Collections.addAll(mList, paramArray);
+                    }
+                    for (Material param : mList) {
+                        List<Material> listMat = new ArrayList<>();
+                        Material[] matArray = Helper.ObjectToGSON(param.getExtraItemObject(), Material[].class);
+                        if (matArray != null) {
+                            Collections.addAll(listMat, matArray);
+                        }
+                        param.setExtraItem(listMat);
+
+                        List<Discount> discList = new ArrayList<>();
+                        Discount[] disc = Helper.ObjectToGSON(param.getDiskonListObject(), Discount[].class);
+                        if (disc != null) {
+                            Collections.addAll(discList, disc);
+                        }
+                        param.setDiskonList(discList);
+                        double totalDiscount = 0;
+                        for (Discount discount : discList) {
+                            double amount = Double.parseDouble(discount.getValuediskon());
+                            totalDiscount = totalDiscount + amount;
+                        }
+                        param.setTotalDiscount(totalDiscount);
+                        param.setTotal(param.getPrice() + totalDiscount);
+                    }
+                    saveDataSuccess = true;
+                    return null;
+                }
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("summarydetail", ex.getMessage());
+                }
+                if (PARAM == 2) {
+                    saveDataSuccess = false;
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage result) {
+            if (PARAM == 1) {
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        resultWsMessage = result;
+                        PARAM = 2;
+                        new RequestUrl().execute();//2
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
+                        setToast(result.getMessage());
+                    }
+                } else {
+                    progressCircle.setVisibility(View.GONE);
+                    setToast(getString(R.string.failedGetData));
+                }
+            } else {
+                progressCircle.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                if (saveDataSuccess) {
+                    mAdapter.setData(mList);
+                } else {
+                    setToast(getString(R.string.failedSaveData));
+                }
+            }
+
+        }
     }
 }

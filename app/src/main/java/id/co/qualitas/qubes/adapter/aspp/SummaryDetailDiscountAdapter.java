@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
-import id.co.qualitas.qubes.model.Discount;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Discount;
 
 public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDetailDiscountAdapter.Holder> implements Filterable {
@@ -23,6 +26,8 @@ public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDe
     private LayoutInflater mInflater;
     private SummaryDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public SummaryDetailDiscountAdapter(SummaryDetailActivity mContext, List<Discount> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -56,7 +61,7 @@ public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDe
                     for (Discount row : mList) {
 
                         /*filter by name*/
-                        if (row.getKodeBarang().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getKeydiskon().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -78,13 +83,13 @@ public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDe
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtLabel, txtDesc;
+        TextView txtLabel, txtAmount;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
             txtLabel = itemView.findViewById(R.id.txtLabel);
-            txtDesc = itemView.findViewById(R.id.txtDesc);
+            txtAmount = itemView.findViewById(R.id.txtAmount);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -97,16 +102,17 @@ public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDe
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_summary_detail_discount, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_discount, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         Discount detail = mFilteredList.get(position);
-//        holder.txtLabel.setText(detail.getLa());
-//        holder.txtDesc.setText(detail.getMaterialCode());
-
+        setFormatSeparator();
+        holder.txtLabel.setText(Helper.isEmpty(detail.getKeydiskon(), ""));
+        double amount = Double.parseDouble(detail.getValuediskon());
+        holder.txtAmount.setText("Rp. " + format.format(amount));
     }
 
     @Override
@@ -117,5 +123,12 @@ public class SummaryDetailDiscountAdapter extends RecyclerView.Adapter<SummaryDe
     public interface OnAdapterListener {
         void onAdapterClick(Discount Discount);
     }
-}
 
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
+    }
+}

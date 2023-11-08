@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -69,6 +70,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private List<Discount> mListDiskon;
     private List<Material> listSpinner, listFilteredSpinner;
     boolean checkedAll = false;
+    private Material minimalOrder;
 
     public OrderAddAdapter(OrderAddActivity mContext, List<Material> mList, Customer outletHeader, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -186,7 +188,15 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
+        if (detail.getQty() == 0 && !Helper.isEmpty(detail.getUom())) {
+            Map req = new HashMap();
+            req.put("id", productId);
+            req.put("uom", detail.getUom());
+            minimalOrder = new Database(mContext).getMinimalOrder(req);
+            holder.edtQty.setText(Helper.setDotCurrencyAmount(minimalOrder.getQty()));
+        } else {
+            holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
+        }
         holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
         holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
 
@@ -224,7 +234,16 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
-            if (!Helper.isNullOrEmpty(detail.getUom())) {
+            Map req = new HashMap();
+            req.put("id", productId);
+            req.put("uom", detail.getUom());
+            minimalOrder = new Database(mContext).getMinimalOrder(req);
+
+            if (detail.getQty() < minimalOrder.getQty()) {
+                holder.edtQty.setText(Helper.setDotCurrencyAmount(minimalOrder.getQty()));
+                detail.setQty(minimalOrder.getQty());
+                Toast.makeText(mContext, "minimal order : " + format.format(minimalOrder.getQty()), Toast.LENGTH_SHORT).show();
+            } else {
                 detail.setPrice(new Database(mContext).getPrice(detail));
                 holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
                 mContext.calculateOmzet();
@@ -292,7 +311,20 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
                     int qty = Integer.parseInt(s.toString().replace(",", ""));
-                    detail.setQty(qty);
+                    if (!Helper.isNullOrEmpty(detail.getUom())) {
+                        Map req = new HashMap();
+                        req.put("id", productId);
+                        req.put("uom", detail.getUom());
+                        minimalOrder = new Database(mContext).getMinimalOrder(req);
+
+                        if (detail.getQty() < minimalOrder.getQty()) {
+                            holder.edtQty.setText(Helper.setDotCurrencyAmount(minimalOrder.getQty()));
+                            detail.setQty(minimalOrder.getQty());
+                            Toast.makeText(mContext, "minimal order : " + format.format(minimalOrder.getQty()), Toast.LENGTH_SHORT).show();
+                        } else {
+                            detail.setQty(qty);
+                        }
+                    }
                 } else {
                     detail.setQty(0);
                 }

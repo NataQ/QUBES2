@@ -16,14 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.PromotionFragment;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Promotion;
 
 public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Holder> implements Filterable {
     private List<Promotion> promotionList;
     private List<Promotion> promotionFilteredList;
     private LayoutInflater mInflater;
-//    private OnClickListener onClickListener;
+    //    private OnClickListener onClickListener;
     private PromotionFragment mContext;
 
 //    public void setOnClickListener(OnClickListener onClickListener) {
@@ -83,11 +85,12 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtPeriode, txtTitle;
+        TextView txtPeriode, txtTitle, txtDesc;
 
         public Holder(View itemView) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtTitle);
+            txtDesc = itemView.findViewById(R.id.txtDesc);
             txtPeriode = itemView.findViewById(R.id.txtPeriode);
             itemView.setOnClickListener(this);
         }
@@ -106,9 +109,21 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        Promotion promotion = promotionFilteredList.get(position);
-        holder.txtTitle.setText(promotion.getNama_promo());
-        holder.txtPeriode.setText(promotion.getValid_from() + " - " + promotion.getValid_to());
+        Promotion detail = promotionFilteredList.get(position);
+        String validFrom = null, validTo = null;
+        if (!Helper.isNullOrEmpty(detail.getValid_from())) {
+            validFrom = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getValid_from());
+        }
+
+        if (!Helper.isNullOrEmpty(detail.getValid_from())) {
+            validTo = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getValid_from());
+        }
+        String noPromo = Helper.isEmpty(detail.getNo_promo(), "");
+        String namaPromo = Helper.isEmpty(detail.getNama_promo(), "");
+
+        holder.txtTitle.setText(noPromo);
+        holder.txtDesc.setText(namaPromo);
+        holder.txtPeriode.setText(validFrom + " - " + validTo);
     }
 
     @Override

@@ -34,6 +34,7 @@ public class User implements Serializable {
     @SerializedName("listReasonReturn")
     private ArrayList<Reason> reasonArrayList;
     int reason = 2;
+    double at = 0;
     String dateString;
     String supervisorNik;
     String supervisorName;
@@ -48,7 +49,7 @@ public class User implements Serializable {
 
     //aspp qubes=========================================================================================
     private String username;
-//    private List<Group> listGroup;
+    //    private List<Group> listGroup;
 //    private List<Authority> listAuthority;
     private String id;
     private String nik;
@@ -70,6 +71,13 @@ public class User implements Serializable {
     private int max_visit;
     private List<DepoRegion> depoRegionList;
 
+    public double getAt() {
+        return at;
+    }
+
+    public void setAt(double at) {
+        this.at = at;
+    }
     public String getType_sales() {
         return type_sales;
     }

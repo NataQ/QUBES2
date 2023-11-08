@@ -2,21 +2,16 @@ package id.co.qualitas.qubes.model;
 
 import java.util.List;
 
-/**
- * Created by Foo on 4/22/2016.
- */
 public class Order {
-    private String txtOrderName;
-    private String txtOrderCode;
-    private String txtPriceBefore;
-    private String txtPriceNett;
     private String status;
-    private String date;
+    private String top;
+    private String order_date;
+    private String tanggal_kirim;
     private String soNo;
-    private String outlet;
-    private String idOrderBE;
-    private String customerId;
-    private String idHeader;
+    private int id;//id from back end
+    private String id_customer;
+    private String nama;
+    private String idHeader;//id sqlite
     private List<Material> materialList;
     private double omzet;
     private int isSync;
@@ -24,13 +19,28 @@ public class Order {
     public Order() {
     }
 
-    public Order(String txtOrderCode, String txtPriceNett, String outlet, String soNo, String status, String date) {
-        this.txtOrderCode = txtOrderCode;
-        this.txtPriceNett = txtPriceNett;
-        this.soNo = soNo;
-        this.status = status;
-        this.date = date;
-        this.outlet = outlet;
+    public String getTanggal_kirim() {
+        return tanggal_kirim;
+    }
+
+    public void setTanggal_kirim(String tanggal_kirim) {
+        this.tanggal_kirim = tanggal_kirim;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+
+    public String getTop() {
+        return top;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
     }
 
     public List<Material> getMaterialList() {
@@ -57,20 +67,20 @@ public class Order {
         this.idHeader = idHeader;
     }
 
-    public String getIdOrderBE() {
-        return idOrderBE;
+    public int getId() {
+        return id;
     }
 
-    public void setIdOrderBE(String idOrderBE) {
-        this.idOrderBE = idOrderBE;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getId_customer() {
+        return id_customer;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setId_customer(String id_customer) {
+        this.id_customer = id_customer;
     }
 
     public double getOmzet() {
@@ -79,14 +89,6 @@ public class Order {
 
     public void setOmzet(double omzet) {
         this.omzet = omzet;
-    }
-
-    public String getOutlet() {
-        return outlet;
-    }
-
-    public void setOutlet(String outlet) {
-        this.outlet = outlet;
     }
 
     public String getSoNo() {
@@ -105,43 +107,11 @@ public class Order {
         this.status = status;
     }
 
-    public String getDate() {
-        return date;
+    public String getOrder_date() {
+        return order_date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTxtOrderName() {
-        return txtOrderName;
-    }
-
-    public void setTxtOrderName(String txtOrderName) {
-        this.txtOrderName = txtOrderName;
-    }
-
-    public String getTxtOrderCode() {
-        return txtOrderCode;
-    }
-
-    public void setTxtOrderCode(String txtOrderCode) {
-        this.txtOrderCode = txtOrderCode;
-    }
-
-    public String getTxtPriceBefore() {
-        return txtPriceBefore;
-    }
-
-    public void setTxtPriceBefore(String txtPriceBefore) {
-        this.txtPriceBefore = txtPriceBefore;
-    }
-
-    public String getTxtPriceNett() {
-        return txtPriceNett;
-    }
-
-    public void setTxtPriceNett(String txtPriceNett) {
-        this.txtPriceNett = txtPriceNett;
+    public void setOrder_date(String order_date) {
+        this.order_date = order_date;
     }
 }

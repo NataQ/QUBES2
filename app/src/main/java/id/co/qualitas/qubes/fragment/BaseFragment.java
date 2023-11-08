@@ -97,6 +97,7 @@ import id.co.qualitas.qubes.database.SecondDatabaseHelper;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.GPSTracker;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.CheckInOutRequest;
 import id.co.qualitas.qubes.model.GPSModel;
@@ -115,6 +116,7 @@ import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
 import id.co.qualitas.qubes.model.VisitOrderRequest;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class BaseFragment extends Fragment implements SearchView.OnQueryTextListener {

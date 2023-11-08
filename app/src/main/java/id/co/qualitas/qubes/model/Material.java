@@ -1,11 +1,9 @@
 package id.co.qualitas.qubes.model;
 
-import androidx.annotation.NonNull;
-
 import java.util.List;
 
 public class Material implements Cloneable {
-    private String idHeader;//aspp
+    private String idheader;//aspp
     private String idItem;//aspp
     private String id;//aspp
     private String id_customer;//aspp
@@ -31,9 +29,8 @@ public class Material implements Cloneable {
     private double total;
     private Discount discount;//from api aspp
     private Discount extraDiscount;//from api aspp
-
-    private List<Discount> extra;
     private List<Material> extraItem;
+    private Object extraItemObject;
     private boolean isChecked;
     private int isSync;
     private String material_sales;
@@ -54,13 +51,14 @@ public class Material implements Cloneable {
     private String photoReason;
     private String expiredDate;
     private List<Discount> diskonList;//object
+    private Object diskonListObject;//object
     private double sisa;
-
+    private int bon_limit;
     public Material() {
     }
 
-    public Material(String idHeader, String id, String nama, double nett, double price, int id_material_group, String material_group_name, int id_product_group, String name_product_group, double sisa) {
-        this.idHeader = idHeader;
+    public Material(String idheader, String id, String nama, double nett, double price, int id_material_group, String material_group_name, int id_product_group, String name_product_group, double sisa) {
+        this.idheader = idheader;
         this.id = id;
         this.nama = nama;
         this.nett = nett;
@@ -73,7 +71,7 @@ public class Material implements Cloneable {
     }
 
     public Material(Material material) {
-        this.idHeader = material.getIdHeader();
+        this.idheader = material.getIdheader();
         this.id = material.getId();
         this.nama = material.getNama();
         this.nett = material.getNett();
@@ -90,6 +88,30 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public Object getDiskonListObject() {
+        return diskonListObject;
+    }
+
+    public void setDiskonListObject(Object diskonListObject) {
+        this.diskonListObject = diskonListObject;
+    }
+
+    public Object getExtraItemObject() {
+        return extraItemObject;
+    }
+
+    public void setExtraItemObject(Object extraItemObject) {
+        this.extraItemObject = extraItemObject;
+    }
+
+    public int getBon_limit() {
+        return bon_limit;
+    }
+
+    public void setBon_limit(int bon_limit) {
+        this.bon_limit = bon_limit;
     }
 
     public double getTarget() {
@@ -244,12 +266,12 @@ public class Material implements Cloneable {
         this.no_invoice = no_invoice;
     }
 
-    public String getIdHeader() {
-        return idHeader;
+    public String getIdheader() {
+        return idheader;
     }
 
-    public void setIdHeader(String idHeader) {
-        this.idHeader = idHeader;
+    public void setIdheader(String idheader) {
+        this.idheader = idheader;
     }
 
     public String getId() {
@@ -404,14 +426,6 @@ public class Material implements Cloneable {
         this.discount = discount;
     }
 
-    public List<Discount> getExtra() {
-        return extra;
-    }
-
-    public void setExtra(List<Discount> extra) {
-        this.extra = extra;
-    }
-
     public List<Material> getExtraItem() {
         return extraItem;
     }
@@ -475,7 +489,7 @@ public class Material implements Cloneable {
 //    }
 
     public Material clone() {
-        Material newObj = new Material(this.getIdHeader(), this.getId(), this.getNama(), this.getNett(), this.getPrice(), this.getId_material_group(), this.getMaterial_group_name(), this.getId_product_group(), this.getName_product_group(), this.getSisa());
+        Material newObj = new Material(this.getIdheader(), this.getId(), this.getNama(), this.getNett(), this.getPrice(), this.getId_material_group(), this.getMaterial_group_name(), this.getId_product_group(), this.getName_product_group(), this.getSisa());
         return newObj;
     }
 }

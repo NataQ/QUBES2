@@ -1,6 +1,5 @@
 package id.co.qualitas.qubes.activity.aspp;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.se.omapi.Session;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +32,13 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.OrderAddAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerProductOrderAdapter;
-import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
-import id.co.qualitas.qubes.model.Parameter;
-import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -115,6 +106,9 @@ public class OrderAddActivity extends BaseActivity {
 
         //tim sr batterai
         //-> 2 bon produk batterai
+//        if(mList){
+//
+//        }
 
         return validate == 0;
     }
@@ -437,8 +431,8 @@ public class OrderAddActivity extends BaseActivity {
                         List<Discount> discList = new ArrayList<>();
                         for (Map.Entry<String, String> pair : map.entrySet()) {
                             Discount disc = new Discount();
-                            disc.setKeyDiskon(pair.getKey());
-                            disc.setValueDiskon(pair.getValue());
+                            disc.setKeydiskon(pair.getKey());
+                            disc.setValuediskon(pair.getValue());
                             totalDisc = totalDisc + Double.parseDouble(pair.getValue());
                             discList.add(disc);
                         }
@@ -459,8 +453,8 @@ public class OrderAddActivity extends BaseActivity {
                     return null;
                 } else {
                     Order header = new Order();
-                    header.setCustomerId(outletHeader.getId());
-                    header.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+                    header.setId_customer(outletHeader.getId());
+                    header.setOrder_date(Helper.getTodayDate(Constants.DATE_FORMAT_3));
                     double omzet = 0;
                     try {
                         omzet = Double.parseDouble(txtOmzet.getText().toString().replace("Rp. ", "").replace(".", ""));

@@ -315,80 +315,100 @@ public class AccountFragment extends BaseFragment {
 
                     List<Reason> reasonList = new ArrayList<>();
                     Reason[] paramArray = Helper.ObjectToGSON(response.get("listReason"), Reason[].class);
-                    Collections.addAll(reasonList, paramArray);
-                    database.deleteMasterReason();
+                    if (paramArray != null) {
+                        Collections.addAll(reasonList, paramArray);
+                        database.deleteMasterReason();
+                    }
                     for (Reason reason : reasonList) {
                         database.addMasterReason(reason, user.getUsername());
                     }
 
                     List<Bank> bankList = new ArrayList<>();
                     Bank[] paramArray1 = Helper.ObjectToGSON(response.get("listBank"), Bank[].class);
-                    Collections.addAll(bankList, paramArray1);
-                    database.deleteMasterBank();
+                    if (paramArray1 != null) {
+                        Collections.addAll(bankList, paramArray1);
+                        database.deleteMasterBank();
+                    }
                     for (Bank param : bankList) {
                         database.addMasterBank(param, user.getUsername());
                     }
 
                     List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
                     DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.get("listDaerahTingkat"), DaerahTingkat[].class);
-                    Collections.addAll(daerahTingkatList, paramArray3);
-                    database.deleteMasterDaerahTingkat();
+                    if (paramArray3 != null) {
+                        Collections.addAll(daerahTingkatList, paramArray3);
+                        database.deleteMasterDaerahTingkat();
+                    }
                     for (DaerahTingkat param : daerahTingkatList) {
                         database.addMasterDaerahTingkat(param, user.getUsername());
                     }
 
                     List<Material> materialList = new ArrayList<>();
                     Material[] paramArray4 = Helper.ObjectToGSON(response.get("listMaterial"), Material[].class);
-                    Collections.addAll(materialList, paramArray4);
-                    database.deleteMasterMaterial();
+                    if (paramArray4 != null) {
+                        Collections.addAll(materialList, paramArray4);
+                        database.deleteMasterMaterial();
+                    }
                     for (Material param : materialList) {
                         database.addMasterMaterial(param, user.getUsername());
                     }
 
                     List<Uom> uomList = new ArrayList<>();
                     Uom[] paramArray5 = Helper.ObjectToGSON(response.get("listUom"), Uom[].class);
-                    Collections.addAll(uomList, paramArray5);
-                    database.deleteMasterUom();
+                    if (paramArray5 != null) {
+                        Collections.addAll(uomList, paramArray5);
+                        database.deleteMasterUom();
+                    }
                     for (Uom param : uomList) {
                         database.addMasterUom(param, user.getUsername());
                     }
 
                     List<PriceCode> priceList = new ArrayList<>();
                     PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
-                    Collections.addAll(priceList, paramArray6);
-                    database.deleteMasterPriceCode();
+                    if (paramArray6 != null) {
+                        Collections.addAll(priceList, paramArray6);
+                        database.deleteMasterPriceCode();
+                    }
                     for (PriceCode param : priceList) {
                         database.addMasterPriceCode(param, user.getUsername());
                     }
 
                     List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
                     SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
-                    Collections.addAll(salesPriceHeaderList, paramArray7);
-                    database.deleteMasterSalesPriceHeader();
+                    if (paramArray7 != null) {
+                        Collections.addAll(salesPriceHeaderList, paramArray7);
+                        database.deleteMasterSalesPriceHeader();
+                    }
                     for (SalesPriceHeader param : salesPriceHeaderList) {
                         database.addMasterSalesPriceHeader(param, user.getUsername());
                     }
 
                     List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
                     SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
-                    Collections.addAll(salesPriceDetailList, paramArray8);
-                    database.deleteMasterSalesPriceDetail();
+                    if (paramArray8 != null) {
+                        Collections.addAll(salesPriceDetailList, paramArray8);
+                        database.deleteMasterSalesPriceDetail();
+                    }
                     for (SalesPriceDetail param : salesPriceDetailList) {
                         database.addMasterSalesPriceDetail(param, user.getUsername());
                     }
 
                     List<Parameter> parameterList = new ArrayList<>();
                     Parameter[] paramArray9 = Helper.ObjectToGSON(response.get("parameter"), Parameter[].class);
-                    Collections.addAll(parameterList, paramArray9);
-                    database.deleteMasterParameter();
+                    if (paramArray9 != null) {
+                        Collections.addAll(parameterList, paramArray9);
+                        database.deleteMasterParameter();
+                    }
                     for (Parameter param : parameterList) {
                         database.addMasterParameter(param, user.getUsername());
                     }
 
                     List<CustomerType> cusTypeList = new ArrayList<>();
                     CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
-                    Collections.addAll(cusTypeList, paramArray10);
-                    database.deleteMasterCustomerType();
+                    if (paramArray10 != null) {
+                        Collections.addAll(cusTypeList, paramArray10);
+                        database.deleteMasterCustomerType();
+                    }
                     for (CustomerType param : cusTypeList) {
                         database.addMasterCustomerType(param, user.getUsername());
                     }

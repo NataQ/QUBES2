@@ -210,6 +210,14 @@ public class Helper extends BaseFragment {
         return c;
     }
 
+    public static String todayDateAddDate(String format, int add) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, add);
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        String formattedDate = df.format(c.getTime());
+        return formattedDate;
+    }
+
     public static String getJsonFromAssets(Context context, String fileName) {
         String jsonString;
         try {

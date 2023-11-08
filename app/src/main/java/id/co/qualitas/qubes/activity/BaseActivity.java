@@ -93,6 +93,7 @@ import id.co.qualitas.qubes.database.SecondDatabaseHelper;
 import id.co.qualitas.qubes.fragment.TimerFragment;
 import id.co.qualitas.qubes.helper.GPSTracker;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.CheckInOutRequest;
 import id.co.qualitas.qubes.model.Material;
@@ -107,6 +108,7 @@ import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
 import id.co.qualitas.qubes.model.VisitOrderRequest;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
@@ -301,15 +303,52 @@ public class BaseActivity extends AppCompatActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearAllSession();
-                Intent intent = new Intent(activity, LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
                 dialog.dismiss();
+                progress.show();
+                new requestLogOut().execute();
             }
         });
 
         dialog.show();
+    }
+
+    private class requestLogOut extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_LOG_OUT;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("logOut", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage wsMessage) {
+            progress.dismiss();
+            if (wsMessage != null) {
+                if (wsMessage.getIdMessage() == 1) {
+                    clearAllSession();
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    setToast(wsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.failedGetData));
+            }
+        }
     }
 
     private void clearAllSession() {

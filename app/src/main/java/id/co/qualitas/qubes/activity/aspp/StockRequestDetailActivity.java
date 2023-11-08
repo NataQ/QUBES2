@@ -151,6 +151,7 @@ public class StockRequestDetailActivity extends BaseActivity {
             if (isSigned) {
                 header.setSignature(Utils.encodeImageBase64Sign(signaturePad.getTransparentSignatureBitmap()));
                 header.setIs_verif(1);
+                header.setId_salesman(user.getUsername());
                 dialog.dismiss();
 
                 progress.show();
