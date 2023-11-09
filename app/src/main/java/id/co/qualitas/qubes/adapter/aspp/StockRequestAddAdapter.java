@@ -134,7 +134,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
 
-        holder.txtNo.setText(format.format(position + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         mContext.setSpinnerData(listSpinner, holder.spinnerUom);

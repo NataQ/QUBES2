@@ -184,7 +184,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
             mListDiskon.addAll(detail.getDiskonList());
         }
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);

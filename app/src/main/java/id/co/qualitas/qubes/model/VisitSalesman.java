@@ -3,6 +3,8 @@ package id.co.qualitas.qubes.model;
 public class VisitSalesman {
     private String idHeader;
     private String customerId;
+    private String customerName;
+    private String address;
     private String idSalesman;
     private String date;
     private String checkInTime;
@@ -25,7 +27,32 @@ public class VisitSalesman {
     private String descCheckOutReason;
     private String photoCheckOutReason;
     private String timer;//new
+    private int posReason;
     private int isSync;
+
+    public int getPosReason() {
+        return posReason;
+    }
+
+    public void setPosReason(int posReason) {
+        this.posReason = posReason;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public String getTimer() {
         return timer;

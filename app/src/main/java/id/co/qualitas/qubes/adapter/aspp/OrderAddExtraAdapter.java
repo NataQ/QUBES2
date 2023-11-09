@@ -158,7 +158,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
 
-        holder.txtNo.setText(String.valueOf(posHeader + 1) + "." + String.valueOf(holder.getAbsoluteAdapterPosition() + 1));
+        holder.txtNo.setText(format.format(posHeader + 1) + "." + format.format(holder.getAbsoluteAdapterPosition() + 1));
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());

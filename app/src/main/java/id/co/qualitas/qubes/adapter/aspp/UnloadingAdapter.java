@@ -119,7 +119,7 @@ public class UnloadingAdapter extends RecyclerView.Adapter<UnloadingAdapter.Hold
         String qty = format.format(detail.getQty());
         String qtySisa = format.format(detail.getQtySisa());
 
-        holder.txtNo.setText(format.format(position + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(idMat + " - " + nameMat);
         holder.txtQty.setText(qty + " " + uom);
         holder.txtSisaStock.setText(qtySisa + " " + uomSisa);

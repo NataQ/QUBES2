@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
 //                setDataDummyUser();
                 progress.show();
                 PARAM = 1;
-                new RequestUrl().execute();
+                new RequestUrl().execute();//1
             }
         });
 

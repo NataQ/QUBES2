@@ -134,7 +134,7 @@ public class OrderDetailExtraAdapter extends RecyclerView.Adapter<OrderDetailExt
         Material detail = mFilteredList.get(position);
         setFormatSeparator();
 
-        holder.txtNo.setText(String.valueOf(positionHeader + 1) + "." + String.valueOf(position + 1));
+        holder.txtNo.setText(format.format(positionHeader + 1) + "." + format.format(holder.getAbsoluteAdapterPosition() + 1));
         holder.txtProduct.setText(detail.getMaterialCode());
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(detail.getUom());

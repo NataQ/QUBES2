@@ -135,7 +135,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
-        holder.txtNo.setText(String.valueOf(position + 1));
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1));
         holder.txtProduct.setText(detail.getMaterialCode());
         holder.txtQty.setText(String.valueOf(detail.getQty()));
         holder.txtUom.setText(detail.getUom());

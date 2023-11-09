@@ -264,6 +264,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 4:
             case 5:
             case 6:
+            case 13:
                 resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
                 break;
             case 7:
@@ -313,7 +314,6 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 5:
                 imageFileName = "KM_Akhir" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
-
             case 6:
                 imageFileName = "Completed" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
@@ -325,6 +325,9 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
                 break;
             case 12:
                 imageFileName = "reason_checkout" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                break;
+            case 13:
+                imageFileName = "reason_not_visit" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
         }
 

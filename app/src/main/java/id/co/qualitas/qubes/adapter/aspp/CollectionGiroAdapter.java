@@ -400,7 +400,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
                     totalPayment = 0;
                     detail.setTotalPayment(0);
                 }
-                setLeft();
+                setLeft(holder.getAbsoluteAdapterPosition());
             }
         });
 
@@ -438,11 +438,13 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
         });
     }
 
-    public double getTotalAmount() {
-        return totalPayment;
+    public double getTotalAmount(int idHeader) {
+        double totalAmount = 0;
+        totalAmount = mFilteredList.get(idHeader).getTotalPayment();
+        return totalAmount;
     }
 
-    public void setLeft() {
+    public void setLeft(int pos) {
         double totalPaid = 0;
         for (Material mat : materialList) {
 //            if (mat.isChecked()) {
@@ -452,7 +454,7 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
         left = totalPayment - totalPaid;
         dataObjectHolder.txtLeft.setText("Rp." + format.format(left));
-        mFilteredList.get(dataObjectHolder.getAbsoluteAdapterPosition()).setLeft(left);
+        mFilteredList.get(pos).setLeft(left);
     }
 
     public double calculateLeft(double qty, int pos) {

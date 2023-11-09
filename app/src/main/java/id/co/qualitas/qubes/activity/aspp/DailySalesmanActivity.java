@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -22,7 +20,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -55,8 +52,6 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.textfield.TextInputLayout;
-
-import org.osmdroid.config.Configuration;
 
 import java.io.File;
 import java.io.IOException;
@@ -166,7 +161,22 @@ public class DailySalesmanActivity extends BaseActivity {
         initialize();
 
         btnCheckOut.setOnClickListener(v -> {
-            checkLocationPermission();
+            int validateOut = validateCheckOut();
+            switch (validateOut) {
+                case 0:
+                    checkLocationPermission();
+                    break;
+                case 1:
+                    openDialogReasonCheckOut();
+                    //reason not order
+                    break;
+//                case 2:
+//                    openDialogReasonCheckOut(Constants.REASON_TYPE_NOT_PAY, "Reason Not Pay");
+//                    //reason not pay
+//                    break;
+            }
+
+
         });
 
         llPause.setOnClickListener(v -> {
@@ -188,12 +198,16 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
-            if (!Helper.isEmpty(user.getType_sales())) {
-                if (user.getType_sales().equals("CO")) {
-                    if (Helper.isEmptyOrNull(fakturList)) {
-                        moveOrder();
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                if (!Helper.isEmpty(user.getType_sales())) {
+                    if (user.getType_sales().equals("CO")) {
+                        if (Helper.isEmptyOrNull(fakturList)) {
+                            moveOrder();
+                        } else {
+                            dialogConfirm();
+                        }
                     } else {
-                        dialogConfirm();
+                        moveOrder();
                     }
                 } else {
                     moveOrder();
@@ -201,8 +215,6 @@ public class DailySalesmanActivity extends BaseActivity {
             } else {
                 moveOrder();
             }
-
-
         });
 
         llCollection.setOnClickListener(v -> {
@@ -308,6 +320,29 @@ public class DailySalesmanActivity extends BaseActivity {
         });
     }
 
+    private int validateCheckOut() {
+        int payment = 0, invoice = 0, orderOutlet = 0, result = 0;
+        Map req = new HashMap();
+        req.put("id", outletHeader.getId());
+        req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+
+        orderOutlet = database.getCountOrderCustomer(req);
+//        invoice = database.getCountInvoiceCustomer(req);
+//        if (invoice > 0) {
+//            payment = database.getCountPaymentCustomer(req);
+//        }
+
+        if (orderOutlet == 0) {
+            result = 1;// no order
+        }
+//        else {
+//            if (invoice > 0 && payment == 0) {
+//                result = 2;//ada invoice tapi belum d bayar
+//            }
+//        }
+        return result;
+    }
+
     private void moveOrder() {
         SessionManagerQubes.clearCollectionHeaderSession();
         Intent intent = new Intent(this, OrderActivity.class);
@@ -348,7 +383,8 @@ public class DailySalesmanActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void openDialogNotOrder() {
+    private void openDialogReasonCheckOut() {
+        imageType = new ImageType();
         Dialog alertDialog = new Dialog(this);
 
         alertDialog.setContentView(R.layout.aspp_dialog_reason);
@@ -369,13 +405,13 @@ public class DailySalesmanActivity extends BaseActivity {
             visitSales.setIdCheckOutReason(String.valueOf(reason.getId()));
             visitSales.setNameCheckOutReason(reason.getDescription());
             if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
-                typeImage = 11;
+                typeImage = 12;
                 imageType.setPosImage(typeImage);
                 imageType.setVisitSalesman(visitSales);
                 imageType.setReason(reason);
                 imageType.setType(2);//1 => pause, 2 => checkout
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-                openDialogPhotoReason(1);
+                openDialogPhotoReason(2);
             } else {
                 checkLocationPermission();
             }
@@ -436,6 +472,7 @@ public class DailySalesmanActivity extends BaseActivity {
 
 
     public void openDialogPause() {
+        imageType = new ImageType();
         Dialog alertDialog = new Dialog(this);
 
         alertDialog.setContentView(R.layout.aspp_dialog_reason);
@@ -583,16 +620,36 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-            if (type == 1) {
-                visitSales.setDescPauseReason(descReason[0]);
-                visitSales.setPhotoPauseReason(imageType.getPhotoReason());
-                pauseTimer();
+            int param = 0;
+            if (reason != null) {
+                if (reason.getIs_freetext() == 1) {
+                    if (Helper.isNullOrEmpty(descReason[0])) {
+                        param++;
+                    }
+                }
+                if (reason.getIs_photo() == 1) {
+                    if (Helper.isNullOrEmpty(imageType.getPhotoReason())) {
+                        param++;
+                    }
+                }
+
+                if (param == 0) {
+                    if (type == 1) {
+                        visitSales.setDescPauseReason(descReason[0]);
+                        visitSales.setPhotoPauseReason(imageType.getPhotoReason());
+                        pauseTimer();
+                    } else {
+                        visitSales.setDescCheckOutReason(descReason[0]);
+                        visitSales.setPhotoCheckOutReason(imageType.getPhotoReason());
+                        checkLocationPermission();
+                    }
+                    dialog.dismiss();
+                } else {
+                    setToast("Semua field harus terisi");
+                }
             } else {
-                visitSales.setDescCheckOutReason(descReason[0]);
-                visitSales.setPhotoCheckOutReason(imageType.getPhotoReason());
-                checkOutCustomer();
+                setToast("Silahkan coba lagi");
             }
-            dialog.dismiss();
         });
 
         dialog.show();
@@ -774,6 +831,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 case 11:
                     imageType.setPhotoReason(uri.toString());
                     openDialogPhotoReason(1);
+                case 12:
+                    imageType.setPhotoReason(uri.toString());
+                    openDialogPhotoReason(2);
             }
         }
         if (outletHeader.getPhotoKtp() != null) {
@@ -1294,11 +1354,7 @@ public class DailySalesmanActivity extends BaseActivity {
                                 currentLocation.put("longitude", location.getLongitude());
                                 currentLocation.put("address", result.getAddressLine(0));
 
-                                if (database.getCountOrder(outletHeader) == 0) {
-                                    openDialogNotOrder();
-                                } else {
-                                    checkOutCustomer();
-                                }
+                                checkOutCustomer();
                             } else {
                                 setToast("Lokasi tidak di temukan");
                             }

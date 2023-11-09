@@ -3,7 +3,7 @@ package id.co.qualitas.qubes.constants;
 public class Constants {
     public static final double ZOOM_LEVEL = 10.0;
     public static final String FCM = "fcm";
-        public static final String IMAGE_TYPE = "image_type";
+    public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
     public static final String STATUS_PENDING = "pending";
     public static final String STATUS_APPROVE = "approve";
@@ -15,6 +15,7 @@ public class Constants {
     public static final String REASON_TYPE_PAUSE = "Pause";
     public static final String REASON_TYPE_NOT_VISIT = "Not Visit";
     public static final String REASON_TYPE_NOT_BUY = "Not Buy";
+    public static final String REASON_TYPE_NOT_PAY = "Not Pay";
     public static final String REASON_TYPE_RETURN = "Return";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String LOG_EXCEPTION = "log exception";

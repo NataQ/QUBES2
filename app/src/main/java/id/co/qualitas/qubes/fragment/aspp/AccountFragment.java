@@ -435,9 +435,10 @@ public class AccountFragment extends BaseFragment {
         }
 
         @Override
-        protected void onPostExecute(WSMessage messageResponse) {
+        protected void onPostExecute(WSMessage wsMessage) {
             if (PARAM == 1) {
-                if (messageResponse != null) {
+                if (wsMessage != null) {
+                    messageResponse = wsMessage;
                     PARAM = 2;
                     new RequestUrl().execute();
                 } else {

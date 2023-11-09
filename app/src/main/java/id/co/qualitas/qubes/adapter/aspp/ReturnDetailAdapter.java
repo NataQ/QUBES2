@@ -142,6 +142,7 @@ public class ReturnDetailAdapter extends RecyclerView.Adapter<ReturnDetailAdapte
         holder.edtUom.setText(Helper.isEmpty(detail.getUom(), ""));
         holder.edtCondition.setText(Helper.isEmpty(detail.getCondition(), ""));
         holder.edtReason.setText(Helper.isEmpty(detail.getNameReason(), ""));
+        holder.edtDescReason.setText(Helper.isEmpty(detail.getDescReason(), ""));
         Utils.loadImageFit(mContext, detail.getPhotoReason(), holder.img);
 
         if (!Helper.isNullOrEmpty(detail.getExpiredDate())) {

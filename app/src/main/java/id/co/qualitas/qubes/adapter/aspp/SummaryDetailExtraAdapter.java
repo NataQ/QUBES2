@@ -135,7 +135,7 @@ public class SummaryDetailExtraAdapter extends RecyclerView.Adapter<SummaryDetai
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
 
-        holder.txtNo.setText(String.valueOf(positionHeader + 1) + "." + String.valueOf(holder.getAbsoluteAdapterPosition() + 1));
+        holder.txtNo.setText(format.format(positionHeader + 1) + "." + format.format(holder.getAbsoluteAdapterPosition() + 1));
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(Helper.isEmpty(detail.getUom(), ""));

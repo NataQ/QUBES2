@@ -12,11 +12,15 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.VisitActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 
 public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Holder> implements Filterable {
@@ -25,6 +29,8 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
     private LayoutInflater mInflater;
     private VisitActivity mContext;
     private OnAdapterListener onAdapterListener;
+    protected DecimalFormatSymbols otherSymbols;
+    protected DecimalFormat format;
 
     public VisitListAdapter(VisitActivity mContext, List<Customer> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -112,10 +118,11 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
+        setFormatSeparator();
         Customer detail = mFilteredList.get(position);
-        holder.txtNo.setText(String.valueOf(position + 1));
-        holder.txtAddress.setText(detail.getAddress());
-        holder.txtOutlet.setText(detail.getId() + " - " + detail.getNama());
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtAddress.setText(Helper.isEmpty(detail.getAddress(), ""));
+        holder.txtOutlet.setText(Helper.isEmpty(detail.getId(), "") + " - " + Helper.isEmpty(detail.getNama(), ""));
 
         if (detail.isRoute()) {
             holder.txtLabelRoute.setText("Route");
@@ -162,5 +169,13 @@ public class VisitListAdapter extends RecyclerView.Adapter<VisitListAdapter.Hold
 
     public interface OnAdapterListener {
         void onAdapterClick(Customer Customer);
+    }
+
+    private void setFormatSeparator() {
+        otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
+        otherSymbols.setDecimalSeparator(',');
+        otherSymbols.setGroupingSeparator('.');
+        format = new DecimalFormat("#,###,###,###.###", otherSymbols);
+        format.setDecimalSeparatorAlwaysShown(false);
     }
 }

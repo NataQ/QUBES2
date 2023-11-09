@@ -59,6 +59,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
@@ -108,14 +109,51 @@ public class ReturnAddActivity extends BaseActivity {
     private void validateData() {
         int param = 0;
 
-        if (mList.isEmpty() || mList == null) {
+        if (Helper.isNotEmptyOrNull(mList)) {
+            for (Material material : mList) {
+                if (!Helper.isNullOrEmpty(material.getIdReason())) {
+                    Reason reason = database.getDetailReasonById(Constants.REASON_TYPE_RETURN, material.getIdReason());
+                    if (reason.getIs_freetext() == 1) {
+                        if (Helper.isNullOrEmpty(material.getDescReason())) {
+                            param++;
+                        }
+                    }
+
+                    if (reason.getIs_photo() == 1) {
+                        if (Helper.isNullOrEmpty(material.getPhotoReason())) {
+                            param++;
+                        }
+                    }
+                } else {
+                    param++;
+                }
+
+                if (material.getQty() == 0) {
+                    param++;
+                }
+
+                if (Helper.isNullOrEmpty(material.getUom())) {
+                    param++;
+                }
+
+                if (Helper.isNullOrEmpty(material.getExpiredDate())) {
+                    param++;
+                }
+
+                if (Helper.isNullOrEmpty(material.getCondition())) {
+                    param++;
+                }
+            }
+        } else {
             param++;
-            setToast(getString(R.string.emptyMaterial));
         }
+
 
         if (param == 0) {
             progress.show();
             new RequestUrl().execute();//1
+        } else {
+            setToast(getString(R.string.emptyMaterial) + "\n" + "dan semua field sudah terisi");
         }
     }
 
@@ -425,6 +463,7 @@ public class ReturnAddActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+                SessionManagerQubes.setReturn(mList);
                 askPermission();
             }
         });

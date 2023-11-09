@@ -52,6 +52,9 @@ public class Customer {
     private double totalFaktur;
     private boolean noo;
     private String mileage;
+    private int idReason;
+    private String nameReason;
+    private int posReason;
 //    private Uri photoKTPUri;
 //    private Uri photoNPWPUri;
 //    private Uri photoOutletUri;
@@ -92,6 +95,30 @@ public class Customer {
 //        this.photoOutletUri = photoOutletUri;
 //    }
 
+
+    public int getPosReason() {
+        return posReason;
+    }
+
+    public void setPosReason(int posReason) {
+        this.posReason = posReason;
+    }
+
+    public int getIdReason() {
+        return idReason;
+    }
+
+    public void setIdReason(int idReason) {
+        this.idReason = idReason;
+    }
+
+    public String getNameReason() {
+        return nameReason;
+    }
+
+    public void setNameReason(String nameReason) {
+        this.nameReason = nameReason;
+    }
 
     public List<Material> getDctList() {
         return dctList;

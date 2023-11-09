@@ -2196,7 +2196,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
             values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
             values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            values.put(KEY_IS_SYNC, 0);
+            values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
 
 
             idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
@@ -2234,7 +2234,7 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_LEFT, (Double) requestDetail.get("left"));
                 values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
                 values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                 int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
@@ -2252,7 +2252,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
                     values.put(KEY_CREATED_BY, user.getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                     int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
                 }
@@ -2273,7 +2273,7 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_LEFT, (Double) requestDetail.get("left"));
                 values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
                 values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                 int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
@@ -2291,7 +2291,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
                     values.put(KEY_CREATED_BY, user.getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                     int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
                 }
@@ -2310,7 +2310,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_DATE, collection.getTgl());
                     values.put(KEY_CREATED_BY, user.getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                     int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
@@ -2328,7 +2328,7 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
                         values.put(KEY_CREATED_BY, user.getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                         int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
                     }
@@ -2354,7 +2354,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
                     values.put(KEY_CREATED_BY, user.getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                     int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
@@ -2372,7 +2372,7 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
                         values.put(KEY_CREATED_BY, user.getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                         int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
                     }
@@ -2398,7 +2398,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
                     values.put(KEY_CREATED_BY, user.getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                     int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
@@ -2416,7 +2416,7 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
                         values.put(KEY_CREATED_BY, user.getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
 
                         int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
                     }
@@ -3499,6 +3499,30 @@ public class Database extends SQLiteOpenHelper {
         return paramModel;
     }
 
+    public Reason getDetailReasonById(String param, String idReason) {
+        Reason paramModel = new Reason();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_REASON + " WHERE " + KEY_CATEGORY_REASON + " = ? and " + KEY_ID_REASON_BE + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{param, idReason});
+
+        if (cursor.moveToFirst()) {
+//            do {
+            paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_REASON_BE)));
+            paramModel.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_REASON)));
+            paramModel.setCategory(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CATEGORY_REASON)));
+            paramModel.setIs_photo(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PHOTO)));
+            paramModel.setIs_freetext(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_FREE_TEXT)));
+            paramModel.setIs_barcode(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_BARCODE)));
+            paramModel.setIs_signature(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SIGNATURE)));
+//                arrayList.add(paramModel);
+//            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return paramModel;
+    }
+
     public double getTotalTagihanCustomer(String idCust) {
         double result = 0.0;
         // Select All Query
@@ -3835,12 +3859,102 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public int getCountOrder(Customer customer) {
+    public List<VisitSalesman> getAllCheckInPauseVisit() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<VisitSalesman> arrayList = new ArrayList<>();
+        String selectQuery = null;
+        Cursor cursor = null;
+        selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = 0";
+        cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                VisitSalesman paramModel = new VisitSalesman();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
+                paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<VisitSalesman> getAllCheckInPauseNoo() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<VisitSalesman> arrayList = new ArrayList<>();
+        String selectQuery = null;
+        Cursor cursor = null;
+        selectQuery = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = 0";
+        cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                VisitSalesman paramModel = new VisitSalesman();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
+                paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setCustomerName(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public int getCountCustomer(Customer customer) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
         countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
         cursor = db.rawQuery(countQuery, new String[]{customer.getId()});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountOrderCustomer(Map req) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ?";
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString(), req.get("date").toString()});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountPaymentCustomer(Map req) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_PAID + " != 0";
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountInvoiceCustomer(Map req) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});
 
         int count = cursor.getCount();
         cursor.close();
@@ -3857,6 +3971,34 @@ public class Database extends SQLiteOpenHelper {
                 + " or " + KEY_STATUS + " = " + Constants.PAUSE_VISIT
                 + " or " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT
                 + ") and " + KEY_IS_ROUTE + " = 1 ";
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountCheckInPauseVisit() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT + " or " + KEY_STATUS + " = " + Constants.PAUSE_VISIT;
+        cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountCheckInPauseNoo() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT + " or " + KEY_STATUS + " = " + Constants.PAUSE_VISIT;
         cursor = db.rawQuery(countQuery, null);
 
         int count = cursor.getCount();

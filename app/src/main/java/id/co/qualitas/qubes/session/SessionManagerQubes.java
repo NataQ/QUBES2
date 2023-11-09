@@ -19,11 +19,13 @@ import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.VisitSalesman;
 
 @SuppressLint("CommitPrefEdits")
 public abstract class SessionManagerQubes {
     private static final Gson gson = new Gson();
     private static final Object sync = new Object();
+    private static final String PREF_VISIT_SALESMAN_REASON = "pref_visit_salesman_reason";
     private static final String PREF_ORDER = "pref_order";
     private static final String PREF_CUSTOMER_NOO = "pref_customer_noo";
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
@@ -36,6 +38,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
     private static final String PREF_COLLECTION = "PREF_COLLECTION";
     private static final String PREF_COLLECTION_HISTORY = "PREF_COLLECTION_HISTORY";
+    private static final String KEY_VISIT_SALESMAN_REASON = "key_visit_salesman_reason";
     private static final String KEY_ORDER = "key_order";
     private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
@@ -51,6 +54,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
     private static final String KEY_RETURN = "key_return";
+    private static SharedPreferences visitSalesmanReasonPrefs;
     private static SharedPreferences orderPrefs;
     private static SharedPreferences customerNooPrefs;
     private static SharedPreferences imageTypePrefs;
@@ -79,6 +83,7 @@ public abstract class SessionManagerQubes {
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
         returnPrefs = context.getSharedPreferences(PREF_RETURN, Context.MODE_PRIVATE);
         orderPrefs = context.getSharedPreferences(PREF_ORDER, Context.MODE_PRIVATE);
+        visitSalesmanReasonPrefs = context.getSharedPreferences(PREF_VISIT_SALESMAN_REASON, Context.MODE_PRIVATE);
     }
 
     public static void setStartDay(int param) {
@@ -90,6 +95,12 @@ public abstract class SessionManagerQubes {
     public static void setUrl(String url) {
         synchronized (sync) {
             prefs.edit().putString(KEY_URL, url).apply();
+        }
+    }
+
+    public static void setVisitSalesmanReason(List<VisitSalesman> param) {
+        synchronized (sync) {
+            visitSalesmanReasonPrefs.edit().putString(KEY_VISIT_SALESMAN_REASON, gson.toJson(param)).apply();
         }
     }
 
@@ -190,6 +201,10 @@ public abstract class SessionManagerQubes {
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+
+    public static List<VisitSalesman> getVisitSalesmanReason() {
+        return Arrays.asList(gson.fromJson(visitSalesmanReasonPrefs.getString(KEY_VISIT_SALESMAN_REASON, null), VisitSalesman[].class));
+    }
 
     public static List<Material> getReturn() {
         return Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class));

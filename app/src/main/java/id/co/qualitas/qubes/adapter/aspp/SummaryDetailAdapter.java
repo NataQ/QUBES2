@@ -146,7 +146,7 @@ public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdap
             mListDiskon.addAll(detail.getDiskonList());
         }
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1));
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1));
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(Helper.isEmpty(detail.getUom(), ""));

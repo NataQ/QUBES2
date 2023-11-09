@@ -2,7 +2,6 @@ package id.co.qualitas.qubes.adapter.aspp;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
@@ -39,7 +38,6 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Material;
 
@@ -230,7 +228,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
                     totalPayment = 0;
                     detail.setTotalPayment(0);
                 }
-                setLeft();
+                setLeft(holder.getAbsoluteAdapterPosition());
             }
         });
 
@@ -285,11 +283,13 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
         });
     }
 
-    public double getTotalAmount() {
-        return totalPayment;
+    public double getTotalAmount(int idHeader) {
+        double totalAmount = 0;
+        totalAmount = mFilteredList.get(idHeader).getTotalPayment();
+        return totalAmount;
     }
 
-    public void setLeft() {
+    public void setLeft(int pos) {
         double totalPaid = 0;
         for (Material mat : materialList) {
 //            if (mat.isChecked()) {
@@ -299,7 +299,7 @@ public class CollectionTransferAdapter extends RecyclerView.Adapter<CollectionTr
 
         left = totalPayment - totalPaid;
         dataObjectHolder.txtLeft.setText("Rp." + format.format(left));
-        mFilteredList.get(dataObjectHolder.getAbsoluteAdapterPosition()).setLeft(left);
+        mFilteredList.get(pos).setLeft(left);
     }
 
     public double calculateLeft(double qty, int pos) {

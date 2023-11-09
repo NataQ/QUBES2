@@ -165,7 +165,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
 
         if (detail.getPhotoReason() != null) {
             Utils.loadImageFit(mContext, detail.getPhotoReason(), holder.img);
@@ -317,8 +317,13 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
             if (reasonDetail.getIs_photo() == 1) {
                 holder.llPhoto.setVisibility(View.VISIBLE);
+                Utils.loadImageFit(mContext, detail.getPhotoReason(), holder.img);
+                holder.img.setVisibility(View.GONE);
+                holder.imgAdd.setVisibility(View.VISIBLE);
             } else {
                 holder.llPhoto.setVisibility(View.GONE);
+                holder.img.setVisibility(View.VISIBLE);
+                holder.imgAdd.setVisibility(View.GONE);
             }
         });
 

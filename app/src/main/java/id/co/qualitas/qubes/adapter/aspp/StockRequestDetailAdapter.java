@@ -116,7 +116,7 @@ public class StockRequestDetailAdapter extends RecyclerView.Adapter<StockRequest
         String nameMat = Helper.isEmpty(detail.getNama(), "");
         String uom = Helper.isEmpty(detail.getUom(), "");
 
-        holder.txtNo.setText(format.format(position + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(idMat + " - " + nameMat);
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(uom);

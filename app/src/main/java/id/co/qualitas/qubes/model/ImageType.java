@@ -12,9 +12,18 @@ public class ImageType {
     private int posMaterial;
     private String kmAwal;
     private String kmAkhir;
+    private String posReason;
     private int type;
     private VisitSalesman visitSalesman;
     private Reason reason;
+
+    public String getPosReason() {
+        return posReason;
+    }
+
+    public void setPosReason(String posReason) {
+        this.posReason = posReason;
+    }
 
     public Reason getReason() {
         return reason;

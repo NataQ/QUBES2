@@ -125,7 +125,7 @@ public class StoreCheckDetailAdapter extends RecyclerView.Adapter<StoreCheckDeta
         setFormatSeparator();
         String productName = Helper.isEmpty(detail.getNama(), "");
         String productId = String.valueOf(detail.getId());
-        holder.txtNo.setText(format.format(position + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
         holder.txtQty.setText(format.format(detail.getQty()));
         holder.txtUom.setText(Helper.isEmpty(detail.getUom(), ""));

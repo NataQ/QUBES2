@@ -50,6 +50,7 @@
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
                         android:padding="0dp"
+                        android:enabled="false"
                         android:textColor="@color/black_aspp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -73,6 +74,7 @@
                         android:layout_height="40dp"
                         android:inputType="numberDecimal"
                         android:padding="3dp"
+                        android:enabled="false"
                         android:textColor="@color/black_aspp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -94,6 +96,7 @@
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
                         android:padding="3dp"
+                        android:enabled="false"
                         android:textColor="@color/black_aspp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -123,12 +126,13 @@
                         android:focusableInTouchMode="false"
                         android:inputType="date"
                         android:padding="0dp"
+                        android:enabled="false"
                         android:textColor="@color/black_aspp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/SpinnerInputLayoutMaterial"
+                    style="@style/TextInputLayoutMaterialDisable"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -146,12 +150,13 @@
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
                         android:padding="3dp"
+                        android:enabled="false"
                         android:textColor="@color/black_aspp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/SpinnerInputLayoutMaterial"
+                    style="@style/TextInputLayoutMaterialDisable"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -166,6 +171,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
                         android:focusableInTouchMode="false"
+                        android:enabled="false"
                         android:padding="3dp"
                         android:textColor="@color/black_aspp" />
 
@@ -190,6 +196,7 @@
                     android:layout_height="wrap_content"
                     android:focusableInTouchMode="false"
                     android:padding="0dp"
+                    android:enabled="false"
                     android:textColor="@color/black_aspp" />
 
             </com.google.android.material.textfield.TextInputLayout>

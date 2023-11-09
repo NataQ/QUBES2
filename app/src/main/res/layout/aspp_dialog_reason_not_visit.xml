@@ -41,18 +41,86 @@
             android:text="Pilih reason untuk outlet yang belum di kunjungi"
             android:textColor="@color/gray8_aspp" />
 
-        <AutoCompleteTextView
-            style="@style/TextView_Small"
-            android:id="@+id/txtReasonAll"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_spinner_2"
-            android:completionThreshold="1"
-            android:hint="Search..."
-            android:padding="5dp"
-            android:textColor="@color/gray8_aspp"
-            android:textSize="@dimen/superSmallFont" />
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/spnReasonAll"
+                    style="@style/TextView_Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/bg_spinner_alert"
+                    android:completionThreshold="1"
+                    android:hint="Search..."
+                    android:padding="5dp"
+                    android:textColor="@color/black_aspp" />
+
+                <EditText
+                    android:id="@+id/edtTxtOther"
+                    style="@style/TextView_Small"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/editbox"
+                    android:padding="5dp"
+                    android:hint="Description reason"
+                    android:textColor="@color/gray8_aspp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/layoutCamera"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/selector_bg_photo"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="@dimen/icon_add_inside_btn"
+                        android:layout_height="@dimen/icon_add_inside_btn"
+                        android:src="@drawable/selector_camera" />
+
+                    <TextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:gravity="center"
+                        android:text="@string/camera"
+                        android:textAllCaps="true"
+                        android:textColor="@color/selector_text_color_photo" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnApply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textSize="@dimen/text_small"
+                android:text="Apply"
+                android:layout_gravity="center"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/blue_aspp"
+                app:cornerRadius="5dp" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -61,7 +129,7 @@
             android:layout_marginBottom="12dp"
             android:background="@color/gray9_aspp" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <id.co.qualitas.qubes.helper.RecyclerViewMaxHeight
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

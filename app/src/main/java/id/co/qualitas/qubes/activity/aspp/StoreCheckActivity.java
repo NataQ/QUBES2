@@ -96,21 +96,25 @@ public class StoreCheckActivity extends BaseActivity {
     private void validateData() {
         int param = 0;
 
-//        if (Helper.isEmpty(txtDate)) {
-//            param++;
-//            txtDate.setError(getString(R.string.emptyField));
-//        } else {
-//            txtDate.setError(null);
-//        }
+        if (Helper.isNotEmptyOrNull(mList)) {
+            for (Material material : mList) {
+                if (material.getQty() == 0) {
+                    param++;
+                }
 
-        if (mList.isEmpty() || mList == null) {
+                if (Helper.isNullOrEmpty(material.getUom())) {
+                    param++;
+                }
+            }
+        } else {
             param++;
-            setToast(getString(R.string.emptyMaterial));
         }
 
         if (param == 0) {
             progress.show();
             new RequestUrl().execute();//1
+        } else {
+            setToast(getString(R.string.emptyMaterial) + "\n" + "dan semua field sudah terisi");
         }
     }
 

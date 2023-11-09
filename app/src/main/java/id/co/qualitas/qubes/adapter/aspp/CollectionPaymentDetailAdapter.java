@@ -117,7 +117,7 @@ public class CollectionPaymentDetailAdapter extends RecyclerView.Adapter<Collect
         setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.txtNo.setText(String.valueOf(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null);
         holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
         holder.txtPaid.setText("Rp. " + format.format(detail.getAmountPaid()));

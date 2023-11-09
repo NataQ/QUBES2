@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -36,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -83,7 +85,9 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAllReasonAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerCustomerAdapter;
+import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
@@ -185,19 +189,6 @@ public class VisitActivity extends BaseActivity {
         setViewVisit();
         setViewNoo();
 
-        btnNextDay.setOnClickListener(v -> {
-            openDialogReasonNotVisit();
-        });
-
-        btnEndDay.setOnClickListener(v -> {
-            if (checkPermission()) {
-                new AsyncTaskGeneratePDF().execute();
-            } else {
-                setToast(getString(R.string.pleaseEnablePermission));
-                requestPermission();
-            }
-        });
-
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
@@ -219,15 +210,29 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            if (database.getAllInvoiceHeaderNotPaid().size() != 0) {
-                openDialogStartVisit();
-            } else {
-                setToast("Pastikan invoice sudah di verifikasi");
-            }
+            startDayVisit();//start visit
+        });
+
+        btnNextDay.setOnClickListener(v -> {
+            startDayVisit();//next day
         });
 
         btnEndVisit.setOnClickListener(v -> {
-            openDialogEndVisit();
+            if (checkPermission()) {
+                endTodayVisit();//end visit
+            } else {
+                setToast(getString(R.string.pleaseEnablePermission));
+                requestPermission();
+            }
+        });
+
+        btnEndDay.setOnClickListener(v -> {
+            if (checkPermission()) {
+                endTodayVisit();//end day
+            } else {
+                setToast(getString(R.string.pleaseEnablePermission));
+                requestPermission();
+            }
         });
 
         btnAddVisit.setOnClickListener(v -> {
@@ -272,6 +277,24 @@ public class VisitActivity extends BaseActivity {
                 setToast("Please start visit first");
             }
         });
+    }
+
+    private void startDayVisit() {
+        if (database.getAllInvoiceHeaderNotPaid().size() != 0) {
+            openDialogStartVisit();
+        } else {
+            setToast("Pastikan invoice sudah di verifikasi");
+        }
+    }
+
+    private void endTodayVisit() {
+        if (getCountCheckInPauseOutlet()) {
+            List<VisitSalesman> tempList = new ArrayList<>();
+            SessionManagerQubes.setVisitSalesmanReason(tempList);
+            openDialogReasonNotVisit();//end visit
+        } else {
+            setToast("Selesaikan customer yang sedang check in atau pause");
+        }
     }
 
     private void setAdapterVisit() {
@@ -338,6 +361,21 @@ public class VisitActivity extends BaseActivity {
 //            }
 //        }
         return (statusCheckIn == 0);
+    }
+
+    private boolean getCountCheckInPauseOutlet() {
+        int statusCheckIn = 0;
+        int statusCheckInVisit = database.getCountCheckInPauseVisit();
+        int statusCheckInNoo = database.getCountCheckInPauseNoo();
+        statusCheckIn = statusCheckInVisit + statusCheckInNoo;
+        return (statusCheckIn == 0);
+    }
+
+    private List<VisitSalesman> getAllCustomerNotVisit() {
+        List<VisitSalesman> customerList = new ArrayList<>();
+        customerList.addAll(database.getAllCheckInPauseVisit());
+        customerList.addAll(database.getAllCheckInPauseNoo());
+        return customerList;
     }
 
     private boolean checkNonRouteCheckIn() {
@@ -628,36 +666,145 @@ public class VisitActivity extends BaseActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.aspp_dialog_reason_not_visit);
 
+        Button btnApply = dialog.findViewById(R.id.btnApply);
         Button btnSave = dialog.findViewById(R.id.btnSave);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
-        AutoCompleteTextView txtReasonAll = dialog.findViewById(R.id.txtReasonAll);
+        Spinner spnReasonAll = dialog.findViewById(R.id.spnReasonAll);
+        EditText edtTxtOther = dialog.findViewById(R.id.edtTxtOther);
+        LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
         List<Reason> reasonList = new ArrayList<>();
-        reasonList.addAll(database.getAllReason("Not Visit"));
+        reasonList.addAll(database.getAllReason(Constants.REASON_TYPE_NOT_VISIT));
+        final String[] descReason = new String[1];
+        final Reason[] reasonChoose = {null};
+        final int[] posReason = {0};
 
-        final ArrayAdapter<Reason> arrayAdapter = new ArrayAdapter<Reason>(VisitActivity.this, android.R.layout.simple_dropdown_item_1line, reasonList);
-        txtReasonAll.setAdapter(arrayAdapter);
+        List<VisitSalesman> listCust = new ArrayList<>();
 
-        txtReasonAll.setOnClickListener(new View.OnClickListener() {
+        ReasonNotVisitAdapter mAdapter = new ReasonNotVisitAdapter(this, listCust, header -> {
+        });
+        recyclerView.setAdapter(mAdapter);
+
+        FilteredSpinnerAllReasonAdapter spinnerAdapter = new FilteredSpinnerAllReasonAdapter(this, reasonList);
+        spnReasonAll.setAdapter(spinnerAdapter);
+
+        if (Helper.isNotEmptyOrNull(SessionManagerQubes.getVisitSalesmanReason())) {
+            listCust.addAll(SessionManagerQubes.getVisitSalesmanReason());
+            if (imageType != null) {
+                if (!Helper.isNullOrEmpty(imageType.getPosReason())) {
+                    int posR = Integer.parseInt(imageType.getPosReason());
+                    try {
+                        listCust.get(posR).setPhotoCheckOutReason(imageType.getPhotoReason());
+                    } catch (Exception e) {
+
+                    }
+                    mAdapter.notifyItemChanged(posR);
+                } else {
+                    for (VisitSalesman cust : listCust) {
+                        cust.setPhotoCheckOutReason(imageType.getPhotoReason());
+                    }
+                    mAdapter.setData(listCust);
+                }
+            } else {
+                mAdapter.setData(listCust);
+            }
+        } else {
+            listCust.addAll(getAllCustomerNotVisit());
+            mAdapter.setData(listCust);
+        }
+
+        spnReasonAll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(final View arg0) {
-                txtReasonAll.showDropDown();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                reasonChoose[0] = reasonList.get(i);
+                posReason[0] = i;
+
+                if (reasonChoose[0].getIs_photo() == 1) {
+                    layoutCamera.setVisibility(View.VISIBLE);
+                } else {
+                    layoutCamera.setVisibility(View.GONE);
+                }
+
+                if (reasonChoose[0].getIs_freetext() == 1) {
+                    edtTxtOther.setVisibility(View.VISIBLE);
+                } else {
+                    edtTxtOther.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
-        ReasonNotVisitAdapter mAdapter = new ReasonNotVisitAdapter(this, mList, header -> {
+        edtTxtOther.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    descReason[0] = s.toString();
+
+                }
+            }
         });
 
-        recyclerView.setAdapter(mAdapter);
+        btnApply.setOnClickListener(v -> {
+            for (VisitSalesman vs : listCust) {
+                vs.setDescCheckOutReason(descReason[0]);
+                vs.setIdCheckOutReason(String.valueOf(reasonChoose[0].getId()));
+                vs.setNameCheckOutReason(reasonChoose[0].getDescription());
+                vs.setPosReason(posReason[0]);
+            }
+            mAdapter.notifyDataSetChanged();
+        });
+
+        layoutCamera.setOnClickListener(v -> {
+            SessionManagerQubes.setVisitSalesmanReason(listCust);
+            openCamera(null);
+        });
 
         btnSave.setOnClickListener(v -> {
             dialog.dismiss();
-            btnEndDay.setVisibility(View.VISIBLE);
-            btnNextDay.setVisibility(View.GONE);
+            int param = 0;
+            if (Helper.isNotEmptyOrNull(listCust)) {
+                for (VisitSalesman vs : listCust) {
+                    if (!Helper.isNullOrEmpty(vs.getIdCheckOutReason())) {
+                        Reason reason = database.getDetailReasonById(Constants.REASON_TYPE_RETURN, vs.getIdCheckOutReason());
+                        if (reason.getIs_freetext() == 1) {
+                            if (Helper.isNullOrEmpty(vs.getDescCheckOutReason())) {
+                                param++;
+                            }
+                        }
+
+                        if (reason.getIs_photo() == 1) {
+                            if (Helper.isNullOrEmpty(vs.getPhotoCheckOutReason())) {
+                                param++;
+                            }
+                        }
+                    } else {
+                        param++;
+                    }
+                }
+            }
+
+            if (param == 0) {
+                save ke visit salesman table offline
+                openDialogEndVisit();
+            } else {
+                setToast("Pastikan semua field susah di isi");
+            }
         });
 
         btnCancel.setOnClickListener(v -> {
@@ -682,7 +829,7 @@ public class VisitActivity extends BaseActivity {
         ImageView imgAddSelesai = dialog.findViewById(R.id.imgAddSelesai);
         ImageView imgPulang = dialog.findViewById(R.id.imgPulang);
         ImageView imgAddPulang = dialog.findViewById(R.id.imgAddPulang);
-
+        yg ud d foto bisa ilang kalau foto lagi, d check lagi
         if (uriSelesai != null) {
             Utils.loadImageFit(VisitActivity.this, uriSelesai.toString(), imgSelesai);
 //            imgSelesai.setImageURI(uriSelesai);
@@ -945,15 +1092,19 @@ public class VisitActivity extends BaseActivity {
             switch (imageType.getPosImage()) {
                 case 4:
                     uriBerangkat = uri;
-                    openDialogStartVisit();
+                    openDialogStartVisit();//on resume
                     break;
                 case 5:
                     uriPulang = uri;
-                    openDialogEndVisit();
+                    openDialogEndVisit();//on resume
                     break;
                 case 6:
                     uriSelesai = uri;
-                    openDialogEndVisit();
+                    openDialogEndVisit();//on resume
+                    break;
+                case 13:
+                    imageType.setPhotoReason(uri.toString());
+                    openDialogReasonNotVisit();//on resume
                     break;
             }
         }
@@ -1013,6 +1164,14 @@ public class VisitActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    public void openCamera(String pos) {
+        ImageType imageType = new ImageType();
+        imageType.setPosImage(13);
+        imageType.setPosReason(pos);
+        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+        askPermissionCamera();
     }
 
     private class AsyncTaskGeneratePDF extends AsyncTask<Void, Void, Boolean> {
@@ -1277,6 +1436,7 @@ public class VisitActivity extends BaseActivity {
                     if (result.getIdMessage() == 1) {
                         SessionManagerQubes.setStartDay(2);
                         validateButton();
+                        new AsyncTaskGeneratePDF().execute();
                     } else {
                         setToast(result.getMessage());
                     }
@@ -1332,7 +1492,8 @@ public class VisitActivity extends BaseActivity {
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             Helper.takePhoto(VisitActivity.this);
         } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
-            new AsyncTaskGeneratePDF().execute();
+            endTodayVisit();//end day/visit
+//            new AsyncTaskGeneratePDF().execute();
         } else if (requestCode == Constants.LOCATION_PERMISSION_REQUEST
                 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
@@ -1354,7 +1515,6 @@ public class VisitActivity extends BaseActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
 
     private void getLocationGPS() {
         getAddressWithPermission((result, location) -> {

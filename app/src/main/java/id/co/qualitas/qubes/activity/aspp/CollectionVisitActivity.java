@@ -54,6 +54,7 @@ public class CollectionVisitActivity extends BaseActivity {
 
     private SwipeRefreshLayout swipeLayoutHistory, swipeLayoutInvoice;
     private ProgressBar progressCircleHistory, progressCircleInvoice;
+    private Customer outletHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,11 +116,15 @@ public class CollectionVisitActivity extends BaseActivity {
 
     private void setAdapterInvoice() {
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
-            SessionManagerQubes.setCollectionHeader(header);
-            SessionManagerQubes.setCollectionSource(2);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                SessionManagerQubes.setCollectionHeader(header);
+                SessionManagerQubes.setCollectionSource(2);
 
-            Intent intent = new Intent(this, CollectionFormActivity.class);
-            startActivity(intent);
+                Intent intent = new Intent(this, CollectionFormActivity.class);
+                startActivity(intent);
+            }else{
+                setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, dilahkan pilih menu Collection di halaman Activity");
+            }
         });
 
         recyclerViewInvoice.setAdapter(mAdapter);
@@ -162,6 +167,7 @@ public class CollectionVisitActivity extends BaseActivity {
     }
 
     private void initialize() {
+        outletHeader = SessionManagerQubes.getOutletHeader();
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         progressCircleHistory = findViewById(R.id.progressCircleHistory);

@@ -97,6 +97,7 @@ public class CollectionFormActivity extends BaseActivity {
     double totalAmountPaid = 0;
     private boolean saveCollection = false, saveOrder = false;
     private Order orderHeader;
+    private int isSync = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,9 +112,10 @@ public class CollectionFormActivity extends BaseActivity {
                     PARAM = 1;
                 } else {
                     PARAM = 2;
+                    isSync = 0;
                 }
                 progress.show();
-                new RequestUrl().execute();//1
+                new RequestUrl().execute();//save
             }
         });
 
@@ -176,6 +178,7 @@ public class CollectionFormActivity extends BaseActivity {
                     request.put("chequeList", chequeList);
                     request.put("mListCheque", mListCheque);
                     request.put("mListCash", mListCash);
+                    request.put("isSync", isSync);
                     database.addCollection(request);
                     saveCollection = true;
                     return null;
@@ -206,6 +209,7 @@ public class CollectionFormActivity extends BaseActivity {
             if (PARAM == 1) {
                 if (messageResponse != null) {
                     if (messageResponse.getIdMessage() == 1) {
+                        isSync = 1;
                         progress.show();
                         PARAM = 2;
                         new RequestUrl().execute();//2

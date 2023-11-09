@@ -18,7 +18,6 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -144,7 +143,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
         holder.txtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
         holder.txtPaid.setOnClickListener(view -> {
-            if (headerAdapter.getTotalAmount() > 0) {
+            if (headerAdapter.getTotalAmount(idHeader) > 0) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 final Dialog dialog = new Dialog(mContext);
                 View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_paid, null);
@@ -197,7 +196,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                                 Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
                             } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
                                 Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                            } else if (qty > headerAdapter.getTotalAmount()) {
+                            } else if (qty > headerAdapter.getTotalAmount(idHeader)) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
                             } else if (qty > detail.getPrice()) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
@@ -206,7 +205,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                                 detail.setAmountPaid(qty);
                                 mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
 //                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                                headerAdapter.setLeft();
+                                headerAdapter.setLeft(idHeader);
 //                                mContext.updateLeft(2, idHeader);
                                 dialog.dismiss();
                             }

@@ -14,6 +14,7 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,6 +35,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -200,6 +202,14 @@ public class Utils {
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
         return new Integer[]{height, width};
+    }
+
+    public static int dpsToPixels(float dip, Resources resources) {
+        float px = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dip, resources.getDisplayMetrics()
+        );
+        return (int) px;
     }
 
     public interface OnItemClickListener {
