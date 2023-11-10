@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Bank implements Serializable {
     private String id;
     private String name;
-    private int id_depo;
+    private String id_depo;
     private String category;
     private String no_rek;
     private int isSync;
@@ -29,11 +29,11 @@ public class Bank implements Serializable {
         this.name = name;
     }
 
-    public int getId_depo() {
+    public String getId_depo() {
         return id_depo;
     }
 
-    public void setId_depo(int id_depo) {
+    public void setId_depo(String id_depo) {
         this.id_depo = id_depo;
     }
 

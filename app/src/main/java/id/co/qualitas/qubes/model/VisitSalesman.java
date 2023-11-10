@@ -29,6 +29,24 @@ public class VisitSalesman {
     private String timer;//new
     private int posReason;
     private int isSync;
+    private boolean isNoo;
+    private boolean isRoute;
+
+    public boolean isRoute() {
+        return isRoute;
+    }
+
+    public void setRoute(boolean route) {
+        isRoute = route;
+    }
+
+    public boolean isNoo() {
+        return isNoo;
+    }
+
+    public void setNoo(boolean noo) {
+        isNoo = noo;
+    }
 
     public int getPosReason() {
         return posReason;

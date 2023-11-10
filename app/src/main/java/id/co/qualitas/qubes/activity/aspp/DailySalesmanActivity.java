@@ -141,11 +141,7 @@ public class DailySalesmanActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_daily_salesman);
 
-        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
-                .setWaitForAccurateLocation(false)
-                .setMinUpdateIntervalMillis(2000)
-                .setMaxUpdateDelayMillis(2000)
-                .build();
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000).setWaitForAccurateLocation(false).setMinUpdateIntervalMillis(2000).setMaxUpdateDelayMillis(2000).build();
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -153,8 +149,7 @@ public class DailySalesmanActivity extends BaseActivity {
         };
         mResultReceiver = new AddressResultReceiver(new Handler());
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
 
@@ -181,9 +176,17 @@ public class DailySalesmanActivity extends BaseActivity {
 
         llPause.setOnClickListener(v -> {
             if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
-                resumeTimer();
+                if (checkOutletStatus()) {
+                    resumeTimer();
+                } else {
+                    setToast("Selesaikan customer yang sedang check in");
+                }
             } else {
-                openDialogPause();
+                if (database.getCountPauseCustomer() < database.getMaxPause()) {
+                    openDialogPause();
+                } else {
+                    setToast("Selesaikan pause di customer lain, sebelum pause di customer ini");
+                }
             }
         });
 
@@ -318,6 +321,14 @@ public class DailySalesmanActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(DailySalesmanActivity.this);
         });
+    }
+
+    private boolean checkOutletStatus() {
+        int statusCheckIn = 0;
+        int statusCheckInVisit = database.getCountCheckInVisit();
+        int statusCheckInNoo = database.getCountCheckInNoo();
+        statusCheckIn = statusCheckInVisit + statusCheckInNoo;
+        return (statusCheckIn == 0);
     }
 
     private int validateCheckOut() {
@@ -1344,8 +1355,7 @@ public class DailySalesmanActivity extends BaseActivity {
         getAddressWithPermission((result, location) -> {
             Utils.backgroundTask(progress,
 //                    () -> Utils.getCurrentAddress(CreateNooActivity.this, location.getLatitude(), location.getLongitude()),
-                    () -> Utils.getCurrentAddressFull(DailySalesmanActivity.this, location.getLatitude(), location.getLongitude()),
-                    new CallbackOnResult<Address>() {
+                    () -> Utils.getCurrentAddressFull(DailySalesmanActivity.this, location.getLatitude(), location.getLongitude()), new CallbackOnResult<Address>() {
                         @Override
                         public void onFinish(Address result) {
                             if (location != null) {
@@ -1380,27 +1390,24 @@ public class DailySalesmanActivity extends BaseActivity {
 
     @SuppressWarnings("MissingPermission")
     private void getAddress() {
-        mFusedLocationClient
-                .getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        mLastLocation = location;
-                        mResultReceiver.setLastLocation(mLastLocation);
-                        if (!Geocoder.isPresent()) {
-                            if (addressCallback != null) {
-                                addressCallback.onFinish("Geocoder not available", location);
-                            }
-                            return;
-                        }
-                        startIntentService();
-                    } else {
-                        addressCallback.onFinish(null, null);
-                        return;
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                mLastLocation = location;
+                mResultReceiver.setLastLocation(mLastLocation);
+                if (!Geocoder.isPresent()) {
+                    if (addressCallback != null) {
+                        addressCallback.onFinish("Geocoder not available", location);
                     }
-                })
-                .addOnFailureListener(this, e -> {
-                    addressCallback.onFinish(null, null);
-                });
+                    return;
+                }
+                startIntentService();
+            } else {
+                addressCallback.onFinish(null, null);
+                return;
+            }
+        }).addOnFailureListener(this, e -> {
+            addressCallback.onFinish(null, null);
+        });
     }
 
     private void startIntentService() {
@@ -1411,8 +1418,7 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     public boolean checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             requestPermissions();
@@ -1421,7 +1427,6 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void requestPermissions() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMISSION_REQUEST);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMISSION_REQUEST);
     }
 }

@@ -46,7 +46,7 @@ public class Return {
     private int isSync;
     private int id_material_group;
     private String material_group_name;
-    private int id_product_group;
+    private String id_product_group;
     private String name_product_group;
 
     public Return() {
@@ -313,11 +313,11 @@ public class Return {
         this.material_group_name = material_group_name;
     }
 
-    public int getId_product_group() {
+    public String getId_product_group() {
         return id_product_group;
     }
 
-    public void setId_product_group(int id_product_group) {
+    public void setId_product_group(String id_product_group) {
         this.id_product_group = id_product_group;
     }
 

@@ -151,6 +151,7 @@ public class CreateNooActivity extends BaseActivity {
         llNPWP.setOnClickListener(view -> {
             typeImage = 2;
             imageType.setPosImage(typeImage);
+            saveDataNoo();
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -159,6 +160,7 @@ public class CreateNooActivity extends BaseActivity {
         llOutlet.setOnClickListener(view -> {
             typeImage = 3;
             imageType.setPosImage(typeImage);
+            saveDataNoo();
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -280,23 +282,23 @@ public class CreateNooActivity extends BaseActivity {
             error++;
             edtAddress.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtKodePos)) {
+        if (txtKodePos.getText().toString().equals("")) {
             error++;
             txtKodePos.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtKelurahan)) {
+        if (txtKelurahan.getText().toString().equals("")) {
             error++;
             txtKelurahan.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtKecamatan)) {
+        if (txtKecamatan.getText().toString().equals("")) {
             error++;
             txtKecamatan.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtKotaKabupaten)) {
+        if (txtKotaKabupaten.getText().toString().equals("")) {
             error++;
             txtKotaKabupaten.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtProvinsi)) {
+        if (txtProvinsi.getText().toString().equals("")) {
             error++;
             txtProvinsi.setError(getString(R.string.emptyField));
         }
@@ -312,15 +314,15 @@ public class CreateNooActivity extends BaseActivity {
             error++;
             edtNIK.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtTypeToko)) {
+        if (txtTypeToko.getText().toString().equals("")) {
             error++;
             txtTypeToko.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtPriceListType)) {
+        if (txtPriceListType.getText().toString().equals("")) {
             error++;
             txtPriceListType.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(txtGPSLocation)) {
+        if (txtGPSLocation.getText().toString().equals("")) {
             error++;
             txtGPSLocation.setError(getString(R.string.emptyField));
         }
@@ -1059,6 +1061,7 @@ public class CreateNooActivity extends BaseActivity {
 
     private void setDataToView() {
         txtKodePos.setText(Helper.isEmpty(customerNoo.getKode_pos(), ""));
+        txtGPSLocation.setText(String.valueOf(customerNoo.getLatitude()) + "," + String.valueOf(customerNoo.getLongitude()));
         txtKelurahan.setText(Helper.isEmpty(customerNoo.getKelurahan(), ""));
         txtKecamatan.setText(Helper.isEmpty(customerNoo.getKecamatan(), ""));
         txtKotaKabupaten.setText(Helper.isEmpty(customerNoo.getKota(), ""));
@@ -1324,6 +1327,8 @@ public class CreateNooActivity extends BaseActivity {
                                     txtKotaKabupaten.setText(daerahTingkat.getNama_kabupaten());
                                     txtProvinsi.setText(daerahTingkat.getNama_provinsi());
                                 }
+                                customerNoo.setLatitude(location.getLatitude());
+                                customerNoo.setLongitude(location.getLongitude());
                                 txtGPSLocation.setText(String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude()));
                             } else {
                                 setToast("Lokasi tidak di temukan");

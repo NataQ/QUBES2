@@ -36,9 +36,9 @@ public class Material implements Cloneable {
     private String material_sales;
     private String load_number;
     private String no_invoice;
-    private int id_material_group;
+    private String id_material_group;
     private String material_group_name;
-    private int id_product_group;
+    private String id_product_group;
     private String name_product_group;
     private String top;
     private String priceListCode;
@@ -57,7 +57,7 @@ public class Material implements Cloneable {
     public Material() {
     }
 
-    public Material(String idheader, String id, String nama, double nett, double price, int id_material_group, String material_group_name, int id_product_group, String name_product_group, double sisa) {
+    public Material(String idheader, String id, String nama, double nett, double price, String id_material_group, String material_group_name, String id_product_group, String name_product_group, double sisa) {
         this.idheader = idheader;
         this.id = id;
         this.nama = nama;
@@ -242,11 +242,11 @@ public class Material implements Cloneable {
         this.id_customer = id_customer;
     }
 
-    public int getId_product_group() {
+    public String getId_product_group() {
         return id_product_group;
     }
 
-    public void setId_product_group(int id_product_group) {
+    public void setId_product_group(String id_product_group) {
         this.id_product_group = id_product_group;
     }
 
@@ -474,11 +474,11 @@ public class Material implements Cloneable {
         this.load_number = load_number;
     }
 
-    public int getId_material_group() {
+    public String getId_material_group() {
         return id_material_group;
     }
 
-    public void setId_material_group(int id_material_group) {
+    public void setId_material_group(String id_material_group) {
         this.id_material_group = id_material_group;
     }
 

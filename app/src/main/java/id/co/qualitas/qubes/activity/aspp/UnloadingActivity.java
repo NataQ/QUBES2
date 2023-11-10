@@ -203,7 +203,6 @@ public class UnloadingActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         pdfUnloadingUtils = UnloadingPdfUtils.getInstance(UnloadingActivity.this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
@@ -307,7 +306,7 @@ public class UnloadingActivity extends BaseActivity {
 
     private void getDataOffline() {
         mList = new ArrayList<>();
-        mList = database.getAllStockRequestDetail(header.getIdHeader());
+        mList = database.getAllStockRequestDetailUnloading(header.getIdHeader());
 
         if (mList == null || mList.isEmpty()) {
             txtNoData.setVisibility(View.VISIBLE);
