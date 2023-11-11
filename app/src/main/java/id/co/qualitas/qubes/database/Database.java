@@ -463,6 +463,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE " + TABLE_INVOICE_HEADER + "("
             + KEY_ID_INVOICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_DATE + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
             + KEY_INVOICE_DATE + " TEXT,"
             + KEY_INVOICE_TOTAL + " REAL,"
@@ -1195,7 +1196,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_DOC, param.getNo_doc());
         values.put(KEY_TANGGAL_KIRIM, param.getTanggal_kirim());
         values.put(KEY_NO_SURAT_JALAN, param.getNo_surat_jalan());
-        values.put(KEY_STATUS, param.getStatus());
+        values.put(KEY_STATUS, param.getStatus().toLowerCase());
         values.put(KEY_SIGN, param.getSignature());
         values.put(KEY_IS_UNLOADING, param.getIs_unloading());
         values.put(KEY_IS_VERIF, param.getIs_verif());
@@ -1247,6 +1248,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_DATE, param.getDate());
         values.put(KEY_INVOICE_NO, param.getNo_invoice());
         values.put(KEY_INVOICE_DATE, param.getInvoice_date());
         values.put(KEY_INVOICE_TOTAL, param.getAmount());
@@ -3128,6 +3130,33 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public StockRequest getLastStockRequest() {
+        StockRequest paramModel = new StockRequest();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc limit 1";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            paramModel = new StockRequest();
+            paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+            paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+            paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+            paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+            paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+            paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+            paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
+            paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+            paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+
+        }
+        cursor.close();
+        return paramModel;
+    }
+
     public List<Material> getAllStockRequestDetailUnloading(String idHeader) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
@@ -3153,6 +3182,7 @@ public class Database extends SQLiteOpenHelper {
                 double qty = getSumQtyByIdMaterial(req);
 
                 paramModel.setQtySisa(paramModel.getQty() - qty);
+                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -3277,6 +3307,7 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Invoice paramModel = new Invoice();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
@@ -3308,6 +3339,7 @@ public class Database extends SQLiteOpenHelper {
             do {
                 Invoice paramModel = new Invoice();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
@@ -3369,6 +3401,7 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Invoice paramModel = new Invoice();
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
                 paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
@@ -3965,7 +3998,12 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<VisitSalesman> getAllCheckInPauseVisit() {
+    public List<VisitSalesman> getAllCheckInPauseVisit(Map currentLocation) {
+        if (currentLocation == null) {
+            currentLocation = new HashMap();
+            currentLocation.put("latitude", null);
+            currentLocation.put("longitude", null);
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         List<VisitSalesman> arrayList = new ArrayList<>();
         String selectQuery = null;
@@ -3983,6 +4021,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
                 paramModel.setLatCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
                 paramModel.setLongCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setLatCheckOut(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
+                paramModel.setLongCheckOut(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);
                 paramModel.setNoo(false);
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -3991,7 +4031,12 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<VisitSalesman> getAllCheckInPauseNoo() {
+    public List<VisitSalesman> getAllCheckInPauseNoo(Map currentLocation) {
+        if (currentLocation == null) {
+            currentLocation = new HashMap();
+            currentLocation.put("latitude", null);
+            currentLocation.put("longitude", null);
+        }
         SQLiteDatabase db = this.getWritableDatabase();
         List<VisitSalesman> arrayList = new ArrayList<>();
         String selectQuery = null;
@@ -4037,6 +4082,48 @@ public class Database extends SQLiteOpenHelper {
 
         // return count
         return count + countNoo;
+    }
+
+    public int getCountInvoiceToday() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_DATE + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountStockRequestToday() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_REQUEST_DATE + " = ? and " + KEY_STATUS + " = ? and " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1";
+        cursor = db.rawQuery(countQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), Constants.STATUS_APPROVE});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    public int getCountInvoiceVerifToday() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_DATE + " = ? and " + KEY_IS_VERIF + " = 1";
+        cursor = db.rawQuery(countQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
     }
 
     public int getCountOrderCustomer(Map req) {
@@ -4130,7 +4217,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT ;
+        countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = " + Constants.CHECK_IN_VISIT;
         cursor = db.rawQuery(countQuery, null);
 
         int count = cursor.getCount();

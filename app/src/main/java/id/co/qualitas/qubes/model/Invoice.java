@@ -6,6 +6,7 @@ public class Invoice {
     private String idHeader;
     private String no_invoice;
     private String nama;
+    private String date;
     private String id_customer;
     private double amount;
     private double total_paid;
@@ -43,6 +44,14 @@ public class Invoice {
         this.invoice_date = invoice_date;
         this.is_route = is_route ? 1 : 0;
         this.materialList = materialList;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getIdHeader() {

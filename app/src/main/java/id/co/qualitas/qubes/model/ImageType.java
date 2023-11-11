@@ -5,7 +5,9 @@ public class ImageType {
     private String photoNPWP;
     private String photoOutlet;
     private String photoAkhir;
+    private String photoAkhirString;
     private String photoSelesai;
+    private String photoSelesaiString;
     private String photoKmAwal;
     private String photoReason;
     private int posImage;
@@ -16,6 +18,22 @@ public class ImageType {
     private int type;
     private VisitSalesman visitSalesman;
     private Reason reason;
+
+    public String getPhotoAkhirString() {
+        return photoAkhirString;
+    }
+
+    public void setPhotoAkhirString(String photoAkhirString) {
+        this.photoAkhirString = photoAkhirString;
+    }
+
+    public String getPhotoSelesaiString() {
+        return photoSelesaiString;
+    }
+
+    public void setPhotoSelesaiString(String photoSelesaiString) {
+        this.photoSelesaiString = photoSelesaiString;
+    }
 
     public String getPosReason() {
         return posReason;

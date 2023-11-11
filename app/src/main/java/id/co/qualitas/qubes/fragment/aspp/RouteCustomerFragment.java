@@ -3,11 +3,13 @@ package id.co.qualitas.qubes.fragment.aspp;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,6 +28,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +41,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,8 +51,10 @@ import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
+import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
@@ -52,7 +63,7 @@ import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
-public class RouteCustomerFragment extends BaseFragment implements LocationListener {
+public class RouteCustomerFragment extends BaseFragment {
     private RouteCustomerAdapter mAdapter;
     private List<Customer> mList, mListFiltered;
     private Button btnCoverage;
@@ -61,8 +72,13 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
     private WSMessage resultWsMessage;
     private boolean saveDataSuccess = false;
     private boolean isLocationPermissionGranted = false;
-    private LocationManager lm;
-    private Location currentLocation = null;
+    //location
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastLocation;
+    private AddressResultReceiver mResultReceiver;
+    private LocationRequestCallback<String, Location> addressCallback;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,12 +93,22 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         getActivity().setTitle(getString(R.string.routeCustomer));
 
         initialize();
-        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+                .setWaitForAccurateLocation(false)
+                .setMinUpdateIntervalMillis(2000)
+                .setMaxUpdateDelayMillis(2000)
+                .build();
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+            }
+        };
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-        checkLocationPermission();
+        getCurrentAddress();
 
         btnCoverage.setOnClickListener(v -> {
             ((MainActivity) getActivity()).changePage(23);
@@ -165,6 +191,15 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
         });
 
         return rootView;
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void getCurrentAddress() {
+        mFusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                mLastLocation = location;
+            }
+        });
     }
 
     public void moveDirection(Customer headerCustomer) {
@@ -310,7 +345,6 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
                             Collections.addAll(arrayDctList, dctArray);
                         }
                         param.setDctList(arrayDctList);
-
                         int idHeader = database.addCustomer(param, user.getUsername());
                         for (Promotion mat : arrayList) {
                             database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
@@ -372,30 +406,7 @@ public class RouteCustomerFragment extends BaseFragment implements LocationListe
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getAllCustomerVisit(currentLocation, false);
+        mList = database.getAllCustomerVisit(mLastLocation, false);
     }
 
-    private void checkLocationPermission() {
-        List<String> permissionRequest = new ArrayList<>();
-        isLocationPermissionGranted = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        if (!isLocationPermissionGranted)
-            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (isLocationPermissionGranted) {
-            if (!Helper.isGPSOn(getActivity())) {
-                setToast("Please turn on GPS");
-                Helper.turnOnGPS(getActivity());
-            } else {
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0l, 0f, this);
-                if (currentLocation == null) {
-//                    setToast("Can't get your location.. Please try again..");
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        currentLocation = location;
-    }
 }

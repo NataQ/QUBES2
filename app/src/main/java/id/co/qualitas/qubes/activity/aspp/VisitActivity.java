@@ -230,7 +230,7 @@ public class VisitActivity extends BaseActivity {
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (SessionManagerQubes.getStartDay() == 0) {
+                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
                     requestData();
                 } else {
                     setToast("Sudah start visit");
@@ -268,10 +268,16 @@ public class VisitActivity extends BaseActivity {
     }
 
     private void startDayVisit() {
-        if (database.getAllInvoiceHeaderNotPaid().size() != 0) {
-            openDialogStartVisit();
+        boolean invoice = database.getCountInvoiceToday() != 0 && (database.getCountInvoiceToday() == database.getCountInvoiceVerifToday());
+        boolean stockRequest = user.getType_sales().equals("CO") ? database.getCountStockRequestToday() != 0 : true;
+        if (stockRequest) {
+            if (invoice) {
+                openDialogStartVisit();
+            } else {
+                setToast("Pastikan invoice sudah di verifikasi");
+            }
         } else {
-            setToast("Pastikan invoice sudah di verifikasi");
+            setToast("Pastikan sudah input stock request dan sudah di verifikasi");
         }
     }
 
@@ -350,10 +356,10 @@ public class VisitActivity extends BaseActivity {
         return (statusCheckIn == 0);
     }
 
-    private List<VisitSalesman> getAllCustomerNotVisit() {
+    private List<VisitSalesman> getAllCustomerNotVisit(Map currentLocation) {
         List<VisitSalesman> customerList = new ArrayList<>();
-        customerList.addAll(database.getAllCheckInPauseVisit());
-        customerList.addAll(database.getAllCheckInPauseNoo());
+        customerList.addAll(database.getAllCheckInPauseVisit(currentLocation));
+        customerList.addAll(database.getAllCheckInPauseNoo(currentLocation));
         return customerList;
     }
 
@@ -410,15 +416,15 @@ public class VisitActivity extends BaseActivity {
                 locCustomer.setLongitude(outletClicked.getLongitude());
 
                 Location currLoc = new Location(LocationManager.GPS_PROVIDER);
-                currLoc.setLatitude(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
-                currLoc.setLongitude(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
+                currLoc.setLatitude(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
+                currLoc.setLongitude(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);
                 outRadius = Helper.checkRadius(currLoc, locCustomer);
 
                 visitSalesman = new VisitSalesman();
                 visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
                 visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
-                visitSalesman.setLongCheckIn(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
+                visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
+                visitSalesman.setLongCheckIn(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);
                 visitSalesman.setInside(outRadius);
                 visitSalesman.setIdSalesman(user.getUsername());
                 visitSalesman.setCustomerId(outletClicked.getId());
@@ -579,7 +585,7 @@ public class VisitActivity extends BaseActivity {
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (SessionManagerQubes.getStartDay() == 0) {
+                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
                     requestData();
                 } else {
                     setToast("Sudah start visit");
@@ -663,6 +669,9 @@ public class VisitActivity extends BaseActivity {
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Spinner spnReasonAll = dialog.findViewById(R.id.spnReasonAll);
         EditText edtTxtOther = dialog.findViewById(R.id.edtTxtOther);
+        ImageView imgDelete = dialog.findViewById(R.id.imgDelete);
+        ImageView img = dialog.findViewById(R.id.img);
+        RelativeLayout llPhoto = dialog.findViewById(R.id.llPhoto);
         LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -695,18 +704,27 @@ public class VisitActivity extends BaseActivity {
                     }
                     mAdapter.notifyItemChanged(posR);
                 } else {
+                    llPhoto.setVisibility(View.VISIBLE);
+                    Utils.loadImageFit(getApplicationContext(), imageType.getPhotoReason(), img);
                     for (VisitSalesman cust : listCust) {
                         cust.setPhotoCheckOutReason(imageType.getPhotoReason());
                     }
-                    mAdapter.setData(listCust);
+//                    mAdapter.setData(listCust);
                 }
             } else {
                 mAdapter.setData(listCust);
             }
         } else {
-            listCust.addAll(getAllCustomerNotVisit());
+            listCust.addAll(getAllCustomerNotVisit(currentLocation));
             mAdapter.setData(listCust);
         }
+
+        imgDelete.setOnClickListener(v -> {
+            llPhoto.setVisibility(View.GONE);
+            for (VisitSalesman cust : listCust) {
+                cust.setPhotoCheckOutReason(null);
+            }
+        });
 
         spnReasonAll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -763,11 +781,18 @@ public class VisitActivity extends BaseActivity {
         });
 
         layoutCamera.setOnClickListener(v -> {
+
             SessionManagerQubes.setVisitSalesmanReason(listCust);
             openCamera(null);
         });
 
         btnSave.setOnClickListener(v -> {
+            for (VisitSalesman vs : listCust) {
+                vs.setDescCheckOutReason(descReason[0]);
+                vs.setIdCheckOutReason(String.valueOf(reasonChoose[0].getId()));
+                vs.setNameCheckOutReason(reasonChoose[0].getDescription());
+                vs.setPosReason(posReason[0]);
+            }
             int param = 0;
             if (Helper.isNotEmptyOrNull(listCust)) {
                 for (VisitSalesman vs : listCust) {
@@ -802,7 +827,9 @@ public class VisitActivity extends BaseActivity {
             }
         });
 
-        btnCancel.setOnClickListener(v -> {
+        btnCancel.setOnClickListener(v ->
+
+        {
             dialog.dismiss();
         });
 
@@ -841,19 +868,15 @@ public class VisitActivity extends BaseActivity {
         locCustomer.setLatitude(vs.getLatCheckIn());
         locCustomer.setLongitude(vs.getLongCheckIn());
         Location currLoc = new Location(LocationManager.GPS_PROVIDER);
-        currLoc.setLatitude(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
-        currLoc.setLongitude(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
+        currLoc.setLatitude(vs.getLatCheckOut());
+        currLoc.setLongitude(vs.getLongCheckOut());
         outRadius = Helper.checkRadius(currLoc, locCustomer);
 
         vs.setIdSalesman(user.getUsername());
         vs.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
         vs.setStatus(Constants.CHECK_OUT_VISIT);
-        vs.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
-        vs.setLongCheckIn(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
         vs.setInside(outRadius);
         vs.setInsideCheckOut(outRadius);
-        vs.setLatCheckOut(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : null);
-        vs.setLongCheckOut(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : null);
         database.addVisitSalesmanAll(vs);
 
         Customer cus = new Customer();
@@ -865,6 +888,8 @@ public class VisitActivity extends BaseActivity {
         } else {
             database.updateStatusOutletVisit(cus, user.getUsername());
         }
+//        mAdapterVisit.notifyDataSetChanged();
+//        mAdapterNoo.notifyDataSetChanged();
     }
 
     private void openDialogEndVisit() {
@@ -1168,11 +1193,13 @@ public class VisitActivity extends BaseActivity {
                     break;
                 case 5:
                     uriPulang = uri;
+                    imageType.setPhotoAkhirString(Utils.encodeImageBase64(VisitActivity.this, uriPulang));
                     imageType.setPhotoAkhir(uriPulang.toString());
                     openDialogEndVisit();//on resume
                     break;
                 case 6:
                     uriSelesai = uri;
+                    imageType.setPhotoSelesaiString(Utils.encodeImageBase64(VisitActivity.this, uriSelesai));
                     imageType.setPhotoSelesai(uriSelesai.toString());
                     openDialogEndVisit();//on resume
                     break;
@@ -1269,6 +1296,7 @@ public class VisitActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
+            progress.dismiss();
             if (result == null) {
                 setToast("Gagal membuat pdf.. Silahkan coba lagi..");
             } else {
@@ -1277,6 +1305,7 @@ public class VisitActivity extends BaseActivity {
                     btnEndDay.setVisibility(View.GONE);
                     btnNextDay.setVisibility(View.VISIBLE);
                     Helper.deleteFolder(getDirLoc(getApplicationContext()).getPath());
+                    SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
                     Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
                     startActivity(intent);
                 } else {
@@ -1436,17 +1465,19 @@ public class VisitActivity extends BaseActivity {
 //                    return (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, startDay);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
                 } else if (PARAM == 4) {
+
                     endDay = new HashMap();
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
-                    endDay.put("photoKmAkhir", Utils.encodeImageBase64(VisitActivity.this, uriPulang));
-                    endDay.put("photoCompleted", Utils.encodeImageBase64(VisitActivity.this, uriSelesai));
+                    endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
+                    endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
 
                     String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
                 } else {
                     validateVisitSalesman();
+                    getData();
                     saveDataSuccess = true;
                     return null;
                 }
@@ -1492,7 +1523,7 @@ public class VisitActivity extends BaseActivity {
                 if (saveDataSuccess) {
                     mAdapterVisit.setData(mList);
                     mAdapterNoo.setData(mListNoo);
-                    validateButton();
+                    validateButton();//after get data
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }
@@ -1500,8 +1531,9 @@ public class VisitActivity extends BaseActivity {
                 progress.dismiss();
                 if (result != null) {
                     if (result.getIdMessage() == 1) {
+                        setToast(result.getMessage());
                         SessionManagerQubes.setStartDay(1);
-                        validateButton();
+                        validateButton();//start
                     } else {
                         setToast(result.getMessage());
                     }
@@ -1512,8 +1544,10 @@ public class VisitActivity extends BaseActivity {
                 progress.dismiss();
                 if (result != null) {
                     if (result.getIdMessage() == 1) {
+//                        setToast(result.getMessage());
                         SessionManagerQubes.setStartDay(2);
-                        validateButton();
+                        validateButton();//end
+                        progress.show();
                         new AsyncTaskGeneratePDF().execute();
                     } else {
                         setToast(result.getMessage());
@@ -1523,11 +1557,16 @@ public class VisitActivity extends BaseActivity {
                 }
             } else {
                 progress.dismiss();
-                mAdapterVisit.notifyDataSetChanged();
-                mAdapterNoo.notifyDataSetChanged();
-                openDialogEndVisit();
+                if (saveDataSuccess) {
+                    mAdapterVisit.notifyDataSetChanged();
+                    mAdapterNoo.notifyDataSetChanged();
+                    openDialogEndVisit();
+                } else {
+                    setToast("Gagal menyimpan data");
+                }
             }
         }
+
     }
 
     private void validateButton() {

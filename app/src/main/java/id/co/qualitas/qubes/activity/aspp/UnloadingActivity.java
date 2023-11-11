@@ -87,7 +87,7 @@ public class UnloadingActivity extends BaseActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setAdapter();
+                getDataOffline();
                 swipeLayout.setRefreshing(false);
             }
         });

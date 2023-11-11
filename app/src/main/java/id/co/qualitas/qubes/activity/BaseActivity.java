@@ -353,6 +353,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private void clearAllSession() {
         SessionManagerQubes.clearLoginSession();
+        SessionManagerQubes.clearOrderSession();
         SessionManagerQubes.clearStockRequestHeaderSession();
         SessionManagerQubes.clearStartDaySession();
         SessionManagerQubes.clearOutletHeaderSession();
