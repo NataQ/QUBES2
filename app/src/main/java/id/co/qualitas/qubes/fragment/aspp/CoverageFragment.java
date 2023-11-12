@@ -42,6 +42,7 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -214,7 +215,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(getContext());
+        database = new Database(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         imgBack = rootView.findViewById(R.id.imgBack);
         btCenterMap = rootView.findViewById(R.id.btCenterMap);

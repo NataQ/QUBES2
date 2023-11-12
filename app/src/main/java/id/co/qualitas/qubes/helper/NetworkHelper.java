@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Objects;
+
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
@@ -38,6 +39,7 @@ public class NetworkHelper {
         try {
             response = restTemplate.exchange(url, HttpMethod.GET, entity, responseType);
         } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
             if (e.getMessage().equals("401 Unauthorized")) {
             } else if (e.getMessage().contains("ENETUNREACH")) {
                 Helper.setItemParam(Constants.NO_CONNECTION, "1");
@@ -65,6 +67,7 @@ public class NetworkHelper {
             try {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
             } catch (Exception e) {
+                Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
                 if (e.getMessage().contains("400")) {
                     Helper.setItemParam(Constants.ERROR_LOGIN, "1");
                 } else if (e.getMessage().contains("ENETUNREACH")) {
@@ -96,6 +99,7 @@ public class NetworkHelper {
             try {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
             } catch (Exception e) {
+                Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
                 if (e.getMessage().equals("401 Unauthorized")) {
                     flag = 0;
                 } else {
@@ -122,6 +126,7 @@ public class NetworkHelper {
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);
         } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
             e.getMessage();
             if (e.getMessage().contains("ENETUNREACH")) {
                 Helper.setItemParam(Constants.NO_CONNECTION, "1");
@@ -151,6 +156,7 @@ public class NetworkHelper {
             try {
                 responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, responseType);
             } catch (Exception e) {
+                Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
                 if (e.getMessage().equals("401 Unauthorized")) {
                     flag = 0;
                 } else if (e.getMessage().contains("ENETUNREACH")) {

@@ -291,6 +291,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        database = new Database(getContext());
         initFragment();
         Helper.trustSSL();
         initProgress();
@@ -299,19 +300,28 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     }
 
     public void initFragment() {
-        database = new Database(getContext());
         if (SessionManagerQubes.getUserProfile() != null) {
             Helper.setItemParam(Constants.USER_DETAIL, SessionManagerQubes.getUserProfile());
             user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+            if (SessionManagerQubes.getUrl() != null) {
+                Helper.setItemParam(Constants.URL, SessionManagerQubes.getUrl());
+            }
             if (user == null) {
                 setToast("Session telah habis. Silahkan login ulang.");
+                clearAllSession();
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-            }
+            } else {
+                if (SessionManagerQubes.getToken() != null) {
+                    Helper.setItemParam(Constants.TOKEN, SessionManagerQubes.getToken());
+                }
 
-            if (SessionManagerQubes.getUrl() != null) {
-                Helper.setItemParam(Constants.URL, SessionManagerQubes.getUrl());
+                if (SessionManagerQubes.getUrl() != null) {
+                    String ipAddress = SessionManagerQubes.getUrl();
+                    Constants.URL = ipAddress;
+                    Helper.setItemParam(Constants.URL, Constants.URL);
+                }
             }
         } else {
             setToast("Session telah habis. Silahkan login ulang.");

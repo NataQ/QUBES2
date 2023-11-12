@@ -21,6 +21,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 
 public class SettingActivity extends AppCompatActivity {
@@ -40,7 +41,7 @@ public class SettingActivity extends AppCompatActivity {
 //        appVersion.setText(Constants.APP_VERSION);
         appVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
 
-        if(Helper.getItemParam(Constants.URL) != null){
+        if (Helper.getItemParam(Constants.URL) != null) {
             String urltemp = Helper.getItemParam(Constants.URL).toString();
             String temp[] = urltemp.split("/");
             edtIp.setText(temp[2]);
@@ -76,17 +77,11 @@ public class SettingActivity extends AppCompatActivity {
                     btnYes.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Constants.IP = edtIp.getText().toString();
-                            Constants.URL = "http://" + Constants.IP + "/";
-                            new SessionManager(
-                                    getApplicationContext())
-                                    .createUrlSession(Constants.URL);
-                            Helper.setItemParam(
-                                    Constants.URL,
-                                    Constants.URL);
-                            Toast.makeText(getApplicationContext(),
-                                    R.string.ipaddress_has_been_changed,
-                                    Toast.LENGTH_LONG).show();
+                            String ipAddress = edtIp.getText().toString();
+                            Constants.URL = ipAddress;
+                            Helper.setItemParam(Constants.URL, Constants.URL);
+                            SessionManagerQubes.setUrl(ipAddress);
+                            Toast.makeText(getApplicationContext(), R.string.ipaddress_has_been_changed, Toast.LENGTH_LONG).show();
                             onBackPressed();
                             alertDialog.dismiss();
                         }

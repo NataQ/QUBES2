@@ -120,8 +120,8 @@ public class Constants {
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    public static String URL = "http://192.168.1.13:8282";
-    public static String IP = "192.168.1.13:8282";
+    public static String URL = "http://192.168.1.16:8282";
+//    public static String IP = "192.168.1.13:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -525,4 +525,7 @@ public class Constants {
     public static final String API_GET_SUMMARY_HEADER = "getSummaryHeader";
     public static final String API_GET_SUMMARY_DETAIL = "getSummaryDetail";
     public static final String API_LOG_OUT = "logOut";
+    public static final String API_GET_IP_ADDRESS = "getIPAddress";
+    public static final String API_UPDATE_LOCATION_SALESMAN = "updateLocationSalesman";
+    public static final String API_SYNC_OFFLINE_DATA = "syncOfflineData";
 }

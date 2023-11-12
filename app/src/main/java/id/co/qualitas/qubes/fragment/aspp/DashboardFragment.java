@@ -23,6 +23,7 @@ import java.util.Map;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -41,6 +42,7 @@ public class DashboardFragment extends BaseFragment {
     TextView txtECS, txtAT;
     TextView txtCallRute, txtCallNonRute, txtTotalCall, txtNonVisit;
     TextView txtTotalInvoiceAmount, txtPaymentAmount, txtOutstandingAmount;
+    private WSMessage logResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +91,7 @@ public class DashboardFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         swipeLayout = rootView.findViewById(R.id.swipeLayout);
         progressCircle = rootView.findViewById(R.id.progressCircle);
@@ -127,6 +130,7 @@ public class DashboardFragment extends BaseFragment {
     }
 
     private void setData() {
+        database = new Database(getContext());
         setFormatSeparator();
         txtTodayDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
         txtRoute.setText(Helper.getTodayRoute());
@@ -174,11 +178,17 @@ public class DashboardFragment extends BaseFragment {
             try {
                 String URL_ = Constants.API_GET_AT_DASHBOARD;
                 final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                return null;
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
-                    Log.e("routeCustomer", ex.getMessage());
+                    Log.e("dashboard", ex.getMessage());
                 }
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setResult(null);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                logResult.setMessage("Dashboard error: " + exMess);
                 return null;
             }
         }
@@ -191,22 +201,20 @@ public class DashboardFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage wsMessage) {
 //            progressCircle.setVisibility(View.GONE);
-            if (wsMessage != null) {
-                if (wsMessage.getIdMessage() == 1) {
-                    Map res = (Map) wsMessage.getResult();
-                    if(res != null) {
-                        double at = (double) res.get("at");
-                        user.setAt(at);
-                        SessionManagerQubes.setUserProfile(user);
-                        txtAT.setText(format.format(user.getAt()));
-                    }
-                } else {
-                    setToast(wsMessage.getMessage());
+            if (logResult.getIdMessage() == 1) {
+                String message = "Dashboard : " + logResult.getMessage();
+                logResult.setMessage(message);
+            }
+            database.addLog(logResult);
+            if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                Map res = (Map) logResult.getResult();
+                if (res != null) {
+                    double at = (double) res.get("at");
+                    user.setAt(at);
+                    SessionManagerQubes.setUserProfile(user);
+                    txtAT.setText(format.format(user.getAt()));
                 }
-            } else {
-                setToast(getString(R.string.failedGetData));
             }
         }
     }
-
 }

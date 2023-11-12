@@ -28,8 +28,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.util.Map;
-
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.constants.Constants;
@@ -41,9 +39,8 @@ import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.services.FCMService;
 import id.co.qualitas.qubes.services.LocationUpdatesService;
-import id.co.qualitas.qubes.services.MyFirebaseMessagingService2;
-import id.co.qualitas.qubes.session.SessionManager;
 
 public class MainActivity extends BaseActivity {
     String currentpage;
@@ -79,7 +76,6 @@ public class MainActivity extends BaseActivity {
 //        requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
         setContentView(R.layout.new_activity_main);
         initialize();
-        setSession();
         myReceiver = new MyReceiver();
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
@@ -170,20 +166,6 @@ public class MainActivity extends BaseActivity {
                     proceedAfterPermission();
                 }
             }
-        }
-    }
-
-    public void setSession() {
-        SessionManager session = new SessionManager(this);
-        if (session.isUrlEmpty()) {
-            Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }
 
@@ -309,7 +291,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         initProgress();
-        registerReceiver(myReceiver, new IntentFilter(MyFirebaseMessagingService2.ACTION_BROADCAST));
+        registerReceiver(myReceiver, new IntentFilter(FCMService.ACTION_BROADCAST));
 //        setPage();
         if(Helper.getItemParam(Constants.FROM_VISIT) != null){
             Helper.removeItemParam(Constants.CURRENTPAGE);
@@ -406,7 +388,7 @@ public class MainActivity extends BaseActivity {
     private class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String actionTracking = intent.getStringExtra(MyFirebaseMessagingService2.ACTION_TRACKING);
+            String actionTracking = intent.getStringExtra(FCMService.ACTION_TRACKING);
             if (actionTracking.equals("start_tracking")) {
                 mServiceFusedLocation.requestLocationUpdates();
             } else if (actionTracking.equals("stop_tracking")) {

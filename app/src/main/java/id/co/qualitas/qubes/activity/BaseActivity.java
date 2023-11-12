@@ -81,6 +81,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
@@ -238,8 +239,13 @@ public class BaseActivity extends AppCompatActivity {
                 if (SessionManagerQubes.getToken() != null) {
                     Helper.setItemParam(Constants.TOKEN, SessionManagerQubes.getToken());
                 }
-            }
 
+                if (SessionManagerQubes.getUrl() != null) {
+                    String ipAddress = SessionManagerQubes.getUrl();
+                    Constants.URL = ipAddress;
+                    Helper.setItemParam(Constants.URL, Constants.URL);
+                }
+            }
         } else {
             setToast("Session telah habis. Silahkan login ulang.");
             clearAllSession();

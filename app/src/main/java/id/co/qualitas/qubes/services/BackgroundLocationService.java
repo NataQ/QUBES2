@@ -23,6 +23,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.LiveTracking;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class BackgroundLocationService extends Service {
     private final LocationServiceBinder binder = new LocationServiceBinder();
@@ -87,15 +88,9 @@ public class BackgroundLocationService extends Service {
     }
 
     public void setSession() {
-        SessionManager session = new SessionManager(this);
-        if (session.isUrlEmpty()) {
-            Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
+        if (SessionManagerQubes.getUrl() != null) {
+            String ipAddress = SessionManagerQubes.getUrl();
+            Constants.URL = ipAddress;
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }

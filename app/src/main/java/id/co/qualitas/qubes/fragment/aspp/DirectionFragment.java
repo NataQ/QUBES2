@@ -64,6 +64,7 @@ import id.co.qualitas.qubes.adapter.aspp.AutoCompleteRouteAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerBankAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.GPSTracker;
@@ -378,6 +379,7 @@ public class DirectionFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         gpsTracker = new GPSTracker(getActivity());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         mMapView = rootView.findViewById(R.id.mapView);

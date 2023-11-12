@@ -30,6 +30,7 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
@@ -40,7 +41,9 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.GPSModel;
 import id.co.qualitas.qubes.model.LiveTracking;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 import id.co.qualitas.qubes.utils.UtilsLocation;
 
@@ -225,29 +228,31 @@ public class LocationForegroundService extends Service {
 
                     Log.e("Service", "Lat:" + String.valueOf(location.getLatitude()) + " Long : " + String.valueOf(location.getLongitude()));
                     setSession();
-                    final String url = Constants.URL.concat(Constants.API_SYNC_DATA);
-                    User user = new User();
-                    user.setUsername("mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    final String url = Constants.URL.concat(Constants.API_UPDATE_LOCATION_SALESMAN);
+                    Map req = new HashMap();
+                    req.put("latitude", location.getLatitude());
+                    req.put("longitude", location.getLongitude());
+                    req.put("username", SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
                     try {
-                        Helper.postWebserviceWithBodyWOReturn(url, Boolean.class, user);//post
+                        Helper.postWebserviceWithBodyWOReturn(url, Boolean.class, req);//post
                     } catch (Exception e) {
                         result = false;
                     }
+
+//                    try {
+//                        WSMessage result = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, liveTracking);
+//                    } catch (Exception e) {
+//
+//                    }
                 }
             }).start();
         }
     }
 
     public void setSession() {
-        SessionManager session = new SessionManager(this);
-        if (session.isUrlEmpty()) {
-            Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
+        if (SessionManagerQubes.getUrl() != null) {
+            String ipAddress = SessionManagerQubes.getUrl();
+            Constants.URL = ipAddress;
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }

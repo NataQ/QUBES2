@@ -48,8 +48,8 @@ import id.co.qualitas.qubes.model.GCMResponse;
  * </intent-filter>
  */
 
-public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
-    private static final String TAG = "MyFirebaseMsgService";
+public class FCMService extends FirebaseMessagingService {
+    private static final String TAG = "FCMService";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     public static final String ACTION_TRACKING = PACKAGE_NAME + ".broadcast";
@@ -244,7 +244,7 @@ public class MyFirebaseMessagingService2 extends FirebaseMessagingService {
     @Override
     public void onCreate() {
         super.onCreate();
-//        bindService(new Intent(MyFirebaseMessagingService2.this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+//        bindService(new Intent(FCMService.this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {

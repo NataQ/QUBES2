@@ -31,10 +31,10 @@
                 android:textColor="@color/black_aspp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
+            <id.co.qualitas.qubes.helper.RecyclerViewMaxHeight
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false" />
 
         </LinearLayout>

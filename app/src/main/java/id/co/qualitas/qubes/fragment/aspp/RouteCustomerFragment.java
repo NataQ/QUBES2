@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import androidx.activity.OnBackPressedCallback;
@@ -49,6 +50,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.RouteCustomerAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
@@ -69,7 +71,9 @@ public class RouteCustomerFragment extends BaseFragment {
     private Button btnCoverage;
     private EditText edtSearch;
     private Spinner spinnerRouteCustomer;
+    private LinearLayout llNoData;
     private WSMessage resultWsMessage;
+    private WSMessage logResult;
     private boolean saveDataSuccess = false;
     private boolean isLocationPermissionGranted = false;
     //location
@@ -89,7 +93,6 @@ public class RouteCustomerFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.aspp_fragment_route_customer, container, false);
-
         getActivity().setTitle(getString(R.string.routeCustomer));
 
         initialize();
@@ -153,7 +156,7 @@ public class RouteCustomerFragment extends BaseFragment {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (SessionManagerQubes.getStartDay() == 0) {
+                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
                     requestData();
                 } else {
                     setToast("Sudah start visit");
@@ -212,8 +215,10 @@ public class RouteCustomerFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = rootView.findViewById(R.id.llNoData);
         spinnerRouteCustomer = rootView.findViewById(R.id.spinnerRouteCustomer);
         edtSearch = rootView.findViewById(R.id.edtSearch);
         btnCoverage = rootView.findViewById(R.id.btnCoverage);
@@ -237,6 +242,14 @@ public class RouteCustomerFragment extends BaseFragment {
             }
         }
         setAdapter();
+
+        if (Helper.isEmptyOrNull(mListFiltered)) {
+            recyclerView.setVisibility(View.GONE);
+            llNoData.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
+        }
     }
 
     private void getFirstDataOffline() {
@@ -254,7 +267,7 @@ public class RouteCustomerFragment extends BaseFragment {
         recyclerView.setVisibility(View.GONE);
 //        setDataDummyCustomer();
         PARAM = 1;
-        new RequestUrl().execute();
+        new RequestUrl().execute();//1
     }
 
     private void setAdapter() {
@@ -277,7 +290,8 @@ public class RouteCustomerFragment extends BaseFragment {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_GET_TODAY_CUSTOMER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    return null;
                 } else {
                     mList = new ArrayList<>();
                     List<Customer> mListNonRoute = new ArrayList<>();
@@ -365,6 +379,10 @@ public class RouteCustomerFragment extends BaseFragment {
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setMessage("Route Customer error: " + ex.getMessage());
                 }
                 return null;
             }
@@ -378,27 +396,33 @@ public class RouteCustomerFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
             if (PARAM == 1) {
-                if (WsMessage != null) {
-                    if (WsMessage.getIdMessage() == 1) {
-                        resultWsMessage = WsMessage;
-                        PARAM = 2;
-                        new RequestUrl().execute();
-                    } else {
-                        progressCircle.setVisibility(View.GONE);
-                        setToast(WsMessage.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Route Customer : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                    resultWsMessage = logResult;
+                    PARAM = 2;
+                    new RequestUrl().execute();//2
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    setToast(getString(R.string.failedGetData));
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     filterData(false);//request url
-//                    mAdapter.setData(mListFiltered);
                 } else {
-                    setToast(getString(R.string.failedSaveData));
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    }
                 }
             }
         }

@@ -9,14 +9,18 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManager;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class NotiWorker extends Worker {
@@ -52,45 +56,39 @@ public class NotiWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        final boolean[] result = {false};
+        WSMessage result = new WSMessage();
         String url = null;
         if (!isStopped())
 //            new Thread(new Runnable() {
 //                @Override
 //                public void run() {
             setSession();
-        url = Constants.URL + Constants.API_SYNC_DATA;
-        User user = new User();
-        user.setUsername("mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        url = Constants.URL + Constants.API_SYNC_OFFLINE_DATA;
+        Map req = new HashMap();
+        req.put("request", "mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
         try {
-            result[0] = (Boolean) Helper.postWebserviceWithBody(url, Boolean.class, user);//post
+            result = (WSMessage) Helper.postWebserviceWithBody(url, WSMessage.class, req);//post
         } catch (Exception e) {
-            result[0] = false;
+            result.setIdMessage(0);
+            result.setMessage("Sync offline data : " + e.getMessage());
         }
 //                }
 //            }).start();
-        if (result[0]) {
+        new Database(getApplicationContext()).addLog(result);
+        if (result.getIdMessage() != 0) {
             Log.e("worker", "success");
             return Result.success();
         } else {
             Log.e("worker", "failed");
             return Result.failure();
         }
-
-//        startRandomNumberGenerator();
-//        return Result.success();
     }
 
     public void setSession() {
-        SessionManager session = new SessionManager(getApplicationContext());
-        if (session.isUrlEmpty()) {
-            Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
-            Helper.setItemParam(Constants.URL, Constants.URL);
-        } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
+        if (SessionManagerQubes.getUrl() != null) {
+            String ipAddress = SessionManagerQubes.getUrl();
+            Constants.URL = ipAddress;
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }

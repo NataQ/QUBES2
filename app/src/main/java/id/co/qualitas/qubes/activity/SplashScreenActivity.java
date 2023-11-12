@@ -3,12 +3,14 @@ package id.co.qualitas.qubes.activity;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -33,6 +35,7 @@ import androidx.core.content.ContextCompat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,13 +43,18 @@ import java.util.Map;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.LoginResponse;
+import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.OffDate;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
@@ -56,6 +64,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 0;
     private String mUSer, mProfile, mDate;
     private LoginResponse loginResponse;
+    protected ProgressDialog progress;
     private User user;
     private List<String> permissionsNeeded = new ArrayList<>();
     private List<String> permissionsList = new ArrayList<>();
@@ -301,10 +310,13 @@ public class SplashScreenActivity extends AppCompatActivity {
 //        if (offlineDat != null) {
 //            SecureDate.getInstance().initServerDate(Helper.convertStringtoDate(Constants.DATE_TYPE_16, offlineDat.getCurDate()), offlineDat.getElapseTime());
 //        }
+//        progress.show();
+//        new RequestUrl().execute();
 
         new CountDownTimer(Constants.LONG_1000, Constants.LONG_100) {
 
             public void onTick(long millisUntilFinished) {
+
             }
 
             public void onFinish() {
@@ -324,6 +336,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         txtDetail = findViewById(R.id.txtDetail);
         llText = findViewById(R.id.llText);
         image = findViewById(R.id.imageView1);
+        initProgress();
     }
 
     @Override
@@ -343,4 +356,56 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
     }
 
+    public void initProgress() {
+        progress = new ProgressDialog(this);
+        progress.setMessage(Constants.STR_WAIT);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setCancelable(false);
+        progress.setCanceledOnTouchOutside(false);
+    }
+
+    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_GET_IP_ADDRESS;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("IPAddress", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage result) {
+            progress.dismiss();
+            if (result != null) {
+                if (result.getIdMessage() == 1) {
+                    String ipAddress = result.getResult().toString();
+                    Constants.URL = ipAddress;
+                    Helper.setItemParam(Constants.URL, Constants.URL);
+                    SessionManagerQubes.setUrl(ipAddress);
+                }
+            }
+
+            if (SessionManagerQubes.getUserProfile() == null) {
+                intent = new Intent(getApplicationContext(), LoginActivity.class);
+            } else {
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
 }

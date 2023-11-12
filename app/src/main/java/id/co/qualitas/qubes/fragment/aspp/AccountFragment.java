@@ -36,6 +36,7 @@ import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.LogAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
@@ -78,7 +79,7 @@ public class AccountFragment extends BaseFragment {
     private CardView llUploadDB, llSync, llLog, llChangePassword;
     private LogAdapter mAdapter;
     private boolean saveDataSuccess = false;
-    private WSMessage messageResponse;
+    private WSMessage messageResponse, logResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -289,6 +290,7 @@ public class AccountFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         llUploadDB = rootView.findViewById(R.id.llUploadDB);
         llSync = rootView.findViewById(R.id.llSync);
         llLog = rootView.findViewById(R.id.llLog);
@@ -309,7 +311,8 @@ public class AccountFragment extends BaseFragment {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_MASTER_DATA_GET;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    return null;
                 } else {
                     Map response = (Map) messageResponse.getResult();
 
@@ -419,10 +422,16 @@ public class AccountFragment extends BaseFragment {
             } catch (Exception ex) {
                 //connection = true;
                 if (ex.getMessage() != null) {
-                    Log.e("UpdateStat", ex.getMessage());
+                    Log.e("syncMaster", ex.getMessage());
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    logResult.setMessage("Sync Master Data error: " + exMess);
                 }
                 return null;
             }

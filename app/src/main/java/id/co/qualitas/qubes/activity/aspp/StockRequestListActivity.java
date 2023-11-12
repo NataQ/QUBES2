@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -35,7 +36,8 @@ public class StockRequestListActivity extends BaseActivity {
     private StockRequestListAdapter mAdapter;
     private List<StockRequest> mList;
     private Button btnAdd;
-    private WSMessage resultWsMessage;
+    private LinearLayout llNoData;
+    private WSMessage resultWsMessage, logResult;
     private boolean saveDataSuccess = false;
 
     @Override
@@ -83,11 +85,20 @@ public class StockRequestListActivity extends BaseActivity {
         });
 
         recyclerView.setAdapter(mAdapter);
+
+        if (Helper.isEmptyOrNull(mList)) {
+            recyclerView.setVisibility(View.GONE);
+            llNoData.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
+        }
     }
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         txtTitle = findViewById(R.id.txtTitle);
         progressCircle = findViewById(R.id.progressCircle);
         swipeLayout = findViewById(R.id.swipeLayout);
@@ -115,44 +126,11 @@ public class StockRequestListActivity extends BaseActivity {
     }
 
     private void requestData() {
+        llNoData.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
         PARAM = 1;
         new RequestUrl().execute();
-//        setDataDummyStock();
-    }
-
-    private void setDataDummyStock() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "stockRequest.json");
-        Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>() {
-        }.getType();
-        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
-        mList = new ArrayList<>();
-        StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
-        if (paramArray != null) {
-            Collections.addAll(mList, paramArray);
-            database.deleteStockRequestHeader();
-            database.deleteStockRequestDetail();
-        }
-
-        for (StockRequest param : mList) {
-            List<Material> listMat = new ArrayList<>();
-            Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-            if (matArray != null) {
-                Collections.addAll(listMat, matArray);
-            }
-            param.setMaterialList(listMat);
-
-            int idHeader = database.addStockRequestHeader(param, user.getUsername());
-            for (Material mat : listMat) {
-                database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUsername());
-            }
-        }
-        getData();
-        progressCircle.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        mAdapter.setData(mList);
     }
 
     private void getData() {
@@ -168,7 +146,8 @@ public class StockRequestListActivity extends BaseActivity {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_STOCK_REQUEST_LIST;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    return null;
                 } else {
                     mList = new ArrayList<>();
                     StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
@@ -201,6 +180,10 @@ public class StockRequestListActivity extends BaseActivity {
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setMessage("Stock Request error: " + ex.getMessage());
                 }
                 return null;
             }
@@ -214,27 +197,32 @@ public class StockRequestListActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        resultWsMessage = result;
-                        PARAM = 2;
-                        new RequestUrl().execute();
-                    } else {
-                        progressCircle.setVisibility(View.GONE);
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Route Customer : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
+                    resultWsMessage = logResult;
+                    PARAM = 2;
+                    new RequestUrl().execute();
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    setToast(getString(R.string.failedGetData));
+                    setAdapter();
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapter.setData(mList);
-                } else {
-                    setToast(getString(R.string.failedSaveData));
                 }
+            }
+            if (Helper.isEmptyOrNull(mList)) {
+                recyclerView.setVisibility(View.GONE);
+                llNoData.setVisibility(View.VISIBLE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                llNoData.setVisibility(View.GONE);
             }
 
         }

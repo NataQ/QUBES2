@@ -41,6 +41,7 @@ import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.aspp.SummaryDetailActivity;
 import id.co.qualitas.qubes.adapter.aspp.SummaryAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
@@ -52,9 +53,10 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 public class SummaryFragment extends BaseFragment {
     private LinearLayout llFilter;
     private EditText edtSearch;
+    private LinearLayout llNoData;
     private SummaryAdapter mAdapter;
     private List<Order> mList;
-    private WSMessage resultWsMessage;
+    private WSMessage resultWsMessage, logResult;
     private boolean saveDataSuccess = false;
     private Spinner spinnerStatus;
     private ArrayAdapter<String> statusAdapter;
@@ -250,7 +252,9 @@ public class SummaryFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        llNoData = rootView.findViewById(R.id.llNoData);
         edtSearch = rootView.findViewById(R.id.edtSearch);
         llFilter = rootView.findViewById(R.id.llFilter);
         progressCircle = rootView.findViewById(R.id.progressCircle);
@@ -277,6 +281,7 @@ public class SummaryFragment extends BaseFragment {
     }
 
     private void requestData() {
+        llNoData.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
         PARAM = 1;
@@ -300,7 +305,8 @@ public class SummaryFragment extends BaseFragment {
                     filter.put("status", selectedStatus != null ? (selectedStatus.equals("All") ? null : selectedStatus) : null);
                     String URL_ = Constants.API_GET_SUMMARY_HEADER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, filter);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, filter);
+                    return null;
                 } else {
                     mList = new ArrayList<>();
                     Order[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Order[].class);
@@ -316,6 +322,12 @@ public class SummaryFragment extends BaseFragment {
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    logResult.setMessage("Summary Header error: " + exMess);
                 }
                 return null;
             }
@@ -329,29 +341,34 @@ public class SummaryFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        resultWsMessage = result;
-                        PARAM = 2;
-                        new RequestUrl().execute();
-                    } else {
-                        progressCircle.setVisibility(View.GONE);
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Summary Header : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                    resultWsMessage = logResult;
+                    PARAM = 2;
+                    new RequestUrl().execute();
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    setToast(getString(R.string.failedGetData));
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapter.setData(mList);
+                }
+                if (Helper.isEmptyOrNull(mList)) {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
                 } else {
-                    setToast(getString(R.string.failedSaveData));
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
                 }
             }
-
         }
     }
 }

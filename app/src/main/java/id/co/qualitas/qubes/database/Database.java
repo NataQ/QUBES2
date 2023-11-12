@@ -40,6 +40,8 @@ import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
+import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class Database extends SQLiteOpenHelper {
     protected DecimalFormatSymbols otherSymbols;
@@ -2690,16 +2692,16 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addLog(LogModel param, String idSales) {
+    public int addLog(WSMessage request) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_DESC_LOG, param.getDescLog());
-        values.put(KEY_DATE_LOG, param.getDateLog());
-        values.put(KEY_TIME_LOG, param.getTimeLog());
-        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_DESC_LOG, request.getMessage());
+        values.put(KEY_DATE_LOG, Helper.getTodayDate(Constants.DATE_FORMAT_3));
+        values.put(KEY_TIME_LOG, Helper.getTodayDate(Constants.DATE_TYPE_6));
+        values.put(KEY_CREATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.isSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -4322,7 +4324,7 @@ public class Database extends SQLiteOpenHelper {
     public List<LogModel> getAllLog() {
         List<LogModel> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_LOG;
+        String selectQuery = "SELECT * FROM " + TABLE_LOG + " order by " + KEY_ID_LOG_DB + " desc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

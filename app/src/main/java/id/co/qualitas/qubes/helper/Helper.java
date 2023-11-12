@@ -273,8 +273,7 @@ public class Helper extends BaseFragment {
             flag = 1;
 
             String token = (String) Helper.getItemParam(Constants.TOKEN);
-//            String bearerToken = Constants.BEARER.concat(token);
-            String bearerToken = Constants.BEARER.concat("3e7bcbc2-fb8e-47a0-8270-671796ebc1ce");
+            String bearerToken = Constants.BEARER.concat(token);
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders requestHeaders = new HttpHeaders();

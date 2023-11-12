@@ -691,17 +691,10 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
                         btnYes.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Constants.IP = edtInput.getText().toString();
-                                Constants.URL = "http://" + Constants.IP + "/";
-                                new SessionManager(
-                                        getApplicationContext())
-                                        .createUrlSession(Constants.URL);
-                                Helper.setItemParam(
-                                        Constants.URL,
-                                        Constants.URL);
-                                Toast.makeText(getApplicationContext(),
-                                        R.string.ipaddress_has_been_changed,
-                                        Toast.LENGTH_LONG).show();
+                                Constants.URL = edtInput.getText().toString();
+                                new SessionManager(getApplicationContext()).createUrlSession(Constants.URL);
+                                Helper.setItemParam(Constants.URL, Constants.URL);
+                                Toast.makeText(getApplicationContext(), R.string.ipaddress_has_been_changed, Toast.LENGTH_LONG).show();
                                 alertDialog.dismiss();
                             }
                         });
@@ -738,12 +731,9 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
         SessionManager session = new SessionManager(this);
         if (session.isUrlEmpty()) {
             Map<String, String> urlSession = session.getUrl();
-            Constants.IP = urlSession.get(Constants.KEY_URL);
-            Constants.URL = Constants.IP;
+            Constants.URL = urlSession.get(Constants.KEY_URL);
             Helper.setItemParam(Constants.URL, Constants.URL);
         } else {
-            Constants.IP = Constants.URL;
-            Constants.URL = Constants.IP;
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
     }

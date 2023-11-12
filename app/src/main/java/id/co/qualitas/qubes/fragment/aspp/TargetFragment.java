@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.TargetAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -35,8 +37,10 @@ import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class TargetFragment extends BaseFragment {
+    private LinearLayout llNoData;
     private TargetAdapter mAdapter;
     private List<Target> mList;
+    private WSMessage logResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,8 +78,10 @@ public class TargetFragment extends BaseFragment {
     }
 
     private void initialize() {
+        database = new Database(getContext());
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = rootView.findViewById(R.id.llNoData);
         progressCircle = rootView.findViewById(R.id.progressCircle);
         swipeLayout = rootView.findViewById(R.id.swipeLayout);
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -106,6 +112,7 @@ public class TargetFragment extends BaseFragment {
 
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
+        llNoData.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         new RequestUrl().execute();
     }
@@ -117,11 +124,17 @@ public class TargetFragment extends BaseFragment {
             try {
                 String URL_ = Constants.API_GET_TARGET_DASHBOARD;
                 final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                return null;
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("target", ex.getMessage());
                 }
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setResult(null);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                logResult.setMessage("Target error: " + exMess);
                 return null;
             }
         }
@@ -134,23 +147,27 @@ public class TargetFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage wsMessage) {
             progressCircle.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-            if (wsMessage != null) {
-                if (wsMessage.getIdMessage() == 1) {
-                    mList = new ArrayList<>();
-                    List<Target> arrayList = new ArrayList<>();
-                    Target[] matArray = Helper.ObjectToGSON(wsMessage.getResult(), Target[].class);
-                    if (matArray != null) {
-                        Collections.addAll(arrayList, matArray);
-                    }
-                    mList.addAll(arrayList);
-                    setAdapter();
-                } else {
-                    setToast(wsMessage.getMessage());
+            if (logResult.getIdMessage() == 1) {
+                String message = "Target : " + logResult.getMessage();
+                logResult.setMessage(message);
+            }
+            database.addLog(logResult);
+            if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                mList = new ArrayList<>();
+                List<Target> arrayList = new ArrayList<>();
+                Target[] matArray = Helper.ObjectToGSON(logResult.getResult(), Target[].class);
+                if (matArray != null) {
+                    Collections.addAll(arrayList, matArray);
                 }
+                mList.addAll(arrayList);
+                setAdapter();
+            }
+            if (Helper.isEmptyOrNull(mList)) {
+                recyclerView.setVisibility(View.GONE);
+                llNoData.setVisibility(View.VISIBLE);
             } else {
-                progressCircle.setVisibility(View.GONE);
-                setToast(getString(R.string.failedGetData));
+                recyclerView.setVisibility(View.VISIBLE);
+                llNoData.setVisibility(View.GONE);
             }
         }
     }
