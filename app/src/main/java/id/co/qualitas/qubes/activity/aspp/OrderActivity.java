@@ -81,7 +81,7 @@ public class OrderActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
-        txtNoData = findViewById(R.id.txtNoData);
+        llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
         btnAdd = findViewById(R.id.btnAdd);
@@ -104,6 +104,7 @@ public class OrderActivity extends BaseActivity {
     }
 
     private void requestData() {
+        llNoData.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
         new RequestUrl().execute();
@@ -139,13 +140,13 @@ public class OrderActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             progressCircle.setVisibility(View.GONE);
-            if (Helper.isNotEmptyOrNull(mList)) {
-                recyclerView.setVisibility(View.VISIBLE);
-                txtNoData.setVisibility(View.GONE);
-                mAdapter.setData(mList);
-            } else {
-                txtNoData.setVisibility(View.VISIBLE);
+            if (Helper.isEmptyOrNull(mList)) {
                 recyclerView.setVisibility(View.GONE);
+                llNoData.setVisibility(View.VISIBLE);
+            } else {
+                mAdapter.setData(mList);
+                recyclerView.setVisibility(View.VISIBLE);
+                llNoData.setVisibility(View.GONE);
             }
 
         }

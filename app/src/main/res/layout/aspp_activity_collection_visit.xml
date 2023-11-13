@@ -231,14 +231,38 @@
                             android:layout_marginTop="12dp"
                             android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/txtNoDataInvoice"
-                                style="@style/TextView_Small"
+                            <LinearLayout
+                                android:id="@+id/llNoDataInvoice"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="No Data"
-                                android:visibility="gone" />
+                                android:orientation="vertical"
+                                android:visibility="gone"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="@string/refresh"
+                                    android:src="@drawable/ic_no_data" />
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center"
+                                    android:text="No Data"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="@string/tap_to_refresh" />
+                            </LinearLayout>
 
                             <ProgressBar
                                 android:id="@+id/progressCircleInvoice"
@@ -331,14 +355,38 @@
                             android:layout_marginTop="12dp"
                             android:layout_weight="1">
 
-                            <TextView
-                                android:id="@+id/txtNoDataHistory"
-                                style="@style/TextView_Small"
+                            <LinearLayout
+                                android:id="@+id/llNoDataHistory"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:layout_gravity="center"
                                 android:gravity="center"
-                                android:text="No Data"
-                                android:visibility="gone" />
+                                android:orientation="vertical"
+                                android:visibility="gone"
+                                tools:ignore="UseCompoundDrawables">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:contentDescription="@string/refresh"
+                                    android:src="@drawable/ic_no_data" />
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center"
+                                    android:text="No Data"
+                                    android:visibility="visible" />
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="@string/tap_to_refresh" />
+                            </LinearLayout>
 
                             <ProgressBar
                                 android:id="@+id/progressCircleHistory"

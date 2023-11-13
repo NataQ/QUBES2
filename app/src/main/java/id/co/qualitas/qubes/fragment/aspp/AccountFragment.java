@@ -416,6 +416,18 @@ public class AccountFragment extends BaseFragment {
                         database.addMasterCustomerType(param, user.getUsername());
                     }
 
+                    if (response.get("max_visit") != null) {
+                        user.setMax_visit((Integer) response.get("max_visit"));
+//                        double maxVisit = (double) response.get("max_visit");
+//                        Parameter parameter = new Parameter();
+//                        parameter.setKey("MAX_VISIT");
+//                        parameter.setValue(String.valueOf(maxVisit));
+//                        database.deleteParameterByKey("MAX_VISIT");
+//                        database.addMasterParameter(parameter, userResponse.getUsername());
+                    }
+
+                    SessionManagerQubes.setUserProfile(user);
+
                     saveDataSuccess = true;
                     return null;
                 }

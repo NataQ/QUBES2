@@ -81,7 +81,6 @@ public class LoginActivity extends AppCompatActivity {
     boolean showPassword = false;
     private ImageView imgShowPassword;
     private EditText edtPassword, edtUsername;
-
     private final Locale locale = new Locale("id", "ID");
     private final DateFormat df = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a", locale);
     private final NumberFormat nf = NumberFormat.getCurrencyInstance(locale);
@@ -229,7 +228,8 @@ public class LoginActivity extends AppCompatActivity {
     private void setDataDummyUser() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "detailUser.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
 
         WSMessage result = gson.fromJson(jsonFileString, resultType);
         if (result != null) {
@@ -247,7 +247,7 @@ public class LoginActivity extends AppCompatActivity {
             SessionManagerQubes.setUserProfile(userResponse);
             SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
             setDataDummyMaster();
-        }else{
+        } else {
             setToast("failed");
         }
     }
@@ -255,7 +255,8 @@ public class LoginActivity extends AppCompatActivity {
     private void setDataDummyMaster() {
         String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "masterData.json");
         Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>(){}.getType();
+        Type resultType = new TypeToken<WSMessage>() {
+        }.getType();
 
         WSMessage result = gson.fromJson(jsonFileString, resultType);
         if (result != null) {
@@ -352,7 +353,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }else{
+        } else {
             setToast("failed");
         }
     }
@@ -508,6 +509,16 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     for (CustomerType param : cusTypeList) {
                         database.addMasterCustomerType(param, userResponse.getUsername());
+                    }
+
+                    if (response.get("max_visit") != null) {
+                        userResponse.setMax_visit((Integer) response.get("max_visit"));
+//                        double maxVisit = (double) response.get("max_visit");
+//                        Parameter parameter = new Parameter();
+//                        parameter.setKey("MAX_VISIT");
+//                        parameter.setValue(String.valueOf(maxVisit));
+//                        database.deleteParameterByKey("MAX_VISIT");
+//                        database.addMasterParameter(parameter, userResponse.getUsername());
                     }
 
                     SessionManagerQubes.setUserProfile(userResponse);

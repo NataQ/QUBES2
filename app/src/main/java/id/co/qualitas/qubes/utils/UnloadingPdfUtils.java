@@ -262,7 +262,7 @@ public class UnloadingPdfUtils {
         cell.addElement(rightTable1);
         mainTable.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(user.getUsername() + " (PT. AHEB)", bigCalibri));
+        cell = new PdfPCell(new Phrase(user.getUsername() + " (" + user.getFull_name() + ")", bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         cell.setColspan(2);
         mainTable.addCell(cell);
@@ -451,7 +451,7 @@ public class UnloadingPdfUtils {
         table.addCell(cell);
 
 
-        cell = new PdfPCell(new Phrase(user.getUsername() + " (PT. AHEB)", calibriRegular));
+        cell = new PdfPCell(new Phrase(user.getUsername() + " (" + user.getFull_name() + ")", calibriRegular));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -554,7 +554,8 @@ public class UnloadingPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(qtySisa + " " + uomSisa, calibriRegular));//rusak
+//            cell = new PdfPCell(new Phrase(qtySisa + " " + uomSisa, calibriRegular));//rusak
+            cell = new PdfPCell(new Phrase("", calibriRegular));//rusak
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);

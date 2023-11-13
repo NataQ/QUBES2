@@ -394,7 +394,7 @@ public class RouteCustomerFragment extends BaseFragment {
         }
 
         @Override
-        protected void onPostExecute(WSMessage WsMessage) {
+        protected void onPostExecute(WSMessage re) {
             if (PARAM == 1) {
                 if (logResult.getIdMessage() == 1) {
                     String message = "Route Customer : " + logResult.getMessage();
@@ -407,8 +407,8 @@ public class RouteCustomerFragment extends BaseFragment {
                     new RequestUrl().execute();//2
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.GONE);
-                    llNoData.setVisibility(View.VISIBLE);
+                    getData();
+                    filterData(false);//no data request failed
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);

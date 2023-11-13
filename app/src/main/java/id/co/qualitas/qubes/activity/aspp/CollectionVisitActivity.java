@@ -47,13 +47,14 @@ public class CollectionVisitActivity extends BaseActivity {
     private TextView txtInvoice, txtInvoiceLine, txtHistory, txtHistoryLine;
     private LinearLayout llInvoice, llHistory;
     private RecyclerView recyclerViewInvoice, recyclerViewHistory;
-    private TextView txtDateHistory, txtTotalInvoice, txtTotalAmountInvoice, txtNoDataInvoice;
-    private TextView txtDateInvoice, txtTotalPaidHistory, txtNoDataHistory;
+    private TextView txtDateHistory, txtTotalInvoice, txtTotalAmountInvoice;
+    private TextView txtDateInvoice, txtTotalPaidHistory;
     private double totalInvoice = 0;
     private double totalPaid = 0, totalPaidHistory = 0;
 
     private SwipeRefreshLayout swipeLayoutHistory, swipeLayoutInvoice;
     private ProgressBar progressCircleHistory, progressCircleInvoice;
+    private LinearLayout llNoDataInvoice, llNoDataHistory;
     private Customer outletHeader;
 
     @Override
@@ -122,7 +123,7 @@ public class CollectionVisitActivity extends BaseActivity {
 
                 Intent intent = new Intent(this, CollectionFormActivity.class);
                 startActivity(intent);
-            }else{
+            } else {
                 setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, dilahkan pilih menu Collection di halaman Activity");
             }
         });
@@ -170,6 +171,8 @@ public class CollectionVisitActivity extends BaseActivity {
         outletHeader = SessionManagerQubes.getOutletHeader();
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoDataHistory = findViewById(R.id.llNoDataHistory);
+        llNoDataInvoice = findViewById(R.id.llNoDataInvoice);
         progressCircleHistory = findViewById(R.id.progressCircleHistory);
         progressCircleInvoice = findViewById(R.id.progressCircleInvoice);
         txtInvoice = findViewById(R.id.txtInvoice);
@@ -180,8 +183,6 @@ public class CollectionVisitActivity extends BaseActivity {
         llInvoice = findViewById(R.id.llInvoice);
         txtDateHistory = findViewById(R.id.txtDateHistory);
         txtDateInvoice = findViewById(R.id.txtDateInvoice);
-        txtNoDataInvoice = findViewById(R.id.txtNoDataInvoice);
-        txtNoDataHistory = findViewById(R.id.txtNoDataHistory);
         txtTotalPaidHistory = findViewById(R.id.txtTotalPaidHistory);
         txtTotalInvoice = findViewById(R.id.txtTotalInvoice);
         txtTotalAmountInvoice = findViewById(R.id.txtTotalAmountInvoice);
@@ -220,6 +221,8 @@ public class CollectionVisitActivity extends BaseActivity {
             progressCircleHistory.setVisibility(View.VISIBLE);
             recyclerViewInvoice.setVisibility(View.GONE);
             recyclerViewHistory.setVisibility(View.GONE);
+            llNoDataHistory.setVisibility(View.GONE);
+            llNoDataInvoice.setVisibility(View.GONE);
             new RequestUrl().execute();//1
         }
     }
@@ -250,10 +253,24 @@ public class CollectionVisitActivity extends BaseActivity {
         protected void onPostExecute(WSMessage result) {
             progressCircleInvoice.setVisibility(View.GONE);
             progressCircleHistory.setVisibility(View.GONE);
-            recyclerViewInvoice.setVisibility(View.VISIBLE);
-            recyclerViewHistory.setVisibility(View.VISIBLE);
             mAdapter.setData(mList);
             mAdapterHistory.setData(mListHistory);
+
+            if (Helper.isEmptyOrNull(mList)) {
+                recyclerViewInvoice.setVisibility(View.GONE);
+                llNoDataInvoice.setVisibility(View.VISIBLE);
+            } else {
+                recyclerViewInvoice.setVisibility(View.VISIBLE);
+                llNoDataInvoice.setVisibility(View.GONE);
+            }
+
+            if (Helper.isEmptyOrNull(mListHistory)) {
+                recyclerViewHistory.setVisibility(View.GONE);
+                llNoDataHistory.setVisibility(View.VISIBLE);
+            } else {
+                recyclerViewHistory.setVisibility(View.VISIBLE);
+                llNoDataHistory.setVisibility(View.GONE);
+            }
         }
     }
 

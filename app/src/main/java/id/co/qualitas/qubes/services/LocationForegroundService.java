@@ -77,7 +77,17 @@ public class LocationForegroundService extends Service {
         String action = intent.getAction();
         if (action != null) {
             if (action.equals("stop")) {
+//                removeLocationUpdates(intent);
                 removeLocationUpdates(intent);
+//                Log.i(TAG, "Removing location updates");
+//                try {
+//                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+//                    UtilsLocation.setRequestingLocationUpdates(this, false);
+//                    stopSelf();
+//                } catch (SecurityException unlikely) {
+//                    UtilsLocation.setRequestingLocationUpdates(this, true);
+//                    Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
+//                }
             }
         } else {
             setLocation();
@@ -228,13 +238,13 @@ public class LocationForegroundService extends Service {
 
                     Log.e("Service", "Lat:" + String.valueOf(location.getLatitude()) + " Long : " + String.valueOf(location.getLongitude()));
                     setSession();
-                    final String url = Constants.URL.concat(Constants.API_UPDATE_LOCATION_SALESMAN);
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_UPDATE_LOCATION_SALESMAN);
                     Map req = new HashMap();
                     req.put("latitude", location.getLatitude());
                     req.put("longitude", location.getLongitude());
                     req.put("username", SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
                     try {
-                        Helper.postWebserviceWithBodyWOReturn(url, Boolean.class, req);//post
+                        Helper.postWebserviceWithBody(url, null, req);//post
                     } catch (Exception e) {
                         result = false;
                     }
@@ -255,21 +265,6 @@ public class LocationForegroundService extends Service {
             Constants.URL = ipAddress;
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
-    }
-
-    /*
-     * Sets the location request parameters.
-     */
-    private void createLocationRequest() {
-//        mLocationRequest = LocationRequest.create();
-//        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-////        mLocationRequest.setInterval(30000);
-//        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
-////        mLocationRequest.setFastestInterval(30000/2);
-////        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS / 2);
-//        mLocationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY);
-
-
     }
 
     @Nullable

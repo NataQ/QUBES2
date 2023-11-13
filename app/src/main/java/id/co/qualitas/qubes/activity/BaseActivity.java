@@ -117,6 +117,7 @@ import id.co.qualitas.qubes.utils.Utils;
 //import android.support.multidex.MultiDex;
 
 public class BaseActivity extends AppCompatActivity {
+    protected LinearLayout llNoData;
     protected ProgressBar progressCircle;
     protected Context context;
     protected ProgressDialog progress;

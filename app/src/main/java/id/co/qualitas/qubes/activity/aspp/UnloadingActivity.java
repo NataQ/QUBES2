@@ -55,6 +55,7 @@ public class UnloadingActivity extends BaseActivity {
     private Boolean success = false;
     private TextView txtDate, txtNoDoc, txtTglKirim, txtNoSuratJalan;
     private StockRequest header;
+    private WSMessage logResult;
     private static final int PERMISSION_REQUEST_CODE = 1;
     private final static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -206,7 +207,7 @@ public class UnloadingActivity extends BaseActivity {
         pdfUnloadingUtils = UnloadingPdfUtils.getInstance(UnloadingActivity.this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
-        txtNoData = findViewById(R.id.txtNoData);
+        llNoData = findViewById(R.id.llNoData);
         txtNoSuratJalan = findViewById(R.id.txtNoSuratJalan);
         txtTglKirim = findViewById(R.id.txtTglKirim);
         txtNoDoc = findViewById(R.id.txtNoDoc);
@@ -309,9 +310,9 @@ public class UnloadingActivity extends BaseActivity {
         mList = database.getAllStockRequestDetailUnloading(header.getIdHeader());
 
         if (mList == null || mList.isEmpty()) {
-            txtNoData.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.VISIBLE);
         } else {
-            txtNoData.setVisibility(View.GONE);
+            llNoData.setVisibility(View.GONE);
             setAdapter();
         }
     }
@@ -330,7 +331,8 @@ public class UnloadingActivity extends BaseActivity {
             try {
                 String URL_ = Constants.API_STOCK_REQUEST_UNLOADING;
                 final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                return null;
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("unloading", ex.getMessage());
@@ -347,20 +349,21 @@ public class UnloadingActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
             progress.dismiss();
-            if (WsMessage != null) {
-                if (WsMessage.getIdMessage() == 1) {
-                    header.setIs_unloading(1);
+            if (logResult.getIdMessage() == 1) {
+                String message = "Unloading Stock Request : " + logResult.getMessage();
+                logResult.setMessage(message);
+            }
+            database.addLog(logResult);
+            if (logResult.getIdMessage() == 1) {
+                header.setIs_unloading(1);
 //                    header.setSync(0);
 //                    header.setStatus(Constants.STATUS_UNLOADING);
-                    database.updateUnloading(header, user.getUsername());
-                    setToast("Unloading sukses");
-                    progress.show();
-                    new AsyncTaskGeneratePDF().execute();
-                } else {
-                    setToast(WsMessage.getMessage());
-                }
+                database.updateUnloading(header, user.getUsername());
+                setToast("Unloading sukses");
+                progress.show();
+                new AsyncTaskGeneratePDF().execute();
             } else {
-                setToast(getString(R.string.serverError));
+                setToast(logResult.getMessage());
             }
         }
     }

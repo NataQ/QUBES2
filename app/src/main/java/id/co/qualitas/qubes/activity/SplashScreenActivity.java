@@ -78,6 +78,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private User attendance = new User();
 
     ActivityResultLauncher<String[]> mPermissionResultLauncher;
+    private boolean isAccessBackgroundLocationPermissionGranted = false;
     private boolean isLocationPermissionGranted = false;
     private boolean isReadPermissionGranted = false;
     //    private boolean isWritePermissionGranted = false;
@@ -139,11 +140,15 @@ public class SplashScreenActivity extends AppCompatActivity {
                     isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
 
+                if (result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION ) != null) {
+                    isAccessBackgroundLocationPermissionGranted = result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION );
+                }
+
                 if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
                     isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
                 }
 
-                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted && isAccessBackgroundLocationPermissionGranted) {
                     if (!Helper.isGPSOn(SplashScreenActivity.this)) {
                         setToast("Please turn on GPS");
                         Helper.turnOnGPS(SplashScreenActivity.this);
@@ -172,6 +177,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             isReadPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
         isLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        isAccessBackgroundLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION ) == PackageManager.PERMISSION_GRANTED;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             isNotificationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
         } else {
@@ -187,8 +193,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 permissionRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         }
-        if (!isLocationPermissionGranted)
-            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (!isLocationPermissionGranted) permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        if (!isAccessBackgroundLocationPermissionGranted) permissionRequest.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         if (!isNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionRequest.add(Manifest.permission.POST_NOTIFICATIONS);
         }
@@ -196,7 +202,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             mPermissionResultLauncher.launch(permissionRequest.toArray(new String[0]));
         }
 
-        if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
+        if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted && isAccessBackgroundLocationPermissionGranted) {
             if (!Helper.isGPSOn(SplashScreenActivity.this)) {
                 setToast("Please turn on GPS");
                 Helper.turnOnGPS(SplashScreenActivity.this);
@@ -310,25 +316,25 @@ public class SplashScreenActivity extends AppCompatActivity {
 //        if (offlineDat != null) {
 //            SecureDate.getInstance().initServerDate(Helper.convertStringtoDate(Constants.DATE_TYPE_16, offlineDat.getCurDate()), offlineDat.getElapseTime());
 //        }
-//        progress.show();
-//        new RequestUrl().execute();
+        progress.show();
+        new RequestUrl().execute();
 
-        new CountDownTimer(Constants.LONG_1000, Constants.LONG_100) {
-
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            public void onFinish() {
-                if (SessionManagerQubes.getUserProfile() == null) {
-                    intent = new Intent(getApplicationContext(), LoginActivity.class);
-                } else {
-                    intent = new Intent(getApplicationContext(), MainActivity.class);
-                }
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        }.start();
+//        new CountDownTimer(Constants.LONG_1000, Constants.LONG_100) {
+//
+//            public void onTick(long millisUntilFinished) {
+//
+//            }
+//
+//            public void onFinish() {
+//                if (SessionManagerQubes.getUserProfile() == null) {
+//                    intent = new Intent(getApplicationContext(), LoginActivity.class);
+//                } else {
+//                    intent = new Intent(getApplicationContext(), MainActivity.class);
+//                }
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//            }
+//        }.start();
     }
 
     private void initialize() {

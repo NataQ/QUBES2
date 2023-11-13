@@ -73,11 +73,20 @@ public class ReturnDetailActivity extends BaseActivity {
         });
 
         recyclerView.setAdapter(mAdapter);
+
+        if (Helper.isEmptyOrNull(mList)) {
+            recyclerView.setVisibility(View.GONE);
+            llNoData.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
+        }
     }
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);

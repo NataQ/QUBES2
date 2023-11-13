@@ -55,7 +55,7 @@ public class StockRequestAddActivity extends BaseActivity {
     Calendar todayDate;
     private StockRequest headerRequest;
     private boolean saveDataSuccess = false;
-
+    private WSMessage logResult;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -300,6 +300,7 @@ public class StockRequestAddActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);
@@ -388,7 +389,8 @@ public class StockRequestAddActivity extends BaseActivity {
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     Map request = new HashMap();
                     request.put("header", headerRequest);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    return null;
                 } else {
                     saveDataToDatabase();
                     saveDataSuccess = true;
@@ -400,6 +402,11 @@ public class StockRequestAddActivity extends BaseActivity {
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    logResult.setMessage("Add Stock Request error: " + ex.getMessage());
                 }
                 return null;
             }
@@ -411,19 +418,19 @@ public class StockRequestAddActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(WSMessage messageResponse) {
+        protected void onPostExecute(WSMessage e) {
             if (PARAM == 1) {
-                if (messageResponse != null) {
-                    if (messageResponse.getIdMessage() == 1) {
-                        PARAM = 2;
-                        new RequestUrl().execute();//2
-                    } else {
-                        progress.dismiss();
-                        setToast(getString(R.string.failedSaveData));
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Add Stock Request : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
+                    PARAM = 2;
+                    new RequestUrl().execute();//2
                 } else {
                     progress.dismiss();
-                    setToast(getString(R.string.failedSaveData));
+                    setToast(logResult.getMessage());
                 }
             } else {
                 progress.dismiss();
@@ -431,7 +438,7 @@ public class StockRequestAddActivity extends BaseActivity {
                     setToast("Stock Request Success");
                     onBackPressed();
                 } else {
-                    setToast("Save Failed");
+                    setToast("Save to database failed");
                 }
             }
         }

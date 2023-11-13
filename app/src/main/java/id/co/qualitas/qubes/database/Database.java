@@ -1230,11 +1230,11 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LOAD_NUMBER, param.getLoad_number());
         values.put(KEY_QTY, param.getQty());
         values.put(KEY_UOM, param.getUom());
-        values.put(KEY_QTY_SISA, param.getQtySisa());
-        values.put(KEY_UOM_SISA, param.getUomSisa());
+        values.put(KEY_QTY_SISA, param.getQty());
+        values.put(KEY_UOM_SISA, param.getUom());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -3174,17 +3174,19 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                 paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
                 paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_SISA)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
-                Map req = new HashMap();
-                req.put("id_material", paramModel.getId());
-                req.put("id_header", idHeader);
-
-                double qty = getSumQtyByIdMaterial(req);
-
-                paramModel.setQtySisa(paramModel.getQty() - qty);
-                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+//                Map req = new HashMap();
+//                req.put("id_material", paramModel.getId());
+//                req.put("id_header", idHeader);
+//
+//                double qty = getSumQtyByIdMaterial(req);
+//
+//                paramModel.setQtySisa(paramModel.getQty() - qty);
+//                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -3222,12 +3224,45 @@ public class Database extends SQLiteOpenHelper {
         String countQuery;
         Cursor cursor;
         double qty = 0;
-        countQuery = "SELECT sum(" + KEY_QTY + ") as " + KEY_QTY + " FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
-        cursor = db.rawQuery(countQuery, new String[]{request.get("id_header").toString(), request.get("id_header").toString()});
+
+//        select od.id_order_header, od.id_material, au.id_material, od.qty, od.uom, au.uom, au.conversion, (od.qty*au.conversion) as total
+//        from order_detail od
+//        join assign_uom au on od.id_material = au.id_material and od.uom = au.uom
+//        where id_order_header in ('26','32');
+
+        countQuery = "SELECT sum(" + KEY_QTY + ") as " + KEY_QTY
+                + " FROM " + TABLE_ORDER_DETAIL
+                + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{request.get("id_header").toString(), request.get("id_material").toString()});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 qty = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY));
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return qty;
+    }
+
+    public int getConversionMaterialUom(Map request) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        int qty = 0;
+
+//        select od.id_order_header, od.id_material, au.id_material, od.qty, od.uom, au.uom, au.conversion, (od.qty*au.conversion) as total
+//        from order_detail od
+//        join assign_uom au on od.id_material = au.id_material and od.uom = au.uom
+//        where id_order_header in ('26','32');
+
+        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{request.get("id_material").toString(), request.get("uom").toString()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                qty = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION));
             }
         }
 
@@ -3289,6 +3324,40 @@ public class Database extends SQLiteOpenHelper {
                 result.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 result.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
 //                result.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
+    public StockRequest getStockMaterial(Map req) {
+        // Select All Query
+        StockRequest result = null;
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? ";
+        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_MATERIAL_ID + " = ? ";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                result = new StockRequest();
+                result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+                result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+                result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+                result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+
+                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{req.get("id_material").toString()});
+                Material paramModel = new Material();
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
             }
         }
 
@@ -5117,6 +5186,19 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
+    public void updateSisaStock(Map request) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PAID, (Double) request.get("paid"));
+        values.put(KEY_NETT, (Double) request.get("nett"));
+        values.put(KEY_UPDATED_BY, request.get("username").toString());
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{request.get("no_invoice").toString()});
+        //db.close();
+    }
+
     public void updateStatusOutletVisit(Customer param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -5219,6 +5301,12 @@ public class Database extends SQLiteOpenHelper {
     public void deleteReturn(Map header) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_RETURN, KEY_DATE + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{header.get("date").toString(), header.get("id_customer").toString()});
+        db.close();
+    }
+
+    public void deleteParameterByKey(String key) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MASTER_PARAMETER, KEY_KEY_PARAMETER + " = ? ", new String[]{key});
         db.close();
     }
 

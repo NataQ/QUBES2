@@ -175,7 +175,7 @@ public class PromotionFragment extends BaseFragment {
         }
 
         @Override
-        protected void onPostExecute(WSMessage result) {
+        protected void onPostExecute(WSMessage r) {
             if (PARAM == 1) {
                 if (logResult.getIdMessage() == 1) {
                     String message = "Promotion : " + logResult.getMessage();
@@ -188,8 +188,15 @@ public class PromotionFragment extends BaseFragment {
                     new RequestUrl().execute();
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.GONE);
-                    llNoData.setVisibility(View.VISIBLE);
+                    getData();
+                    mAdapter.setData(mList);
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    }
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);

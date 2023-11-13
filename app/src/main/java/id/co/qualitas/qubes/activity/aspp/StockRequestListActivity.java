@@ -36,7 +36,6 @@ public class StockRequestListActivity extends BaseActivity {
     private StockRequestListAdapter mAdapter;
     private List<StockRequest> mList;
     private Button btnAdd;
-    private LinearLayout llNoData;
     private WSMessage resultWsMessage, logResult;
     private boolean saveDataSuccess = false;
 
@@ -183,7 +182,9 @@ public class StockRequestListActivity extends BaseActivity {
                 } else {
                     logResult = new WSMessage();
                     logResult.setIdMessage(0);
-                    logResult.setMessage("Stock Request error: " + ex.getMessage());
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    logResult.setMessage("Stock Request error: " + exMess);
                 }
                 return null;
             }
@@ -202,13 +203,21 @@ public class StockRequestListActivity extends BaseActivity {
                     logResult.setMessage(message);
                 }
                 database.addLog(logResult);
-                if (logResult.getIdMessage() == 1) {
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
                     resultWsMessage = logResult;
                     PARAM = 2;
                     new RequestUrl().execute();
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    setAdapter();
+                    getData();
+                    mAdapter.setData(mList);
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    }
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);

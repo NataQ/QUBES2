@@ -67,6 +67,7 @@ public class CollectionFormActivity extends BaseActivity {
 //    private List<CollectionDetail> mListGiro;
 //    private List<CollectionDetail> mListCheque;
     private List<Material> mListCash, mListLain, mListKredit, mListMaster;
+    private WSMessage logResult;
     private Invoice header;
     private CollectionKreditAdapter mAdapterKredit;
     private CollectionCashAdapter mAdapterCash;//14400
@@ -159,7 +160,8 @@ public class CollectionFormActivity extends BaseActivity {
                     Map request = prepareData();
                     String URL_ = Constants.API_SAVE_COLLECTION;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    return null;
                 } else if (PARAM == 2) {
                     Map request = new HashMap();
                     request.put("user", user);
@@ -193,6 +195,12 @@ public class CollectionFormActivity extends BaseActivity {
                 }
                 if (PARAM == 2) {
                     saveCollection = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    logResult.setMessage("Collection error: " + exMess);
                 }
                 return null;
             }
@@ -204,18 +212,19 @@ public class CollectionFormActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(WSMessage messageResponse) {
+        protected void onPostExecute(WSMessage re) {
             progress.dismiss();
             if (PARAM == 1) {
-                if (messageResponse != null) {
-                    if (messageResponse.getIdMessage() == 1) {
-                        isSync = 1;
-                        progress.show();
-                        PARAM = 2;
-                        new RequestUrl().execute();//2
-                    } else {
-                        setToast(getString(R.string.failedSaveData));
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Route Customer : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
+                    isSync = 1;
+                    progress.show();
+                    PARAM = 2;
+                    new RequestUrl().execute();//2
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }

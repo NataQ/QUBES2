@@ -52,11 +52,6 @@ public class StoreCheckDetailActivity extends BaseActivity {
         initialize();
         initData();
 
-        mAdapter = new StoreCheckDetailAdapter(this, mList, header -> {
-
-        });
-        recyclerView.setAdapter(mAdapter);
-
         imgBack.setOnClickListener(v -> {
             onBackPressed();
         });
@@ -78,6 +73,18 @@ public class StoreCheckDetailActivity extends BaseActivity {
         } else {
             txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
         }
+        mAdapter = new StoreCheckDetailAdapter(this, mList, header -> {
+
+        });
+        recyclerView.setAdapter(mAdapter);
+
+        if (Helper.isEmptyOrNull(mList)) {
+            recyclerView.setVisibility(View.GONE);
+            llNoData.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.GONE);
+        }
 
         btnAdd.setVisibility(View.GONE);
         btnSave.setVisibility(View.GONE);
@@ -86,6 +93,7 @@ public class StoreCheckDetailActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);

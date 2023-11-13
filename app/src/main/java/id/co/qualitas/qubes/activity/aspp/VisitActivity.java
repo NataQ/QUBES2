@@ -125,8 +125,10 @@ public class VisitActivity extends BaseActivity {
     };
 
     private SwipeRefreshLayout swipeLayoutNoo, swipeLayoutVisit;
+    private LinearLayout llNoDataVisit, llNoDataNoo;
     private ProgressBar progressCircleNoo, progressCircleVisit;
     private WSMessage resultWsMessage;
+    private WSMessage logResult;
     private boolean saveDataSuccess = false;
     private boolean outRadius = false;
     public static final int CAMERA_PERM_CODE = 102;
@@ -1129,6 +1131,8 @@ public class VisitActivity extends BaseActivity {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
         pdfUtils = LashPdfUtils.getInstance(VisitActivity.this);
 
+        llNoDataVisit = findViewById(R.id.llNoDataVisit);
+        llNoDataNoo = findViewById(R.id.llNoDataNoo);
         progressCircleNoo = findViewById(R.id.progressCircleNoo);
         progressCircleVisit = findViewById(R.id.progressCircleVisit);
         txtNOOLine = findViewById(R.id.txtNOOLine);
@@ -1335,6 +1339,8 @@ public class VisitActivity extends BaseActivity {
         progressCircleNoo.setVisibility(View.VISIBLE);
         recyclerViewVisit.setVisibility(View.GONE);
         recyclerViewNoo.setVisibility(View.GONE);
+        llNoDataVisit.setVisibility(View.GONE);
+        llNoDataNoo.setVisibility(View.GONE);
         PARAM = 1;
         new RequestUrl().execute();//1
 //        setDataDummy();
@@ -1356,7 +1362,8 @@ public class VisitActivity extends BaseActivity {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_GET_TODAY_CUSTOMER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    return null;
                 } else if (PARAM == 2) {
                     mList = new ArrayList<>();
                     mListNonRoute = new ArrayList<>();
@@ -1463,9 +1470,9 @@ public class VisitActivity extends BaseActivity {
                     String URL_ = Constants.API_GET_START_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
 //                    return (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, startDay);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
+                    return null;
                 } else if (PARAM == 4) {
-
                     endDay = new HashMap();
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
@@ -1474,11 +1481,13 @@ public class VisitActivity extends BaseActivity {
 
                     String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
+                    return null;
                 } else {
                     validateVisitSalesman();
                     getData();
                     saveDataSuccess = true;
+
                     return null;
                 }
             } catch (Exception ex) {
@@ -1487,6 +1496,18 @@ public class VisitActivity extends BaseActivity {
                 }
                 if (PARAM == 2 || PARAM == 5) {
                     saveDataSuccess = false;
+                } else {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    if (PARAM == 1) {
+                        logResult.setMessage("Today Customer error: " + exMess);
+                    } else if (PARAM == 3) {
+                        logResult.setMessage("Start Visit error: " + exMess);
+                    } else if (PARAM == 4) {
+                        logResult.setMessage("End Visit error: " + exMess);
+                    }
                 }
                 return null;
             }
@@ -1500,26 +1521,42 @@ public class VisitActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        resultWsMessage = result;
-                        PARAM = 2;
-                        new RequestUrl().execute();//2
-                    } else {
-                        progressCircleVisit.setVisibility(View.GONE);
-                        progressCircleNoo.setVisibility(View.GONE);
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Today Customer : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                    resultWsMessage = logResult;
+                    PARAM = 2;
+                    new RequestUrl().execute();//2
                 } else {
                     progressCircleVisit.setVisibility(View.GONE);
                     progressCircleNoo.setVisibility(View.GONE);
-                    setToast(getString(R.string.failedGetData));
+                    setToast(logResult.getMessage());
+                    getData();
+                    mAdapterVisit.setData(mList);
+                    mAdapterNoo.setData(mListNoo);
+
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerViewVisit.setVisibility(View.GONE);
+                        llNoDataVisit.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerViewVisit.setVisibility(View.VISIBLE);
+                        llNoDataVisit.setVisibility(View.GONE);
+                    }
+
+                    if (Helper.isEmptyOrNull(mListNoo)) {
+                        recyclerViewNoo.setVisibility(View.GONE);
+                        llNoDataNoo.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerViewNoo.setVisibility(View.VISIBLE);
+                        llNoDataNoo.setVisibility(View.GONE);
+                    }
                 }
             } else if (PARAM == 2) {
                 progressCircleVisit.setVisibility(View.GONE);
                 progressCircleNoo.setVisibility(View.GONE);
-                recyclerViewVisit.setVisibility(View.VISIBLE);
-                recyclerViewNoo.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapterVisit.setData(mList);
                     mAdapterNoo.setData(mListNoo);
@@ -1527,33 +1564,51 @@ public class VisitActivity extends BaseActivity {
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }
+
+                if (Helper.isEmptyOrNull(mList)) {
+                    recyclerViewVisit.setVisibility(View.GONE);
+                    llNoDataVisit.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerViewVisit.setVisibility(View.VISIBLE);
+                    llNoDataVisit.setVisibility(View.GONE);
+                }
+
+                if (Helper.isEmptyOrNull(mListNoo)) {
+                    recyclerViewNoo.setVisibility(View.GONE);
+                    llNoDataNoo.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerViewNoo.setVisibility(View.VISIBLE);
+                    llNoDataNoo.setVisibility(View.GONE);
+                }
             } else if (PARAM == 3) {
                 progress.dismiss();
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        setToast(result.getMessage());
-                        SessionManagerQubes.setStartDay(1);
-                        validateButton();//start
-                    } else {
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Start Visit : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
+                    setToast(logResult.getMessage());
+                    SessionManagerQubes.setStartDay(1);
+                    validateButton();//start
                 } else {
-                    setToast(getString(R.string.serverError));
+                    setToast(logResult.getMessage());
                 }
             } else if (PARAM == 4) {
                 progress.dismiss();
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "End Visit : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
 //                        setToast(result.getMessage());
-                        SessionManagerQubes.setStartDay(2);
-                        validateButton();//end
-                        progress.show();
-                        new AsyncTaskGeneratePDF().execute();
-                    } else {
-                        setToast(result.getMessage());
-                    }
+                    SessionManagerQubes.setStartDay(2);
+                    validateButton();//end
+                    progress.show();
+                    new AsyncTaskGeneratePDF().execute();
                 } else {
-                    setToast(getString(R.string.serverError));
+                    setToast(logResult.getMessage());
                 }
             } else {
                 progress.dismiss();

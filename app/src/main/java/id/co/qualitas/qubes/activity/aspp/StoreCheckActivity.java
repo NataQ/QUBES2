@@ -196,6 +196,7 @@ public class StoreCheckActivity extends BaseActivity {
 //    }
 
     private void initData() {
+        llNoData.setVisibility(View.GONE);
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
         mList = new ArrayList<>();
         mList.addAll(database.getAllStoreCheck(SessionManagerQubes.getOutletHeader().getId()));
@@ -227,6 +228,7 @@ public class StoreCheckActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);

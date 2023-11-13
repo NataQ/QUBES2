@@ -36,7 +36,6 @@ public class OrderDetailActivity extends BaseActivity {
         initProgress();
         initialize();
         initData();
-        setDataDummy();
 
         mAdapter = new OrderDetailAdapter(this, mList, header -> {
         });
@@ -50,38 +49,6 @@ public class OrderDetailActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(OrderDetailActivity.this);
         });
-    }
-
-    private void setDataDummy() {
-        String jsonFileString = Helper.getJsonFromAssets(getApplicationContext(), "discount.json");
-//        Gson gson = new Gson();
-//        Type listUserType = new TypeToken<List<ShipmentResponse>>() {
-//        }.getType();
-//
-//        shipmentResponseList = new ArrayList<>();
-//        shipmentResponseList = gson.fromJson(jsonFileString, listUserType);
-//        bgTaskFilter(shipmentResponseList);
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject = new JSONObject(jsonFileString);
-        } catch (JSONException err) {
-            Log.d("Error", err.toString());
-        }
-
-//        JSONObject json_array = args.optJSONObject(0);
-
-        Iterator<?> keys = jsonObject.keys();
-
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            System.out.println("Key: " + key);
-            try {
-                System.out.println("Value: " + jsonObject.get(key));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private void initData() {

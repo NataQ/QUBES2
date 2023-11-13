@@ -48,6 +48,7 @@ import id.co.qualitas.qubes.utils.Utils;
 
 public class StockRequestDetailActivity extends BaseActivity {
     private StockRequestDetailAdapter mAdapter;
+    private WSMessage logResult;
     private List<Material> mList;
     private TextView txtDate, txtNoDoc, txtTglKirim, txtNoSuratJalan;
     private Button btnVerification, btnUnloading;
@@ -232,11 +233,11 @@ public class StockRequestDetailActivity extends BaseActivity {
         db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         txtNoSuratJalan = findViewById(R.id.txtNoSuratJalan);
         txtTglKirim = findViewById(R.id.txtTglKirim);
         txtNoDoc = findViewById(R.id.txtNoDoc);
         txtDate = findViewById(R.id.txtDate);
-        txtNoData = findViewById(R.id.txtNoData);
         swipeLayout = findViewById(R.id.swipeLayout);
         progressCircle = findViewById(R.id.progressCircle);
         imgBack = findViewById(R.id.imgBack);
@@ -266,9 +267,9 @@ public class StockRequestDetailActivity extends BaseActivity {
         mList = database.getAllStockRequestDetail(header.getIdHeader());
 
         if (mList == null || mList.isEmpty()) {
-            txtNoData.setVisibility(View.VISIBLE);
+            llNoData.setVisibility(View.VISIBLE);
         } else {
-            txtNoData.setVisibility(View.GONE);
+            llNoData.setVisibility(View.GONE);
             setAdapter();
         }
     }
@@ -350,11 +351,15 @@ public class StockRequestDetailActivity extends BaseActivity {
             try {
                 String URL_ = Constants.API_STOCK_REQUEST_VERIFICATION;
                 final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                return null;
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("verification", ex.getMessage());
                 }
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setMessage("Verification Stock Request error: " + ex.getMessage());
                 return null;
             }
         }
@@ -367,16 +372,17 @@ public class StockRequestDetailActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
             progress.dismiss();
-            if (WsMessage != null) {
-                if (WsMessage.getIdMessage() == 1) {
-                    database.updateStockRequestVerification(header, user.getUsername());
-                    setToast("Verifikasi sukses");
-                    onBackPressed();
-                } else {
-                    setToast(WsMessage.getMessage());
-                }
+            if (logResult.getIdMessage() == 1) {
+                String message = "Verification Stock Request : " + logResult.getMessage();
+                logResult.setMessage(message);
+            }
+            database.addLog(logResult);
+            if (logResult.getIdMessage() == 1) {
+                database.updateStockRequestVerification(header, user.getUsername());
+                setToast("Verifikasi sukses");
+                onBackPressed();
             } else {
-                setToast(getString(R.string.serverError));
+                setToast(logResult.getMessage());
             }
         }
     }

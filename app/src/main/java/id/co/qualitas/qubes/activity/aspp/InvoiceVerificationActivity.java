@@ -49,7 +49,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private double totalInvoice = 0;
     private double totalAmount = 0.0;
     private Bitmap transSign;
-    private WSMessage resultWsMessage;
+    private WSMessage resultWsMessage, logResult;
     private boolean saveDataSuccess = false;
     private String signature;
     private boolean isSigned;
@@ -159,6 +159,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
         txtDate = findViewById(R.id.txtDate);
         txtTotalInvoice = findViewById(R.id.txtTotalInvoice);
         txtTotalAmount = findViewById(R.id.txtTotalAmount);
@@ -192,6 +193,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private void requestData() {
         progressCircle.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
+        llNoData.setVisibility(View.GONE);
         PARAM = 1;
         new RequestUrl().execute();//1
 //        setDataDummy();
@@ -275,7 +277,8 @@ public class InvoiceVerificationActivity extends BaseActivity {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_INVOICE_LIST;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    return null;
                 } else if (PARAM == 2) {
                     mList = new ArrayList<>();
                     Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
@@ -332,6 +335,28 @@ public class InvoiceVerificationActivity extends BaseActivity {
                 if (PARAM == 2 || PARAM == 4) {
                     saveDataSuccess = false;
                 }
+                String exMess = null;
+                switch (PARAM) {
+                    case 1:
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                        logResult.setMessage("Invoice List Error : " + exMess);
+                        break;
+                    case 2:
+                    case 4:
+                        saveDataSuccess = false;
+                        break;
+                    case 3:
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                        logResult.setMessage("Invoice Verification Error : " + exMess);
+                        break;
+
+                }
                 return null;
             }
         }
@@ -342,43 +367,60 @@ public class InvoiceVerificationActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(WSMessage result) {
+        protected void onPostExecute(WSMessage re) {
             if (PARAM == 1) {
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        resultWsMessage = result;
-                        PARAM = 2;
-                        new RequestUrl().execute();//2
-                    } else {
-                        progressCircle.setVisibility(View.GONE);
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Invoice List : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                    resultWsMessage = logResult;
+                    PARAM = 2;
+                    new RequestUrl().execute();//2
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    setToast(getString(R.string.failedGetData));
+                    setToast(logResult.getMessage());
+                    mAdapter.setData(mList);
+                    setTotal();
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    }
                 }
             } else if (PARAM == 2) {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
-                    setTotal();
                     mAdapter.setData(mList);
+                    setTotal();
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }
+
+                if (Helper.isEmptyOrNull(mList)) {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
+                }
             } else if (PARAM == 3) {
-                if (result != null) {
-                    if (result.getIdMessage() == 1) {
-                        setToast("Verifikasi sukses");
-                        PARAM = 4;
-                        new RequestUrl().execute();//4
-                    } else {
-                        progress.dismiss();
-                        setToast(result.getMessage());
-                    }
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Invoice Verification : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1) {
+                    setToast("Verifikasi sukses");
+                    PARAM = 4;
+                    new RequestUrl().execute();//4
                 } else {
                     progress.dismiss();
-                    setToast(getString(R.string.serverError));
+                    setToast(logResult.getMessage());
                 }
             } else {
                 progress.dismiss();
