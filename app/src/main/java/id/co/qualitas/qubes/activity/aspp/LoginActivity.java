@@ -512,7 +512,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     if (response.get("max_visit") != null) {
-                        userResponse.setMax_visit((Integer) response.get("max_visit"));
+                        userResponse.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
 //                        double maxVisit = (double) response.get("max_visit");
 //                        Parameter parameter = new Parameter();
 //                        parameter.setKey("MAX_VISIT");

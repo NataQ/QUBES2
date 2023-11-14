@@ -276,7 +276,7 @@ public class LocationForegroundService extends Service {
     private Notification getNotification() {
 //        Intent intent = new Intent(this, LocationUpdatesService.class);
 
-        Intent notificationIntent = new Intent(this, LocationUpdatesService.class);
+        Intent notificationIntent = new Intent(this, LocationForegroundService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder notificationBuilder =

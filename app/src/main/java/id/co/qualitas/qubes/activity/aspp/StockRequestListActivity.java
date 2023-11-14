@@ -199,7 +199,7 @@ public class StockRequestListActivity extends BaseActivity {
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
                 if (logResult.getIdMessage() == 1) {
-                    String message = "Route Customer : " + logResult.getMessage();
+                    String message = "Stock Request : " + logResult.getMessage();
                     logResult.setMessage(message);
                 }
                 database.addLog(logResult);

@@ -318,7 +318,8 @@ public class InvoiceVerificationActivity extends BaseActivity {
                     request.put("username", user.getUsername());
 
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
+                    return null;
                 } else {
                     for (Invoice invoice : mList) {
                         invoice.setSignature(signature);

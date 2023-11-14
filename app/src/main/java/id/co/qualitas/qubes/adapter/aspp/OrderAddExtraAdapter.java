@@ -235,7 +235,8 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                 @Override
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    notifyDataSetChanged();
                     alertDialog.dismiss();
                 }
             });

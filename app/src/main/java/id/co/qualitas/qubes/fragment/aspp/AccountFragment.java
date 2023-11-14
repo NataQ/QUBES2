@@ -417,7 +417,7 @@ public class AccountFragment extends BaseFragment {
                     }
 
                     if (response.get("max_visit") != null) {
-                        user.setMax_visit((Integer) response.get("max_visit"));
+                        user.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
 //                        double maxVisit = (double) response.get("max_visit");
 //                        Parameter parameter = new Parameter();
 //                        parameter.setKey("MAX_VISIT");
@@ -456,10 +456,15 @@ public class AccountFragment extends BaseFragment {
         }
 
         @Override
-        protected void onPostExecute(WSMessage wsMessage) {
+        protected void onPostExecute(WSMessage r) {
             if (PARAM == 1) {
-                if (wsMessage != null) {
-                    messageResponse = wsMessage;
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Stock Request : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                }
+                database.addLog(logResult);
+                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                    messageResponse = logResult;
                     PARAM = 2;
                     new RequestUrl().execute();
                 } else {

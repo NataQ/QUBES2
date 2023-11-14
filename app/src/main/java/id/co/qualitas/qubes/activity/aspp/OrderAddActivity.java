@@ -39,6 +39,7 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
+import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -53,10 +54,11 @@ public class OrderAddActivity extends BaseActivity {
     boolean checkedAll = false;
     private SpinnerProductOrderAdapter spinnerAdapter;
     private Customer outletHeader;
-    private boolean saveDiscount = false, saveOrder = false;
+    private boolean saveDiscount = false, saveOrder = false, payNow = false;
     private WSMessage wsMessage;
     boolean getDiscount = false;
     private List<Material> fakturList;
+    private StockRequest stockHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,9 +69,10 @@ public class OrderAddActivity extends BaseActivity {
 
         btnGetDiscount.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
+                getDiscount = true;
                 progress.show();
                 PARAM = 1;
-                new RequestUrl().execute();
+                new RequestUrl().execute();//1
             } else {
                 setToast("Anda tidak memiliki jaringan internet");
             }
@@ -83,7 +86,7 @@ public class OrderAddActivity extends BaseActivity {
             if (checkDiscount()) {
                 dialogConfirm();
             } else {
-                setToast("Anda belum mengambil diskon");
+                setToast("Silahkan ambil diskon lagi sebelum save order");
             }
         });
 
@@ -130,7 +133,7 @@ public class OrderAddActivity extends BaseActivity {
     private void saveOrderSession() {
         progress.show();
         PARAM = 3;
-        new RequestUrl().execute();
+        new RequestUrl().execute();//3
     }
 
     private void setAdapter() {
@@ -167,6 +170,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        stockHeader = database.getLastStockRequest();
 
         txtOmzet = findViewById(R.id.txtOmzet);
         txtDate = findViewById(R.id.txtDate);
@@ -280,33 +284,64 @@ public class OrderAddActivity extends BaseActivity {
 
         btnSave.setOnClickListener(v -> {
             List<Material> addList = new ArrayList<>();
-            String priceListCode = null;
+            String idMatGroup = null;
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
-                    if (Helper.isNullOrEmpty(mat.getUomSisa())) {
-                        Map req = new HashMap();
-                        req.put("udf5", outletHeader.getUdf_5());
-                        req.put("productId", mat.getId_product_group());
-                        req.put("matId", mat.getId());
-                        Material matDetail = database.getPriceMaterial(req);
-                        if (priceListCode != null) {
-                            if (priceListCode.equals(matDetail.getPriceListCode())) {
-                                addList.add(matDetail);
+                    boolean avaiable = false;
+                    for (Material materialStock : stockHeader.getMaterialList()) {
+                        if (mat.getId().equals(materialStock.getId())) {
+                            if (materialStock.getQtySisa() != 0) {
+                                avaiable = true;
+                            }
+                            break;
+                        }
+                    }
+                    if (avaiable) {
+//                        addList.add(mat);
+//                        if (Helper.isNullOrEmpty(mat.getUomSisa())) {
+//                            Map req = new HashMap();
+//                            req.put("udf5", outletHeader.getUdf_5());
+//                            req.put("productId", mat.getId_product_group());
+//                            req.put("matId", mat.getId());
+//                            Material matDetail = database.getPriceMaterial(req);
+                        if (idMatGroup != null) {
+                            if (idMatGroup.equals(mat.getId_material_group())) {
+                                addList.add(mat);
                             } else {
-                                setToast("Harus product yang TOP nya sama");
+                                setToast("Harus product yang grup nya sama");
                             }
                         } else {
-                            priceListCode = matDetail.getPriceListCode();
-                            addList.add(matDetail);
+                            idMatGroup = mat.getId_material_group();
+                            addList.add(mat);
                         }
+//                        } else {
+//                            addList.add(mat);
+//                        }
                     } else {
-                        addList.add(mat);
+                        setToast("Tidak ada stock untuk material ini");
                     }
                 }
             }
             addNew(addList);
             dialog.dismiss();
         });
+    }
+
+    public boolean checkStock(Material material) {
+        boolean stockReady = false;
+        for (Material mat : stockHeader.getMaterialList()) {
+            if (mat.getId().equals(material.getId())) {
+                Material stock = database.getQtySmallUom(mat);
+                Material order = database.getQtySmallUom(material);
+                if (stock.getQty() > order.getQty()) {
+                    stockReady = true;
+                } else {
+                    stockReady = false;
+                }
+                break;
+            }
+        }
+        return stockReady;
     }
 
     public void setCheckedAll() {
@@ -355,14 +390,16 @@ public class OrderAddActivity extends BaseActivity {
     private List<Material> initDataMaterial() {
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
+        Map req = new HashMap();
+        req.put("udf_5", outletHeader.getUdf_5());
         if (Helper.isNotEmptyOrNull(mList)) {
-            Map req = new HashMap();
-            req.put("udf5", outletHeader.getUdf_5());
-            req.put("productId", mList.get(0).getId_product_group());
-            listMat.addAll(database.getAllMasterMaterialOrder(req));
+            req.put("price_list_code", mList.get(0).getPriceListCode());
+            req.put("material_group_id", mList.get(0).getId_material_group());
         } else {
-            listMat.addAll(database.getAllMasterMaterial());
+            req.put("price_list_code", null);
+            req.put("material_group_id", null);
         }
+        listMat.addAll(database.getAllMasterMaterialByCustomer(req));
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {
@@ -392,6 +429,14 @@ public class OrderAddActivity extends BaseActivity {
         }
 
         txtOmzet.setText("Rp. " + format.format(omzet));
+    }
+
+    public void removeOmzet() {
+        txtOmzet.setText("0");
+    }
+
+    public void resizeView() {
+        recyclerView.swapAdapter(mAdapter,true);
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
@@ -466,6 +511,7 @@ public class OrderAddActivity extends BaseActivity {
                     header.setIsSync(0);
                     header.setMaterialList(mList);
 
+                    database.addOrder(header, user);
                     SessionManagerQubes.setOrder(header);
 
                     saveOrder = true;
@@ -496,7 +542,7 @@ public class OrderAddActivity extends BaseActivity {
                 if (result != null) {
                     wsMessage = result;
                     PARAM = 2;
-                    new RequestUrl().execute();
+                    new RequestUrl().execute();//2
                 } else {
                     progress.dismiss();
                     setToast("Failed get discount");
@@ -505,15 +551,21 @@ public class OrderAddActivity extends BaseActivity {
                 progress.dismiss();
                 if (saveDiscount) {
                     mAdapter.notifyDataSetChanged();
+                    calculateOmzet();
                 } else {
                     setToast("Failed save discount");
                 }
             } else {
                 progress.dismiss();
                 if (saveOrder) {
-                    SessionManagerQubes.setCollectionSource(3);
-                    Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
-                    startActivity(intent);
+                    setToast("Save order Success");
+                    if (payNow) {
+                        SessionManagerQubes.setCollectionSource(3);
+                        Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
+                        startActivity(intent);
+                    } else {
+                        onBackPressed();
+                    }
                 } else {
                     setToast("Failed save order");
                 }
@@ -534,6 +586,8 @@ public class OrderAddActivity extends BaseActivity {
         btnKredit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                payNow = false;
+                saveOrderSession();//tidak bayar
                 dialog.dismiss();
             }
         });
@@ -541,7 +595,8 @@ public class OrderAddActivity extends BaseActivity {
         btnBayar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveOrderSession();
+                payNow = true;
+                saveOrderSession();//bayar sekarang
                 dialog.dismiss();
             }
         });

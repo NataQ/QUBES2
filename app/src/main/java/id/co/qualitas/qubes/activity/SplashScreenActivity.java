@@ -78,7 +78,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private User attendance = new User();
 
     ActivityResultLauncher<String[]> mPermissionResultLauncher;
-    private boolean isAccessBackgroundLocationPermissionGranted = false;
+//    private boolean isAccessBackgroundLocationPermissionGranted = false;
     private boolean isLocationPermissionGranted = false;
     private boolean isReadPermissionGranted = false;
     //    private boolean isWritePermissionGranted = false;
@@ -140,15 +140,15 @@ public class SplashScreenActivity extends AppCompatActivity {
                     isLocationPermissionGranted = result.get(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
 
-                if (result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION ) != null) {
-                    isAccessBackgroundLocationPermissionGranted = result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION );
-                }
+//                if (result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION) != null) {
+//                    isAccessBackgroundLocationPermissionGranted = result.get(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+//                }
 
                 if (result.get(Manifest.permission.POST_NOTIFICATIONS) != null) {
                     isNotificationPermissionGranted = result.get(Manifest.permission.POST_NOTIFICATIONS);
                 }
 
-                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted && isAccessBackgroundLocationPermissionGranted) {
+                if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
                     if (!Helper.isGPSOn(SplashScreenActivity.this)) {
                         setToast("Please turn on GPS");
                         Helper.turnOnGPS(SplashScreenActivity.this);
@@ -177,7 +177,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             isReadPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
         isLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-        isAccessBackgroundLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION ) == PackageManager.PERMISSION_GRANTED;
+//        isAccessBackgroundLocationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             isNotificationPermissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
         } else {
@@ -193,8 +193,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                 permissionRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         }
-        if (!isLocationPermissionGranted) permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        if (!isAccessBackgroundLocationPermissionGranted) permissionRequest.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        if (!isLocationPermissionGranted)
+            permissionRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
         if (!isNotificationPermissionGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionRequest.add(Manifest.permission.POST_NOTIFICATIONS);
         }
@@ -202,7 +202,7 @@ public class SplashScreenActivity extends AppCompatActivity {
             mPermissionResultLauncher.launch(permissionRequest.toArray(new String[0]));
         }
 
-        if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted && isAccessBackgroundLocationPermissionGranted) {
+        if (isCameraPermissionGranted && isReadPermissionGranted && isLocationPermissionGranted && isNotificationPermissionGranted) {
             if (!Helper.isGPSOn(SplashScreenActivity.this)) {
                 setToast("Please turn on GPS");
                 Helper.turnOnGPS(SplashScreenActivity.this);
@@ -376,10 +376,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected WSMessage doInBackground(Void... voids) {
             try {
-                String URL_ = Constants.API_GET_IP_ADDRESS;
-                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
-
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_GET_IP_ADDRESS);
+                return (WSMessage) NetworkHelper.getWebserviceWoToken(url, WSMessage.class);
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("IPAddress", ex.getMessage());
@@ -403,6 +401,8 @@ public class SplashScreenActivity extends AppCompatActivity {
                     Helper.setItemParam(Constants.URL, Constants.URL);
                     SessionManagerQubes.setUrl(ipAddress);
                 }
+            } else {
+                Constants.URL = SessionManagerQubes.getUrl();
             }
 
             if (SessionManagerQubes.getUserProfile() == null) {

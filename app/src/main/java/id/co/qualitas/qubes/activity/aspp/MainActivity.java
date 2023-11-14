@@ -39,8 +39,6 @@ import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.services.FCMService;
-import id.co.qualitas.qubes.services.LocationUpdatesService;
 
 public class MainActivity extends BaseActivity {
     String currentpage;
@@ -55,10 +53,10 @@ public class MainActivity extends BaseActivity {
     private ImageView imgLogOut;
     private boolean sentToSettings = false;
     // Tracks the bound state of the service.
-    private boolean mBound = false;
+//    private boolean mBound = false;
     // The BroadcastReceiver used to listen from broadcasts from the service.
-    private MyReceiver myReceiver;
-    private static LocationUpdatesService mServiceFusedLocation = null;
+//    private MyReceiver myReceiver;
+//    private static LocationUpdatesService mServiceFusedLocation = null;
     HomeFragment homeFragment = new HomeFragment();
     RouteCustomerFragment routeCustomerFragment = new RouteCustomerFragment();
     ActivityFragment activityFragment = new ActivityFragment();
@@ -76,7 +74,7 @@ public class MainActivity extends BaseActivity {
 //        requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
         setContentView(R.layout.new_activity_main);
         initialize();
-        myReceiver = new MyReceiver();
+//        myReceiver = new MyReceiver();
 
         SharedPreferences permissionStatus = getSharedPreferences(getString(R.string.permission_status), MODE_PRIVATE);
 
@@ -291,7 +289,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         initProgress();
-        registerReceiver(myReceiver, new IntentFilter(FCMService.ACTION_BROADCAST));
+//        registerReceiver(myReceiver, new IntentFilter(FCMService.ACTION_BROADCAST));
 //        setPage();
         if(Helper.getItemParam(Constants.FROM_VISIT) != null){
             Helper.removeItemParam(Constants.CURRENTPAGE);
@@ -385,51 +383,51 @@ public class MainActivity extends BaseActivity {
 //        bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private class MyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String actionTracking = intent.getStringExtra(FCMService.ACTION_TRACKING);
-            if (actionTracking.equals("start_tracking")) {
-                mServiceFusedLocation.requestLocationUpdates();
-            } else if (actionTracking.equals("stop_tracking")) {
-                mServiceFusedLocation.removeLocationUpdates();
-            }
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        //enhancement tracking
-        if (mBound) {
-            // Unbind from the service. This signals to the service that this activity is no longer
-            // in the foreground, and the service can respond by promoting itself to a foreground
-            // service.
-            unbindService(mServiceConnection);
-            mBound = false;
-        }
-        super.onStop();
-    }
-
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-            mServiceFusedLocation = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceFusedLocation = null;
-            mBound = false;
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        //enhancement tracking
-        unregisterReceiver(myReceiver);
-        super.onPause();
-    }
+//    private class MyReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String actionTracking = intent.getStringExtra(FCMService.ACTION_TRACKING);
+//            if (actionTracking.equals("start_tracking")) {
+//                mServiceFusedLocation.requestLocationUpdates();
+//            } else if (actionTracking.equals("stop_tracking")) {
+//                mServiceFusedLocation.removeLocationUpdates();
+//            }
+//        }
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        //enhancement tracking
+//        if (mBound) {
+//            // Unbind from the service. This signals to the service that this activity is no longer
+//            // in the foreground, and the service can respond by promoting itself to a foreground
+//            // service.
+//            unbindService(mServiceConnection);
+//            mBound = false;
+//        }
+//        super.onStop();
+//    }
+//
+//    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+//            mServiceFusedLocation = binder.getService();
+//            mBound = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mServiceFusedLocation = null;
+//            mBound = false;
+//        }
+//    };
+//
+//    @Override
+//    protected void onPause() {
+//        //enhancement tracking
+//        unregisterReceiver(myReceiver);
+//        super.onPause();
+//    }
 }

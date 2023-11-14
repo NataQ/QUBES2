@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -105,6 +106,8 @@ public class Database extends SQLiteOpenHelper {
     // column table price code
     private static final String KEY_ID_PRICE_CODE_DB = "idPriceCodeDB";
     private static final String KEY_PRICE_LIST_CODE = "priceListCode";
+    private static final String KEY_VALID_FROM = "validFrom";
+    private static final String KEY_VALID_TO = "validTo";
     private static final String KEY_BON_LIMIT = "bonLimit";
 
     //MasterSalesPriceHeader
@@ -1066,6 +1069,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_SALES_PRICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_TOP + " TEXT,"
             + KEY_PRICE_LIST_CODE + " TEXT,"
+            + KEY_VALID_FROM + " TEXT,"
+            + KEY_VALID_TO + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + " UNIQUE (" + KEY_PRICE_LIST_CODE + ")"
@@ -2833,6 +2838,8 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TOP, param.getTop());
         values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
+        values.put(KEY_VALID_FROM, param.getValid_from());
+        values.put(KEY_VALID_TO, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -3152,9 +3159,27 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
             paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
             paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
-//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
 
+            String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
+            cursor = db.rawQuery(selectQueryDetail, new String[]{paramModel.getIdHeader()});
+            List<Material> arrayList = new ArrayList<>();
+            if (cursor.moveToFirst()) {
+                do {
+                    Material param = new Material();
+                    param.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_DETAIL_DB)));
+                    param.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    param.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    param.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    param.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
+                    param.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    param.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_SISA)));
+                    param.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                    arrayList.add(param);
+                } while (cursor.moveToNext());
+            }
+            paramModel.setMaterialList(arrayList);
         }
+
         cursor.close();
         return paramModel;
     }
@@ -3269,6 +3294,31 @@ public class Database extends SQLiteOpenHelper {
         assert cursor != null;
         cursor.close();
         return qty;
+    }
+
+    public Material getQtySmallUom(Material mat) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        int qty = 0;
+
+        String smallUom = getSmallUom(mat.getId());
+
+        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{mat.getId(), mat.getUom()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                qty = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION));
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+
+        mat.setUom(smallUom);
+        mat.setQty(qty);
+        return mat;
     }
 
     public boolean checkUnloadingRequest() {
@@ -4543,6 +4593,74 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Material> getAllMasterMaterialByCustomer(Map request) {
+        List<Material> arrayList = new ArrayList<>();
+        List<String> priceListCodeList = new ArrayList<>();
+        String top = null;
+
+//        select a.
+//        priceListCode, b.top, d.materialId, c.sellingPrice, c.uom, c.qty, d.materialName, d.materialGroupId, d.materialGroupName, d.materialProductId, d.materialProductName
+//        from mastertoppricecode a
+//        join mastersalespriceheader b on a.priceListCode = b.priceListCode and date ('2023-11-14')
+//        between b.validFrom and b.validTo
+//        join MasterSalesPriceDetail c on a.priceListCode = c.priceListCode
+//        join mastermaterial d on c.materialId = d.materialId
+//        where a.udf5 = 'G' and a.priceListCode = ifnull('GT - TOP 14', a.priceListCode) and d.
+//        materialGroupId = ifnull('11', d.materialGroupId) GROUP BY d.materialId
+        String allQuery = null;
+        String query = "select a." + KEY_PRICE_LIST_CODE + ", b." + KEY_TOP + ", d." + KEY_MATERIAL_ID + ", c." + SELLING_PRICE + ", c." + KEY_UOM
+                + ", c." + KEY_QTY + ", d." + KEY_MATERIAL_NAME + ", d." + KEY_MATERIAL_GROUP_ID + ", d." + KEY_MATERIAL_GROUP_NAME
+                + ", d." + KEY_MATERIAL_PRODUCT_ID + ", d." + KEY_MATERIAL_PRODUCT_NAME + ", d." + KEY_MATERIAL_SALES + " "
+                + "from " + TABLE_MASTER_PRICE_CODE + " a "
+                + "join " + TABLE_MASTER_SALES_PRICE_HEADER + " b on a." + KEY_PRICE_LIST_CODE + " = b." + KEY_PRICE_LIST_CODE + " and date(?) between b." + KEY_VALID_FROM + " and  b." + KEY_VALID_TO + " "
+                + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
+                + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
+                + "where a." + KEY_UDF_5 + " = ? ";
+        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code")+ "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
+        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        if (request.get("price_list_code") != null) {
+            allQuery = query + queryPriceList;
+        }else{
+            allQuery = query;
+        }
+        if (request.get("material_group_id") != null) {
+            allQuery = allQuery + querymaterialGroupId;
+        }
+        allQuery = allQuery + groupBy;
+        // Select All Query
+
+        try {
+            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+            if (cursor.moveToFirst()) {
+                do {
+                    Material paramModel = new Material();
+                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                    paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                    paramModel.setPriceListCode(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE)));
+
+                    arrayList.add(paramModel);
+                } while (cursor.moveToNext());
+            }
+        }catch(Exception e){
+            arrayList = new ArrayList<>();
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<String> getUom(String idMat) {
         List<String> arrayList = new ArrayList<>();
         // Select All Query
@@ -4561,13 +4679,27 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public String getSmallUom(String idMat) {
+        String paramModel = null;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_UOM_ID + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat});
+
+        if (cursor.moveToFirst()) {
+            paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_ID));
+        }
+        cursor.close();
+        return paramModel;
+    }
+
     public double getPrice(Material material) {
         double price = 0;
         int conversion = 0;
         // Select All Query
-        String selectQuery = "SELECT " + KEY_CONVERSION + " FROM " + TABLE_MASTER_UOM
-                + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM_ID + " = ? ";
-
+        String selectQuery = "SELECT " + KEY_CONVERSION + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM_ID + " = ? ";
+        String smallUom = getSmallUom(material.getId());
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{material.getId(), material.getUom()});
 

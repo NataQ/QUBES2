@@ -54,12 +54,8 @@ public class FCMService extends FirebaseMessagingService {
     public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
     public static final String ACTION_TRACKING = PACKAGE_NAME + ".broadcast";
 
-    private static LocationUpdatesService mServiceFusedLocation = null;
-    private boolean mBound = false;
     Intent serviceIntent;
 
-//    public BackgroundLocationService gpsService;
-//    public boolean mTracking = false;
 
     //https://stackoverflow.com/questions/41383238/firebase-notifications-when-app-is-closed
 
@@ -247,22 +243,6 @@ public class FCMService extends FirebaseMessagingService {
 //        bindService(new Intent(FCMService.this, LocationUpdatesService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-            mServiceFusedLocation = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mServiceFusedLocation = null;
-            mBound = false;
-        }
-    };
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -290,32 +270,4 @@ public class FCMService extends FirebaseMessagingService {
 //        }
         return super.onUnbind(intent);
     }
-
-    //new
-//    private ServiceConnection serviceConnection = new ServiceConnection() {
-//        public void onServiceConnected(ComponentName className, IBinder service) {
-//            String name = className.getClassName();
-//            if (name.endsWith("BackgroundLocationService")) {
-//                gpsService = ((BackgroundLocationService.LocationServiceBinder) service).getService();
-//            }
-//        }
-//
-//        public void onServiceDisconnected(ComponentName className) {
-//            if (className.getClassName().equals("BackgroundLocationService")) {
-//                gpsService = null;
-//            }
-//        }
-//    };
-//
-//
-//    public void startTracking() {
-//        //check for permission
-//        gpsService.startTracking();
-//        mTracking = true;
-//    }
-//
-//    public void stopTracking() {
-//        mTracking = false;
-//        gpsService.stopTracking();
-//    }
 }

@@ -50,6 +50,32 @@ public class NetworkHelper {
         return Objects.requireNonNull(response).getBody();
     }
 
+    public static Object getWebserviceWoToken(String url, Class<?> responseType) {
+        int flag = 0;
+
+        HttpEntity<?> response = null;
+//        while (flag == 0) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+        HttpEntity<?> entity = new HttpEntity<>(requestHeaders);
+        GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+        restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+        try {
+            response = restTemplate.exchange(url, HttpMethod.GET, entity, responseType);
+        } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());//403
+            if (e.getMessage().equals("401 Unauthorized")) {
+            } else if (e.getMessage().contains("ENETUNREACH")) {
+                Helper.setItemParam(Constants.NO_CONNECTION, "1");
+            }
+
+        }
+//        }
+        return Objects.requireNonNull(response).getBody();
+    }
+
     /*POST*/
     public static Object postWebserviceLogin(String url, Class<?> responseType, Object body) {
         int flag = 0;

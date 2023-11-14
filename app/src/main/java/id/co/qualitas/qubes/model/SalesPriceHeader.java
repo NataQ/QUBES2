@@ -6,7 +6,24 @@ public class SalesPriceHeader implements Serializable {
     int idSalesPriceHeaderDB;
     String top;
     String price_list_code;
+    String valid_from;
+    String valid_to;
 
+    public String getValid_from() {
+        return valid_from;
+    }
+
+    public void setValid_from(String valid_from) {
+        this.valid_from = valid_from;
+    }
+
+    public String getValid_to() {
+        return valid_to;
+    }
+
+    public void setValid_to(String valid_to) {
+        this.valid_to = valid_to;
+    }
     public int getIdSalesPriceHeaderDB() {
         return idSalesPriceHeaderDB;
     }
