@@ -14,8 +14,8 @@ public class StoreCheck {
     private String uom;
     private int isSync;
     private String material_group_name;
-    private int id_material_group;
-    private int id_product_group;
+    private String id_material_group;
+    private String id_product_group;
     private String name_product_group;
 
     public String getIdStoreCheck() {
@@ -90,19 +90,19 @@ public class StoreCheck {
         this.material_group_name = material_group_name;
     }
 
-    public int getId_material_group() {
+    public String getId_material_group() {
         return id_material_group;
     }
 
-    public void setId_material_group(int id_material_group) {
+    public void setId_material_group(String id_material_group) {
         this.id_material_group = id_material_group;
     }
 
-    public int getId_product_group() {
+    public String getId_product_group() {
         return id_product_group;
     }
 
-    public void setId_product_group(int id_product_group) {
+    public void setId_product_group(String id_product_group) {
         this.id_product_group = id_product_group;
     }
 

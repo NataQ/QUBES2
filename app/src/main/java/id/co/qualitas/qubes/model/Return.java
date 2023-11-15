@@ -44,7 +44,7 @@ public class Return {
     private String descReason;
     private String photoReason;
     private int isSync;
-    private int id_material_group;
+    private String id_material_group;
     private String material_group_name;
     private String id_product_group;
     private String name_product_group;
@@ -297,11 +297,11 @@ public class Return {
         this.isSync = isSync;
     }
 
-    public int getId_material_group() {
+    public String getId_material_group() {
         return id_material_group;
     }
 
-    public void setId_material_group(int id_material_group) {
+    public void setId_material_group(String id_material_group) {
         this.id_material_group = id_material_group;
     }
 

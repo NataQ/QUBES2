@@ -390,11 +390,12 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             public void afterTextChanged(Editable s) {
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    int qty = Integer.parseInt(s.toString().replace(",", ""));
+                    double qty = Double.parseDouble(s.toString().replace(",", ""));
                     detail.setQty(qty);
-                } else {
-                    detail.setQty(0);
                 }
+//                else {
+//                    detail.setQty(0);
+//                }
             }
         });
     }

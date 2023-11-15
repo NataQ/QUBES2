@@ -39,6 +39,24 @@ public class Uom implements Serializable {
     String id_material;
     String id_uom;
     int conversion;
+    double qty_min;
+    double qty_max;
+
+    public double getQty_min() {
+        return qty_min;
+    }
+
+    public void setQty_min(double qty_min) {
+        this.qty_min = qty_min;
+    }
+
+    public double getQty_max() {
+        return qty_max;
+    }
+
+    public void setQty_max(double qty_max) {
+        this.qty_max = qty_max;
+    }
 
     public String getIdHeader() {
         return idHeader;

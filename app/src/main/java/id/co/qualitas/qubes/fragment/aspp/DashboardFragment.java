@@ -212,7 +212,11 @@ public class DashboardFragment extends BaseFragment {
                     double at = (double) res.get("at");
                     user.setAt(at);
                     SessionManagerQubes.setUserProfile(user);
-                    txtAT.setText(format.format(user.getAt()));
+                    try {
+                        txtAT.setText(format.format(user.getAt()));
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         }

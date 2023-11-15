@@ -86,11 +86,11 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "MasterNonRouteCustomerPromotion";
     private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT = "MasterNonRouteCustomerDct";
     private static final String TABLE_MASTER_PRICE_CODE = "MasterTopPriceCode";
+    private static final String TABLE_MASTER_LIMIT_BON = "MasterLimitBon";
     private static final String TABLE_MASTER_SALES_PRICE_HEADER = "MasterSalesPriceHeader";
     private static final String TABLE_MASTER_SALES_PRICE_DETAIL = "MasterSalesPriceDetail";
     private static final String TABLE_MASTER_PARAMETER = "MasterParameter";
     private static final String TABLE_MASTER_CUSTOMER_TYPE = "MasterCustomerType";
-    private static final String TABLE_MASTER_MINIMAL_ORDER = "MinimalOrder";
     private static final String TABLE_LOG = "Log";
     private static final String KEY_ID_CUSTOMER_TYPE = "idCustomerType";
     private static final String KEY_ID_TYPE_PRICE = "idTypePrice";
@@ -108,6 +108,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_PRICE_LIST_CODE = "priceListCode";
     private static final String KEY_VALID_FROM = "validFrom";
     private static final String KEY_VALID_TO = "validTo";
+    private static final String KEY_ID_MINIMAL_ORDER_DB = "idMinimalOrderDb";
     private static final String KEY_BON_LIMIT = "bonLimit";
 
     //MasterSalesPriceHeader
@@ -343,8 +344,10 @@ public class Database extends SQLiteOpenHelper {
 
     //column table MasterUom
     private static final String KEY_UOM_ID_DB = "idUomDB";
-    private static final String KEY_UOM_ID = "uomId";
+    //    private static final String KEY_UOM_ID = "uomId";
     private static final String KEY_CONVERSION = "conversion";
+    private static final String KEY_QTY_MIN = "qtyMin";
+    private static final String KEY_QTY_MAX = "qtyMax";
 
     //column table MasterDaerahTingkat
     private static final String KEY_DAERAH_TINGKAT_ID_DB = "idDaerahTingkatDB";
@@ -369,8 +372,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
-//            + " UNIQUE (" + KEY_REQUEST_DATE + ", " + KEY_ID_SALESMAN + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
+            + KEY_IS_SYNC + " INTEGER, "
+            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_BE + ", " + KEY_REQUEST_DATE + "," + KEY_ID_SALESMAN + ")"
             + ")";
 
     public static String CREATE_TABLE_STOCK_REQUEST_DETAIL = "CREATE TABLE " + TABLE_STOCK_REQUEST_DETAIL + "("
@@ -392,7 +395,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER + "("
@@ -485,7 +488,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_INVOICE_NO + ")"
+            + " UNIQUE (" + KEY_INVOICE_NO + "," + KEY_DATE + ")"
             + ")";
 
     public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE " + TABLE_INVOICE_DETAIL + "("
@@ -505,7 +508,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_INVOICE_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_NOO = "CREATE TABLE " + TABLE_NOO + "("
@@ -608,8 +611,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
+            + KEY_IS_SYNC + " INTEGER"
+//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_CUSTOMER_DCT + "("
@@ -754,11 +757,12 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
+            + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_EXTRA = "CREATE TABLE " + TABLE_ORDER_DETAIL_EXTRA + "("
             + KEY_ID_ORDER_DETAIL_EXTRA_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_ORDER_HEADER_DB + " TEXT,"
             + KEY_ID_ORDER_DETAIL_DB + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -777,12 +781,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE " + TABLE_ORDER_DETAIL_DISCOUNT + "("
             + KEY_ID_ORDER_DETAIL_DISCOUNT_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_ORDER_DETAIL_DB + " TEXT,"
+            + KEY_ID_ORDER_HEADER_DB + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_DISCOUNT_ID + " TEXT,"
@@ -794,7 +799,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_ORDER_DETAIL_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_DISCOUNT_ID + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_PAYMENT_HEADER = "CREATE TABLE " + TABLE_ORDER_PAYMENT_HEADER + "("
@@ -887,7 +892,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
-//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE " + TABLE_COLLECTION_DETAIL + "("
@@ -909,13 +913,14 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
-//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
+            + KEY_IS_SYNC + " INTEGER,"
+            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE " + TABLE_COLLECTION_ITEM + "("
             + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_COLLECTION_DETAIL_DB + " TEXT,"
+            + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " TEXT,"
@@ -929,7 +934,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE " + TABLE_MASTER_REASON + "("
@@ -978,7 +983,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER"
-//            + " UNIQUE (" + KEY_ITEM_NR + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_BANK = "CREATE TABLE " + TABLE_MASTER_BANK + "("
@@ -1015,15 +1019,17 @@ public class Database extends SQLiteOpenHelper {
 
     public static String CREATE_TABLE_MASTER_UOM = "CREATE TABLE " + TABLE_MASTER_UOM + "("
             + KEY_UOM_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_UOM_ID + " TEXT,"
+            + KEY_UOM + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_CONVERSION + " INTEGER,"
+            + KEY_QTY_MIN + " REAL,"
+            + KEY_QTY_MAX + " REAL,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER,"
-            + " UNIQUE (" + KEY_UOM_ID + ", " + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_UOM + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE " + TABLE_MASTER_DAERAH_TINGKAT + "("
@@ -1054,15 +1060,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
-            + ")";
-    public static String CREATE_TABLE_MASTER_MINIMAL_ORDER = "CREATE TABLE " + TABLE_MASTER_MINIMAL_ORDER + "("
-            + KEY_MATERIAL_ID + " INTEGER PRIMARY KEY ,"
-            + KEY_QTY + " REAL,"
-            + KEY_UOM + " TEXT,"
-            + KEY_BON_LIMIT + " INTEGER,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_MATERIAL_ID + ", " + KEY_UOM + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_HEADER + "("
@@ -1107,6 +1104,16 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
             + ")";
 
+    public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE " + TABLE_MASTER_LIMIT_BON + "("
+            + KEY_ID_MINIMAL_ORDER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_MATERIAL_ID + " TEXT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_BON_LIMIT + " TEXT,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_CUSTOMER_ID + ")"
+            + ")";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_STOCK_REQUEST_HEADER);
@@ -1143,7 +1150,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MASTER_PRICE_CODE);
         db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_HEADER);
         db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_DETAIL);
-        db.execSQL(CREATE_TABLE_MASTER_MINIMAL_ORDER);
+        db.execSQL(CREATE_TABLE_MASTER_LIMIT_BON);
         db.execSQL(CREATE_TABLE_PARAMETER);
         db.execSQL(CREATE_TABLE_LOG);
         db.execSQL(CREATE_TABLE_CUSTOMER_TYPE);
@@ -1185,7 +1192,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE_CODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MINIMAL_ORDER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_LIMIT_BON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PARAMETER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOG);
@@ -2745,9 +2752,11 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_UOM_ID, param.getId_uom());
+        values.put(KEY_UOM, param.getId_uom());
         values.put(KEY_MATERIAL_ID, param.getId_material());
         values.put(KEY_CONVERSION, param.getConversion());
+        values.put(KEY_QTY_MIN, param.getQty_min());
+        values.put(KEY_QTY_MAX, param.getQty_max());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -2865,7 +2874,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         try {
-            db.insert(TABLE_MASTER_MINIMAL_ORDER, null, values);//return id yg ud d create
+            db.insert(TABLE_MASTER_LIMIT_BON, null, values);//return id yg ud d create
         } catch (Exception e) {
 
         }
@@ -3282,7 +3291,7 @@ public class Database extends SQLiteOpenHelper {
 //        join assign_uom au on od.id_material = au.id_material and od.uom = au.uom
 //        where id_order_header in ('26','32');
 
-        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM_ID + " = ? ";
+        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM + " = ? ";
         cursor = db.rawQuery(countQuery, new String[]{request.get("id_material").toString(), request.get("uom").toString()});
 
         if (cursor != null) {
@@ -3304,7 +3313,7 @@ public class Database extends SQLiteOpenHelper {
 
         String smallUom = getSmallUom(mat.getId());
 
-        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM_ID + " = ? ";
+        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM + " = ? ";
         cursor = db.rawQuery(countQuery, new String[]{mat.getId(), mat.getUom()});
 
         if (cursor != null) {
@@ -3316,9 +3325,10 @@ public class Database extends SQLiteOpenHelper {
         assert cursor != null;
         cursor.close();
 
-        mat.setUom(smallUom);
-        mat.setQty(qty);
-        return mat;
+        Material result = new Material();
+        result.setUom(smallUom);
+        result.setQty(mat.getQty() * qty);
+        return result;
     }
 
     public boolean checkUnloadingRequest() {
@@ -3382,11 +3392,132 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public StockRequest getStockMaterial(Map req) {
+    public Material getStockMaterial(Map req) {
+        // Select All Query
+        Material result = null;
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? ";
+        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB));
+
+                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
+                if (cursorDetail != null) {
+                    if (cursorDetail.moveToFirst()) {
+                        result = new Material();
+                        result.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                        result.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                        result.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY_SISA)));
+                        result.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM_SISA)));
+
+                        Material conversion = getQtySmallUom(result);
+                        result.setQty(conversion.getQty());
+                        result.setUom(conversion.getUom());
+                    }
+                    cursorDetail.close();
+                }
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
+    public double getLKCustomer(Customer cust) {
+        // Select All Query
+        Material result = null;
+        String selectQuery = "SELECT a.creditLimit - b.value + c.value as " + KEY_CREDIT_LIMIT + "\n" +
+                "from\n" +
+                "(SELECT creditLimit FROM customer WHERE customerId = '0A285') a  ,\n" +
+                "(SELECT COALESCE(sum(omzet),0) AS value FROM orderheader WHERE customerId = '0A285') b ,\n" +
+                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM invoiceheader a \n" +
+                "INNER JOIN CollectionDetail b on b.invoiceNo = a.invoiceNo and typePayment = 'cash' \n" +
+                "WHERE a.customerId = '0A285') c\n";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
+
+                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
+                if (cursorDetail != null) {
+                    if (cursorDetail.moveToFirst()) {
+                        result = new Material();
+                        result.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                        result.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                        result.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY_SISA)));
+                        result.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM_SISA)));
+
+                        Material conversion = getQtySmallUom(result);
+                        result.setQty(conversion.getQty());
+                        result.setUom(conversion.getUom());
+                    }
+                    cursorDetail.close();
+                }
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
+    public double getLimitBon(Customer cust) {
+        // Select All Query
+        Material result = null;
+        String selectQuery = "SELECT a.creditLimit - b.value + c.value as " + KEY_CREDIT_LIMIT + "\n" +
+                "from\n" +
+                "(SELECT creditLimit FROM customer WHERE customerId = '0A285') a  ,\n" +
+                "(SELECT COALESCE(sum(omzet),0) AS value FROM orderheader WHERE customerId = '0A285') b ,\n" +
+                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM invoiceheader a \n" +
+                "INNER JOIN CollectionDetail b on b.invoiceNo = a.invoiceNo and typePayment = 'cash' \n" +
+                "WHERE a.customerId = '0A285') c\n";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
+
+                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
+                if (cursorDetail != null) {
+                    if (cursorDetail.moveToFirst()) {
+                        result = new Material();
+                        result.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                        result.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                        result.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY_SISA)));
+                        result.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM_SISA)));
+
+                        Material conversion = getQtySmallUom(result);
+                        result.setQty(conversion.getQty());
+                        result.setUom(conversion.getUom());
+                    }
+                    cursorDetail.close();
+                }
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
+    public StockRequest getLastStockRequest(Map req) {
         // Select All Query
         StockRequest result = null;
         String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? ";
-        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_MATERIAL_ID + " = ? ";
+        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -3396,18 +3527,27 @@ public class Database extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 result = new StockRequest();
                 result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
-                result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
-                result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
-                result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
-                result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
-                result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
 
+                List<Material> materialList = new ArrayList<>();
                 Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{req.get("id_material").toString()});
-                Material paramModel = new Material();
-                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                if (cursorDetail != null) {
+                    if (cursor.moveToFirst()) {
+                        do {
+                            Material paramModel = new Material();
+                            paramModel.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                            paramModel.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                            paramModel.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
+                            paramModel.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
+
+                            Material conversion = getQtySmallUom(paramModel);
+                            paramModel.setQty(conversion.getQty());
+                            paramModel.setUom(conversion.getUom());
+                            materialList.add(paramModel);
+                        } while (cursorDetail.moveToNext());
+                    }
+                    cursorDetail.close();
+                }
+                result.setMaterialList(materialList);
             }
         }
 
@@ -4492,17 +4632,18 @@ public class Database extends SQLiteOpenHelper {
     public Material getMinimalOrder(Map request) {
         Material paramModel = new Material();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_MINIMAL_ORDER + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM + " = ?";
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM + " = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.get("id").toString(), request.get("uom").toString()});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.get("id_material").toString(), request.get("uom").toString()});
 
         if (cursor.moveToFirst()) {
             paramModel = new Material();
             paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-            paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+            paramModel.setQtyMin(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_MIN)));
+            paramModel.setQtyMax(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_MAX)));
             paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-            paramModel.setBon_limit(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT)));
+//            paramModel.setBon_limit(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT)));
         }
         cursor.close();
         return paramModel;
@@ -4616,7 +4757,7 @@ public class Database extends SQLiteOpenHelper {
                 + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
                 + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
                 + "where a." + KEY_UDF_5 + " = ? ";
-        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code")+ "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
         String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
         String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
 
@@ -4624,7 +4765,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
         if (request.get("price_list_code") != null) {
             allQuery = query + queryPriceList;
-        }else{
+        } else {
             allQuery = query;
         }
         if (request.get("material_group_id") != null) {
@@ -4654,7 +4795,7 @@ public class Database extends SQLiteOpenHelper {
                     arrayList.add(paramModel);
                 } while (cursor.moveToNext());
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             arrayList = new ArrayList<>();
         }
         cursor.close();
@@ -4664,14 +4805,14 @@ public class Database extends SQLiteOpenHelper {
     public List<String> getUom(String idMat) {
         List<String> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT " + KEY_UOM_ID + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc";
+        String selectQuery = "SELECT " + KEY_UOM + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat});
 
         if (cursor.moveToFirst()) {
             do {
-                String paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_ID));
+                String paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -4682,13 +4823,13 @@ public class Database extends SQLiteOpenHelper {
     public String getSmallUom(String idMat) {
         String paramModel = null;
         // Select All Query
-        String selectQuery = "SELECT " + KEY_UOM_ID + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1";
+        String selectQuery = "SELECT " + KEY_UOM + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat});
 
         if (cursor.moveToFirst()) {
-            paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_ID));
+            paramModel = cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM));
         }
         cursor.close();
         return paramModel;
@@ -4698,7 +4839,7 @@ public class Database extends SQLiteOpenHelper {
         double price = 0;
         int conversion = 0;
         // Select All Query
-        String selectQuery = "SELECT " + KEY_CONVERSION + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM_ID + " = ? ";
+        String selectQuery = "SELECT " + KEY_CONVERSION + " FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM + " = ? ";
         String smallUom = getSmallUom(material.getId());
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{material.getId(), material.getUom()});
@@ -4776,7 +4917,7 @@ public class Database extends SQLiteOpenHelper {
 //    public List<Uom> getUom(String idMat) {
 //        List<Uom> arrayList = new ArrayList<>();
 //        // Select All Query
-//        String selectQuery = "SELECT "+KEY_UOM_ID+" FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ?";
+//        String selectQuery = "SELECT "+KEY_UOM+" FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ?";
 //
 //        SQLiteDatabase db = this.getWritableDatabase();
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat});
@@ -4785,7 +4926,7 @@ public class Database extends SQLiteOpenHelper {
 //            do {
 //                Uom paramModel = new Uom();
 //                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_ID_DB)));
-//                paramModel.setId_uom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_ID)));
+//                paramModel.setId_uom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
 //                paramModel.setId_material(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
 //                paramModel.setConversion(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION)));
 //
@@ -5593,7 +5734,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public void deleteMasterMinimalOrder() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MINIMAL_ORDER);
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_LIMIT_BON);
     }
 
     public void deleteMasterParameter() {

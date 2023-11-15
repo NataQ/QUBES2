@@ -53,6 +53,8 @@ public class Material implements Cloneable {
     private List<Discount> diskonList;//object
     private Object diskonListObject;//object
     private double sisa;
+    private double qtyMin;
+    private double qtyMax;
     private int bon_limit;
     public Material() {
     }
@@ -88,6 +90,22 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getQtyMin() {
+        return qtyMin;
+    }
+
+    public void setQtyMin(double qtyMin) {
+        this.qtyMin = qtyMin;
+    }
+
+    public double getQtyMax() {
+        return qtyMax;
+    }
+
+    public void setQtyMax(double qtyMax) {
+        this.qtyMax = qtyMax;
     }
 
     public Object getDiskonListObject() {

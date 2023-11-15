@@ -112,6 +112,25 @@ public class OrderAddActivity extends BaseActivity {
 //        if(mList){
 //
 //        }
+        if (!Helper.isEmpty(txtOmzet)) {
+            String omzet = txtOmzet.getText().toString();
+            if (omzet.equals("0")) validate++;
+        }
+//perlu ada sync LK cust?
+//        cek lk, -> lk ambil dari customer (back end lk nya ud harus d itung juga)
+//        di mobile, lk d kurang dari invoice yg sudah d bayar kan juga yg is sync nya 0, kalau uda 1 berarti kan ud masuk ke back end
+        //rumus lk => LK - total Order + total paid
+
+        double LK = database.getLKCustomer(outletHeader);
+        for (Material material: mList) {
+            double limitBon = database.getLimitBon(material, outletHeader);
+        }
+table limit bon
+        kalau limit bon kurang dari 1, maka gak bisa simpen order
+
+        for (Material material : mList) {
+
+        }
 
         return validate == 0;
     }
@@ -288,13 +307,17 @@ public class OrderAddActivity extends BaseActivity {
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
                     boolean avaiable = false;
-                    for (Material materialStock : stockHeader.getMaterialList()) {
-                        if (mat.getId().equals(materialStock.getId())) {
-                            if (materialStock.getQtySisa() != 0) {
-                                avaiable = true;
+                    if (user.getType_sales().equals("CO")) {
+                        for (Material materialStock : stockHeader.getMaterialList()) {
+                            if (mat.getId().equals(materialStock.getId())) {
+                                if (materialStock.getQtySisa() != 0) {
+                                    avaiable = true;
+                                }
+                                break;
                             }
-                            break;
                         }
+                    } else {
+                        avaiable = true;
                     }
                     if (avaiable) {
 //                        addList.add(mat);
@@ -304,16 +327,16 @@ public class OrderAddActivity extends BaseActivity {
 //                            req.put("productId", mat.getId_product_group());
 //                            req.put("matId", mat.getId());
 //                            Material matDetail = database.getPriceMaterial(req);
-                        if (idMatGroup != null) {
-                            if (idMatGroup.equals(mat.getId_material_group())) {
-                                addList.add(mat);
-                            } else {
-                                setToast("Harus product yang grup nya sama");
-                            }
-                        } else {
-                            idMatGroup = mat.getId_material_group();
-                            addList.add(mat);
-                        }
+//                        if (idMatGroup != null) {
+//                            if (idMatGroup.equals(mat.getId_material_group())) {
+                        addList.add(mat);
+//                            } else {
+//                                setToast("Harus product yang grup nya sama");
+//                            }
+//                        } else {
+//                            idMatGroup = mat.getId_material_group();
+//                            addList.add(mat);
+//                        }
 //                        } else {
 //                            addList.add(mat);
 //                        }
@@ -322,7 +345,7 @@ public class OrderAddActivity extends BaseActivity {
                     }
                 }
             }
-            addNew(addList);
+            if (Helper.isNotEmptyOrNull(addList)) addNew(addList);
             dialog.dismiss();
         });
     }
@@ -433,10 +456,11 @@ public class OrderAddActivity extends BaseActivity {
 
     public void removeOmzet() {
         txtOmzet.setText("0");
+        getDiscount = false;
     }
 
     public void resizeView() {
-        recyclerView.swapAdapter(mAdapter,true);
+        recyclerView.swapAdapter(mAdapter, true);
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
@@ -452,12 +476,14 @@ public class OrderAddActivity extends BaseActivity {
 
                     List<Map> listBarang = new ArrayList<>();
                     for (Material material : mList) {
-                        Map tempBarang = new HashMap<>();
-                        tempBarang.put("id", material.getId());
-                        tempBarang.put("harga", material.getPrice());
-                        tempBarang.put("qty", material.getQty());
-                        tempBarang.put("satuan", material.getUom());
-                        listBarang.add(tempBarang);
+                        if (material.getQty() != 0) {
+                            Map tempBarang = new HashMap<>();
+                            tempBarang.put("id", material.getId());
+                            tempBarang.put("harga", material.getPrice());
+                            tempBarang.put("qty", material.getQty());
+                            tempBarang.put("satuan", material.getUom());
+                            listBarang.add(tempBarang);
+                        }
                     }
                     request.put("listDetail", listBarang);
                     String URL_ = Constants.API_GET_DISCOUNT_ORDER;
