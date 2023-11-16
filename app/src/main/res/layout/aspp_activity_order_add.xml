@@ -92,7 +92,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -102,11 +102,38 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/TextView_Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:text="Tgl Kirim"
+                    android:textColor="@color/gray8_aspp" />
+
+                <TextView
+                    android:id="@+id/txtTglKirim"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:background="@drawable/edit_text_default"
+                    android:drawableRight="@drawable/ic_calendar_aspp"
+                    android:hint="01/01/2023"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black_aspp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal">
+
+                <TextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".25"
-                    android:text="Date"
+                    android:layout_weight=".5"
+                    android:text="Tgl Order"
                     android:textColor="@color/gray8_aspp" />
 
                 <TextView
@@ -114,7 +141,7 @@
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".75"
+                    android:layout_weight=".5"
                     android:gravity="end"
                     android:text="0"
                     android:textColor="@color/black_aspp" />

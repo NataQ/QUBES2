@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderDetailActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
 public class OrderDetailExtraAdapter extends RecyclerView.Adapter<OrderDetailExtraAdapter.Holder> implements Filterable {
@@ -131,14 +132,14 @@ public class OrderDetailExtraAdapter extends RecyclerView.Adapter<OrderDetailExt
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        Material detail = mFilteredList.get(position);
+        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
 
         holder.txtNo.setText(format.format(positionHeader + 1) + "." + format.format(holder.getAbsoluteAdapterPosition() + 1));
-        holder.txtProduct.setText(detail.getMaterialCode());
+        holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtQty.setText(format.format(detail.getQty()));
-        holder.txtUom.setText(detail.getUom());
-        holder.txtPrice.setText(format.format(detail.getPrice()));
+        holder.txtUom.setText(Helper.isEmpty(detail.getUom(), ""));
+        holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {

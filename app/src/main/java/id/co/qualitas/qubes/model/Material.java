@@ -55,7 +55,9 @@ public class Material implements Cloneable {
     private double sisa;
     private double qtyMin;
     private double qtyMax;
-    private int bon_limit;
+    private int max_bon;
+    private int idStockRequestHeaderDB;
+    private int idStockRequestHeaderBE;
     public Material() {
     }
 
@@ -92,6 +94,22 @@ public class Material implements Cloneable {
         this.uom = uom;
     }
 
+    public int getIdStockRequestHeaderDB() {
+        return idStockRequestHeaderDB;
+    }
+
+    public void setIdStockRequestHeaderDB(int idStockRequestHeaderDB) {
+        this.idStockRequestHeaderDB = idStockRequestHeaderDB;
+    }
+
+    public int getIdStockRequestHeaderBE() {
+        return idStockRequestHeaderBE;
+    }
+
+    public void setIdStockRequestHeaderBE(int idStockRequestHeaderBE) {
+        this.idStockRequestHeaderBE = idStockRequestHeaderBE;
+    }
+
     public double getQtyMin() {
         return qtyMin;
     }
@@ -124,12 +142,12 @@ public class Material implements Cloneable {
         this.extraItemObject = extraItemObject;
     }
 
-    public int getBon_limit() {
-        return bon_limit;
+    public int getMax_bon() {
+        return max_bon;
     }
 
-    public void setBon_limit(int bon_limit) {
-        this.bon_limit = bon_limit;
+    public void setMax_bon(int max_bon) {
+        this.max_bon = max_bon;
     }
 
     public double getTarget() {

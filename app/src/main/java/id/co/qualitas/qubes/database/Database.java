@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -723,6 +722,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ORDER_TYPE + " TEXT,"
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER,"
             + KEY_ID_STOCK_REQUEST_HEADER_BE + " INTEGER,"
+            + KEY_TANGGAL_KIRIM + " TEXT,"
             + KEY_TOP + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_OMZET + " REAL,"
@@ -1773,6 +1773,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_ORDER_TYPE, user.getType_sales().equals("CO") ? "CO" : "TO");
             values.put(KEY_TOP, request.getTop());
             values.put(KEY_DATE, request.getOrder_date());
+            values.put(KEY_TANGGAL_KIRIM, request.getTanggal_kirim());
             values.put(KEY_OMZET, request.getOmzet());
             values.put(KEY_STATUS, request.getStatus());
             values.put(KEY_CREATED_BY, user.getUsername());
@@ -1806,6 +1807,7 @@ public class Database extends SQLiteOpenHelper {
                 for (Discount discount : param.getDiskonList()) {
                     values = new ContentValues();
                     values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
+                    values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
                     values.put(KEY_CUSTOMER_ID, request.getId_customer());
                     values.put(KEY_MATERIAL_ID, param.getId());
                     values.put(KEY_DISCOUNT_ID, discount.getKeydiskon());
@@ -1820,6 +1822,7 @@ public class Database extends SQLiteOpenHelper {
                 for (Material matExtra : param.getExtraItem()) {
                     values = new ContentValues();
                     values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
+                    values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
                     values.put(KEY_CUSTOMER_ID, request.getId_customer());
                     values.put(KEY_MATERIAL_ID, matExtra.getId());
                     values.put(KEY_MATERIAL_NAME, matExtra.getNama());
@@ -2862,21 +2865,20 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public void addMinimalOrder(Material param, String idSales) {
+    public void addLimitBon(Material param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_MATERIAL_ID, param.getTop());
-        values.put(KEY_QTY, param.getQty());
-        values.put(KEY_UOM, param.getUom());
-        values.put(KEY_BON_LIMIT, param.getBon_limit());
+        values.put(KEY_MATERIAL_ID, param.getId());
+        values.put(KEY_CUSTOMER_ID, param.getId_customer());
+        values.put(KEY_BON_LIMIT, param.getMax_bon());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         try {
             db.insert(TABLE_MASTER_LIMIT_BON, null, values);//return id yg ud d create
         } catch (Exception e) {
-
+            //done
         }
     }
 
@@ -3179,8 +3181,16 @@ public class Database extends SQLiteOpenHelper {
                     param.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                     param.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                     param.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    param.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
                     param.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+
+//                    Map req = new HashMap();
+//                    req.put("idStockRequestHeaderDB", paramModel.getIdHeader());
+//                    req.put("idStockRequestHeaderBE", paramModel.getId());
+//                    req.put("idMaterial", param.getId());
+//                    req.put("qty", param.getQty());
+//                    req.put("uom", param.getQty());
+//                    Material stockSisa = getStockSisa(req);
+                    param.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
                     param.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_SISA)));
                     param.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                     arrayList.add(param);
@@ -3431,38 +3441,22 @@ public class Database extends SQLiteOpenHelper {
 
     public double getLKCustomer(Customer cust) {
         // Select All Query
-        Material result = null;
-        String selectQuery = "SELECT a.creditLimit - b.value + c.value as " + KEY_CREDIT_LIMIT + "\n" +
-                "from\n" +
-                "(SELECT creditLimit FROM customer WHERE customerId = '0A285') a  ,\n" +
-                "(SELECT COALESCE(sum(omzet),0) AS value FROM orderheader WHERE customerId = '0A285') b ,\n" +
-                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM invoiceheader a \n" +
-                "INNER JOIN CollectionDetail b on b.invoiceNo = a.invoiceNo and typePayment = 'cash' \n" +
-                "WHERE a.customerId = '0A285') c\n";
+        double result = 0;
+        String selectQuery = "SELECT a.creditLimit - b.value + c.value as " + KEY_CREDIT_LIMIT + " " +
+                "from " +
+                "(SELECT creditLimit FROM customer WHERE customerId = ?) a  , " +
+                "(SELECT COALESCE(sum(omzet),0) AS value FROM orderheader WHERE customerId = ? and orderType = 'CO') b , " +
+                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM invoiceheader a  " +
+                "INNER JOIN CollectionDetail b on b.invoiceNo = a.invoiceNo and typePayment = 'cash'  " +
+                "WHERE a.customerId = ?) c ";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
-
-                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
-                if (cursorDetail != null) {
-                    if (cursorDetail.moveToFirst()) {
-                        result = new Material();
-                        result.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                        result.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                        result.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY_SISA)));
-                        result.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM_SISA)));
-
-                        Material conversion = getQtySmallUom(result);
-                        result.setQty(conversion.getQty());
-                        result.setUom(conversion.getUom());
-                    }
-                    cursorDetail.close();
-                }
+                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
             }
         }
 
@@ -3471,40 +3465,27 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public double getLimitBon(Customer cust) {
+    public double getLimitBon(String idMat, String idCust) {
         // Select All Query
-        Material result = null;
-        String selectQuery = "SELECT a.creditLimit - b.value + c.value as " + KEY_CREDIT_LIMIT + "\n" +
-                "from\n" +
-                "(SELECT creditLimit FROM customer WHERE customerId = '0A285') a  ,\n" +
-                "(SELECT COALESCE(sum(omzet),0) AS value FROM orderheader WHERE customerId = '0A285') b ,\n" +
-                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM invoiceheader a \n" +
-                "INNER JOIN CollectionDetail b on b.invoiceNo = a.invoiceNo and typePayment = 'cash' \n" +
-                "WHERE a.customerId = '0A285') c\n";
+        double result = 0;
+        String selectQuery = "SELECT COALESCE(a.value,0) - COALESCE(b.value,0) + COALESCE(c.value,0) as " + KEY_BON_LIMIT + " " +
+                "FROM " +
+                "(SELECT a." + KEY_BON_LIMIT + " as value FROM " + TABLE_MASTER_LIMIT_BON + " a  WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_CUSTOMER_ID + " = ?) a, " +
+                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
+                "INNER JOIN " + TABLE_INVOICE_DETAIL + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + " AND b.  " + KEY_MATERIAL_ID + " = ? " +
+                "WHERE a." + KEY_CUSTOMER_ID + " = ?) b, " +
+                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
+                "INNER JOIN " + TABLE_COLLECTION_HEADER + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + " " +
+                "INNER JOIN " + TABLE_COLLECTION_ITEM + " c ON b." + KEY_ID_COLLECTION_HEADER_DB + " = c." + KEY_ID_COLLECTION_HEADER_DB + " AND c.  " + KEY_MATERIAL_ID + " = ? " +
+                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat, idCust, idMat, idCust, idMat, idCust});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
-
-                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
-                if (cursorDetail != null) {
-                    if (cursorDetail.moveToFirst()) {
-                        result = new Material();
-                        result.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                        result.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                        result.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY_SISA)));
-                        result.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM_SISA)));
-
-                        Material conversion = getQtySmallUom(result);
-                        result.setQty(conversion.getQty());
-                        result.setUom(conversion.getUom());
-                    }
-                    cursorDetail.close();
-                }
+                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT));
             }
         }
 
@@ -3873,6 +3854,75 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return paramModel;
+    }
+
+    public List<Material> getAllDetailOrder(Order header) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
+        String selectQueryDiscount = "SELECT * FROM " + TABLE_ORDER_DETAIL_DISCOUNT + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ?";
+        String selectQueryExtra = "SELECT * FROM " + TABLE_ORDER_DETAIL_EXTRA + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? and " + KEY_ID_ORDER_DETAIL_DB + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{header.getIdHeader()});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_DETAIL_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setIdStockRequestHeaderDB(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockRequestHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setTotalDiscount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_DISCOUNT)));
+                paramModel.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+
+                List<Discount> diskonList = new ArrayList<>();
+                Cursor cursorDiscount = db.rawQuery(selectQueryDiscount, new String[]{header.getIdHeader(), paramModel.getId()});
+                if (cursorDiscount.moveToFirst()) {
+                    do {
+                        Discount disc = new Discount();
+                        disc.setKeydiskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_ID)));
+                        disc.setKeydiskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_NAME)));
+                        disc.setValuediskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_PRICE)));
+                        diskonList.add(disc);
+                    }while(cursor.moveToNext());
+                }
+                cursorDiscount.close();
+                paramModel.setDiskonList(diskonList);
+
+                List<Material> extraList = new ArrayList<>();
+                Cursor cursorExtra = db.rawQuery(selectQueryExtra, new String[]{header.getIdHeader(), paramModel.getIdheader()});
+                if (cursorExtra.moveToFirst()) {
+                    do {
+                        Material extra = new Material();
+                        extra.setId(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                        extra.setNama(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                        extra.setId_material_group(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                        extra.setMaterial_group_name(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                        extra.setId_product_group(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                        extra.setName_product_group(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                        extra.setQty(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_QTY)));
+                        extra.setUom(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_UOM)));
+                        extraList.add(extra);
+                    }while(cursorExtra.moveToNext());
+                }
+                cursorExtra.close();
+                paramModel.setExtraItem(extraList);
+
+                arrayList.add(paramModel);
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
     }
 
     public Reason getDetailReason(String param, String nameReason) {
@@ -4250,6 +4300,10 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+                paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                paramModel.setIdStockHeaderDb(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 arrayList.add(paramModel);

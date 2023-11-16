@@ -416,6 +416,14 @@ public class AccountFragment extends BaseFragment {
                         database.addMasterCustomerType(param, user.getUsername());
                     }
 
+                    List<Material> minOrderList = new ArrayList<>();
+                    Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
+                    Collections.addAll(minOrderList, paramArray11);
+                    database.deleteMasterMinimalOrder();
+                    for (Material param : minOrderList) {
+                        database.addLimitBon(param, user.getUsername());
+                    }
+
                     if (response.get("max_visit") != null) {
                         user.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
 //                        double maxVisit = (double) response.get("max_visit");

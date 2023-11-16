@@ -19,6 +19,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,8 +28,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
@@ -55,8 +58,10 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
     protected DecimalFormat format;
     private ArrayAdapter<String> uomAdapter;
     private Holder dataObjectHolder;
+    private Material stockItem, itemOrder;
+    private OrderAddAdapter headerAdapter;
 
-    public OrderAddExtraAdapter(OrderAddActivity mContext, List<Material> mList, int posHeader, OnAdapterListener onAdapterListener) {
+    public OrderAddExtraAdapter(OrderAddActivity mContext, OrderAddAdapter headerAdapter, List<Material> mList, int posHeader, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -64,6 +69,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.headerAdapter = headerAdapter;
         this.posHeader = posHeader;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
@@ -159,6 +165,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         setFormatSeparator();
 
         holder.txtNo.setText(format.format(posHeader + 1) + "." + format.format(holder.getAbsoluteAdapterPosition() + 1));
+        holder.edtQty.clearFocus();
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
@@ -196,6 +203,19 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
+            if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail.getUom())) {
+                Map req = new HashMap();
+                req.put("id_material", productId);
+                req.put("uom", detail.getUom());
+                stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
+                itemOrder = new Database(mContext).getQtySmallUom(detail);
+                if (itemOrder.getQty() > stockItem.getQty()) {
+                    String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
+                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                    holder.edtQty.clearFocus();
+                    holder.edtQty.setText("0");
+                }
+            }
         });
         //uom
 
@@ -211,14 +231,36 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
 
             @Override
             public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(holder.edtQty, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    double qty = Double.parseDouble(s.toString().replace(",", ""));
-                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
-                }
+                if (holder.edtQty.isFocused()) {
+                    Helper.setDotCurrency(holder.edtQty, this, s);
+                    if (!s.toString().equals("") && !s.toString().equals("-")) {
+                        double qty = Double.parseDouble(s.toString().replace(",", ""));
+                        if (!Helper.isNullOrEmpty(detail.getUom())) {
+                            Map req = new HashMap();
+                            req.put("id_material", productId);
+                            req.put("uom", detail.getUom());
+                            stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
+                            Material mat = new Material();
+                            mat.setQty(qty);
+                            mat.setId(productId);
+                            mat.setUom(detail.getUom());
+                            itemOrder = new Database(mContext).getQtySmallUom(mat);
+                            if (itemOrder.getQty() > stockItem.getQty()) {
+                                String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
+                                Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                holder.edtQty.clearFocus();
+                                holder.edtQty.setText("0");
+                            } else {
+                                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                            }
+                        } else {
+                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                        }
+                    }
 //                else {
 //                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
 //                }
+                }
             }
         });
 

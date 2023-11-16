@@ -5,6 +5,8 @@ import java.util.List;
 public class Order {
     private String status;
     private String top;
+    private int idStockHeaderDb;
+    private int idStockHeaderBE;
     private String order_date;
     private String tanggal_kirim;
     private String soNo;
@@ -17,6 +19,23 @@ public class Order {
     private int isSync;
 
     public Order() {
+
+    }
+
+    public int getIdStockHeaderDb() {
+        return idStockHeaderDb;
+    }
+
+    public void setIdStockHeaderDb(int idStockHeaderDb) {
+        this.idStockHeaderDb = idStockHeaderDb;
+    }
+
+    public int getIdStockHeaderBE() {
+        return idStockHeaderBE;
+    }
+
+    public void setIdStockHeaderBE(int idStockHeaderBE) {
+        this.idStockHeaderBE = idStockHeaderBE;
     }
 
     public String getTanggal_kirim() {

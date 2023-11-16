@@ -1,5 +1,6 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,7 +25,10 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +53,7 @@ public class OrderAddActivity extends BaseActivity {
     private OrderAddAdapter mAdapter;
     private List<Material> mList;
     private Button btnAdd, btnNext, btnGetDiscount;
-    private TextView txtDate, txtOmzet;
+    private TextView txtDate, txtOmzet, txtTglKirim;
     private List<Material> listSpinner, listFilteredSpinner;
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
@@ -59,6 +64,11 @@ public class OrderAddActivity extends BaseActivity {
     boolean getDiscount = false;
     private List<Material> fakturList;
     private StockRequest stockHeader;
+    String ket = null;
+    private boolean overLK = false, doubleBon = false;
+    Calendar todayDate;
+    Date fromDate;
+    String fromDateString, paramFromDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,10 +79,15 @@ public class OrderAddActivity extends BaseActivity {
 
         btnGetDiscount.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
-                getDiscount = true;
-                progress.show();
-                PARAM = 1;
-                new RequestUrl().execute();//1
+                if (checkMaterial() == 0) {
+                    getDiscount = true;
+                    progress.show();
+                    PARAM = 1;
+                    new RequestUrl().execute();//1
+                } else {
+                    setToast("Pastikan data sudah benar dan tidak ada yang kosong");
+                }
+
             } else {
                 setToast("Anda tidak memiliki jaringan internet");
             }
@@ -84,9 +99,44 @@ public class OrderAddActivity extends BaseActivity {
 
         btnNext.setOnClickListener(v -> {
             if (checkDiscount()) {
-                dialogConfirm();
+                if (checkOmzet()) {
+                    if (!Helper.isEmpty(user.getType_sales())) {
+                        overLK = checkOverLk();
+                        doubleBon = checkDoubleBon();
+                        if (overLK || doubleBon) {
+                            if (user.getType_sales().equals("CO")) {
+                                setToast(ket);
+                            } else {
+                                dialogConfirm();
+                            }
+                        } else {
+                            dialogConfirm();
+                        }
+//                    int validate = validateCO();
+//                    switch (validate) {
+//                        case 0:
+//                            if (user.getType_sales().equals("CO")) {
+//                                dialogKredit();
+//                            } else {
+//                                dialogConfirm();
+//                                saveOrderSession();
+//                            }
+//                            break;
+//                        case 1://co
+//                            setToast(ket);
+//                            break;
+//                        case 2://to
+//                            dialogConfirm();
+//                            break;
+//                    }
+                    } else {
+                        dialogConfirm();
+                    }
+                } else {
+                    setToast("Pastikan data sudah benar dan tidak ada yang kosong");
+                }
             } else {
-                setToast("Silahkan ambil diskon lagi sebelum save order");
+                setToast("Silahkan dapatkan diskon. ");
             }
         });
 
@@ -99,8 +149,51 @@ public class OrderAddActivity extends BaseActivity {
         });
     }
 
-    private boolean validateCO() {
-        int validate = 0;
+    private void setDate() {
+        fromDate = Helper.getTodayDate();
+        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(fromDate);
+        txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
+        txtTglKirim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideKeyboard();
+                openDateDialog();
+            }
+        });
+    }
+
+    private void openDateDialog() {
+        todayDate = Calendar.getInstance();
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fromDate);
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int date = calendar.get(Calendar.DATE);
+
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.DATE, dayOfMonth);
+
+                fromDate = calendar.getTime();
+                fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(calendar.getTime());
+                paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
+                txtTglKirim.setText(fromDateString);
+                txtTglKirim.setError(null);
+            }
+        };
+        DatePickerDialog dialog = new DatePickerDialog(OrderAddActivity.this, dateSetListener, year, month, date);
+        dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
+        dialog.show();
+    }
+
+    private int validateCO() {
+        int error = 0, result = 0;
+        ket = null;
+        boolean overLK = false;
+        boolean isMaxBon = false;
         //tim sr/gt/on premise:
         //-> 2 bon produk existing (KTD-R)
         //-> 2 bon produk existing (Vitamin n Water)
@@ -112,27 +205,54 @@ public class OrderAddActivity extends BaseActivity {
 //        if(mList){
 //
 //        }
-        if (!Helper.isEmpty(txtOmzet)) {
-            String omzet = txtOmzet.getText().toString();
-            if (omzet.equals("0")) validate++;
-        }
+
 //perlu ada sync LK cust?
 //        cek lk, -> lk ambil dari customer (back end lk nya ud harus d itung juga)
 //        di mobile, lk d kurang dari invoice yg sudah d bayar kan juga yg is sync nya 0, kalau uda 1 berarti kan ud masuk ke back end
         //rumus lk => LK - total Order + total paid
 
-        double LK = database.getLKCustomer(outletHeader);
-        for (Material material: mList) {
-            double limitBon = database.getLimitBon(material, outletHeader);
+        if (!Helper.isEmpty(txtOmzet)) {
+            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
+            if (omzet.equals("0")) {
+                error++;
+            } else {
+                double total = Double.parseDouble(omzet);
+                double LK = database.getLKCustomer(outletHeader);
+
+                if (LK < total) {
+                    overLK = true;
+                    ket = ket + "Over LK\n";
+                }
+            }
         }
-table limit bon
-        kalau limit bon kurang dari 1, maka gak bisa simpen order
 
         for (Material material : mList) {
-
+            double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
+            if (limitBon < 1) {
+                isMaxBon = true;
+                ket = ket + "Double Bon : " + material.getNama() + "\n";
+            }
         }
 
-        return validate == 0;
+        if (isMaxBon || overLK) {
+            if (user.getType_sales().equals("CO")) {
+                result = 1;
+            } else {
+                if (error != 0) {
+                    result = 2;
+                }
+            }
+        } else {
+            if (error != 0) {
+                if (user.getType_sales().equals("CO")) {
+                    result = 1;
+                } else {
+                    result = 2;
+                }
+            }
+        }
+
+        return result;//0->clear, 1-> co, 2-> TO
     }
 
     private boolean checkDiscount() {
@@ -145,6 +265,84 @@ table limit bon
             }
         } else {
             result = true;
+        }
+        return result;
+    }
+
+    private boolean checkOverLk() {
+        boolean result = false;
+        ket = null;
+        if (!Helper.isEmpty(txtOmzet)) {
+            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
+            if (omzet.equals("0")) {
+                result = false;
+            } else {
+                double total = Double.parseDouble(omzet);
+                double LK = database.getLKCustomer(outletHeader);
+
+                if (LK < total) {
+                    result = true;
+                    ket = ket + "Over LK\n";
+                }
+            }
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean checkOmzet() {
+        int empty = 0;
+        if (!Helper.isEmpty(txtOmzet)) {
+            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
+            if (omzet.equals("0")) {
+                empty++;
+            }
+        } else {
+            empty++;
+        }
+        if (txtTglKirim.getText().toString().equals("")) {
+            empty++;
+        }
+        empty = empty + checkMaterial();
+
+        return empty == 0;
+    }
+
+    private int checkMaterial() {
+        int empty = 0;
+        if (Helper.isNotEmptyOrNull(mList)) {
+            for (Material material : mList) {
+                if (material.getQty() == 0 && material.getUom() != null) {
+                    empty++;
+                    break;
+                }
+                if (Helper.isNotEmptyOrNull(material.getExtraItem())) {
+                    for (Material extra : material.getExtraItem()) {
+                        if (extra.getQty() == 0 && extra.getUom() != null) {
+                            empty++;
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            empty++;
+        }
+        return empty;
+    }
+
+    private boolean checkDoubleBon() {
+        ket = null;
+        boolean result = true;
+        boolean isMaxBon = false;
+        for (Material material : mList) {
+            double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
+            if (limitBon != 0) {
+                isMaxBon = true;
+                ket = ket + "Double Bon : " + material.getNama() + "\n";
+                return false;
+            }
         }
         return result;
     }
@@ -165,6 +363,7 @@ table limit bon
 
     private void addNew(List<Material> addedList) {
         mList.addAll(addedList);
+        removeOmzet();
         new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
@@ -181,16 +380,18 @@ table limit bon
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
+        stockHeader = database.getLastStockRequest();
         fakturList = database.getOutstandingFaktur(outletHeader.getId());
         mList = new ArrayList<>();
+        setDate();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
         setAdapter();
     }
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
-        stockHeader = database.getLastStockRequest();
 
+        txtTglKirim = findViewById(R.id.txtTglKirim);
         txtOmzet = findViewById(R.id.txtOmzet);
         txtDate = findViewById(R.id.txtDate);
         btnGetDiscount = findViewById(R.id.btnGetDiscount);
@@ -327,16 +528,16 @@ table limit bon
 //                            req.put("productId", mat.getId_product_group());
 //                            req.put("matId", mat.getId());
 //                            Material matDetail = database.getPriceMaterial(req);
-//                        if (idMatGroup != null) {
-//                            if (idMatGroup.equals(mat.getId_material_group())) {
-                        addList.add(mat);
-//                            } else {
-//                                setToast("Harus product yang grup nya sama");
-//                            }
-//                        } else {
-//                            idMatGroup = mat.getId_material_group();
-//                            addList.add(mat);
-//                        }
+                        if (idMatGroup != null) {
+                            if (idMatGroup.equals(mat.getId_material_group())) {
+                                addList.add(mat);
+                            } else {
+                                setToast("Harus product yang grup nya sama");
+                            }
+                        } else {
+                            idMatGroup = mat.getId_material_group();
+                            addList.add(mat);
+                        }
 //                        } else {
 //                            addList.add(mat);
 //                        }
@@ -532,9 +733,14 @@ table limit bon
                     } catch (Exception e) {
                         omzet = 0;
                     }
+                    String date = Helper.changeDateFormat(Constants.DATE_FORMAT_1, Constants.DATE_FORMAT_3, txtTglKirim.getText().toString().trim());
+                    header.setTanggal_kirim(date);
                     header.setOmzet(omzet);
+                    header.setIdStockHeaderBE(stockHeader.getId());
+                    header.setIdStockHeaderDb(Integer.parseInt(stockHeader.getIdHeader()));
                     header.setStatus("Pending");
                     header.setIsSync(0);
+                    header.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     header.setMaterialList(mList);
 
                     database.addOrder(header, user);
@@ -644,7 +850,15 @@ table limit bon
         Button btnYes = dialog.findViewById(R.id.btnYes);
 
         txtTitle.setText("Order");
-        txtDialog.setText("Anda yakin sudah selesai order?");
+        if (user.getType_sales().equals("CO")) {
+            txtDialog.setText("Anda yakin sudah selesai order?");
+        } else {
+            String text = null;
+            if (overLK) text = text + "Order ini melebihi limit customer.";
+            if (doubleBon)
+                text = text + "\nOrder ini memiliki double bon.\nAnda yakin ingin menyimpan order ini?";
+            txtDialog.setText(text);
+        }
 
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -657,16 +871,10 @@ table limit bon
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (!Helper.isEmpty(user.getType_sales())) {
-                    if (user.getType_sales().equals("CO")) {
-                        if (validateCO()) {
-                            dialogKredit();
-                        }
-                    } else {
-                        saveOrderSession();
-                    }
+                if (user.getType_sales().equals("CO")) {
+                    dialogKredit();
                 } else {
-                    saveOrderSession();
+                    saveOrderSession();//dialog confirm
                 }
             }
         });

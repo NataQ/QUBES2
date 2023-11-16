@@ -21,26 +21,23 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderDetailActivity extends BaseActivity {
     private OrderDetailAdapter mAdapter;
     private List<Material> mList, mListExtra;
     private ImageView imgBack;
+    private Order header;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_detail);
 
-        initProgress();
         initialize();
         initData();
-
-        mAdapter = new OrderDetailAdapter(this, mList, header -> {
-        });
-
-        recyclerView.setAdapter(mAdapter);
 
         imgBack.setOnClickListener(v -> {
             onBackPressed();
@@ -52,22 +49,23 @@ public class OrderDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        mList = new ArrayList<>();
-//        mList.add(new Material("11_KTD R", "11008_KRATINGDAENG LUAR PULAU - MT", 1, 1000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11006_KRATINGDAENG - LAIN-LAIN", 1, 3000, "BTL", initDataExtra()));
-//        mList.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL", initDataExtra()));
-    }
+        header = SessionManagerQubes.getOrder();
+        if(header == null){
+            onBackPressed();
+        }else {
+            mList = new ArrayList<>();
+            mList.addAll(database.getAllDetailOrder(header));
 
-    private List<Material> initDataExtra() {
-        mListExtra = new ArrayList<>();
-//        mListExtra.add(new Material("11_KTD R", "11007_KRATINGDAENG - MT", 1, 2000, "BTL"));
-//        mListExtra.add(new Material("11_KTD R", "11005_KRATINGDAENG LUAR PULAU", 1, 4000, "BTL"));
-        return mListExtra;
+            mAdapter = new OrderDetailAdapter(this, mList, header -> {
+            });
+
+            recyclerView.setAdapter(mAdapter);
+        }
+header nya belum
+                diskon listnya masih 1 doank
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         imgLogOut = findViewById(R.id.imgLogOut);

@@ -21,15 +21,20 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderDetailActivity;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 
 public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.Holder> implements Filterable {
     private List<Material> mList;
     private List<Material> mFilteredList;
+    private List<Discount> mListDiskon;
+    private List<Material> mListExtra;
     private LayoutInflater mInflater;
     private OrderDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
     private OrderDetailExtraAdapter mAdapter;
+    private OrderDetailDiscountAdapter mAdapterDiscount;
     private boolean isExpand = false;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
@@ -88,10 +93,9 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtProduct, txtQty, txtPrice, txtUom, txtNo;
-        TextView txtDiscountQty, txtDiscountValue, txtDiscountKelipatan, txtTotalDiscount;
-        LinearLayout llDiscount, llDiscountQty, llDiscountValue, llDiscountKelipatan;
-        RecyclerView rvExtra;
+        TextView txtProduct, txtQty, txtPrice, txtUom, txtNo,txtTotalDiscount, txtTotal;
+        LinearLayout llDiscountAll;
+        RecyclerView rvExtra, rvDiscount;
         ImageView imgView;
         OnAdapterListener onAdapterListener;
 
@@ -99,21 +103,19 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             super(itemView);
             txtNo = itemView.findViewById(R.id.txtNo);
             imgView = itemView.findViewById(R.id.imgView);
-            llDiscountQty = itemView.findViewById(R.id.llDiscountQty);
-            llDiscountValue = itemView.findViewById(R.id.llDiscountValue);
-            llDiscountKelipatan = itemView.findViewById(R.id.llDiscountKelipatan);
-            txtUom = itemView.findViewById(R.id.txtUom);
+            txtTotal = itemView.findViewById(R.id.txtTotal);
             txtTotalDiscount = itemView.findViewById(R.id.txtTotalDiscount);
+            llDiscountAll = itemView.findViewById(R.id.llDiscountAll);
+            txtUom = itemView.findViewById(R.id.txtUom);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtQty = itemView.findViewById(R.id.txtQty);
-            llDiscount = itemView.findViewById(R.id.llDiscount);
-            txtDiscountQty = itemView.findViewById(R.id.txtDiscountQty);
-            txtDiscountValue = itemView.findViewById(R.id.txtDiscountValue);
-            txtDiscountKelipatan = itemView.findViewById(R.id.txtDiscountKelipatan);
             rvExtra = itemView.findViewById(R.id.rvExtra);
             rvExtra.setLayoutManager(new LinearLayoutManager(mContext));
             rvExtra.setHasFixedSize(true);
+            rvDiscount = itemView.findViewById(R.id.rvDiscount);
+            rvDiscount.setLayoutManager(new LinearLayoutManager(mContext));
+            rvDiscount.setHasFixedSize(true);
 
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
@@ -134,21 +136,41 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
-        Material detail = mFilteredList.get(position);
+        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        mListExtra = new ArrayList<>();
+        mListDiskon = new ArrayList<>();
+        if (Helper.isNotEmptyOrNull(detail.getExtraItem())) {
+            mListExtra.addAll(detail.getExtraItem());
+        }
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            mListDiskon.addAll(detail.getDiskonList());
+        }
+
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1));
-        holder.txtProduct.setText(detail.getMaterialCode());
-        holder.txtQty.setText(String.valueOf(detail.getQty()));
-        holder.txtUom.setText(detail.getUom());
-        holder.txtPrice.setText(format.format(detail.getPrice()));
+        holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
+        holder.txtQty.setText(format.format(detail.getQty()));
+        holder.txtUom.setText(Helper.isEmpty(detail.getUom(), ""));
+        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+        holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
+        holder.txtTotal.setText("Rp. " + format.format(detail.getTotal()));
+
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            holder.llDiscountAll.setVisibility(View.VISIBLE);
+            mAdapterDiscount = new OrderDetailDiscountAdapter(mContext, mListDiskon, header -> {
+            });
+            holder.rvDiscount.setAdapter(mAdapterDiscount);
+        } else {
+            holder.llDiscountAll.setVisibility(View.GONE);
+        }
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
-                holder.llDiscount.setVisibility(View.VISIBLE);
+                holder.rvDiscount.setVisibility(View.VISIBLE);
                 isExpand = true;
             } else {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
-                holder.llDiscount.setVisibility(View.GONE);
+                holder.rvDiscount.setVisibility(View.GONE);
                 isExpand = false;
             }
         });

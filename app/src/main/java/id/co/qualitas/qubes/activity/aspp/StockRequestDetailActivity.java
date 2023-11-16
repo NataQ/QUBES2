@@ -230,7 +230,6 @@ public class StockRequestDetailActivity extends BaseActivity {
     }
 
     private void initialize() {
-        db = new DatabaseHelper(this);
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         llNoData = findViewById(R.id.llNoData);

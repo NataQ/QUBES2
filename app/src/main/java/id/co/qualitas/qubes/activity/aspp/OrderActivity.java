@@ -72,6 +72,7 @@ public class OrderActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new OrderAdapter(this, mList, header -> {
+            SessionManagerQubes.setOrder(header);
             Intent intent = new Intent(this, OrderDetailActivity.class);
             startActivity(intent);
         });

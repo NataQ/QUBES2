@@ -217,7 +217,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             listSpinner.add("-");
         }
 
-        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, holder.getAbsoluteAdapterPosition(), header -> {
+        mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, holder.getAbsoluteAdapterPosition(), header -> {
         });
         holder.rvExtra.setAdapter(mAdapter);
 
@@ -242,12 +242,15 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 req.put("id_material", productId);
                 req.put("uom", detail.getUom());
                 minMaxOrder = new Database(mContext).getMinimalOrder(req);
-                stockItem = new Database(mContext).getStockMaterial(req);
+                stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
                 itemOrder = new Database(mContext).getQtySmallUom(detail);
 
                 if (detail.getQty() < minMaxOrder.getQtyMin() || detail.getQty() > (minMaxOrder.getQtyMax() == 0 ? detail.getQty() : minMaxOrder.getQtyMax())) {
                     String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                    holder.edtQty.clearFocus();
+                    holder.edtQty.setText("0");
+                    detail.setQty(0);
                     detail.setPrice(0);
                     detail.setDiskonList(null);
                     detail.setTotalDiscount(0);
@@ -257,6 +260,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 } else if (itemOrder.getQty() > stockItem.getQty()) {
                     String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                    holder.edtQty.clearFocus();
+                    holder.edtQty.setText("0");
+                    detail.setQty(0);
                     detail.setPrice(0);
                     detail.setDiskonList(null);
                     detail.setTotalDiscount(0);
@@ -380,7 +386,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                     mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
                 }
                 mListExtra.addAll(addList);
-                mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, pos, header -> {
+                mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
                 });
                 holder.rvExtra.setAdapter(mAdapter);
                 if (mListExtra.size() == 1) {
@@ -466,7 +472,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                             req.put("id_material", productId);
                             req.put("uom", detail.getUom());
                             minMaxOrder = new Database(mContext).getMinimalOrder(req);
-                            stockItem = new Database(mContext).getStockMaterial(req);
+                            stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
                             Material mat = new Material();
                             mat.setQty(qty);
                             mat.setId(productId);
@@ -476,6 +482,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                             if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty : minMaxOrder.getQtyMax())) {
                                 String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
                                 Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                holder.edtQty.clearFocus();
+                                holder.edtQty.setText("0");
+                                detail.setQty(0);
                                 detail.setPrice(0);
                                 detail.setDiskonList(null);
                                 detail.setTotalDiscount(0);
@@ -485,6 +494,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                             } else if (itemOrder.getQty() > stockItem.getQty()) {
                                 String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
                                 Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                holder.edtQty.clearFocus();
+                                holder.edtQty.setText("0");
+                                detail.setQty(0);
                                 detail.setPrice(0);
                                 detail.setDiskonList(null);
                                 detail.setTotalDiscount(0);
@@ -511,6 +523,69 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 }
             }
         });
+    }
+
+    private Material getAllStock(int pos) {
+        Material detail = mFilteredList.get(pos);
+        Map req = new HashMap();
+        req.put("id_material", detail.getId());
+        req.put("uom", detail.getUom());
+        Material stock = new Database(mContext).getStockMaterial(req);
+        double qtySisa = stock.getQty();
+        for (int i = 0; i < mFilteredList.size(); i++) {
+            Material matPos = mFilteredList.get(i);
+            if (i != pos && matPos.getId().equals(detail.getId())) {
+                if (matPos.getId() != null && matPos.getUom() != null) {
+                    Material order = new Database(mContext).getQtySmallUom(matPos);
+                    qtySisa = qtySisa - order.getQty();
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(matPos.getExtraItem())) {
+                for (int j = 0; j < matPos.getExtraItem().size(); j++) {
+                    Material matExtraPos = mFilteredList.get(i);
+                    if (matExtraPos.getId().equals(detail.getId())) {
+                        if (matExtraPos.getId() != null && matExtraPos.getUom() != null) {
+                            Material orderExtra = new Database(mContext).getQtySmallUom(matExtraPos);
+                            qtySisa = qtySisa - orderExtra.getQty();
+                        }
+                    }
+                }
+            }
+        }
+        stock.setQty(qtySisa);
+        return stock;
+    }
+
+    public Material getAllStockExtra(Material detail, int pos) {
+        Map req = new HashMap();
+        req.put("id_material", detail.getId());
+        req.put("uom", detail.getUom());
+        Material stock = new Database(mContext).getStockMaterial(req);
+        double qtySisa = stock.getQty();
+        for (int i = 0; i < mFilteredList.size(); i++) {
+            Material matPos = mFilteredList.get(i);
+            if (matPos.getId().equals(detail.getId())) {
+                if (matPos.getId() != null && matPos.getUom() != null) {
+                    Material order = new Database(mContext).getQtySmallUom(matPos);
+                    qtySisa = qtySisa - order.getQty();
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(matPos.getExtraItem())) {
+                for (int j = 0; j < matPos.getExtraItem().size(); j++) {
+                    Material matExtraPos = matPos.getExtraItem().get(j);
+                    if (j != pos && matExtraPos.getId().equals(detail.getId())) {
+                        if (matExtraPos.getId() != null && matExtraPos.getUom() != null) {
+                            Material orderExtra = new Database(mContext).getQtySmallUom(matExtraPos);
+                            qtySisa = qtySisa - orderExtra.getQty();
+                        }
+                    }
+                }
+            }
+        }
+        stock.setQty(qtySisa);
+        return stock;
     }
 
 //    private void addExtraItem(int pos, Material detail) {
@@ -680,7 +755,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         if (mListExtra == null) mListExtra = new ArrayList<>();
         Material detail = new Material("", "", "", "");
         mListExtra.add(detail);
-        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, pos, header -> {
+        mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
         });
         rvExtra.setAdapter(mAdapter);
         if (mListExtra.size() == 1) {
