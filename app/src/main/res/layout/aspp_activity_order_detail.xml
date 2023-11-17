@@ -200,36 +200,37 @@
                 android:layout_marginTop="12dp">
 
                 <LinearLayout
-                    android:id="@+id/tap_to_refresh"
+                    android:id="@+id/llNoData"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:visibility="gone"
                     tools:ignore="UseCompoundDrawables">
 
                     <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:contentDescription="@string/refresh"
-                        android:src="@drawable/refresh_grey_192x192" />
+                        android:src="@drawable/ic_no_data" />
 
                     <TextView
                         style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="No Data"
+                        android:visibility="visible" />
+
+                    <TextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:text="@string/tap_to_refresh" />
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txtNoData"
-                    style="@style/TextView_Small"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="No Data"
-                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"

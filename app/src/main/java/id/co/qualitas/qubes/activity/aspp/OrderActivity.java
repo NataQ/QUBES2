@@ -1,13 +1,17 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,15 +23,11 @@ import java.util.List;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.OrderAdapter;
-import id.co.qualitas.qubes.adapter.aspp.StoreCheckAdapter;
 import id.co.qualitas.qubes.constants.Constants;
-import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderActivity extends BaseActivity {
@@ -72,9 +72,14 @@ public class OrderActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new OrderAdapter(this, mList, header -> {
-            SessionManagerQubes.setOrder(header);
-            Intent intent = new Intent(this, OrderDetailActivity.class);
-            startActivity(intent);
+            validasi kalau uda ke sync gak bisa save lagi?
+            if (!header.isStatusPaid()) {
+                dialogConfirm(header);
+            } else {
+                SessionManagerQubes.setOrder(header);
+                Intent intent = new Intent(this, OrderDetailActivity.class);
+                startActivity(intent);
+            }
         });
         recyclerView.setAdapter(mAdapter);
     }
@@ -101,7 +106,8 @@ public class OrderActivity extends BaseActivity {
 
     private void getFirstDataOffline() {
         outletHeader = SessionManagerQubes.getOutletHeader();
-        requestData();
+        setAdapter();
+        if (Helper.isEmptyOrNull(mList)) requestData();
     }
 
     private void requestData() {
@@ -114,7 +120,6 @@ public class OrderActivity extends BaseActivity {
     private void getData() {
         mList = new ArrayList<>();
         mList = database.getAllOrder(outletHeader);
-        setAdapter();
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
@@ -122,7 +127,6 @@ public class OrderActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                mList = new ArrayList<>();
                 getData();
                 return true;
             } catch (Exception ex) {
@@ -156,7 +160,45 @@ public class OrderActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, DailySalesmanActivity.class);
+        intent = new Intent(this, DailySalesmanActivity.class);
         startActivity(intent);
+    }
+
+    public void dialogConfirm(Order header) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+        txtTitle.setText("Collection");
+        txtDialog.setText("Apakah outlet ini akan melakukan pembayaran?");
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                SessionManagerQubes.setOrder(header);
+                SessionManagerQubes.setCollectionSource(3);
+                Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                SessionManagerQubes.setOrder(header);
+                Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        dialog.show();
     }
 }

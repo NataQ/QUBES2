@@ -63,7 +63,7 @@ public class NotiWorker extends Worker {
 //                @Override
 //                public void run() {
             setSession();
-        url = Constants.URL + Constants.API_SYNC_OFFLINE_DATA;
+        url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_OFFLINE_DATA);
         Map req = new HashMap();
         req.put("request", "mobile " + Helper.getTodayDate(Constants.DATE_FORMAT_2));
 

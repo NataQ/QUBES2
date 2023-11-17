@@ -439,7 +439,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             alertDialog.show();
         });
 
-        holder.imgView.setOnClickListener(v -> {
+        holder.txtTotalDiscount.setOnClickListener(v -> {
             if (!isExpand) {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
                 holder.rvDiscount.setVisibility(View.VISIBLE);

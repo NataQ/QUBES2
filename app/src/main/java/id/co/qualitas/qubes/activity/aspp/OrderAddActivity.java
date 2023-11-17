@@ -42,6 +42,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Discount;
+import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.StockRequest;
@@ -62,13 +63,14 @@ public class OrderAddActivity extends BaseActivity {
     private boolean saveDiscount = false, saveOrder = false, payNow = false;
     private WSMessage wsMessage;
     boolean getDiscount = false;
-    private List<Material> fakturList;
     private StockRequest stockHeader;
     String ket = null;
     private boolean overLK = false, doubleBon = false;
     Calendar todayDate;
     Date fromDate;
     String fromDateString, paramFromDate;
+    Order headerSave = new Order();
+    private int idHeader = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -380,8 +382,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
-        stockHeader = database.getLastStockRequest();
-        fakturList = database.getOutstandingFaktur(outletHeader.getId());
+        stockHeader = database.getAllStockMaterial();
         mList = new ArrayList<>();
         setDate();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
@@ -509,9 +510,10 @@ public class OrderAddActivity extends BaseActivity {
                 if (mat.isChecked()) {
                     boolean avaiable = false;
                     if (user.getType_sales().equals("CO")) {
+//                        Material materialStock = database.getStockMaterial(new HashMap());
                         for (Material materialStock : stockHeader.getMaterialList()) {
                             if (mat.getId().equals(materialStock.getId())) {
-                                if (materialStock.getQtySisa() != 0) {
+                                if (materialStock.getQty() != 0) {
                                     avaiable = true;
                                 }
                                 break;
@@ -549,23 +551,6 @@ public class OrderAddActivity extends BaseActivity {
             if (Helper.isNotEmptyOrNull(addList)) addNew(addList);
             dialog.dismiss();
         });
-    }
-
-    public boolean checkStock(Material material) {
-        boolean stockReady = false;
-        for (Material mat : stockHeader.getMaterialList()) {
-            if (mat.getId().equals(material.getId())) {
-                Material stock = database.getQtySmallUom(mat);
-                Material order = database.getQtySmallUom(material);
-                if (stock.getQty() > order.getQty()) {
-                    stockReady = true;
-                } else {
-                    stockReady = false;
-                }
-                break;
-            }
-        }
-        return stockReady;
     }
 
     public void setCheckedAll() {
@@ -724,9 +709,9 @@ public class OrderAddActivity extends BaseActivity {
                     saveDiscount = true;
                     return null;
                 } else {
-                    Order header = new Order();
-                    header.setId_customer(outletHeader.getId());
-                    header.setOrder_date(Helper.getTodayDate(Constants.DATE_FORMAT_3));
+                    headerSave = new Order();
+                    headerSave.setId_customer(outletHeader.getId());
+                    headerSave.setOrder_date(Helper.getTodayDate(Constants.DATE_FORMAT_3));
                     double omzet = 0;
                     try {
                         omzet = Double.parseDouble(txtOmzet.getText().toString().replace("Rp. ", "").replace(".", ""));
@@ -734,18 +719,17 @@ public class OrderAddActivity extends BaseActivity {
                         omzet = 0;
                     }
                     String date = Helper.changeDateFormat(Constants.DATE_FORMAT_1, Constants.DATE_FORMAT_3, txtTglKirim.getText().toString().trim());
-                    header.setTanggal_kirim(date);
-                    header.setOmzet(omzet);
-                    header.setIdStockHeaderBE(stockHeader.getId());
-                    header.setIdStockHeaderDb(Integer.parseInt(stockHeader.getIdHeader()));
-                    header.setStatus("Pending");
-                    header.setIsSync(0);
-                    header.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
-                    header.setMaterialList(mList);
+                    headerSave.setTanggal_kirim(date);
+                    headerSave.setOmzet(omzet);
+                    headerSave.setIdStockHeaderBE(stockHeader.getId());
+                    headerSave.setIdStockHeaderDb(Integer.parseInt(stockHeader.getIdHeader()));
+                    headerSave.setStatus("Pending");
+                    headerSave.setIsSync(0);
+                    headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
+                    headerSave.setMaterialList(mList);
+                    headerSave.setStatusPaid(false);
 
-                    database.addOrder(header, user);
-                    SessionManagerQubes.setOrder(header);
-
+                    idHeader = database.addOrder(headerSave, user);
                     saveOrder = true;
                     return null;
                 }
@@ -778,6 +762,7 @@ public class OrderAddActivity extends BaseActivity {
                 } else {
                     progress.dismiss();
                     setToast("Failed get discount");
+                    calculateOmzet();
                 }
             } else if (PARAM == 2) {
                 progress.dismiss();
@@ -789,9 +774,11 @@ public class OrderAddActivity extends BaseActivity {
                 }
             } else {
                 progress.dismiss();
-                if (saveOrder) {
+                if (idHeader != -1) {
                     setToast("Save order Success");
                     if (payNow) {
+                        headerSave.setIdHeader(String.valueOf(idHeader));
+                        SessionManagerQubes.setOrder(headerSave);
                         SessionManagerQubes.setCollectionSource(3);
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
                         startActivity(intent);

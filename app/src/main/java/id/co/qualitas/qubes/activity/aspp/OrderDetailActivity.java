@@ -2,8 +2,12 @@ package id.co.qualitas.qubes.activity.aspp;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import org.json.JSONException;
@@ -27,9 +31,10 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderDetailActivity extends BaseActivity {
     private OrderDetailAdapter mAdapter;
-    private List<Material> mList, mListExtra;
-    private ImageView imgBack;
-    private Order header;
+    private List<Material> mList;
+    private TextView txtOrderNo, txtDate,txtStatus, txtOmzet;
+    private LinearLayout llStatus, llNoData;
+    private Order orderHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,25 +54,72 @@ public class OrderDetailActivity extends BaseActivity {
     }
 
     private void initData() {
-        header = SessionManagerQubes.getOrder();
-        if(header == null){
+        orderHeader = SessionManagerQubes.getOrder();
+        if(orderHeader == null){
             onBackPressed();
         }else {
+            if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
+                txtDate.setText(requestDate);
+            } else {
+                txtDate.setText("");
+            }
+            txtOrderNo.setText(format.format(orderHeader.getId()));
+            txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
+            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
+
+            if (!Helper.isEmpty(orderHeader.getStatus())) {
+                switch (orderHeader.getStatus().toLowerCase()) {
+                    case "approve":
+                        llStatus.setVisibility(View.VISIBLE);
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.green3_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_aspp));
+                        break;
+                    case "reject":
+                        llStatus.setVisibility(View.VISIBLE);
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.red_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red2_aspp));
+                        break;
+                    case "pending":
+                        llStatus.setVisibility(View.VISIBLE);
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.yellow3_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.yellow_aspp));
+                        break;
+                    case "sync success":
+                        llStatus.setVisibility(View.VISIBLE);
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue8_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.aspp_blue9));
+                        break;
+                    default:
+                        llStatus.setVisibility(View.GONE);
+                        llStatus.setBackgroundTintList(null);
+                        txtStatus.setText("-");
+                }
+            } else {
+                llStatus.setVisibility(View.GONE);
+                llStatus.setBackgroundTintList(null);
+                txtStatus.setText("-");
+            }
+
             mList = new ArrayList<>();
-            mList.addAll(database.getAllDetailOrder(header));
+            mList.addAll(database.getAllDetailOrder(orderHeader));
 
             mAdapter = new OrderDetailAdapter(this, mList, header -> {
             });
 
             recyclerView.setAdapter(mAdapter);
         }
-header nya belum
-                diskon listnya masih 1 doank
     }
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoData = findViewById(R.id.llNoData);
+        txtOmzet = findViewById(R.id.txtOmzet);
+        txtStatus = findViewById(R.id.txtStatus);
+        llStatus = findViewById(R.id.llStatus);
+        txtDate = findViewById(R.id.txtDate);
+        txtOrderNo = findViewById(R.id.txtOrderNo);
         imgLogOut = findViewById(R.id.imgLogOut);
         imgBack = findViewById(R.id.imgBack);
         recyclerView = findViewById(R.id.recyclerView);

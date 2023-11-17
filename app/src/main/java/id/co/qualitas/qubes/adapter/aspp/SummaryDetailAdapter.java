@@ -163,7 +163,7 @@ public class SummaryDetailAdapter extends RecyclerView.Adapter<SummaryDetailAdap
             holder.llDiscountAll.setVisibility(View.GONE);
         }
 
-        holder.imgView.setOnClickListener(v -> {
+        holder.txtTotalDiscount.setOnClickListener(v -> {
             if (!isExpand) {
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
                 holder.rvDiscount.setVisibility(View.VISIBLE);

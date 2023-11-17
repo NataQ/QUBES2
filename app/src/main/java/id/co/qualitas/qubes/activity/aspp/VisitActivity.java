@@ -43,6 +43,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -71,8 +75,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.AlarmManagerActivity;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerAllReasonAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerCustomerAdapter;
@@ -95,6 +101,7 @@ import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.services.NotiWorker;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.LashPdfUtils;
 import id.co.qualitas.qubes.utils.Utils;
@@ -148,6 +155,9 @@ public class VisitActivity extends BaseActivity {
     private Map currentLocation;
     private boolean endVisit = false;
     private List<VisitSalesman> listVisitSalesman;
+    WorkManager workManager;
+    private WorkRequest workRequest;
+    private static final String TAG = VisitActivity.class.getSimpleName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -156,7 +166,7 @@ public class VisitActivity extends BaseActivity {
 
         //set Map
         Configuration.getInstance().load(VisitActivity.this, PreferenceManager.getDefaultSharedPreferences(VisitActivity.this));
-
+        workManager = WorkManager.getInstance(getApplicationContext());
         locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
                 .setWaitForAccurateLocation(false)
                 .setMinUpdateIntervalMillis(2000)
@@ -1560,6 +1570,10 @@ public class VisitActivity extends BaseActivity {
                 if (saveDataSuccess) {
                     mAdapterVisit.setData(mList);
                     mAdapterNoo.setData(mListNoo);
+                    if (SessionManagerQubes.getStartDay() == 1) {
+                        workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+                        workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+                    }
                     validateButton();//after get data
                 } else {
                     setToast(getString(R.string.failedSaveData));
@@ -1590,6 +1604,8 @@ public class VisitActivity extends BaseActivity {
                 if (logResult.getIdMessage() == 1) {
                     setToast(logResult.getMessage());
                     SessionManagerQubes.setStartDay(1);
+                    workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+                    workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
                     validateButton();//start
                 } else {
                     setToast(logResult.getMessage());
@@ -1605,6 +1621,7 @@ public class VisitActivity extends BaseActivity {
 //                        setToast(result.getMessage());
                     SessionManagerQubes.setStartDay(2);
                     validateButton();//end
+                    workManager.cancelAllWork();
                     progress.show();
                     new AsyncTaskGeneratePDF().execute();
                 } else {

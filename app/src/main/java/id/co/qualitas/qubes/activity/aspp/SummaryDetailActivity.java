@@ -36,7 +36,7 @@ public class SummaryDetailActivity extends BaseActivity {
     private WSMessage resultWsMessage;
     private boolean saveDataSuccess = false;
     private Order orderHeader;
-    private LinearLayout llStatus;
+    private LinearLayout llStatus, llNoData;
     private TextView txtOrderNo, txtDate, txtInvoiceNo, txtOutlet, txtOmzet, txtStatus;
 
     @Override
@@ -127,6 +127,7 @@ public class SummaryDetailActivity extends BaseActivity {
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        llNoData = findViewById(R.id.llNoData);
         llStatus = findViewById(R.id.llStatus);
         txtStatus = findViewById(R.id.txtStatus);
         txtOutlet = findViewById(R.id.txtOutlet);
@@ -165,6 +166,7 @@ public class SummaryDetailActivity extends BaseActivity {
 
     private void requestData() {
         recyclerView.setVisibility(View.GONE);
+        llNoData.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
         PARAM = 1;
         new RequestUrl().execute();
@@ -247,9 +249,15 @@ public class SummaryDetailActivity extends BaseActivity {
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
                     mAdapter.setData(mList);
+                    if (Helper.isNotEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    } else {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     setToast(getString(R.string.failedSaveData));
                 }

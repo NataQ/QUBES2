@@ -278,7 +278,6 @@ public class CollectionVisitActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         intent = new Intent(this, DailySalesmanActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
     }

@@ -1,9 +1,12 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,7 +14,10 @@ import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -162,10 +168,9 @@ public class CollectionFormActivity extends BaseActivity {
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                     return null;
-                } else if (PARAM == 2) {
+                } else {
                     Map request = new HashMap();
                     request.put("user", user);
-                    request.put("header", header);
                     request.put("totalAmountPaid", totalAmountPaid);
                     request.put("totalPaymentCash", totalPaymentCash);
                     request.put("leftCash", leftCash);
@@ -181,12 +186,18 @@ public class CollectionFormActivity extends BaseActivity {
                     request.put("mListCheque", mListCheque);
                     request.put("mListCash", mListCash);
                     request.put("isSync", isSync);
-                    database.addCollection(request);
-                    saveCollection = true;
-                    return null;
-                } else {
-                    database.addOrder(orderHeader, user);
-                    saveOrder = true;
+                    if (colLFrom == 3) {
+                        if (totalAmountPaid > orderHeader.getOmzet() || totalAmountPaid == orderHeader.getOmzet()) {
+                            request.put("isPaid", 1);
+                        } else {
+                            request.put("isPaid", 0);
+                        }
+                        request.put("header", orderHeader);
+                        saveCollection = database.addCollectionOrder(request);
+                    } else {
+                        request.put("header", header);
+                        saveCollection = database.addCollection(request);
+                    }
                     return null;
                 }
             } catch (Exception ex) {
@@ -718,12 +729,9 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     private void initData() {
-        if (SessionManagerQubes.getCollectionHeader() == null) {
-            onBackPressed();
-            setToast("Gagal ambil data. Silahkan coba lagi");
-        } else {
-            colLFrom = SessionManagerQubes.getCollectionSource();
+        colLFrom = SessionManagerQubes.getCollectionSource();
 
+        if (colLFrom == 3) {
             mListTransfer = new ArrayList<>();
             mListGiro = new ArrayList<>();
             mListCheque = new ArrayList<>();
@@ -731,29 +739,44 @@ public class CollectionFormActivity extends BaseActivity {
             mListLain = new ArrayList<>();
             mListKredit = new ArrayList<>();
 
-            if (colLFrom == 3) {
-                llOrder.setVisibility(View.VISIBLE);
-                llInvoice.setVisibility(View.GONE);
-                buttonKredit.setVisibility(View.VISIBLE);
-                orderHeader = SessionManagerQubes.getOrder();
+            llOrder.setVisibility(View.VISIBLE);
+            llInvoice.setVisibility(View.GONE);
+            buttonKredit.setVisibility(View.VISIBLE);
+            orderHeader = SessionManagerQubes.getOrder();
 
-                mListMaster = orderHeader.getMaterialList();
+//            mListMaster = orderHeader.getMaterialList();
+            mListMaster = database.getAllDetailOrder(orderHeader.getIdHeader());
+            mListCash = database.getAllDetailOrder(orderHeader.getIdHeader());
+            mListLain = database.getAllDetailOrder(orderHeader.getIdHeader());
+            mListKredit = database.getAllDetailOrder(orderHeader.getIdHeader());
 
-                for (Material obj : mListMaster) {
-                    mListCash.add(obj.clone());
-                    mListLain.add(obj.clone());
-                    mListKredit.add(obj.clone());
-                }
+//            for (Material obj : mListMaster) {
+//                mListCash.add(obj.clone());
+//                mListLain.add(obj.clone());
+//                mListKredit.add(obj.clone());
+//            }
 
-                txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
-                txtAmount.setText("Rp." + format.format(orderHeader.getOmzet()));
-                if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
-                    String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
-                    txtDate.setText(requestDate);
-                } else {
-                    txtDate.setText("-");
-                }
+            txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
+            txtAmount.setText("Rp." + format.format(orderHeader.getOmzet()));
+            if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
+                String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
+                txtDate.setText(requestDate);
             } else {
+                txtDate.setText("-");
+            }
+        } else {
+            if (SessionManagerQubes.getCollectionHeader() == null) {
+                onBackPressed();
+                setToast("Gagal ambil data. Silahkan coba lagi");
+            } else {
+                mListTransfer = new ArrayList<>();
+                mListGiro = new ArrayList<>();
+                mListCheque = new ArrayList<>();
+                mListCash = new ArrayList<>();
+                mListLain = new ArrayList<>();
+                mListKredit = new ArrayList<>();
+
+
                 llOrder.setVisibility(View.GONE);
                 llInvoice.setVisibility(View.VISIBLE);
                 buttonKredit.setVisibility(View.GONE);
@@ -773,24 +796,14 @@ public class CollectionFormActivity extends BaseActivity {
                     txtDate.setText("-");
                 }
             }
-
-            setCashView();
-            setTransferView();
-            setGiroView();
-            setChequeView();
-            setLainView();
-            setKreditView();
-
-//            Material clone = null;
-//            try  {
-//                clone = (Material) super.clone();
-//                //Copy new date object to cloned method
-//                clone.setDob((Date) this.getDob().clone());
-//            }
-//            catch (CloneNotSupportedException e)  {
-//                throw new RuntimeException(e);
-//            }
         }
+
+        setCashView();
+        setTransferView();
+        setGiroView();
+        setChequeView();
+        setLainView();
+        setKreditView();
     }
 
     private void setSelectView(int posTab) {
@@ -1237,6 +1250,39 @@ public class CollectionFormActivity extends BaseActivity {
         return leftLain;
     }
 
+    public void dialogConfirm() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+        txtTitle.setText("Collection");
+        txtDialog.setText("Apakah outlet ini tidak jadi melakukan pembayaran?");
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(CollectionFormActivity.this, OrderActivity.class);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -1246,8 +1292,7 @@ public class CollectionFormActivity extends BaseActivity {
                 startActivity(intent);
                 break;
             case 3:
-                intent = new Intent(this, OrderAddActivity.class);
-                startActivity(intent);
+                dialogConfirm();
                 break;
             case 1:
             default:

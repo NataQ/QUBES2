@@ -15,11 +15,20 @@ public class Order {
     private String nama;
     private String idHeader;//id sqlite
     private List<Material> materialList;
+    private boolean statusPaid;
     private double omzet;
     private int isSync;
 
     public Order() {
 
+    }
+
+    public boolean isStatusPaid() {
+        return statusPaid;
+    }
+
+    public void setStatusPaid(boolean statusPaid) {
+        this.statusPaid = statusPaid;
     }
 
     public int getIdStockHeaderDb() {
