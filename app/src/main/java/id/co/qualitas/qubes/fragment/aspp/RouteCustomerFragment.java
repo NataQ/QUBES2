@@ -83,6 +83,7 @@ public class RouteCustomerFragment extends BaseFragment {
     private LocationRequestCallback<String, Location> addressCallback;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private boolean allCustomer = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -156,11 +157,11 @@ public class RouteCustomerFragment extends BaseFragment {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    requestData();
-                } else {
-                    setToast("Sudah start visit");
-                }
+//                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
+                    getFirstDataOffline();
+//                } else {
+//                    setToast("Sudah start visit");
+//                }
                 swipeLayout.setRefreshing(false);
             }
         });
@@ -179,10 +180,11 @@ public class RouteCustomerFragment extends BaseFragment {
                 edtSearch.setText(null);
                 if (mList != null) {
                     if (position == 0) {
-                        filterData(false);//spinner false
+                        allCustomer = false;
                     } else {
-                        filterData(true);//spinner true
+                        allCustomer = true;
                     }
+                    filterData(allCustomer);//spinner false
 //                    mAdapter.setData(mListFiltered);
                 }
             }
@@ -254,12 +256,13 @@ public class RouteCustomerFragment extends BaseFragment {
 
     private void getFirstDataOffline() {
         getData();
-        if (mList == null || mList.isEmpty()) {
-            requestData();
-        } else {
-            filterData(false);//getFirstDataOffline
-//            mAdapter.setData(mListFiltered);
-        }
+        filterData(allCustomer);//getFirstDataOffline
+//        if (mList == null || mList.isEmpty()) {
+//            requestData();
+//        } else {
+//            filterData(false);//getFirstDataOffline
+////            mAdapter.setData(mListFiltered);
+//        }
     }
 
     private void requestData() {
@@ -408,13 +411,13 @@ public class RouteCustomerFragment extends BaseFragment {
                 } else {
                     progressCircle.setVisibility(View.GONE);
                     getData();
-                    filterData(false);//no data request failed
+                    filterData(allCustomer);//no data request failed
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {
-                    filterData(false);//request url
+                    filterData(allCustomer);//request url
                 } else {
                     if (Helper.isEmptyOrNull(mList)) {
                         recyclerView.setVisibility(View.GONE);
@@ -430,7 +433,7 @@ public class RouteCustomerFragment extends BaseFragment {
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getAllCustomerVisit(mLastLocation, false);
+        mList = database.getRouteCustomer(mLastLocation, false);
     }
 
 }

@@ -54,8 +54,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -68,12 +70,17 @@ import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.compass.CompassOverlay;
 import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -243,7 +250,7 @@ public class VisitActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    requestData();
+                    requestData();//swipe visit
                 } else {
                     setToast("Sudah start visit");
                 }
@@ -433,6 +440,7 @@ public class VisitActivity extends BaseActivity {
                 outRadius = Helper.checkRadius(currLoc, locCustomer);
 
                 visitSalesman = new VisitSalesman();
+                visitSalesman.setIdHeader(Constants.ID_VS_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
                 visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                 visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
@@ -598,7 +606,7 @@ public class VisitActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    requestData();
+                    requestData();//swipe noo
                 } else {
                     setToast("Sudah start visit");
                 }
@@ -710,7 +718,7 @@ public class VisitActivity extends BaseActivity {
                 if (!Helper.isNullOrEmpty(imageType.getPosReason())) {
                     int posR = Integer.parseInt(imageType.getPosReason());
                     try {
-                        listCust.get(posR).setPhotoCheckOutReason(imageType.getPhotoReason());
+                        listCust.get(posR).setPhotoNotVisitReason(imageType.getPhotoReason());
                     } catch (Exception e) {
 
                     }
@@ -719,7 +727,7 @@ public class VisitActivity extends BaseActivity {
                     llPhoto.setVisibility(View.VISIBLE);
                     Utils.loadImageFit(getApplicationContext(), imageType.getPhotoReason(), img);
                     for (VisitSalesman cust : listCust) {
-                        cust.setPhotoCheckOutReason(imageType.getPhotoReason());
+                        cust.setPhotoNotVisitReason(imageType.getPhotoReason());
                     }
 //                    mAdapter.setData(listCust);
                 }
@@ -734,7 +742,7 @@ public class VisitActivity extends BaseActivity {
         imgDelete.setOnClickListener(v -> {
             llPhoto.setVisibility(View.GONE);
             for (VisitSalesman cust : listCust) {
-                cust.setPhotoCheckOutReason(null);
+                cust.setPhotoNotVisitReason(null);
             }
         });
 
@@ -784,9 +792,9 @@ public class VisitActivity extends BaseActivity {
 
         btnApply.setOnClickListener(v -> {
             for (VisitSalesman vs : listCust) {
-                vs.setDescCheckOutReason(descReason[0]);
-                vs.setIdCheckOutReason(String.valueOf(reasonChoose[0].getId()));
-                vs.setNameCheckOutReason(reasonChoose[0].getDescription());
+                vs.setDescNotVisitReason(descReason[0]);
+                vs.setIdNotVisitReason(String.valueOf(reasonChoose[0].getId()));
+                vs.setNameNotVisitReason(reasonChoose[0].getDescription());
                 vs.setPosReason(posReason[0]);
             }
             mAdapter.notifyDataSetChanged();
@@ -800,24 +808,24 @@ public class VisitActivity extends BaseActivity {
 
         btnSave.setOnClickListener(v -> {
             for (VisitSalesman vs : listCust) {
-                vs.setDescCheckOutReason(descReason[0]);
-                vs.setIdCheckOutReason(String.valueOf(reasonChoose[0].getId()));
-                vs.setNameCheckOutReason(reasonChoose[0].getDescription());
+                vs.setDescNotVisitReason(descReason[0]);
+                vs.setIdNotVisitReason(String.valueOf(reasonChoose[0].getId()));
+                vs.setNameNotVisitReason(reasonChoose[0].getDescription());
                 vs.setPosReason(posReason[0]);
             }
             int param = 0;
             if (Helper.isNotEmptyOrNull(listCust)) {
                 for (VisitSalesman vs : listCust) {
-                    if (!Helper.isNullOrEmpty(vs.getIdCheckOutReason())) {
-                        Reason reason = database.getDetailReasonById(Constants.REASON_TYPE_NOT_VISIT, vs.getIdCheckOutReason());
+                    if (!Helper.isNullOrEmpty(vs.getIdNotVisitReason())) {
+                        Reason reason = database.getDetailReasonById(Constants.REASON_TYPE_NOT_VISIT, vs.getIdNotVisitReason());
                         if (reason.getIs_freetext() == 1) {
-                            if (Helper.isNullOrEmpty(vs.getDescCheckOutReason())) {
+                            if (Helper.isNullOrEmpty(vs.getDescNotVisitReason())) {
                                 param++;
                             }
                         }
 
                         if (reason.getIs_photo() == 1) {
-                            if (Helper.isNullOrEmpty(vs.getPhotoCheckOutReason())) {
+                            if (Helper.isNullOrEmpty(vs.getPhotoNotVisitReason())) {
                                 param++;
                             }
                         }
@@ -839,9 +847,7 @@ public class VisitActivity extends BaseActivity {
             }
         });
 
-        btnCancel.setOnClickListener(v ->
-
-        {
+        btnCancel.setOnClickListener(v -> {
             dialog.dismiss();
         });
 
@@ -853,16 +859,16 @@ public class VisitActivity extends BaseActivity {
 
         for (VisitSalesman vs : listVisitSalesman) {
             if (vs.isNoo()) {
-                saveVisitSalesman(vs);
+                saveVisitSalesman(vs);//dari noo
             } else {
                 if (vs.isRoute()) {
                     //rute hari ini
-                    saveVisitSalesman(vs);
+                    saveVisitSalesman(vs);//rute hari ini
                 } else {
                     //non rute
                     int nonRouteCust = database.getCountCheckInVisitNonRoute();
                     if (nonRouteCust < nonRouteMax) {
-                        saveVisitSalesman(vs);
+                        saveVisitSalesman(vs);//non rute
                     }
                 }
             }
@@ -889,6 +895,7 @@ public class VisitActivity extends BaseActivity {
         vs.setStatus(Constants.CHECK_OUT_VISIT);
         vs.setInside(outRadius);
         vs.setInsideCheckOut(outRadius);
+        vs.setIdHeader(Constants.ID_VS_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         database.addVisitSalesmanAll(vs);
 
         Customer cus = new Customer();
@@ -1041,7 +1048,6 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStart.setOnClickListener(v -> {
-
             if (Helper.isEmptyEditText(txtKmAwal)) {
                 txtKmAwal.setError(getString(R.string.emptyField));
             } else if (uriBerangkat == null) {
@@ -1105,9 +1111,9 @@ public class VisitActivity extends BaseActivity {
                 database.addCustomerDct(mat, String.valueOf(idHeader), user.getUsername());
             }
 
-            database.deleteMasterNonRouteCustomerById(header.getIdHeader());
-            database.deleteMasterNonRouteCustomerPromotionById(header.getIdHeader());
-            database.deleteMasterNonRouteCustomerDctById(header.getIdHeader());
+//            database.deleteMasterNonRouteCustomerById(header.getIdHeader());
+//            database.deleteMasterNonRouteCustomerPromotionById(header.getIdHeader());
+//            database.deleteMasterNonRouteCustomerDctById(header.getIdHeader());
             getData();
             setAdapterVisit();
             alertDialog.dismiss();
@@ -1338,7 +1344,7 @@ public class VisitActivity extends BaseActivity {
         setAdapterNoo();
 
         if (mList == null || mList.isEmpty()) {
-            requestData();
+            requestData();//getFirstDataOffline
         }
 
         validateButton();
@@ -1358,7 +1364,7 @@ public class VisitActivity extends BaseActivity {
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getAllCustomerVisit(null, false);
+        mList = database.getAllCustomerVisit();
 
         mListNoo = new ArrayList<>();
         mListNoo = database.getAllCustomerNoo();
@@ -1370,117 +1376,67 @@ public class VisitActivity extends BaseActivity {
         protected WSMessage doInBackground(Void... voids) {
             try {
                 if (PARAM == 1) {
-                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
-                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
-                    return null;
-                } else if (PARAM == 2) {
-                    mList = new ArrayList<>();
-                    mListNonRoute = new ArrayList<>();
-                    Map result = (Map) resultWsMessage.getResult();
-                    if (result.get("visit") != null) {
-                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
-                        double id = (double) startDay.get("id");
-                        SessionManagerQubes.setStartDay((int) id);
-                    } else {
-                        SessionManagerQubes.setStartDay(0);
-                    }
-
-                    Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
-                    if (param1Array != null) {
-                        Collections.addAll(mListNonRoute, param1Array);
-                        database.deleteMasterNonRouteCustomer();
-                        database.deleteMasterNonRouteCustomerPromotion();
-                        database.deleteMasterNonRouteCustomerDct();
-                    }
-
-                    for (Customer param : mListNonRoute) {
-                        List<Promotion> arrayList = new ArrayList<>();
-                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
-                        }
-                        param.setPromoList(arrayList);
-
-                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-
-                        List<Material> arrayDctList = new ArrayList<>();
-                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        if (dctArray != null) {
-                            Collections.addAll(arrayDctList, dctArray);
-                        }
-                        param.setDctList(arrayDctList);
-
-                        for (Material mat : arrayDctList) {
-                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
-                        }
-                    }
-
-                    Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
-                    if (paramArray != null) {
-                        Collections.addAll(mList, paramArray);
+                    List<Customer> custList = database.getTodayCustomer();
+                    if (custList.size() != 0) {
                         database.deleteCustomer();
-                        database.deleteCustomerPromotion();
                         database.deleteCustomerDct();
+                        database.deleteCustomerPromotion();
                         database.deleteVisitSalesman();
                         database.deleteNoo();
-                    }
+                        for (Customer customer : custList) {
+                            int idHeader = database.addCustomer(customer, user.getUsername());
+                            List<Promotion> promoList = database.getPromotionNonRouteByIdCustomer(customer.getId());
+                            for (Promotion promo : promoList) {
+                                database.addCustomerPromotion(promo, String.valueOf(idHeader), user.getUsername());
+                            }
 
-                    for (Customer param : mList) {
-                        List<Promotion> arrayList = new ArrayList<>();
-                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
-                        }
-                        param.setPromoList(arrayList);
-
-                        List<Material> arrayDctList = new ArrayList<>();
-                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        if (dctArray != null) {
-                            Collections.addAll(arrayDctList, dctArray);
-                        }
-                        param.setDctList(arrayDctList);
-
-                        int idHeader = database.addCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-
-                        for (Material mat : arrayDctList) {
-                            database.addCustomerDct(mat, param.getId(), user.getUsername());
+                            List<Material> dctList = database.getDctNonRouteByIdCustomer(customer.getId());
+                            for (Material mat : dctList) {
+                                database.addCustomerDct(mat, String.valueOf(idHeader), user.getUsername());
+                            }
                         }
                     }
                     getData();
                     saveDataSuccess = true;
                     return null;
+
+//                    tiap refresh data, apus data di customer, terus add dari customer no rute
+//                    kalau ud d start jangan di add lagi, jadi lksg amil dari table customer aja
+
+//                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
+//                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+//                    return null;
+                } else if (PARAM == 2) {
+                    Map req = new HashMap();
+                    req.put("username", user.getUsername());
+                    String URL_ = Constants.API_GET_START_VISIT;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                    return null;
                 } else if (PARAM == 3) {
-//                    String photoKMAwal = Utils.compressImageUri(getApplicationContext(), uriBerangkat.toString());
-//                    StartVisit startDay = new StartVisit();
-//                    startDay.setKmAwal(kmAwal);
-//                    startDay.setUsername(user.getUsername());
-//                    startDay.setUserLogin(user.getUserLogin());
+//                    ImageType request = new ImageType();
+//                    request.setKmAwal(kmAwal);
+//                    request.put("username", user.getUsername());
                     startDay = new HashMap();
                     startDay.put("kmAwal", kmAwal);
                     startDay.put("username", user.getUsername());
-                    startDay.put("userLogin", user.getUserLogin());
-                    startDay.put("photo", Utils.encodeImageBase64(VisitActivity.this, uriBerangkat));
-//                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-//                    if (photoKMAwal != null) {
-//                        map.add("kmAwal", new FileSystemResource(photoKMAwal));
-//                    } else {
-//                        map.add("kmAwal", "");
-//                    }
-//                    String json = new Gson().toJson(startDay);
-//                    map.add("data", json);
-//
-//                    String URL_ = Constants.API_GET_START_DAY_MULTI_PART;
-                    String URL_ = Constants.API_GET_START_DAY;
+//                    startDay.put("userLogin", user.getUserLogin());
+//                    startDay.put("photo", Utils.encodeImageBase64(VisitActivity.this, uriBerangkat));
+                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                    if (uriBerangkat != null) {
+                        map.add("kmAwalPhoto", new FileSystemResource(uriBerangkat.getPath()));
+                    } else {
+                        map.add("kmAwalPhoto", "");
+                    }
+                    String json = new Gson().toJson(startDay);
+                    map.add("data", json);
+
+                    String URL_ = Constants.API_GET_START_DAY_MULTI_PART;
+//                    String URL_ = Constants.API_GET_START_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-//                    return (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, startDay);
-                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
                     return null;
                 } else if (PARAM == 4) {
                     endDay = new HashMap();
@@ -1489,8 +1445,25 @@ public class VisitActivity extends BaseActivity {
                     endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
                     endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
 
+//                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//                    if (imageType.getPhotoAkhir() != null) {
+//                        File file = FileUtils.getFile(String.valueOf(this), imageType.getPhotoAkhir());
+//                        map.add("photoKmAkhir", new FileSystemResource(imageType.getPhotoAkhir()));
+//                    } else {
+//                        map.add("photoKmAkhir", "");
+//                    }
+//                    if (imageType.getPhotoSelesai() != null) {
+//                        map.add("photoCompleted", new FileSystemResource(imageType.getPhotoSelesai()));
+//                    } else {
+//                        map.add("photoCompleted", "");
+//                    }
+//                    String json = new Gson().toJson(endDay);
+//                    map.add("data", json);
+
+//                    String URL_ = Constants.API_GET_END_DAY_MULTI_PART;
                     String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
                     return null;
                 } else {
@@ -1531,54 +1504,73 @@ public class VisitActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
-                if (logResult.getIdMessage() == 1) {
-                    String message = "Today Customer : " + logResult.getMessage();
-                    logResult.setMessage(message);
-                }
-                database.addLog(logResult);
-                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
-                    resultWsMessage = logResult;
-                    PARAM = 2;
-                    new RequestUrl().execute();//2
+                if (saveDataSuccess) {
+                    if (SessionManagerQubes.getStartDay() == 1) {
+                        progressCircleVisit.setVisibility(View.GONE);
+                        progressCircleNoo.setVisibility(View.GONE);
+                        mAdapterVisit.setData(mList);
+                        mAdapterNoo.setData(mListNoo);
+                        workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+                        workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+                        validateButton();//after get data
+                        if (Helper.isEmptyOrNull(mList)) {
+                            recyclerViewVisit.setVisibility(View.GONE);
+                            llNoDataVisit.setVisibility(View.VISIBLE);
+                        } else {
+                            recyclerViewVisit.setVisibility(View.VISIBLE);
+                            llNoDataVisit.setVisibility(View.GONE);
+                        }
+
+                        if (Helper.isEmptyOrNull(mListNoo)) {
+                            recyclerViewNoo.setVisibility(View.GONE);
+                            llNoDataNoo.setVisibility(View.VISIBLE);
+                        } else {
+                            recyclerViewNoo.setVisibility(View.VISIBLE);
+                            llNoDataNoo.setVisibility(View.GONE);
+                        }
+                    } else {
+                        if (mList.size() != 0) {
+                            PARAM = 2;
+                            new RequestUrl().execute();
+                        } else {
+                            progressCircleVisit.setVisibility(View.GONE);
+                            progressCircleNoo.setVisibility(View.GONE);
+                            mAdapterVisit.setData(mList);
+                            mAdapterNoo.setData(mListNoo);
+                            validateButton();//after get data
+                            if (Helper.isEmptyOrNull(mList)) {
+                                recyclerViewVisit.setVisibility(View.GONE);
+                                llNoDataVisit.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerViewVisit.setVisibility(View.VISIBLE);
+                                llNoDataVisit.setVisibility(View.GONE);
+                            }
+
+                            if (Helper.isEmptyOrNull(mListNoo)) {
+                                recyclerViewNoo.setVisibility(View.GONE);
+                                llNoDataNoo.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerViewNoo.setVisibility(View.VISIBLE);
+                                llNoDataNoo.setVisibility(View.GONE);
+                            }
+                        }
+                    }
                 } else {
-                    progressCircleVisit.setVisibility(View.GONE);
-                    progressCircleNoo.setVisibility(View.GONE);
-                    setToast(logResult.getMessage());
-                    getData();
-                    mAdapterVisit.setData(mList);
-                    mAdapterNoo.setData(mListNoo);
-
-                    if (Helper.isEmptyOrNull(mList)) {
-                        recyclerViewVisit.setVisibility(View.GONE);
-                        llNoDataVisit.setVisibility(View.VISIBLE);
-                    } else {
-                        recyclerViewVisit.setVisibility(View.VISIBLE);
-                        llNoDataVisit.setVisibility(View.GONE);
-                    }
-
-                    if (Helper.isEmptyOrNull(mListNoo)) {
-                        recyclerViewNoo.setVisibility(View.GONE);
-                        llNoDataNoo.setVisibility(View.VISIBLE);
-                    } else {
-                        recyclerViewNoo.setVisibility(View.VISIBLE);
-                        llNoDataNoo.setVisibility(View.GONE);
-                    }
+                    setToast(getString(R.string.failedSaveData));
                 }
             } else if (PARAM == 2) {
                 progressCircleVisit.setVisibility(View.GONE);
                 progressCircleNoo.setVisibility(View.GONE);
-                if (saveDataSuccess) {
-                    mAdapterVisit.setData(mList);
-                    mAdapterNoo.setData(mListNoo);
-                    if (SessionManagerQubes.getStartDay() == 1) {
-                        workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
-                        workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
-                    }
-                    validateButton();//after get data
-                } else {
-                    setToast(getString(R.string.failedSaveData));
-                }
+                mAdapterVisit.setData(mList);
+                mAdapterNoo.setData(mListNoo);
 
+                if (SessionManagerQubes.getStartDay() == 1) {
+                    workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+                    workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+                } else {
+
+                }
+                validateButton();//after get data
                 if (Helper.isEmptyOrNull(mList)) {
                     recyclerViewVisit.setVisibility(View.GONE);
                     llNoDataVisit.setVisibility(View.VISIBLE);
@@ -1621,7 +1613,6 @@ public class VisitActivity extends BaseActivity {
 //                        setToast(result.getMessage());
                     SessionManagerQubes.setStartDay(2);
                     validateButton();//end
-                    workManager.cancelAllWork();
                     progress.show();
                     new AsyncTaskGeneratePDF().execute();
                 } else {
@@ -1658,6 +1649,7 @@ public class VisitActivity extends BaseActivity {
                 btnEndDay.setVisibility(View.GONE);
                 btnAddVisit.setVisibility(View.GONE);
                 btnAddNoo.setVisibility(View.GONE);
+                workManager.cancelAllWork();
                 break;
             case 1:
                 btnStartVisit.setVisibility(View.GONE);
@@ -1674,6 +1666,7 @@ public class VisitActivity extends BaseActivity {
                 btnEndDay.setVisibility(View.GONE);
                 btnAddVisit.setVisibility(View.GONE);
                 btnAddNoo.setVisibility(View.GONE);
+                workManager.cancelAllWork();
                 break;
         }
     }

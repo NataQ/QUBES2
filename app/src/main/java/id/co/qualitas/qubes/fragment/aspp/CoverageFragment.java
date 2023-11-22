@@ -138,7 +138,7 @@ public class CoverageFragment extends BaseFragment implements LocationListener {
 
         //your items
         custList = new ArrayList<>();
-        custList = database.getAllCustomerVisit(null, true);
+        custList = database.getRouteCustomer(null, true);
 
 //        zoomToBounds(custList);
 

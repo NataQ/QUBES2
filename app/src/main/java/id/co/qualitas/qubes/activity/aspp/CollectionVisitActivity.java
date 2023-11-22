@@ -117,14 +117,18 @@ public class CollectionVisitActivity extends BaseActivity {
 
     private void setAdapterInvoice() {
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
-            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
-                SessionManagerQubes.setCollectionHeader(header);
-                SessionManagerQubes.setCollectionSource(2);
-
-                Intent intent = new Intent(this, CollectionFormActivity.class);
-                startActivity(intent);
+            if (header.getAmount() == header.getTotal_paid()) {
+                setToast("Invoice sudah lunas");
             } else {
-                setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, dilahkan pilih menu Collection di halaman Activity");
+                if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                    SessionManagerQubes.setCollectionHeader(header);
+                    SessionManagerQubes.setCollectionSource(2);
+
+                    Intent intent = new Intent(this, CollectionFormActivity.class);
+                    startActivity(intent);
+                } else {
+                    setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, silahkan pilih menu Collection di halaman Activity");
+                }
             }
         });
 

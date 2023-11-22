@@ -11,6 +11,7 @@ public class CollectionDetail implements Serializable, Cloneable {
     public String customerId;
     public String invoiceNo;
     public String status;
+    public String typePayment;
     public double omzet;
     public String no;
     public String tglCair;
@@ -41,6 +42,14 @@ public class CollectionDetail implements Serializable, Cloneable {
         this.idBankCust = idBankCust;
         this.bankCust = bankCust;
         this.materialList = materialList;
+    }
+
+    public String getTypePayment() {
+        return typePayment;
+    }
+
+    public void setTypePayment(String typePayment) {
+        this.typePayment = typePayment;
     }
 
     public String getInvoiceNo() {

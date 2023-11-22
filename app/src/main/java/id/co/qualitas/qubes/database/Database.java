@@ -11,6 +11,7 @@ import android.util.Log;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.model.StoreCheck;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
@@ -101,6 +103,13 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_KEY_PARAMETER = "keyParameter";
     private static final String KEY_VALUE = "value";
     private static final String KEY_DESC = "description";
+    private static final String KEY_IS_SYNC_PHOTO = "isSyncPhoto";
+    private static final String KEY_IS_SYNC_PHOTO_KTP = "isSyncPhotoKTP";
+    private static final String KEY_IS_SYNC_PHOTO_OUTLET = "isSyncPhotoOutlet";
+    private static final String KEY_IS_SYNC_PHOTO_NPWP = "isSyncPhotoNPWP";
+    private static final String KEY_IS_SYNC_PHOTO_REASON_PAUSE = "isSyncPhotoPause";
+    private static final String KEY_IS_SYNC_PHOTO_REASON_NOT_VISIT = "isSyncPhotoNotVisit";
+    private static final String KEY_IS_SYNC_PHOTO_REASON_NOT_BUY = "isSyncPhotoNotBuy";
 
     // column table price code
     private static final String KEY_ID_PRICE_CODE_DB = "idPriceCodeDB";
@@ -248,10 +257,14 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_DESC_PAUSE_REASON = "descPauseReason";
     private static final String KEY_PHOTO_PAUSE_REASON = "photoPauseReason";
     private static final String KEY_DURATION = "duration";
-    private static final String KEY_ID_CHECK_OUT_REASON = "idCheckOutReason";
-    private static final String KEY_NAME_CHECK_OUT_REASON = "nameCheckOutReason";
-    private static final String KEY_DESC_CHECK_OUT_REASON = "descCheckOutReason";
-    private static final String KEY_PHOTO_CHECK_OUT_REASON = "photoCheckOutReason";
+    private static final String KEY_ID_NOT_VISIT_REASON = "idNotVisitReason";
+    private static final String KEY_NAME_NOT_VISIT_REASON = "nameNotVisitReason";
+    private static final String KEY_DESC_NOT_VISIT_REASON = "descNotVisitReason";
+    private static final String KEY_PHOTO_NOT_VISIT_REASON = "photoNotVisitReason";
+    private static final String KEY_ID_NOT_BUY_REASON = "idNotBuyReason";
+    private static final String KEY_NAME_NOT_BUY_REASON = "nameNotBuyReason";
+    private static final String KEY_DESC_NOT_BUY_REASON = "descNotBuyReason";
+    private static final String KEY_PHOTO_NOT_BUY_REASON = "photoNotBuyReason";
     // column table VisitSalesmanNOO
     private static final String KEY_ID_VISIT_SALESMAN_NOO_DB = "idVisitSalesmanNooDB";
 
@@ -358,7 +371,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static String CREATE_TABLE_STOCK_REQUEST_HEADER = "CREATE TABLE " + TABLE_STOCK_REQUEST_HEADER + "("
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_STOCK_REQUEST_HEADER_BE + " INTEGER,"
+            + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_REQUEST_DATE + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
             + KEY_NO_DOC + " TEXT,"
@@ -366,13 +379,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_NO_SURAT_JALAN + " TEXT,"
             + KEY_SIGN + " TEXT,"
             + KEY_STATUS + " TEXT,"
-            + KEY_IS_UNLOADING + " INTEGER,"
-            + KEY_IS_VERIF + " INTEGER,"
+            + KEY_IS_UNLOADING + " INTEGER DEFAULT 0,"
+            + KEY_IS_VERIF + " INTEGER DEFAULT 0,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER, "
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0, "
             + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_BE + ", " + KEY_REQUEST_DATE + "," + KEY_ID_SALESMAN + ")"
             + ")";
 
@@ -394,7 +407,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
@@ -420,7 +433,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ROUTE + " TEXT,"
             + KEY_KODE_POS + " TEXT,"
             + KEY_NAME_KOTA_KABUPATEN + " TEXT,"
-            + KEY_IS_ROUTE + " INTEGER,"
+            + KEY_IS_ROUTE + " INTEGER DEFAULT 0,"
             + KEY_PHOTO_KTP + " TEXT,"
             + KEY_PHOTO_NPWP + " TEXT,"
             + KEY_PHOTO_OUTLET + " TEXT,"
@@ -428,15 +441,15 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " INTEGER ,"
+            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT ,"
             + KEY_CUSTOMER_ID + " TEXT,"
-            + KEY_ID_PROMOTION + " INTEGER,"
+            + KEY_ID_PROMOTION + " TEXT,"
             + KEY_NO_PROMOTION + " TEXT,"
             + KEY_NAME_PROMOTION + " TEXT,"
             + KEY_DESC + " TEXT,"
@@ -449,13 +462,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
     public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
             + KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " INTEGER,"
+            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " TEXT,"
             + KEY_MATERIAL_GROUP_NAME + " TEXT,"
@@ -465,7 +478,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
             + ")";
 
@@ -481,13 +494,13 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
             + KEY_SIGN + " TEXT,"
-            + KEY_IS_VERIF + " INTEGER,"
-            + KEY_IS_ROUTE + " INTEGER,"
+            + KEY_IS_VERIF + " INTEGER DEFAULT 0,"
+            + KEY_IS_ROUTE + " INTEGER DEFAULT 0,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_INVOICE_NO + "," + KEY_DATE + ")"
             + ")";
 
@@ -507,15 +520,15 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_NOO = "CREATE TABLE " + TABLE_NOO + "("
-            + KEY_ID_NOO_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_NOO_DB + " TEXT PRIMARY KEY,"
             + KEY_NAME_NOO + " TEXT,"
             + KEY_ADDRESS_NOO + " TEXT,"
-            + KEY_STATUS + " INTEGER,"
+            + KEY_STATUS + " INTEGER DEFAULT 0,"
             + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL,"
             + KEY_KODE_POS + " TEXT,"
@@ -556,7 +569,10 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC_PHOTO_KTP + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_NPWP + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_OUTLET + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
 //            + " UNIQUE (" + KEY_ID_NOO_DB + ")"
             + ")";
 
@@ -565,7 +581,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
             + KEY_CUSTOMER_ADDRESS + " TEXT,"
-            + KEY_STATUS + " INTEGER,"
+            + KEY_STATUS + " INTEGER DEFAULT 0,"
             + KEY_TYPE_CUSTOMER + " TEXT,"
             + KEY_TYPE_CUSTOMER_NAME + " TEXT,"
             + KEY_TYPE_PRICE + " TEXT,"
@@ -583,7 +599,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ROUTE + " TEXT,"
             + KEY_KODE_POS + " TEXT,"
             + KEY_NAME_KOTA_KABUPATEN + " TEXT,"
-            + KEY_IS_ROUTE + " INTEGER,"
+            + KEY_IS_ROUTE + " INTEGER DEFAULT 0,"
             + KEY_PHOTO_KTP + " TEXT,"
             + KEY_PHOTO_NPWP + " TEXT,"
             + KEY_PHOTO_OUTLET + " TEXT,"
@@ -591,14 +607,17 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC_PHOTO_KTP + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_NPWP + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_OUTLET + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_CUSTOMER_PROMOTION + "("
             + KEY_ID_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
-            + KEY_ID_PROMOTION + " INTEGER,"
+            + KEY_ID_PROMOTION + " TEXT,"
             + KEY_NAME_PROMOTION + " TEXT,"
             + KEY_NO_PROMOTION + " TEXT,"
             + KEY_DESC + " TEXT,"
@@ -611,7 +630,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
 //            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
@@ -626,45 +645,52 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE " + TABLE_VISIT_SALESMAN + "("
-            + KEY_ID_VISIT_SALESMAN_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_VISIT_SALESMAN_DB + " TEXT PRIMARY KEY ,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_CHECK_IN_TIME + " TEXT,"
             + KEY_CHECK_OUT_TIME + " TEXT,"
-            + KEY_STATUS + " INTEGER,"
+            + KEY_STATUS + " INTEGER DEFAULT 0,"
             + KEY_RESUME_TIME + " TEXT,"
             + KEY_PAUSE_TIME + " TEXT,"
             + KEY_LAT_CHECK_IN + " REAL,"
             + KEY_LONG_CHECK_IN + " REAL,"
             + KEY_LAT_CHECK_OUT + " REAL,"
             + KEY_LONG_CHECK_OUT + " REAL,"
-            + KEY_INSIDE + " INTEGER,"
-            + KEY_INSIDE_CHECK_OUT + " INTEGER,"
+            + KEY_INSIDE + " INTEGER DEFAULT 0,"
+            + KEY_INSIDE_CHECK_OUT + " INTEGER DEFAULT 0,"
             + KEY_ID_PAUSE_REASON + " TEXT,"
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
             + KEY_PHOTO_PAUSE_REASON + " TEXT,"
             + KEY_DURATION + " TEXT,"
-            + KEY_ID_CHECK_OUT_REASON + " TEXT,"
-            + KEY_NAME_CHECK_OUT_REASON + " TEXT,"
-            + KEY_DESC_CHECK_OUT_REASON + " TEXT,"
-            + KEY_PHOTO_CHECK_OUT_REASON + " TEXT,"
+            + KEY_ID_NOT_VISIT_REASON + " TEXT,"
+            + KEY_NAME_NOT_VISIT_REASON + " TEXT,"
+            + KEY_DESC_NOT_VISIT_REASON + " TEXT,"
+            + KEY_PHOTO_NOT_VISIT_REASON + " TEXT,"
+            + KEY_ID_NOT_BUY_REASON + " TEXT,"
+            + KEY_NAME_NOT_BUY_REASON + " TEXT,"
+            + KEY_DESC_NOT_BUY_REASON + " TEXT,"
+            + KEY_PHOTO_NOT_BUY_REASON + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC_PHOTO_REASON_PAUSE + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_REASON_NOT_VISIT + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC_PHOTO_REASON_NOT_BUY + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
 
     public static String CREATE_TABLE_VISIT_SALESMAN_NOO = "CREATE TABLE " + TABLE_VISIT_SALESMAN_NOO + "("
-            + KEY_ID_VISIT_SALESMAN_NOO_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_VISIT_SALESMAN_NOO_DB + " TEXT PRIMARY KEY ,"
             + KEY_ID_NOO_DB + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
             + KEY_DATE + " TEXT,"
@@ -677,27 +703,23 @@ public class Database extends SQLiteOpenHelper {
             + KEY_LONG_CHECK_IN + " REAL,"
             + KEY_LAT_CHECK_OUT + " REAL,"
             + KEY_LONG_CHECK_OUT + " REAL,"
-            + KEY_INSIDE + " INTEGER,"
-            + KEY_INSIDE_CHECK_OUT + " INTEGER,"
+            + KEY_INSIDE + " INTEGER DEFAULT 0,"
+            + KEY_INSIDE_CHECK_OUT + " INTEGER DEFAULT 0,"
             + KEY_ID_PAUSE_REASON + " TEXT,"
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
             + KEY_PHOTO_PAUSE_REASON + " TEXT,"
             + KEY_DURATION + " TEXT,"
-            + KEY_ID_CHECK_OUT_REASON + " TEXT,"
-            + KEY_NAME_CHECK_OUT_REASON + " TEXT,"
-            + KEY_DESC_CHECK_OUT_REASON + " TEXT,"
-            + KEY_PHOTO_CHECK_OUT_REASON + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_NOO_DB + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
 
     public static String CREATE_TABLE_STORE_CHECK = "CREATE TABLE " + TABLE_STORE_CHECK + "("
-            + KEY_ID_STORE_CHECK_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_STORE_CHECK_DB + " TEXT PRIMARY KEY,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -712,19 +734,19 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_HEADER = "CREATE TABLE " + TABLE_ORDER_HEADER + "("
-            + KEY_ID_ORDER_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_ORDER_HEADER_DB + " TEXT PRIMARY KEY,"
             + KEY_ID_ORDER_BACK_END + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
-            + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER,"
-            + KEY_ID_STOCK_REQUEST_HEADER_BE + " INTEGER,"
+            + KEY_ID_STOCK_REQUEST_HEADER_DB + " TEXT,"
+            + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_TANGGAL_KIRIM + " TEXT,"
-            + KEY_IS_PAID + " INTEGER,"
+            + KEY_IS_PAID + " INTEGER DEFAULT 0,"
             + KEY_TOP + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_OMZET + " REAL,"
@@ -733,7 +755,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
 //            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
@@ -747,8 +769,8 @@ public class Database extends SQLiteOpenHelper {
             + KEY_MATERIAL_GROUP_NAME + " TEXT,"
             + KEY_MATERIAL_PRODUCT_ID + " TEXT,"
             + KEY_MATERIAL_PRODUCT_NAME + " TEXT,"
-            + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER,"
-            + KEY_ID_STOCK_REQUEST_HEADER_BE + " INTEGER,"
+            + KEY_ID_STOCK_REQUEST_HEADER_DB + " TEXT,"
+            + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_QTY + " REAL,"
             + KEY_UOM + " TEXT,"
             + KEY_PRICE + " REAL,"
@@ -758,7 +780,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
             + ")";
 
@@ -782,7 +804,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
@@ -800,7 +822,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_DISCOUNT_ID + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
@@ -836,7 +858,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
 //            + " UNIQUE (" + KEY_ID_ORDER_PAYMENT_HEADER_DB + ", " + KEY_TYPE_PAYMENT + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
@@ -851,12 +873,12 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_ORDER_PAYMENT_DETAIL_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_RETURN = "CREATE TABLE " + TABLE_RETURN + "("
-            + KEY_ID_RETURN_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_RETURN_DB + " TEXT PRIMARY KEY,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -877,12 +899,14 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC_PHOTO + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE " + TABLE_COLLECTION_HEADER + "("
-            + KEY_ID_COLLECTION_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_COLLECTION_HEADER_DB + " TEXT PRIMARY KEY,"
+            + KEY_DATE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
             + KEY_INVOICE_DATE + " TEXT,"
@@ -893,11 +917,11 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE " + TABLE_COLLECTION_DETAIL + "("
-            + KEY_ID_COLLECTION_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_COLLECTION_DETAIL_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
             + KEY_STATUS + " TEXT,"
@@ -915,12 +939,12 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE " + TABLE_COLLECTION_ITEM + "("
-            + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_DETAIL_DB + " TEXT,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -935,30 +959,27 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE " + TABLE_MASTER_REASON + "("
             + KEY_ID_REASON_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_REASON_BE + " INTEGER,"
+            + KEY_ID_REASON_BE + " TEXT,"
             + KEY_NAME_REASON + " TEXT,"
             + KEY_CATEGORY_REASON + " TEXT,"
-            + KEY_IS_PHOTO + " INTEGER,"
-            + KEY_IS_FREE_TEXT + " INTEGER,"
-            + KEY_IS_BARCODE + " INTEGER,"
-            + KEY_IS_SIGNATURE + " INTEGER,"
+            + KEY_IS_PHOTO + " INTEGER DEFAULT 0,"
+            + KEY_IS_FREE_TEXT + " INTEGER DEFAULT 0,"
+            + KEY_IS_BARCODE + " INTEGER DEFAULT 0,"
+            + KEY_IS_SIGNATURE + " INTEGER DEFAULT 0,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_ID_REASON_BE + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_PROMOTION + "("
             + KEY_ID_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_PROMOTION + " INTEGER,"
+            + KEY_ID_PROMOTION + " TEXT,"
             + KEY_NAME_PROMOTION + " TEXT,"
             + KEY_NO_PROMOTION + " TEXT,"
             + KEY_DESC + " TEXT,"
@@ -969,9 +990,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_VALID_TO_PROMOTION + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_ID_PROMOTION + ")"
             + ")";
 
@@ -981,10 +999,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_DATE_LOG + " TEXT,"
             + KEY_TIME_LOG + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER"
+            + KEY_CREATED_DATE + " TEXT "
             + ")";
 
     public static String CREATE_TABLE_MASTER_BANK = "CREATE TABLE " + TABLE_MASTER_BANK + "("
@@ -996,9 +1011,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_NO_REK + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_ID_BANK_BE + ")"
             + ")";
 
@@ -1013,9 +1025,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_MATERIAL_PRODUCT_NAME + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_MATERIAL_ID + ")"
             + ")";
 
@@ -1028,15 +1037,12 @@ public class Database extends SQLiteOpenHelper {
             + KEY_QTY_MAX + " REAL,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_UOM + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE " + TABLE_MASTER_DAERAH_TINGKAT + "("
             + KEY_DAERAH_TINGKAT_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_KODE_POS + " INTEGER,"
+            + KEY_KODE_POS + " TEXT,"
             + KEY_ID_DESA_KELURAHAN + " TEXT,"
             + KEY_NAME_DESA_KELURAHAN + " TEXT,"
             + KEY_ID_KECAMATAN + " TEXT,"
@@ -1047,9 +1053,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_NAME_PROVINSI + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER,"
             + " UNIQUE (" + KEY_KODE_POS + ", " + KEY_ID_DESA_KELURAHAN + "," + KEY_ID_KECAMATAN + "," + KEY_ID_KOTA_KABUPATEN + "," + KEY_ID_PROVINSI + ")"
             + ")";
 
@@ -1098,7 +1101,7 @@ public class Database extends SQLiteOpenHelper {
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_TYPE = "CREATE TABLE " + TABLE_MASTER_CUSTOMER_TYPE + "("
-            + KEY_ID_CUSTOMER_TYPE + " INTEGER PRIMARY KEY,"
+            + KEY_ID_CUSTOMER_TYPE + " TEXT PRIMARY KEY,"
             + KEY_ID_TYPE_PRICE + " TEXT,"
             + KEY_NAME_TYPE_PRICE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
@@ -1130,15 +1133,15 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CUSTOMER_PROMOTION);
         db.execSQL(CREATE_TABLE_CUSTOMER_DCT);
         db.execSQL(CREATE_TABLE_VISIT_SALESMAN);
-        db.execSQL(CREATE_TABLE_VISIT_SALESMAN_NOO);
+//        db.execSQL(CREATE_TABLE_VISIT_SALESMAN_NOO);
         db.execSQL(CREATE_TABLE_STORE_CHECK);
         db.execSQL(CREATE_TABLE_ORDER_HEADER);
         db.execSQL(CREATE_TABLE_ORDER_DETAIL);
         db.execSQL(CREATE_TABLE_ORDER_DETAIL_DISCOUNT);
         db.execSQL(CREATE_TABLE_ORDER_DETAIL_EXTRA);
-        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_HEADER);
-        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_DETAIL);
-        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_ITEM);
+//        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_HEADER);
+//        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_DETAIL);
+//        db.execSQL(CREATE_TABLE_ORDER_PAYMENT_ITEM);
         db.execSQL(CREATE_TABLE_RETURN);
         db.execSQL(CREATE_TABLE_COLLECTION_HEADER);
         db.execSQL(CREATE_TABLE_COLLECTION_DETAIL);
@@ -1322,6 +1325,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_ID_NOO_DB, param.getId());
         values.put(KEY_NAME_NOO, param.getNama());
         values.put(KEY_ADDRESS_NOO, param.getAddress());
         values.put(KEY_LATITUDE, param.getLatitude());
@@ -1360,7 +1364,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1398,7 +1401,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_ROUTE, param.isRoute());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1463,8 +1465,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
-
+//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1488,7 +1489,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TARGET, param.getTarget());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1516,7 +1517,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1539,7 +1540,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TARGET, param.getTarget());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -1566,10 +1567,14 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_LONG_CHECK_IN, param.getLongCheckIn());
         values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
         values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
-        values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-        values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-        values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-        values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
+        values.put(KEY_ID_NOT_VISIT_REASON, param.getIdNotVisitReason());
+        values.put(KEY_NAME_NOT_VISIT_REASON, param.getNameNotVisitReason());
+        values.put(KEY_DESC_NOT_VISIT_REASON, param.getDescNotVisitReason());
+        values.put(KEY_PHOTO_NOT_VISIT_REASON, param.getPhotoNotVisitReason());
+        values.put(KEY_ID_NOT_BUY_REASON, param.getIdNotBuyReason());
+        values.put(KEY_NAME_NOT_BUY_REASON, param.getNameNotBuyReason());
+        values.put(KEY_DESC_NOT_BUY_REASON, param.getDescNotBuyReason());
+        values.put(KEY_PHOTO_NOT_BUY_REASON, param.getPhotoNotBuyReason());
         values.put(KEY_CREATED_BY, param.getIdSalesman());
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_IS_SYNC, 0); //0 false, 1 true
@@ -1588,6 +1593,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_ID_VISIT_SALESMAN_DB, param.getIdHeader());
         values.put(KEY_CUSTOMER_ID, param.getCustomerId());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_DATE, param.getDate());
@@ -1740,6 +1746,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
         values.put(KEY_DATE, header.get("date").toString());
+        values.put(KEY_ID_STORE_CHECK_DB, header.get("id_header").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1762,15 +1769,15 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addOrder(Order request, User user) {
+    public boolean addOrder(Order request, User user) {
         boolean result = false;
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransactionNonExclusive();
         ContentValues values = new ContentValues();
 
-        int idOrderHeader = -1;
         try {
             values = new ContentValues();
+            values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
             values.put(KEY_ID_ORDER_BACK_END, request.getId());
             values.put(KEY_CUSTOMER_ID, request.getId_customer());
             values.put(KEY_ORDER_TYPE, user.getType_sales().equals("CO") ? "CO" : "TO");
@@ -1786,13 +1793,13 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
-            idOrderHeader = (int) db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
+            db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
 
             if (Helper.isNotEmptyOrNull(request.getMaterialList())) {
                 for (Material param : request.getMaterialList()) {
                     int idOrderDetail = -1;
                     values = new ContentValues();
-                    values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
+                    values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
                     values.put(KEY_CUSTOMER_ID, request.getId_customer());
                     values.put(KEY_MATERIAL_ID, param.getId());
                     values.put(KEY_MATERIAL_NAME, param.getNama());
@@ -1817,7 +1824,7 @@ public class Database extends SQLiteOpenHelper {
                         for (Discount discount : param.getDiskonList()) {
                             values = new ContentValues();
                             values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
-                            values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
+                            values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
                             values.put(KEY_CUSTOMER_ID, request.getId_customer());
                             values.put(KEY_MATERIAL_ID, param.getId());
                             values.put(KEY_DISCOUNT_ID, discount.getKeydiskon());
@@ -1834,7 +1841,7 @@ public class Database extends SQLiteOpenHelper {
                         for (Material matExtra : param.getExtraItem()) {
                             values = new ContentValues();
                             values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
-                            values.put(KEY_ID_ORDER_HEADER_DB, idOrderHeader);
+                            values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
                             values.put(KEY_CUSTOMER_ID, request.getId_customer());
                             values.put(KEY_MATERIAL_ID, matExtra.getId());
                             values.put(KEY_MATERIAL_NAME, matExtra.getNama());
@@ -1857,13 +1864,13 @@ public class Database extends SQLiteOpenHelper {
                 }
             }
             db.setTransactionSuccessful();
+            result = true;
         } catch (Exception e) {
             Log.e("Order", e.getMessage());
-            idOrderHeader = -1;
         }
 
         db.endTransaction();
-        return idOrderHeader;
+        return result;
     }
 
     public int addOrderHeader(Order param, String idSales) {
@@ -2117,6 +2124,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
         values.put(KEY_DATE, header.get("date").toString());
+        values.put(KEY_ID_RETURN_DB, header.get("id_header").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -2252,9 +2260,11 @@ public class Database extends SQLiteOpenHelper {
             }
 
             Map requestHeader = new HashMap();
+            requestHeader.put("id_header", Constants.ID_CO_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
             requestHeader.put("customer_id", header.getId_customer());
             requestHeader.put("no_invoice", header.getIdHeader());
             requestHeader.put("invoice_date", header.getOrder_date());
+            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
             requestHeader.put("status", "paid");
             requestHeader.put("total_paid", totalAmountPaid);
             requestHeader.put("amount", header.getOmzet());
@@ -2265,9 +2275,11 @@ public class Database extends SQLiteOpenHelper {
             //addCollectionHeader
             //int idCollHeader = database.addCollectionHeader(requestHeader);
             ContentValues values = new ContentValues();
+            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
             values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
             values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
             values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+            values.put(KEY_DATE, requestHeader.get("date").toString());
             values.put(KEY_STATUS, requestHeader.get("status").toString());
             values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
             values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
@@ -2275,10 +2287,11 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
             values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
 
-            idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+//            idCollHeaderA = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+            db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
 
             Map requestDetail = new HashMap();
-            requestDetail.put("id_header", idCollHeader);
+            requestDetail.put("id_header", requestHeader.get("id_header").toString());
             requestDetail.put("no_invoice", header.getIdHeader());
             requestDetail.put("status", "paid");
             requestDetail.put("username", user.getUsername());
@@ -2305,6 +2318,7 @@ public class Database extends SQLiteOpenHelper {
 //                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
                     values = new ContentValues();
                     values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_MATERIAL_ID, material.getId());
                     values.put(KEY_MATERIAL_NAME, material.getNama());
                     values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2344,6 +2358,7 @@ public class Database extends SQLiteOpenHelper {
 //                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
                     values = new ContentValues();
                     values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_MATERIAL_ID, material.getId());
                     values.put(KEY_MATERIAL_NAME, material.getNama());
                     values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2365,7 +2380,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getIdHeader());
 //                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "transfer");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2381,6 +2396,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2403,7 +2419,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getIdHeader());
 //                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "giro");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2425,6 +2441,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2447,7 +2464,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getIdHeader());
 //                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "cheque");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2469,6 +2486,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2575,6 +2593,7 @@ public class Database extends SQLiteOpenHelper {
             }
 
             Map requestHeader = new HashMap();
+            requestHeader.put("id_header", Constants.ID_CI_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
             requestHeader.put("customer_id", header.getId_customer());
             requestHeader.put("no_invoice", header.getNo_invoice());
             requestHeader.put("invoice_date", header.getInvoice_date());
@@ -2587,6 +2606,7 @@ public class Database extends SQLiteOpenHelper {
             //addCollectionHeader
             //int idCollHeader = database.addCollectionHeader(requestHeader);
             ContentValues values = new ContentValues();
+            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
             values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
             values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
             values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
@@ -2614,7 +2634,7 @@ public class Database extends SQLiteOpenHelper {
             //updatePaidInvoice
 
             Map requestDetail = new HashMap();
-            requestDetail.put("id_header", idCollHeader);
+            requestDetail.put("id_header", requestHeader.get("id_header").toString());
             requestDetail.put("no_invoice", header.getNo_invoice());
             requestDetail.put("status", "paid");
             requestDetail.put("username", user.getUsername());
@@ -2641,6 +2661,7 @@ public class Database extends SQLiteOpenHelper {
 //                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
                     values = new ContentValues();
                     values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_MATERIAL_ID, material.getId());
                     values.put(KEY_MATERIAL_NAME, material.getNama());
                     values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2680,6 +2701,7 @@ public class Database extends SQLiteOpenHelper {
 //                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
                     values = new ContentValues();
                     values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_MATERIAL_ID, material.getId());
                     values.put(KEY_MATERIAL_NAME, material.getNama());
                     values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2701,7 +2723,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getNo_invoice());
 //                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "transfer");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2717,6 +2739,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2739,7 +2762,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getNo_invoice());
 //                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "giro");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2761,6 +2784,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -2783,7 +2807,7 @@ public class Database extends SQLiteOpenHelper {
                     collection.setInvoiceNo(header.getNo_invoice());
 //                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
                     values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, String.valueOf(idCollHeader));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                     values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
                     values.put(KEY_TYPE_PAYMENT, "cheque");
                     values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
@@ -2805,6 +2829,7 @@ public class Database extends SQLiteOpenHelper {
 //                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                         values.put(KEY_MATERIAL_ID, material.getId());
                         values.put(KEY_MATERIAL_NAME, material.getNama());
                         values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
@@ -3012,8 +3037,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_IS_BARCODE, param.getIs_barcode());
         values.put(KEY_IS_SIGNATURE, param.getIs_signature());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -3039,8 +3062,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
         values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -3061,7 +3082,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TIME_LOG, Helper.getTodayDate(Constants.DATE_TYPE_6));
         values.put(KEY_CREATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
         int id = -1;
         try {
@@ -3084,7 +3104,6 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_REK, param.getNo_rek());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
 
         int id = -1;
         try {
@@ -4061,10 +4080,131 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Customer> getTodayCustomer() {
+        setFormatSeparator();
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<Customer> arrayList = new ArrayList<>();
+        String selectQuery = null;
+        Cursor cursor = null;
+        selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? " +
+                "union " +
+                "select b.* from " + TABLE_INVOICE_HEADER + " a " +
+                "inner join " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
+                "where a." + KEY_DATE + " = ? group by b." + KEY_CUSTOMER_ID;
+        cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%", Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+                paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
+                paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
+                paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
+                paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
+                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
+                paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
+                paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
+                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
+                paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
+                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
+                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
+//                paramModel.setPromoList(getPromotionRouteByIdCustomer(paramModel.getId()));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Customer> getRouteCustomer(Location currentLocation, boolean coverage) {
+        setFormatSeparator();
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<Customer> arrayList = new ArrayList<>();
+        String selectQuery = null;
+        Cursor cursor = null;
+        if (coverage) {
+            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? ";
+            cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
+        } else {
+            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c ";
+//            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? " +
+//                    "union " +
+//                    "select b.* from " + TABLE_INVOICE_HEADER + " a " +
+//                    "inner join " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
+//                    "where a." + KEY_DATE + " = ? group by b." + KEY_CUSTOMER_ID;
+            cursor = db.rawQuery(selectQuery, null);
+        }
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+                paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
+                paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
+                paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
+                paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
+                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
+                paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
+                paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
+                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
+                paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
+                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
+                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
+
+                if (currentLocation != null) {
+                    double distance = Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
+                    paramModel.setMileage(format.format(distance));
+                }
+
+//                paramModel.setPromoList(getPromotionRouteByIdCustomer(paramModel.getId()));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Material> getAllDetailOrder(String idHeader) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
+//        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
+        String selectQuery = "select a." + KEY_ID_ORDER_HEADER_DB + ", a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", a." + KEY_MATERIAL_GROUP_ID + ", a." + KEY_MATERIAL_GROUP_NAME + ", a." +
+                KEY_MATERIAL_PRODUCT_ID + ", a." + KEY_MATERIAL_PRODUCT_NAME + ", (a." + KEY_TOTAL + " - sum(ifnull(d." + KEY_AMOUNT_PAID + ", 0)))  as " + KEY_TOTAL + " from " + TABLE_ORDER_DETAIL + " a \n" +
+                "left join " + TABLE_COLLECTION_HEADER + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_INVOICE_NO + " and b." + KEY_CUSTOMER_ID + " = a." + KEY_CUSTOMER_ID + "\n" +
+                "left join " + TABLE_COLLECTION_DETAIL + " c on c." + KEY_ID_COLLECTION_HEADER_DB + " = b." + KEY_ID_COLLECTION_HEADER_DB + "\n" +
+                "left join " + TABLE_COLLECTION_ITEM + " d on d." + KEY_ID_COLLECTION_DETAIL_DB + " = c." + KEY_ID_COLLECTION_DETAIL_DB + " and a." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + "\n" +
+                "where a." + KEY_ID_ORDER_HEADER_DB + " = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
@@ -4082,7 +4222,6 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                 paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
-                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -4123,20 +4262,20 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Customer> getAllCustomerVisit(Location currentLocation, boolean coverage) {
+    public List<Customer> getAllCustomerVisit() {
         setFormatSeparator();
         SQLiteDatabase db = this.getWritableDatabase();
         List<Customer> arrayList = new ArrayList<>();
         String selectQuery = null;
         Cursor cursor = null;
         // Select All Query
-        if (coverage) {
-            selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
-            cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
-        } else {
-            selectQuery = "SELECT * FROM " + TABLE_CUSTOMER;
-            cursor = db.rawQuery(selectQuery, null);
-        }
+//        if (coverage) {
+//            selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
+//            cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
+//        } else {
+        selectQuery = "SELECT * FROM " + TABLE_CUSTOMER;
+        cursor = db.rawQuery(selectQuery, null);
+//        }
 
         if (cursor.moveToFirst()) {
             do {
@@ -4169,10 +4308,10 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
                 paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
-                if (currentLocation != null) {
-                    double distance = Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
-                    paramModel.setMileage(format.format(distance));
-                }
+//                if (currentLocation != null) {
+//                    double distance = Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
+//                    paramModel.setMileage(format.format(distance));
+//                }
 
                 paramModel.setPromoList(getPromotionRouteByIdCustomer(paramModel.getId()));
 
@@ -4295,24 +4434,6 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
-    }
-
-    public Customer getDetailCustomer(String idCustomer) {
-        Customer paramModel = new Customer();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCustomer});
-
-        if (cursor.moveToFirst()) {
-            paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
-            paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
-            paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
-            paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
-        }
-        cursor.close();
-        return paramModel;
     }
 
     public List<Material> getAllDetailOrder(Order header) {
@@ -4504,7 +4625,7 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public List<Customer> getAllNonRouteCustomer() {
+    public List<Customer> getAllSalesmanCustomer() {
         setFormatSeparator();
         List<Customer> arrayList = new ArrayList<>();
         // Select All Query
@@ -4512,6 +4633,51 @@ public class Database extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
+                paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+                paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
+                paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
+                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
+                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
+                paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
+                paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
+                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
+                paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
+                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
+                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
+                paramModel.setRoute(false);
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Customer> getAllNonRouteCustomer() {
+        setFormatSeparator();
+        List<Customer> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " not like ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
 
         if (cursor.moveToFirst()) {
             do {
@@ -4565,6 +4731,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));
@@ -5350,6 +5517,40 @@ public class Database extends SQLiteOpenHelper {
         return paramModel;
     }
 
+    public StockRequest getDetailStockRequest(int idHeader) {
+        StockRequest paramModel = new StockRequest();
+        // Select All Query
+        String selectQuery = "SELECT* FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? limit 1";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(idHeader)});
+
+        if (cursor.moveToFirst()) {
+            paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+            paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+            paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+        }
+        cursor.close();
+        return paramModel;
+    }
+
+    public Customer getDetailCustomer(String idCustomer) {
+        Customer paramModel = new Customer();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCustomer});
+
+        if (cursor.moveToFirst()) {
+            paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+            paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+        }
+        cursor.close();
+        return paramModel;
+    }
+
     public double getPrice(Material material) {
         double price = 0;
         int conversion = 0;
@@ -5808,13 +6009,17 @@ public class Database extends SQLiteOpenHelper {
                 result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
                 result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
-                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
+                result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
                 result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
                 result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
-                result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
-                result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
-                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
-                result.setPhotoCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_CHECK_OUT_REASON)));
+                result.setIdNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_VISIT_REASON)));
+                result.setNameNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_VISIT_REASON)));
+                result.setDescNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_VISIT_REASON)));
+                result.setPhotoNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_VISIT_REASON)));
+                result.setIdNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_BUY_REASON)));
+                result.setNameNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_BUY_REASON)));
+                result.setDescNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_BUY_REASON)));
+                result.setPhotoNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_BUY_REASON)));
             }
         }
         cursor.close();
@@ -5849,23 +6054,436 @@ public class Database extends SQLiteOpenHelper {
                 result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
                 result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
-                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
+                result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
                 result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
                 result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
-                result.setIdCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CHECK_OUT_REASON)));
-                result.setNameCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CHECK_OUT_REASON)));
-                result.setDescCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_CHECK_OUT_REASON)));
-                result.setPhotoCheckOutReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_CHECK_OUT_REASON)));
+                result.setIdNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_VISIT_REASON)));
+                result.setNameNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_VISIT_REASON)));
+                result.setDescNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_VISIT_REASON)));
+                result.setPhotoNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_VISIT_REASON)));
+                result.setIdNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_BUY_REASON)));
+                result.setNameNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_BUY_REASON)));
+                result.setDescNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_BUY_REASON)));
+                result.setPhotoNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_BUY_REASON)));
             }
         }
         cursor.close();
         return result;
     }
 
-    //update
-    public void updateVisit(VisitSalesman param, String username) {
+    //sync offline
+    public List<Customer> getAllCustomerCheckOut() {
         SQLiteDatabase db = this.getWritableDatabase();
+        List<Customer> arrayList = new ArrayList<>();
+        String selectQuery = null, selectQueryNoo = null;
+        Cursor cursor = null;
+        selectQuery = "SELECT * FROM " + TABLE_CUSTOMER + " where " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT;
+        selectQueryNoo = "SELECT * FROM " + TABLE_NOO + " where " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT;
+        cursor = db.rawQuery(selectQuery, null);
 
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor = db.rawQuery(selectQueryNoo, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Customer> getAllNoo() {
+        List<Customer> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_IS_SYNC + " = 0 and " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer paramModel = new Customer();
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
+                paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NOO)));
+                paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
+                paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
+                paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
+                paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
+                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setIdKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
+                paramModel.setKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
+                paramModel.setIdKecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
+                paramModel.setKecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KECAMATAN)));
+                paramModel.setIdKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KOTA_KABUPATEN)));
+                paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
+                paramModel.setIdProvinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PROVINSI)));
+                paramModel.setProvinsi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROVINSI)));
+                paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
+                paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
+                paramModel.setNpwp_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NPWP)));
+                paramModel.setNpwp_address(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NPWP)));
+                paramModel.setStatus_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS_NPWP)));
+                paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
+                paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
+//                paramModel.setNik(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_NIK_PEMILIK)));
+                paramModel.setStatus_toko(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS_TOKO)));
+                paramModel.setLocation(cursor.getString(cursor.getColumnIndexOrThrow(KEY_LOKASI)));
+                paramModel.setJenis_usaha(cursor.getString(cursor.getColumnIndexOrThrow(KEY_JENIS_USAHA)));
+                paramModel.setLama_usaha(cursor.getString(cursor.getColumnIndexOrThrow(KEY_LAMA_USAHA)));
+                paramModel.setSuku(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SUKU)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
+                paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
+                paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+//                paramModel.setPhotoKtp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_KTP)));
+//                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
+//                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<VisitSalesman> getAllVisitSalesman() {
+        List<VisitSalesman> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_VISIT_SALESMAN + " WHERE " + KEY_IS_SYNC + " = 0 and " + KEY_CHECK_OUT_TIME + " != null";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                VisitSalesman result = new VisitSalesman();
+                result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT_SALESMAN_DB)));
+                result.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                result.setIdSalesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
+                result.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                result.setCheckInTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_IN_TIME)));
+                result.setCheckOutTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_OUT_TIME)));
+                result.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                result.setResumeTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_RESUME_TIME)));
+                result.setPauseTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PAUSE_TIME)));
+                result.setLatCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_IN)));
+                result.setLongCheckIn(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_IN)));
+                result.setLatCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_CHECK_OUT)));
+                result.setLongCheckOut(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_CHECK_OUT)));
+                result.setInside(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)) != 0);
+                result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
+                result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
+                result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
+                result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
+                result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
+                result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
+                result.setIdNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_VISIT_REASON)));
+                result.setNameNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_VISIT_REASON)));
+                result.setDescNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_VISIT_REASON)));
+                result.setPhotoNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_VISIT_REASON)));
+                result.setIdNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_BUY_REASON)));
+                result.setNameNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_BUY_REASON)));
+                result.setDescNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_BUY_REASON)));
+                result.setPhotoNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_BUY_REASON)));
+                arrayList.add(result);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllStoreCheckCheckOut(String id) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select * from " + TABLE_STORE_CHECK + " where " + KEY_IS_SYNC + " = 0 and " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STORE_CHECK_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Order> getAllOrderHeader(String idCust, String username) {
+        List<Order> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_IS_SYNC + " = 0 and " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Order paramModel = new Order();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setId_salesman(username);
+                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
+                paramModel.setIdStockHeaderDb(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+                paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
+                paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setMaterialList(getAllOrderDetail(paramModel.getIdHeader()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllOrderDetail(String idHeader) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_DETAIL_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setIdStockRequestHeaderDB(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockRequestHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setTotalDiscount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_DISCOUNT)));
+                paramModel.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+                paramModel.setDiskonList(getAllOrderDetailDiscount(paramModel.getIdheader()));
+                paramModel.setExtraItem(getAllOrderDetailExtra(paramModel.getIdheader()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Discount> getAllOrderDetailDiscount(String idDetail) {
+        List<Discount> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL_DISCOUNT + " WHERE " + KEY_ID_ORDER_DETAIL_DB + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idDetail});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Discount disc = new Discount();
+                disc.setKeydiskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_ID)));
+                disc.setKeydiskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_NAME)));
+                disc.setValuediskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_PRICE)));
+                arrayList.add(disc);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllOrderDetailExtra(String idDetail) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL_EXTRA + " WHERE " + KEY_ID_ORDER_DETAIL_DB + " = ? ";
+        ;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idDetail});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material extra = new Material();
+                extra.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                extra.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                extra.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                extra.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                extra.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                extra.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                extra.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                extra.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                arrayList.add(extra);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllReturnCheckOut(String id) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " where " + KEY_IS_SYNC + " = 0 and " + KEY_CUSTOMER_ID + " = ?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_RETURN_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setExpiredDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_EXPIRED_DATE)));
+                paramModel.setCondition(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CONDITION)));
+                paramModel.setIdReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_REASON_RETURN)));
+                paramModel.setNameReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_REASON_RETURN)));
+                paramModel.setDescReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_REASON_RETURN)));
+                paramModel.setPhotoReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_REASON_RETURN)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionHeader> getAllCollectionHeader(String id) {
+        List<CollectionHeader> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_HEADER + " WHERE " + KEY_IS_SYNC + " = 0 and " + KEY_CUSTOMER_ID + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionHeader paramModel = new CollectionHeader();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));
+                paramModel.setTfList(getAllCollectionDetailTransfer(paramModel.getIdHeader()));
+                paramModel.setGiroList(getAllCollectionDetailGiro(paramModel.getIdHeader()));
+                paramModel.setChequeList(getAllCollectionDetailCheque(paramModel.getIdHeader()));
+                paramModel.setLainList(getAllCollectionDetailLain(paramModel.getIdHeader()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<CollectionDetail> getAllCollectionDetail() {
+        List<CollectionDetail> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_IS_SYNC + " = 0 ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                CollectionDetail paramModel = new CollectionDetail();
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTypePayment(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PAYMENT)));
+                paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
+                paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO)));
+                paramModel.setTglCair(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setIdBankASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_BANK)));
+                paramModel.setBankNameASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_BANK)));
+                paramModel.setIdBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUST_BANK)));
+                paramModel.setBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CUST_BANK)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllCollectionItem() {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_IS_SYNC + " = 0 ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdItem(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_ITEM_DB)));
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setAmountPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    //sync offline
+
+    //update
+    public void updateVisit(VisitSalesman param, String username, boolean notBuy) {
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_STATUS, param.getStatus());
         switch (param.getStatus()) {
@@ -5887,10 +6505,18 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
                 values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
                 values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
-                values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-                values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-                values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
+
+                if (notBuy) {
+                    values.put(KEY_ID_NOT_BUY_REASON, param.getIdNotBuyReason());
+                    values.put(KEY_NAME_NOT_BUY_REASON, param.getNameNotBuyReason());
+                    values.put(KEY_DESC_NOT_BUY_REASON, param.getDescNotBuyReason());
+                    values.put(KEY_PHOTO_NOT_BUY_REASON, param.getPhotoNotBuyReason());
+                } else {
+                    values.put(KEY_ID_NOT_VISIT_REASON, param.getIdNotVisitReason());
+                    values.put(KEY_NAME_NOT_VISIT_REASON, param.getNameNotVisitReason());
+                    values.put(KEY_DESC_NOT_VISIT_REASON, param.getDescNotVisitReason());
+                    values.put(KEY_PHOTO_NOT_VISIT_REASON, param.getPhotoNotVisitReason());
+                }
                 break;
         }
         values.put(KEY_UPDATED_BY, username);
@@ -5900,39 +6526,68 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
-    public void updateVisitNoo(VisitSalesman param, String username) {
+    public void updateSyncNoo(Customer req) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_STATUS, param.getStatus());
-        switch (param.getStatus()) {
-            case Constants.PAUSE_VISIT:
-                values.put(KEY_PAUSE_TIME, param.getPauseTime());
-                values.put(KEY_ID_PAUSE_REASON, param.getIdPauseReason());
-                values.put(KEY_NAME_PAUSE_REASON, param.getNamePauseReason());
-                values.put(KEY_DESC_PAUSE_REASON, param.getDescPauseReason());
-                values.put(KEY_PHOTO_PAUSE_REASON, param.getPhotoPauseReason());
-                values.put(KEY_DURATION, param.getTimer());
-                values.put(KEY_RESUME_TIME, param.getResumeTime());
-                break;
-            case Constants.CHECK_IN_VISIT:
-                values.put(KEY_RESUME_TIME, param.getResumeTime());
-                values.put(KEY_DURATION, param.getTimer());
-                break;
-            case Constants.CHECK_OUT_VISIT:
-                values.put(KEY_CHECK_OUT_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
-                values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
-                values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
-                values.put(KEY_ID_CHECK_OUT_REASON, param.getIdCheckOutReason());
-                values.put(KEY_NAME_CHECK_OUT_REASON, param.getNameCheckOutReason());
-                values.put(KEY_DESC_CHECK_OUT_REASON, param.getDescCheckOutReason());
-                values.put(KEY_PHOTO_CHECK_OUT_REASON, param.getPhotoCheckOutReason());
-                break;
-        }
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        db.update(TABLE_VISIT_SALESMAN_NOO, values, KEY_ID_NOO_DB + " = ? ", new String[]{param.getCustomerId()});
+        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{req.getId()});
         //db.close();
+    }
+    public void updateSyncVisitSalesman(VisitSalesman req) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_VISIT_SALESMAN, values, KEY_ID_VISIT_SALESMAN_DB + " = ?", new String[]{req.getIdHeader()});
+        //db.close();
+    }
+
+    public void updateSyncOrderHeader(Order req) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{req.getIdHeader()});
+        //db.close();
+    }
+    public void updateSyncCollectionHeader(CollectionHeader req) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_COLLECTION_HEADER, values, KEY_ID_COLLECTION_HEADER_DB + " = ?", new String[]{req.getIdHeader()});
+        //db.close();
+    }
+
+    public void updateSyncStoreCheck(Map req) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        db.update(TABLE_STORE_CHECK, values, KEY_ID_STORE_CHECK_DB + " = ? ", new String[]{req.get("id_mobile").toString()});
+    }
+
+    public void updateSyncReturn(Map req) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_IS_SYNC, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        db.update(TABLE_RETURN, values, KEY_ID_RETURN_DB + " = ? ", new String[]{req.get("id_mobile").toString()});
     }
 
     public void updatePaidInvoice(Map request) {
@@ -5970,7 +6625,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_UPDATED_BY, username);
         values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
-        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
+        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getId()});
         //db.close();
     }
 

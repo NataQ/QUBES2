@@ -2,317 +2,546 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="10dp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/corner_dialog">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="18dp">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="20dp">
-
-            <TextView
-                android:id="@+id/txtTitle"
-                style="@style/TextView_Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:text="Sync"
-                android:textAllCaps="false"
-                android:textColor="@color/black_aspp"
-                android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="-20dp"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextView_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="Sync Master Data"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black_aspp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/linearMasterData"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
+                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:id="@+id/linearReason"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp"
-                            app:tint="@color/orange_aspp" />
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
 
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp"
+                                app:tint="@color/orange_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/reason"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearBank"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/masterData"
-                            android:textColor="@color/gray8_aspp" />
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Bank"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/linearCollection"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
+                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:id="@+id/linearDaerahTingkat"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
 
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Daerah Tingkat"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+                        <LinearLayout
+                            android:id="@+id/linearParameter"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="Collection"
-                            android:textColor="@color/gray8_aspp" />
-                    </LinearLayout>
-                </LinearLayout>
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
 
-                    <LinearLayout
-                        android:id="@+id/linearVisit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/navmenu5"
-                            android:textColor="@color/gray8_aspp" />
-                    </LinearLayout>
-
-                    <!--        <View-->
-                    <!--            android:layout_width="1dp"-->
-                    <!--            android:layout_height="match_parent"-->
-                    <!--            android:background="@color/grey"/>-->
-                    <LinearLayout
-                        android:id="@+id/linearStoreCheck"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/navmenu5b"
-                            android:textColor="@color/gray8_aspp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/linearOrder"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/navmenu5c"
-                            android:textColor="@color/gray8_aspp" />
-                    </LinearLayout>
-
-                    <!--        <View-->
-                    <!--            android:layout_width="1dp"-->
-                    <!--            android:layout_height="match_parent"-->
-                    <!--            android:background="@color/grey"/>-->
-                    <LinearLayout
-                        android:id="@+id/linearReturn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/nav_item_return"
-                            android:textColor="@color/gray8_aspp" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <LinearLayout
-                        android:id="@+id/linearSyncAll"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:background="@drawable/selector_bg_account"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_sync_aspp" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_marginStart="8dp"
-                            android:text="@string/all"
-                            android:textColor="@color/gray8_aspp" />
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Parameter"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="14dp" />
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearMaterialPrice"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Material \u0026 Price"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+                        <LinearLayout
+                            android:id="@+id/linearCustomer"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Customer"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <LinearLayout
+                <TextView
+                    style="@style/TextView_Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="20dp"
+                    android:text="Sync Transaction"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black_aspp"
+                    android:textStyle="bold" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_broadcast"
-                        android:visibility="gone"
-                        app:tint="@color/orange_aspp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/TextView_Small"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/info_sync_all"
-                        android:textColor="@color/gray8_aspp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearVisit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp"
+                                app:tint="@color/orange_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Visit"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearNOO"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="NOO"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearStoreCheck"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/navmenu5b"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearCollection"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Collection"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearOrder"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/navmenu5c"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+                        <LinearLayout
+                            android:id="@+id/linearReturn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/nav_item_return"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearPhoto"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="Photo"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/linearSyncAll"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <TextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/all"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray9_aspp" />
+        </ScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:gravity="end"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textAllCaps="false"
-                android:textColor="@color/black_aspp"
-                android:textSize="@dimen/text_small"
-                app:cornerRadius="5dp"
-                app:strokeColor="@color/gray2_aspp"
-                app:strokeWidth="1dp" />
+                android:src="@drawable/ic_broadcast"
+                android:visibility="gone"
+                app:tint="@color/orange_aspp" />
+
+            <TextView
+                style="@style/TextView_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/info_sync_all"
+                android:textColor="@color/gray8_aspp" />
         </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="15dp"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/black_aspp"
+            android:textSize="@dimen/text_small"
+            app:cornerRadius="5dp"
+            app:strokeColor="@color/gray2_aspp"
+            app:strokeWidth="1dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

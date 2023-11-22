@@ -529,7 +529,7 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
             alertDialog.setCanceledOnTouchOutside(false);
 
             LinearLayout linSyncAll = alertDialog.findViewById(R.id.linearSyncAll);
-            LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
+//            LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
             LinearLayout linearCollection = alertDialog.findViewById(R.id.linearCollection);
             LinearLayout linSyncVisit = alertDialog.findViewById(R.id.linearVisit);
             LinearLayout linSyncStoreCheck = alertDialog.findViewById(R.id.linearStoreCheck);
@@ -545,14 +545,14 @@ public class MainActivityDrawer extends BaseActivity implements FragmentDrawer.F
                     alertDialog.dismiss();
                 }
             });
-            linSyncMasterData.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PARAM = 6;
-                    new RequestUrl().execute();
-                    alertDialog.dismiss();
-                }
-            });
+//            linSyncMasterData.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    PARAM = 6;
+//                    new RequestUrl().execute();
+//                    alertDialog.dismiss();
+//                }
+//            });
 
             linearCollection.setOnClickListener(new View.OnClickListener() {
                 @Override

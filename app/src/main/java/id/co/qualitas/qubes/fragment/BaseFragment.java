@@ -480,7 +480,7 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 initDialog(R.layout.custom_dialog_sync_menu);
 
                 LinearLayout linSyncAll = alertDialog.findViewById(R.id.linearSyncAll);
-                LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
+//                LinearLayout linSyncMasterData = alertDialog.findViewById(R.id.linearMasterData);
                 LinearLayout linearCollection = alertDialog.findViewById(R.id.linearCollection);
                 LinearLayout linSyncVisit = alertDialog.findViewById(R.id.linearVisit);
                 LinearLayout linSyncStoreCheck = alertDialog.findViewById(R.id.linearStoreCheck);
@@ -499,13 +499,13 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
                 });
 
 
-                linSyncMasterData.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        PARAM_MENU_SYNC = 1;
-                        openDialog(DIALOG_ALERT_CONFIRM);
-                    }
-                });
+//                linSyncMasterData.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        PARAM_MENU_SYNC = 1;
+//                        openDialog(DIALOG_ALERT_CONFIRM);
+//                    }
+//                });
 
                 linearCollection.setOnClickListener(new View.OnClickListener() {
                     @Override

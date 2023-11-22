@@ -879,6 +879,10 @@ public class Helper extends BaseFragment {
             weekYear = 4;
         }
 
+        if (dayWeek == 0) {
+            dayWeek = 7;
+        }
+
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
         return result;
     }
@@ -896,9 +900,12 @@ public class Helper extends BaseFragment {
 //        int dayWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (weekYear == 0) {
             weekYear = 4;
-        } else {
-            weekYear = 0;
         }
+
+        if (dayWeek == 0) {
+            dayWeek = 7;
+        }
+
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
         result2 = "P" + String.valueOf(weekYear + 2) + "H" + String.valueOf(dayWeek);
         return result + "-" + result2;

@@ -50,7 +50,9 @@ import com.google.android.gms.location.Priority;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -142,6 +144,7 @@ public class CreateNooActivity extends BaseActivity {
         llKTP.setOnClickListener(view -> {
             typeImage = 1;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             saveDataNoo();
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -151,6 +154,7 @@ public class CreateNooActivity extends BaseActivity {
         llNPWP.setOnClickListener(view -> {
             typeImage = 2;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             saveDataNoo();
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -160,6 +164,7 @@ public class CreateNooActivity extends BaseActivity {
         llOutlet.setOnClickListener(view -> {
             typeImage = 3;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             saveDataNoo();
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -355,6 +360,7 @@ public class CreateNooActivity extends BaseActivity {
         ImageView photo = dialog.findViewById(R.id.photo);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        layoutGallery.setVisibility(View.VISIBLE);
         btnSave.setVisibility(View.GONE);
 
         switch (typeImage) {
@@ -1193,7 +1199,6 @@ public class CreateNooActivity extends BaseActivity {
             try {
                 f.createNewFile();
                 Utils.copyFile(new File(Utils.getRealPathFromURI(CreateNooActivity.this, data.getData())), f);
-
                 switch (typeImage) {
                     case 1:
                         imageType.setPhotoKTP(selectedImage);
@@ -1204,7 +1209,6 @@ public class CreateNooActivity extends BaseActivity {
                         break;
                     case 2:
                         imageType.setPhotoNPWP(selectedImage);
-//                imgNPWP.setImageURI(selectedImage);
                         Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
                         imgNPWP.setVisibility(View.VISIBLE);
                         imgDeleteNPWP.setVisibility(View.VISIBLE);
@@ -1212,7 +1216,6 @@ public class CreateNooActivity extends BaseActivity {
                         break;
                     case 3:
                         imageType.setPhotoOutlet(selectedImage);
-//                imgOutlet.setImageURI(selectedImage);
                         Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
                         imgOutlet.setVisibility(View.VISIBLE);
                         imgDeleteOutlet.setVisibility(View.VISIBLE);
@@ -1221,9 +1224,7 @@ public class CreateNooActivity extends BaseActivity {
                 }
 
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-//        SessionManagerQubes.setImageType(imageType);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -1244,6 +1245,7 @@ public class CreateNooActivity extends BaseActivity {
             try {
                 boolean result = false;
                 saveDataNoo();
+                customerNoo.setId(Constants.ID_NOO_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 int header = database.addNoo(customerNoo, user.getUsername());
                 if (header == -1) {
                     result = false;

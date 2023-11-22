@@ -43,8 +43,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
@@ -165,6 +167,7 @@ public class ReturnAddActivity extends BaseActivity {
                 header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
                 header.put("date", today);
                 header.put("username", user.getUsername());
+                header.put("id_header", Constants.ID_RT_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteReturn(header);
 
                 for (Material material : mList) {
@@ -218,6 +221,9 @@ public class ReturnAddActivity extends BaseActivity {
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
         if (mList != null && mList.size() != 0) {
             today = mList.get(0).getDate();
+            if(today == null){
+                today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
+            }
             txtReturnDate.setText(Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, today));
         } else {
             txtReturnDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
@@ -358,6 +364,7 @@ public class ReturnAddActivity extends BaseActivity {
             List<Material> addList = new ArrayList<>();
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
+                    mat.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
                     addList.add(mat);
                 }
             }

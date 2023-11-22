@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
@@ -64,13 +65,12 @@ public class OrderAddActivity extends BaseActivity {
     private WSMessage wsMessage;
     boolean getDiscount = false;
     private StockRequest stockHeader;
-    String ket = null;
+    String ket = "";
     private boolean overLK = false, doubleBon = false;
     Calendar todayDate;
     Date fromDate;
     String fromDateString, paramFromDate;
     Order headerSave = new Order();
-    private int idHeader = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -273,7 +273,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private boolean checkOverLk() {
         boolean result = false;
-        ket = null;
+        ket = "";
         if (!Helper.isEmpty(txtOmzet)) {
             String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
             if (omzet.equals("0")) {
@@ -335,18 +335,17 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private boolean checkDoubleBon() {
-        ket = null;
-        boolean result = true;
+        ket = "";
         boolean isMaxBon = false;
         for (Material material : mList) {
             double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
             if (limitBon != 0) {
                 isMaxBon = true;
                 ket = ket + "Double Bon : " + material.getNama() + "\n";
-                return false;
+                break;
             }
         }
-        return result;
+        return isMaxBon;
     }
 
     private void saveOrderSession() {
@@ -728,9 +727,8 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);
                     headerSave.setStatusPaid(false);
-
-                    idHeader = database.addOrder(headerSave, user);
-                    saveOrder = true;
+                    headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                    saveOrder = database.addOrder(headerSave, user);
                     return null;
                 }
             } catch (Exception ex) {
@@ -774,10 +772,9 @@ public class OrderAddActivity extends BaseActivity {
                 }
             } else {
                 progress.dismiss();
-                if (idHeader != -1) {
+                if (saveOrder) {
                     setToast("Save order Success");
                     if (payNow) {
-                        headerSave.setIdHeader(String.valueOf(idHeader));
                         SessionManagerQubes.setOrder(headerSave);
                         SessionManagerQubes.setCollectionSource(3);
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);

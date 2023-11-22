@@ -121,7 +121,7 @@ public class Constants {
     public static final int FAILURE_RESULT = 1;
 
     public static String URL = "http://192.168.1.10:8282";
-//    public static String IP = "192.168.1.13:8282";
+    //    public static String IP = "192.168.1.13:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -464,9 +464,13 @@ public class Constants {
     public static final String API_GET_TARGET_FOR_SUMMARY_MONTHLY = "//api/v1/target/getMelsSummaryMonthly";
 
     public static final String ID_VP_MOBILE = "VPM";
-    public static final String ID_SC_MOBILE = "CM";
-    public static final String ID_OP_MOBILE = "OM";
-    public static final String ID_RT_MOBILE = "RM";
+    public static final String ID_SC_MOBILE = "SC";//store check
+    public static final String ID_OP_MOBILE = "OM";//order mobile
+    public static final String ID_RT_MOBILE = "RT";//return
+    public static final String ID_NOO_MOBILE = "NOO";//noo
+    public static final String ID_VS_MOBILE = "VS";//visit salesman
+    public static final String ID_CI_MOBILE = "CI";//collection invoice
+    public static final String ID_CO_MOBILE = "CO";//collection order
 
     public static final String ATTACHMENT = "attachment";
 
@@ -483,11 +487,11 @@ public class Constants {
 
     public static final String API_SYNC_MASTER_DATA = "/api/v1/sync/syncMasterData";
     public static final String API_SYNC_ORDER_PLAN = "/api/v1/sync/syncOrderPlan";
-    public static final String API_SYNC_VISIT = "/api/v1/sync/syncVisit";
-    public static final String API_SYNC_STORE_CHECK = "/api/v1/sync/syncStoreCheck";
-    public static final String API_SYNC_ORDER = "/api/v1/sync/syncOrder";
-    public static final String API_SYNC_RETURN = "/api/v1/sync/syncReturn";
-    public static final String API_GET_IMAGE = "/api/v1/images/getImages";
+//    public static final String API_SYNC_VISIT = "/api/v1/sync/syncVisit";
+//    public static final String API_SYNC_STORE_CHECK = "/api/v1/sync/syncStoreCheck";
+//    public static final String API_SYNC_ORDER = "/api/v1/sync/syncOrder";
+//    public static final String API_SYNC_RETURN = "/api/v1/sync/syncReturn";
+//    public static final String API_GET_IMAGE = "/api/v1/images/getImages";
 
     public static final String PARAM_FOR_DIALOG = "dialog param";
     public static final String SELECTED_CUSTOMER_ORDER_PLAN = "sel cus op";
@@ -515,7 +519,9 @@ public class Constants {
     public static final String API_INVOICE_VERIFICATION = "updateVerificationInvoice";
     public static final String API_GET_TODAY_CUSTOMER = "getTodayCustomer";
     public static final String API_GET_START_DAY = "startDay";
+    public static final String API_GET_START_VISIT = "getStartVisit";
     public static final String API_GET_START_DAY_MULTI_PART = "startDayMultiPart";
+    public static final String API_GET_END_DAY_MULTI_PART = "endDayMultiPart";
     public static final String API_GET_END_DAY = "endDay";
     public static final String API_GET_DISCOUNT_ORDER = "getDiscount";
     public static final String API_SAVE_COLLECTION = "saveCollection";
@@ -528,4 +534,18 @@ public class Constants {
     public static final String API_GET_IP_ADDRESS = "getIPAddress";
     public static final String API_UPDATE_LOCATION_SALESMAN = "updateLocationSalesman";
     public static final String API_SYNC_OFFLINE_DATA = "syncOfflineData";
+    public static final String API_GET_MASTER_REASON = "getMasterReason";
+    public static final String API_GET_MASTER_BANK = "getMasterBank";
+    public static final String API_GET_MASTER_DAERAH_TINGKAT = "getMasterDaerahTingkat";
+    public static final String API_GET_MASTER_PARAMETER = "getMasterParameter";
+    public static final String API_GET_MASTER_MATERIAL_PRICE = "getMasterMaterial";
+    public static final String API_GET_MASTER_CUSTOMER = "getMasterCustomer";
+    public static final String API_SYNC_CUSTOMER_NOO = "syncCustomerNoo";
+    public static final String API_SYNC_VISIT = "syncVisit";
+    public static final String API_SYNC_STORE_CHECK = "syncStoreCheck";
+    public static final String API_SYNC_ORDER = "syncOrder";
+    public static final String API_SYNC_COLLECTION = "syncCollection";
+    public static final String API_SYNC_RETURN = "syncReturn";
+    public static final String API_SYNC_PHOTO = "syncPhoto";
+    public static final String API_GET_IMAGE = "getImage";
 }

@@ -238,6 +238,7 @@ public class DailySalesmanActivity extends BaseActivity {
         llKTP.setOnClickListener(view -> {
             typeImage = 8;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -246,6 +247,7 @@ public class DailySalesmanActivity extends BaseActivity {
         llNPWP.setOnClickListener(view -> {
             typeImage = 9;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
             openDialogPhoto();
         });
@@ -253,6 +255,7 @@ public class DailySalesmanActivity extends BaseActivity {
         llOutlet.setOnClickListener(view -> {
             typeImage = 10;
             imageType.setPosImage(typeImage);
+            imageType.setIdName(user.getUsername());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
             openDialogPhoto();
         });
@@ -413,14 +416,15 @@ public class DailySalesmanActivity extends BaseActivity {
 
         FilteredSpinnerReasonAdapter spinnerAdapter = new FilteredSpinnerReasonAdapter(this, reasonList, (reason, adapterPosition) -> {
             alertDialog.dismiss();
-            visitSales.setIdCheckOutReason(String.valueOf(reason.getId()));
-            visitSales.setNameCheckOutReason(reason.getDescription());
+            visitSales.setIdNotBuyReason(String.valueOf(reason.getId()));
+            visitSales.setNameNotBuyReason(reason.getDescription());
             if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
                 typeImage = 12;
                 imageType.setPosImage(typeImage);
                 imageType.setVisitSalesman(visitSales);
                 imageType.setReason(reason);
                 imageType.setType(2);//1 => pause, 2 => checkout
+                imageType.setIdName(user.getUsername());
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
                 openDialogPhotoReason(2);
             } else {
@@ -476,7 +480,11 @@ public class DailySalesmanActivity extends BaseActivity {
 
         visitSales.setStatus(Constants.CHECK_OUT_VISIT);
 
-        database.updateVisit(visitSales, user.getUsername());
+        if (visitSales.getIdNotBuyReason() != null) {
+            database.updateVisit(visitSales, user.getUsername(), true);
+        } else {
+            database.updateVisit(visitSales, user.getUsername(), false);
+        }
         SessionManagerQubes.setOutletHeader(outletHeader);
         onBackPressed();
     }
@@ -508,6 +516,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imageType.setVisitSalesman(visitSales);
                 imageType.setReason(reason);
                 imageType.setType(1);//1 => pause, 2 => checkout
+                imageType.setIdName(user.getUsername());
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
                 openDialogPhotoReason(1);
             } else {
@@ -650,8 +659,8 @@ public class DailySalesmanActivity extends BaseActivity {
                         visitSales.setPhotoPauseReason(imageType.getPhotoReason());
                         pauseTimer();
                     } else {
-                        visitSales.setDescCheckOutReason(descReason[0]);
-                        visitSales.setPhotoCheckOutReason(imageType.getPhotoReason());
+                        visitSales.setDescNotBuyReason(descReason[0]);
+                        visitSales.setPhotoNotBuyReason(imageType.getPhotoReason());
                         checkLocationPermission();
                     }
                     dialog.dismiss();
@@ -915,7 +924,7 @@ public class DailySalesmanActivity extends BaseActivity {
 //        visitSales.setPauseTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
         visitSales.setResumeTime(null);
         visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
-        database.updateVisit(visitSales, user.getUsername());
+        database.updateVisit(visitSales, user.getUsername(), false);
 
         txtStatus.setText("Resume");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
@@ -936,7 +945,7 @@ public class DailySalesmanActivity extends BaseActivity {
 //        visitSales.setResumeTime(String.valueOf(curDate.getTime()));
 //        visitSales.setTimer(String.valueOf(timerValue.getBase()));
 
-        database.updateVisit(visitSales, user.getUsername());
+        database.updateVisit(visitSales, user.getUsername(), false);
         SessionManagerQubes.setOutletHeader(outletHeader);
 
         txtStatus.setText("Pause");

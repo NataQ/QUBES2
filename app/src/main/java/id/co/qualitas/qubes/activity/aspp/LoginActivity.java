@@ -33,6 +33,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -61,6 +62,7 @@ import id.co.qualitas.qubes.model.LoginResponse;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Parameter;
 import id.co.qualitas.qubes.model.PriceCode;
+import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
@@ -225,140 +227,6 @@ public class LoginActivity extends AppCompatActivity {
         Helper.removeItemParam(Constants.USER_DETAIL);
     }
 
-//    private void setDataDummyUser() {
-//        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "detailUser.json");
-//        Gson gson = new Gson();
-//        Type resultType = new TypeToken<WSMessage>() {
-//        }.getType();
-//
-//        WSMessage result = gson.fromJson(jsonFileString, resultType);
-//        if (result != null) {
-//            LoginResponse response = Helper.ObjectToGSON(result.getResult(), LoginResponse.class);
-//            userResponse = Helper.ObjectToGSON(response.getUserDetail(), User.class);
-//            userResponse.setUserLogin(userId);
-//            userResponse.setImei(Helper.getImei(getApplicationContext()));
-////            userResponse.setToken(loginResponse.getAccess_token());
-//            userResponse.setRegis_id(registerID);
-//
-//            List<DepoRegion> arrayList = new ArrayList<>();
-//            DepoRegion[] paramArray = Helper.ObjectToGSON(response.getDepoRegion(), DepoRegion[].class);
-//            Collections.addAll(arrayList, paramArray);
-//            userResponse.setDepoRegionList(arrayList);
-//            SessionManagerQubes.setUserProfile(userResponse);
-//            SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
-//            setDataDummyMaster();
-//        } else {
-//            setToast("failed");
-//        }
-//    }
-//
-//    private void setDataDummyMaster() {
-//        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "masterData.json");
-//        Gson gson = new Gson();
-//        Type resultType = new TypeToken<WSMessage>() {
-//        }.getType();
-//
-//        WSMessage result = gson.fromJson(jsonFileString, resultType);
-//        if (result != null) {
-//            Map response = (Map) result.getResult();
-//
-//            List<Reason> reasonList = new ArrayList<>();
-//            Reason[] paramArray = Helper.ObjectToGSON(response.get("listReason"), Reason[].class);
-//            Collections.addAll(reasonList, paramArray);
-//            database.deleteMasterReason();
-//            for (Reason reason : reasonList) {
-//                database.addMasterReason(reason, userId);
-//            }
-//
-//            List<Bank> bankList = new ArrayList<>();
-//            Bank[] paramArray1 = Helper.ObjectToGSON(response.get("listBank"), Bank[].class);
-//            Collections.addAll(bankList, paramArray1);
-//            database.deleteMasterBank();
-//            for (Bank param : bankList) {
-//                database.addMasterBank(param, userId);
-//            }
-//
-//            List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
-//            DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.get("listDaerahTingkat"), DaerahTingkat[].class);
-//            Collections.addAll(daerahTingkatList, paramArray3);
-//            database.deleteMasterDaerahTingkat();
-//            for (DaerahTingkat param : daerahTingkatList) {
-//                database.addMasterDaerahTingkat(param, userId);
-//            }
-//
-//            List<Material> materialList = new ArrayList<>();
-//            Material[] paramArray4 = Helper.ObjectToGSON(response.get("listMaterial"), Material[].class);
-//            Collections.addAll(materialList, paramArray4);
-//            database.deleteMasterMaterial();
-//            for (Material param : materialList) {
-//                database.addMasterMaterial(param, userId);
-//            }
-//
-//            List<Uom> uomList = new ArrayList<>();
-//            Uom[] paramArray5 = Helper.ObjectToGSON(response.get("listUom"), Uom[].class);
-//            Collections.addAll(uomList, paramArray5);
-//            database.deleteMasterUom();
-//            for (Uom param : uomList) {
-//                database.addMasterUom(param, userId);
-//            }
-//
-//            List<PriceCode> priceList = new ArrayList<>();
-//            PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
-//            Collections.addAll(priceList, paramArray6);
-//            database.deleteMasterPriceCode();
-//            for (PriceCode param : priceList) {
-//                database.addMasterPriceCode(param, userId);
-//            }
-//
-//            List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
-//            SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
-//            Collections.addAll(salesPriceHeaderList, paramArray7);
-//            database.deleteMasterSalesPriceHeader();
-//            for (SalesPriceHeader param : salesPriceHeaderList) {
-//                database.addMasterSalesPriceHeader(param, userId);
-//            }
-//
-//            List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
-//            SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
-//            Collections.addAll(salesPriceDetailList, paramArray8);
-//            database.deleteMasterSalesPriceDetail();
-//            for (SalesPriceDetail param : salesPriceDetailList) {
-//                database.addMasterSalesPriceDetail(param, userId);
-//            }
-//
-//            List<Parameter> parameterList = new ArrayList<>();
-//            Parameter[] paramArray9 = Helper.ObjectToGSON(response.get("parameter"), Parameter[].class);
-//            Collections.addAll(parameterList, paramArray9);
-//            database.deleteMasterParameter();
-//            for (Parameter param : parameterList) {
-//                database.addMasterParameter(param, userId);
-//            }
-//
-//            List<CustomerType> cusTypeList = new ArrayList<>();
-//            CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
-//            Collections.addAll(cusTypeList, paramArray10);
-//            database.deleteMasterCustomerType();
-//            for (CustomerType param : cusTypeList) {
-//                database.addMasterCustomerType(param, userId);
-//            }
-//
-//            List<Material> minOrderList = new ArrayList<>();
-//            Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
-//            Collections.addAll(minOrderList, paramArray11);
-//            database.deleteMasterMinimalOrder();
-//            for (Material param : minOrderList) {
-//                database.addLimitBon(param, userId);
-//            }
-//
-//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
-//        } else {
-//            setToast("failed");
-//        }
-//    }
-
-
     private class RequestUrl extends AsyncTask<Void, Void, LoginResponse> {
 
         @Override
@@ -402,17 +270,16 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     return null;
                 } else if (PARAM == 4) {
-                    String URL_ = Constants.API_MASTER_DATA_GET;
+                    String URL_ = Constants.API_GET_MASTER_REASON;
                     User param = new User();
-                    param.setUsername(userId);
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
                     return null;
-                } else {
-                    Map response = (Map) messageResponse.getResult();
-
+                } else if (PARAM == 5) {
                     List<Reason> reasonList = new ArrayList<>();
-                    Reason[] paramArray = Helper.ObjectToGSON(response.get("listReason"), Reason[].class);
+                    Reason[] paramArray = Helper.ObjectToGSON(messageResponse.getResult(), Reason[].class);
                     if (paramArray != null) {
                         Collections.addAll(reasonList, paramArray);
                         database.deleteMasterReason();
@@ -420,9 +287,19 @@ public class LoginActivity extends AppCompatActivity {
                     for (Reason reason : reasonList) {
                         database.addMasterReason(reason, userResponse.getUsername());
                     }
-
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 6) {
+                    String URL_ = Constants.API_GET_MASTER_BANK;
+                    User param = new User();
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
+                    return null;
+                } else if (PARAM == 7) {
                     List<Bank> bankList = new ArrayList<>();
-                    Bank[] paramArray1 = Helper.ObjectToGSON(response.get("listBank"), Bank[].class);
+                    Bank[] paramArray1 = Helper.ObjectToGSON(messageResponse.getResult(), Bank[].class);
                     if (paramArray1 != null) {
                         Collections.addAll(bankList, paramArray1);
                         database.deleteMasterBank();
@@ -430,9 +307,19 @@ public class LoginActivity extends AppCompatActivity {
                     for (Bank param : bankList) {
                         database.addMasterBank(param, userResponse.getUsername());
                     }
-
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 8) {
+                    String URL_ = Constants.API_GET_MASTER_DAERAH_TINGKAT;
+                    User param = new User();
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
+                    return null;
+                } else if (PARAM == 9) {
                     List<DaerahTingkat> daerahTingkatList = new ArrayList<>();
-                    DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(response.get("listDaerahTingkat"), DaerahTingkat[].class);
+                    DaerahTingkat[] paramArray3 = Helper.ObjectToGSON(messageResponse.getResult(), DaerahTingkat[].class);
                     if (paramArray3 != null) {
                         Collections.addAll(daerahTingkatList, paramArray3);
                         database.deleteMasterDaerahTingkat();
@@ -440,7 +327,18 @@ public class LoginActivity extends AppCompatActivity {
                     for (DaerahTingkat param : daerahTingkatList) {
                         database.addMasterDaerahTingkat(param, userResponse.getUsername());
                     }
-
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 10) {
+                    String URL_ = Constants.API_GET_MASTER_MATERIAL_PRICE;
+                    User param = new User();
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
+                    return null;
+                } else if (PARAM == 11) {
+                    Map response = (Map) messageResponse.getResult();
                     List<Material> materialList = new ArrayList<>();
                     Material[] paramArray4 = Helper.ObjectToGSON(response.get("listMaterial"), Material[].class);
                     if (paramArray4 != null) {
@@ -491,6 +389,26 @@ public class LoginActivity extends AppCompatActivity {
                         database.addMasterSalesPriceDetail(param, userResponse.getUsername());
                     }
 
+                    List<Material> minOrderList = new ArrayList<>();
+                    Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
+                    Collections.addAll(minOrderList, paramArray11);
+                    database.deleteMasterMinimalOrder();
+                    for (Material param : minOrderList) {
+                        database.addLimitBon(param, userId);
+                    }
+
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 12) {
+                    String URL_ = Constants.API_GET_MASTER_PARAMETER;
+                    User param = new User();
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
+                    return null;
+                } else if (PARAM == 13) {
+                    Map response = (Map) messageResponse.getResult();
                     List<Parameter> parameterList = new ArrayList<>();
                     Parameter[] paramArray9 = Helper.ObjectToGSON(response.get("parameter"), Parameter[].class);
                     if (paramArray9 != null) {
@@ -501,6 +419,23 @@ public class LoginActivity extends AppCompatActivity {
                         database.addMasterParameter(param, userResponse.getUsername());
                     }
 
+                    if (response.get("max_visit") != null) {
+                        userResponse.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
+                    }
+
+                    SessionManagerQubes.setUserProfile(userResponse);
+                    saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 14) {
+                    String URL_ = Constants.API_GET_MASTER_CUSTOMER;
+                    User param = new User();
+                    param.setUserLogin(userId);
+                    param.setUsername(userResponse.getUsername());
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, userResponse);
+                    return null;
+                } else {
+                    Map response = (Map) messageResponse.getResult();
                     List<CustomerType> cusTypeList = new ArrayList<>();
                     CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
                     if (paramArray10 != null) {
@@ -511,25 +446,46 @@ public class LoginActivity extends AppCompatActivity {
                         database.addMasterCustomerType(param, userResponse.getUsername());
                     }
 
-                    List<Material> minOrderList = new ArrayList<>();
-                    Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
-                    Collections.addAll(minOrderList, paramArray11);
-                    database.deleteMasterMinimalOrder();
-                    for (Material param : minOrderList) {
-                        database.addLimitBon(param, userId);
+                    if (response.get("visit") != null) {
+                        LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
+                        double id = (double) startDay.get("id");
+                        SessionManagerQubes.setStartDay((int) id);
+                    } else {
+                        SessionManagerQubes.setStartDay(0);
                     }
 
-                    if (response.get("max_visit") != null) {
-                        userResponse.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
-//                        double maxVisit = (double) response.get("max_visit");
-//                        Parameter parameter = new Parameter();
-//                        parameter.setKey("MAX_VISIT");
-//                        parameter.setValue(String.valueOf(maxVisit));
-//                        database.deleteParameterByKey("MAX_VISIT");
-//                        database.addMasterParameter(parameter, userResponse.getUsername());
+                    Customer[] paramArray = Helper.ObjectToGSON(response.get("listCustomerSalesman"), Customer[].class);
+                    List<Customer> mList = new ArrayList<>();
+                    if (paramArray != null) {
+                        Collections.addAll(mList, paramArray);
+                        database.deleteMasterNonRouteCustomer();
+                        database.deleteMasterNonRouteCustomerPromotion();
+                        database.deleteMasterNonRouteCustomerDct();
                     }
 
-                    SessionManagerQubes.setUserProfile(userResponse);
+                    for (Customer param : mList) {
+                        List<Promotion> arrayList = new ArrayList<>();
+                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        if (matArray != null) {
+                            Collections.addAll(arrayList, matArray);
+                        }
+                        param.setPromoList(arrayList);
+
+                        List<Material> arrayDctList = new ArrayList<>();
+                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+                        if (dctArray != null) {
+                            Collections.addAll(arrayDctList, dctArray);
+                        }
+                        param.setDctList(arrayDctList);
+                        int idHeader = database.addNonRouteCustomer(param, userResponse.getUsername());
+                        for (Promotion mat : arrayList) {
+                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), userResponse.getUsername());
+                        }
+
+                        for (Material mat : arrayDctList) {
+                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), userResponse.getUsername(), param.getId());
+                        }
+                    }
 
                     saveDataSuccess = true;
                     return null;
@@ -538,7 +494,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (ex.getMessage() != null) {
                     Log.e("LoginActivity", ex.getMessage());
                 }
-                if (PARAM == 3 || PARAM == 5) {
+                if (PARAM == 3 || PARAM == 5 || PARAM == 7 || PARAM == 9 || PARAM == 11 || PARAM == 13 || PARAM == 15) {
                     saveDataSuccess = false;
                 }
                 return null;
@@ -584,11 +540,11 @@ public class LoginActivity extends AppCompatActivity {
                             new RequestUrl().execute();//f75c38b1ea8e2416, 3
                         } else {
                             progress.dismiss();
-                            setToast(getString(R.string.failedGetData));
+                            setToast("Gagal mengambil data salesman");
                         }
                     } else {
                         progress.dismiss();
-                        setToast(getString(R.string.failedGetData));
+                        setToast("Gagal mengambil data salesman");
                     }
                 } else if (PARAM == 3) {
                     if (saveDataSuccess) {
@@ -597,15 +553,130 @@ public class LoginActivity extends AppCompatActivity {
                         new RequestUrl().execute();//4
                     } else {
                         progress.dismiss();
-                        setToast(getString(R.string.failedSaveData));
+                        setToast("Gagal menyimpan data salesman");
                     }
                 } else if (PARAM == 4) {
                     if (messageResponse != null) {
-                        PARAM = 5;
-                        new RequestUrl().execute();//5
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 5;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data reason");
+                        }
                     } else {
                         progress.dismiss();
-                        setToast(getString(R.string.failedGetData));
+                        setToast("Gagal mengambil data reason");
+                    }
+                } else if (PARAM == 5) {
+                    if (saveDataSuccess) {
+                        saveDataSuccess = false;
+                        PARAM = 6;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal menyimpan data reason");
+                    }
+                } else if (PARAM == 6) {
+                    if (messageResponse != null) {
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 7;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data bank");
+                        }
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal mengambil data bank");
+                    }
+                } else if (PARAM == 7) {
+                    if (saveDataSuccess) {
+                        saveDataSuccess = false;
+                        PARAM = 8;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal menyimpan data bank");
+                    }
+                } else if (PARAM == 8) {
+                    if (messageResponse != null) {
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 9;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data daerah tingkat");
+                        }
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal mengambil data daerah tingkat");
+                    }
+                } else if (PARAM == 9) {
+                    if (saveDataSuccess) {
+                        saveDataSuccess = false;
+                        PARAM = 10;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal menyimpan data daerah tingkat");
+                    }
+                } else if (PARAM == 10) {
+                    if (messageResponse != null) {
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 11;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data material");
+                        }
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal mengambil data material");
+                    }
+                } else if (PARAM == 11) {
+                    if (saveDataSuccess) {
+                        saveDataSuccess = false;
+                        PARAM = 12;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal menyimpan data material");
+                    }
+                } else if (PARAM == 12) {
+                    if (messageResponse != null) {
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 13;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data parameter");
+                        }
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal mengambil data parameter");
+                    }
+                } else if (PARAM == 13) {
+                    if (saveDataSuccess) {
+                        saveDataSuccess = false;
+                        PARAM = 14;
+                        new RequestUrl().execute();//4
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal menyimpan data parameter");
+                    }
+                } else if (PARAM == 14) {
+                    if (messageResponse != null) {
+                        if (messageResponse.getIdMessage() == 1) {
+                            PARAM = 15;
+                            new RequestUrl().execute();//f75c38b1ea8e2416, 3
+                        } else {
+                            progress.dismiss();
+                            setToast("Gagal mengambil data customer");
+                        }
+                    } else {
+                        progress.dismiss();
+                        setToast("Gagal mengambil data customer");
                     }
                 } else {
                     progress.dismiss();
@@ -614,11 +685,12 @@ public class LoginActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     } else {
-                        setToast(getString(R.string.failedSaveData));
+                        setToast("Gagal menyimpan data customer");
                     }
                 }
             }
         }
+
     }
 
     public void initProgress() {

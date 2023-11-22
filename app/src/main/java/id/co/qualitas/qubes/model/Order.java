@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.model;
 import java.util.List;
 
 public class Order {
+    private String order_type;
     private String status;
     private String top;
     private int idStockHeaderDb;
@@ -13,14 +14,40 @@ public class Order {
     private int id;//id from back end
     private String id_customer;
     private String nama;
+    private String id_salesman;
     private String idHeader;//id sqlite
     private List<Material> materialList;
+    private List<Material> extraList;
     private boolean statusPaid;
     private double omzet;
     private int isSync;
 
     public Order() {
 
+    }
+
+    public String getId_salesman() {
+        return id_salesman;
+    }
+
+    public void setId_salesman(String id_salesman) {
+        this.id_salesman = id_salesman;
+    }
+
+    public List<Material> getExtraList() {
+        return extraList;
+    }
+
+    public void setExtraList(List<Material> extraList) {
+        this.extraList = extraList;
+    }
+
+    public String getOrder_type() {
+        return order_type;
+    }
+
+    public void setOrder_type(String order_type) {
+        this.order_type = order_type;
     }
 
     public boolean isStatusPaid() {

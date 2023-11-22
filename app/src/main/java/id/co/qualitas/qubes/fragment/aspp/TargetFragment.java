@@ -107,7 +107,7 @@ public class TargetFragment extends BaseFragment {
 
     private void getData() {
         mList = new ArrayList<>();
-//        mList = database.getAllCustomerVisit(currentLocation, false);
+//        mList = database.getTodayCustomer(currentLocation, false);
     }
 
     private void requestData() {

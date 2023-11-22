@@ -248,7 +248,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
                     }
                 };
                 DatePickerDialog dialog = new DatePickerDialog(mContext, dateSetListener, year, month, date);
-                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+//                dialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
                 dialog.show();
             }
         });

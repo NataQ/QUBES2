@@ -298,36 +298,36 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
         switch (imageType.getPosImage()) {
             case 1:
             case 8:
-                imageFileName = "KTP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "KTP" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 2:
             case 9:
-                imageFileName = "NPWP" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "NPWP" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 3:
             case 10:
-                imageFileName = "Outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "outlet" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 4:
-                imageFileName = "KM_Awal" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "KM_Awal" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 5:
-                imageFileName = "KM_Akhir" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "KM_Akhir" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 6:
-                imageFileName = "Completed" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "completed" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 7:
-                imageFileName = "Return" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "return" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 11:
-                imageFileName = "reason_pause" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "reason_pause" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 12:
-                imageFileName = "reason_checkout" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "reason_checkout" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 13:
-                imageFileName = "reason_not_visit" + Helper.getTodayDate(Constants.DATE_TYPE_18);
+                imageFileName = "reason_not_visit" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
         }
 

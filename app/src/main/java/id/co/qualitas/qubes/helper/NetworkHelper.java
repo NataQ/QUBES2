@@ -8,7 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -230,8 +232,9 @@ public class NetworkHelper {
         requestHeaders.set("Authorization", bearerToken);
 
         HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
-        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
-
+//        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
         try {
             responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);

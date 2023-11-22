@@ -61,10 +61,14 @@ public class CollectionActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new CollectionAdapter(this, mList, header -> {
-            SessionManagerQubes.setCollectionHeader(header);
-            SessionManagerQubes.setCollectionSource(1);
-            Intent intent = new Intent(this, CollectionFormActivity.class);
-            startActivity(intent);
+            if (header.getAmount() == header.getTotal_paid()) {
+                setToast("Invoice sudah lunas");
+            } else {
+                SessionManagerQubes.setCollectionHeader(header);
+                SessionManagerQubes.setCollectionSource(1);
+                Intent intent = new Intent(this, CollectionFormActivity.class);
+                startActivity(intent);
+            }
         });
 
         recyclerView.setAdapter(mAdapter);
@@ -104,8 +108,8 @@ public class CollectionActivity extends BaseActivity {
     }
 
     private void getData() {
-        totalPaid= 0;
-        totalInvoice= 0;
+        totalPaid = 0;
+        totalInvoice = 0;
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotPaid();
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 public class CollectionHeader implements Serializable, Cloneable {
     public String idHeader;
+    public String date;
     public String customerId;
     public String invoiceNo;
     public String invoiceDate;
@@ -20,6 +21,14 @@ public class CollectionHeader implements Serializable, Cloneable {
     public List<CollectionDetail> chequeList;
     public List<CollectionDetail> lainList;
     private int isSync;
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 
     public List<CollectionDetail> getCashList() {
         return cashList;

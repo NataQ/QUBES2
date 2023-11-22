@@ -53,6 +53,7 @@
     <application
         android:name="id.co.qualitas.qubes.application.App"
         android:allowBackup="true"
+        android:requestLegacyExternalStorage="true"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -320,11 +321,11 @@
             android:exported="true"
             android:foregroundServiceType="location" />
 
-        <service
-            android:name=".services.BackgroundLocationService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="location" />
+<!--        <service-->
+<!--            android:name=".services.BackgroundLocationService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"-->
+<!--            android:foregroundServiceType="location" />-->
 
         <service
             android:name=".services.LocationForegroundService"

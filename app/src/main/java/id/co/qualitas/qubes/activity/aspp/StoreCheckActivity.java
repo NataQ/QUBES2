@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
@@ -126,6 +127,7 @@ public class StoreCheckActivity extends BaseActivity {
                 header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
                 header.put("date", today);
                 header.put("username", user.getUsername());
+                header.put("id_header", Constants.ID_SC_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteStoreCheck(header);
 
                 for (Material material : mList) {

@@ -20,7 +20,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1285,7 +1288,6 @@ public class CollectionFormActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         switch (colLFrom) {
             case 2:
                 intent = new Intent(this, CollectionVisitActivity.class);
@@ -1300,6 +1302,22 @@ public class CollectionFormActivity extends BaseActivity {
                 startActivity(intent);
                 break;
         }
+    }
 
+    //print
+    private void print(){
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_print);
+
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        RecyclerView mConnectorView = dialog.findViewById(R.id.list);
+        SwipeRefreshLayout mSwipeLayout = findViewById(R.id.swipe_container);
+        mConnectorView.setLayoutManager(new LinearLayoutManager(this));
+        mConnectorView.setHasFixedSize(true);
+
+
+        dialog.show();
     }
 }

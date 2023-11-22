@@ -38,7 +38,15 @@ import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
+import id.co.qualitas.qubes.activity.aspp.OrderActivity;
+import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
+import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ConnectorAdapter.OnItemClickListener {
 
@@ -547,6 +555,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     private interface PrinterRunnable {
         void run(ProgressDialog dialog, Printer printer) throws IOException;
     }
+
     private void printText() {
         setFormatSeparator();
         Log.d(TAG, "Print Text");
@@ -554,7 +563,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         runTask(new PrinterRunnable() {
             @Override
             public void run(ProgressDialog dialog, Printer printer) throws IOException {
-                List<Material> materialList = initDataMaterial();
                 StringBuffer textBuffer = new StringBuffer();
 //                  textBuffer.append("{reset}{center}{w}{h}Yasha Kishi");
 //                textBuffer.append("{br}");
@@ -568,23 +576,38 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 //                textBuffer.append("{reset}{center}{s}Thank You!{br}");
                 //max character 32
 
-//                textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
-//                textBuffer.append("{reset}{center}Jl.Gatot Subroto Kav. 99{br}");
-//                textBuffer.append("{reset}{center}Jakarta Selatan{br}{br}");
-//                textBuffer.append("{reset}{center}{b}Tanda Terima Barang{br}{br}");
-//                textBuffer.append("{reset}No.     : 305430000001{br}");
-//                textBuffer.append("{reset}Tgl.    : " + Helper.getTodayDate(Constants.DATE_FORMAT_6) + "{br}");
-//                textBuffer.append("{reset}Toko    : KOPRASI GANA ARTHA{br}");
-//                textBuffer.append("{reset}Alamat  : JL ABDUL RAHMAN SALE{br}");
-//                textBuffer.append("{reset}No.Cust : 76149{br}");
-//                textBuffer.append("{reset}No.SJ   : SMAO001393{br}");
-//                textBuffer.append("{reset}Payment : Kredit{br}");
-//                textBuffer.append("{reset}================================{br}");
+                Order order = SessionManagerQubes.getOrder();
+
+                Customer cust = database.getDetailCustomer(order.getId_customer());
+                StockRequest stock = database.getDetailStockRequest(order.getIdStockHeaderDb());
+
+                String no = String.valueOf(order.getIdStockHeaderDb());
+                String id = Helper.isEmpty(order.getId_customer(), "-");
+                String name = Helper.isEmpty(cust.getNama(), "-");
+                String address = Helper.isEmpty(cust.getAddress(), "-");
+                String noSJ = Helper.isEmpty(stock.getNo_surat_jalan(), "-");
+                String payment = order.isStatusPaid() ? "Cash" : "Kredit";
+
+                textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
+                textBuffer.append("{reset}{center}Jl.Gatot Subroto Kav. 99{br}");
+                textBuffer.append("{reset}{center}Jakarta Selatan{br}{br}");
+                textBuffer.append("{reset}{center}{b}Tanda Terima Barang{br}{br}");
+                textBuffer.append("{reset}No.     : " + no + "{br}");
+                textBuffer.append("{reset}Tgl.    : " + Helper.getTodayDate(Constants.DATE_FORMAT_6) + "{br}");
+                textBuffer.append("{reset}Toko    : " + name + "{br}");
+                textBuffer.append("{reset}Alamat  : " + address + "{br}");
+                textBuffer.append("{reset}No.Cust : " + id + "{br}");
+                textBuffer.append("{reset}No.SJ   : " + noSJ + "{br}");
+                textBuffer.append("{reset}Payment : " + payment + "{br}");
+                textBuffer.append("{reset}================================{br}");
+
+
+                List<Material> mList = new ArrayList<>();
+                mList.addAll(database.getAllDetailOrder(order));
 
                 double totalDiscount = 0.0, totalPrice = 0.0;
-                for (Material mat : materialList) {
-//                    textBuffer.append("{reset}" + mat.getIdMaterial() + " - " + mat.getMaterialCode() + "{br}");
-
+                for (Material mat : mList) {
+                    textBuffer.append("{reset}" + mat.getId() + " - " + mat.getNama() + "{br}");
                     String qtyUom = format.format(mat.getQty()) + " " + mat.getUom();
                     String price = format.format(mat.getPrice());
                     String priceSpace = "";
@@ -597,36 +620,35 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
 //                    while (priceSpace.length() < (12 - price.length())) priceSpace.concat(" ");
                     textBuffer.append("{reset}" + qtyUom + "Rp. " + priceSpace + "{br}");
-//                    textBuffer.append("{reset}{left}Disc {/left}{reset}{right}Rp. " + format.format(mat.getTotalDiscount()) + "{/right}{br}");
+                    textBuffer.append("{reset}{left}Disc {/left}{reset}{right}Rp. " + format.format(mat.getTotalDiscount()) + "{/right}{br}");
                     totalPrice = totalPrice + mat.getPrice();
                     totalDiscount = totalDiscount + mat.getTotalDiscount();
-//                    if (mat.getExtraItem() != null) {
-//                        for (Material matExtra : mat.getExtraItem()) {
-//                            textBuffer.append("{reset}" + matExtra.getIdMaterial() + " - " + matExtra.getMaterialCode() + "[PROMO]{br}");
-//                            textBuffer.append("{reset}" + format.format(matExtra.getQty()) + " " + matExtra.getUom() + "{reset}{right}Rp. " + matExtra.getPrice() + "{br}");
+                    if (mat.getExtraItem() != null) {
+                        for (Material matExtra : mat.getExtraItem()) {
+                            textBuffer.append("{reset}" + matExtra.getId() + " - " + matExtra.getNama() + "[PROMO]{br}");
+                            textBuffer.append("{reset}" + format.format(matExtra.getQty()) + " " + matExtra.getUom() + "{reset}{right}Rp. " + matExtra.getPrice() + "{br}");
 //                            textBuffer.append("{reset}{right}Disc Rp. " + format.format(matExtra.getTotalDiscount()) + "{br}");
-//                            totalPrice = totalPrice + Double.parseDouble(matExtra.getPrice().replace(",", ""));
-//                            totalDiscount = totalDiscount + matExtra.getTotalDiscount();
-//                        }
-//                    }
+                            totalPrice = totalPrice + matExtra.getPrice();
+                            totalDiscount = totalDiscount + matExtra.getTotalDiscount();
+                        }
+                    }
                 }
-//                textBuffer.append("{reset}--------------------------------{br}");
+                textBuffer.append("{reset}--------------------------------{br}");
                 String subTotPrice = format.format(totalPrice);
                 String totDiscount = format.format(totalDiscount);
                 String total = format.format(totalPrice - totalDiscount);
-                String name = "SUPRAPTOS";
-                String toko = "TOKO";
+                String nameSales = SessionManagerQubes.getUserProfile().getFull_name();
 
-                if ((name.length() % 2) == 1) {
-                    name = String.format("%" + (name.length() + 1) + "s", name).replace(' ', ' ');//left
+                if ((nameSales.length() % 2) == 1) {
+                    nameSales = String.format("%" + (nameSales.length() + 1) + "s", nameSales).replace(' ', ' ');//left
                 }
-                int lengthToko = ((16 - toko.length()) / 2) + toko.length();
-                int lengthName = ((16 - name.length()) / 2) + name.length();
+                int lengthToko = ((16 - name.length()) / 2) + name.length();
+                int lengthName = ((16 - nameSales.length()) / 2) + nameSales.length();
 
-                name = String.format("%" + lengthName + "s", name).replace(' ', ' ');//bf
+                nameSales = String.format("%" + lengthName + "s", nameSales).replace(' ', ' ');//bf
+                nameSales = String.format("%-16s", nameSales).replace(' ', ' ');//af
+                name = String.format("%" + lengthToko + "s", name).replace(' ', ' ');//bf
                 name = String.format("%-16s", name).replace(' ', ' ');//af
-                toko = String.format("%" + lengthToko + "s", toko).replace(' ', ' ');//bf
-                toko = String.format("%-16s", toko).replace(' ', ' ');//af
                 subTotPrice = String.format("%1$" + 12 + "s", subTotPrice);
                 totDiscount = String.format("%1$" + 12 + "s", totDiscount);
                 total = String.format("%1$" + 12 + "s", total);
@@ -634,12 +656,12 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
 //                String.format("%-[L]s", str).replace(' ', ch);//right
 
-//                textBuffer.append("{reset}     Sub Total : Rp." + subTotPrice + "{br}");
-//                textBuffer.append("{reset}     Discount  : Rp." + totDiscount + "{br}");
-//                textBuffer.append("{reset}     Total     : Rp." + total + "{br}");
+                textBuffer.append("{reset}     Sub Total : Rp." + subTotPrice + "{br}");
+                textBuffer.append("{reset}     Discount  : Rp." + totDiscount + "{br}");
+                textBuffer.append("{reset}     Total     : Rp." + total + "{br}");
                 textBuffer.append("{reset}{center}TANDA TANGAN / STEMPEL{br}");
-//                textBuffer.append("{br}{br}{br}{br}{br}");
-                textBuffer.append("{reset}" + name + toko + "{br}");
+                textBuffer.append("{br}{br}{br}{br}{br}");
+                textBuffer.append("{reset}" + nameSales + name + "{br}");
 
                 printer.reset();
                 printer.printTaggedText(textBuffer.toString());
@@ -647,20 +669,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 printer.flush();
             }
         }, R.string.msg_printing_text);
-    }
-
-    private List<Material> initDataMaterial() {
-        List<Material> mList = new ArrayList<>();
-//        mList.add(new Material("11001", "Kratingdaeng", 6, "CAN", 1000000, 1000, initDataMaterialExtra()));
-//        mList.add(new Material("11030", "Redbull", 10, "CAN", "1.000.000", 5000, initDataMaterialExtra()));
-//        mList.add(new Material("31020", "You C1000 Vitamin Orange", 24, "BTL", "1.000.000", 2000, initDataMaterialExtra()));
-        return mList;
-    }
-
-    private List<Material> initDataMaterialExtra() {
-        List<Material> mList = new ArrayList<>();
-//        mList.add(new Material("31001", "You C1000 Vitamin Lemon", 3, "BTL", 0, 0));
-        return mList;
     }
 
     private void error(final String text) {
@@ -701,5 +709,11 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
             }
         });
         t.start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        intent = new Intent(this, OrderActivity.class);
+        startActivity(intent);
     }
 }

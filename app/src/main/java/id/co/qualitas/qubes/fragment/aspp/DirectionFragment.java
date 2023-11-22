@@ -307,7 +307,7 @@ public class DirectionFragment extends BaseFragment {
         if (SessionManagerQubes.getRouteCustomerHeader() != null) {
             routeCustHeader = SessionManagerQubes.getRouteCustomerHeader();
             custList = new ArrayList<>();
-            custList = database.getAllCustomerVisit(null, false);
+            custList = database.getRouteCustomer(null, false);
 
             txtStore.setText(routeCustHeader.getId() + " - " + routeCustHeader.getNama());
             txtAddress.setText(routeCustHeader.getAddress());

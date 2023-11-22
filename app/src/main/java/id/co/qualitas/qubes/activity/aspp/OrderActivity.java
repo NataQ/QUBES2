@@ -1,10 +1,14 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +18,20 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -28,6 +41,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderActivity extends BaseActivity {
@@ -35,6 +49,52 @@ public class OrderActivity extends BaseActivity {
     private List<Order> mList;
     private Button btnAdd;
     private Customer outletHeader;
+    public static final int PERMISSION_BLUETOOTH = 1;
+    public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
+    public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
+    public static final int PERMISSION_BLUETOOTH_SCAN = 4;
+    private static final int REQUEST_LOCATION_PERMISSION = 5;
+    private static final int REQUEST_ENABLE_BT = 6;
+
+    ArrayList<String> permissionsList;
+    String[] permissionsStr = {
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN
+    };
+    int permissionsCount = 0;
+
+    ActivityResultLauncher<String[]> permissionsLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
+                    new ActivityResultCallback<Map<String, Boolean>>() {
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onActivityResult(Map<String, Boolean> result) {
+                            ArrayList<Boolean> list = new ArrayList<>(result.values());
+                            permissionsList = new ArrayList<>();
+                            permissionsCount = 0;
+                            for (int i = 0; i < list.size(); i++) {
+                                if (shouldShowRequestPermissionRationale(permissionsStr[i])) {
+                                    permissionsList.add(permissionsStr[i]);
+                                } else if (!hasPermission(OrderActivity.this, permissionsStr[i])) {
+                                    permissionsCount++;
+                                }
+                            }
+                            if (permissionsList.size() > 0) {
+                                //Some permissions are denied and can be asked again.
+                                askForPermissions(permissionsList);
+                            } else if (permissionsCount > 0) {
+                                //Show alert dialog
+                                showPermissionDialog();
+                            } else {
+                                SessionManagerQubes.clearOrderSession();
+                                Intent intent = new Intent(OrderActivity.this, OrderAddActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,10 +103,11 @@ public class OrderActivity extends BaseActivity {
 
         initialize();
 
+        permissionsList = new ArrayList<>();
+        permissionsList.addAll(Arrays.asList(permissionsStr));
+
         btnAdd.setOnClickListener(y -> {
-            SessionManagerQubes.clearOrderSession();
-            Intent intent = new Intent(this, OrderAddActivity.class);
-            startActivity(intent);
+            askForPermissions(permissionsList);
         });
 
         imgBack.setOnClickListener(v -> {
@@ -70,9 +131,42 @@ public class OrderActivity extends BaseActivity {
         });
     }
 
+    private boolean hasPermission(Context context, String permissionStr) {
+        return ContextCompat.checkSelfPermission(context, permissionStr) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void askForPermissions(ArrayList<String> permissionsList) {
+        String[] newPermissionStr = new String[permissionsList.size()];
+        for (int i = 0; i < newPermissionStr.length; i++) {
+            newPermissionStr[i] = permissionsList.get(i);
+        }
+        if (newPermissionStr.length > 0) {
+            permissionsLauncher.launch(newPermissionStr);
+        } else {
+            /* User has pressed 'Deny & Don't ask again' so we have to show the enable permissions dialog
+            which will lead them to app details page to enable permissions from there. */
+            showPermissionDialog();
+        }
+    }
+
+    private void showPermissionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permission required")
+                .setMessage("Some permissions are needed to be allowed to use this app without any problems.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+        if (alertDialog == null) {
+            alertDialog = builder.create();
+            if (!alertDialog.isShowing()) {
+                alertDialog.show();
+            }
+        }
+    }
+
     private void setAdapter() {
         mAdapter = new OrderAdapter(this, mList, header -> {
-            validasi kalau uda ke sync gak bisa save lagi?
+//            validasi kalau uda ke sync gak bisa save lagi?
             if (!header.isStatusPaid()) {
                 dialogConfirm(header);
             } else {

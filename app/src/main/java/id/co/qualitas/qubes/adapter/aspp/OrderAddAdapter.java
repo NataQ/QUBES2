@@ -200,7 +200,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 //        }
         holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
         holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
-        double priceTotal = detail.getPrice() + detail.getTotalDiscount();
+        double priceTotal = detail.getPrice() - detail.getTotalDiscount();
         holder.txtTotal.setText("Rp. " + format.format(priceTotal));
 
         if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
@@ -273,7 +273,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                     detail.setPrice(new Database(mContext).getPrice(detail));
                     holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
 //                    mContext.calculateOmzet();
-                    double pt = detail.getPrice() + detail.getTotalDiscount();
+                    double pt = detail.getPrice() - detail.getTotalDiscount();
                     holder.txtTotal.setText("Rp. " + format.format(pt));
                 }
                 mContext.removeOmzet();
@@ -508,7 +508,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                 if (!Helper.isNullOrEmpty(detail.getUom())) {
                                     detail.setPrice(new Database(mContext).getPrice(detail));
                                     holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-                                    double priceTotal = detail.getPrice() + detail.getTotalDiscount();
+                                    double priceTotal = detail.getPrice() - detail.getTotalDiscount();
                                     holder.txtTotal.setText("Rp. " + format.format(priceTotal));
                                 }
                             }
@@ -543,7 +543,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
             if (Helper.isNotEmptyOrNull(matPos.getExtraItem())) {
                 for (int j = 0; j < matPos.getExtraItem().size(); j++) {
-                    Material matExtraPos = mFilteredList.get(i);
+                    Material matExtraPos = matPos.getExtraItem().get(j);
                     if (matExtraPos.getId().equals(detail.getId())) {
                         if (matExtraPos.getId() != null && matExtraPos.getUom() != null) {
                             Material orderExtra = new Database(mContext).getQtySmallUom(matExtraPos);

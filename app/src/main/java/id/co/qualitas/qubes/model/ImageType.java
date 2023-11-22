@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.model;
 
 public class ImageType {
     private String photoKTP;
+    private String idName;
     private String photoNPWP;
     private String photoOutlet;
     private String photoAkhir;
@@ -18,6 +19,14 @@ public class ImageType {
     private int type;
     private VisitSalesman visitSalesman;
     private Reason reason;
+
+    public String getIdName() {
+        return idName;
+    }
+
+    public void setIdName(String idName) {
+        this.idName = idName;
+    }
 
     public String getPhotoAkhirString() {
         return photoAkhirString;

@@ -22,15 +22,83 @@ public class VisitSalesman {
     private String namePauseReason;
     private String descPauseReason;
     private String photoPauseReason;
-    private String idCheckOutReason;
-    private String nameCheckOutReason;
-    private String descCheckOutReason;
-    private String photoCheckOutReason;
+    private String idNotVisitReason;
+    private String nameNotVisitReason;
+    private String descNotVisitReason;
+    private String photoNotVisitReason;
+    private String idNotBuyReason;
+    private String nameNotBuyReason;
+    private String descNotBuyReason;
+    private String photoNotBuyReason;
     private String timer;//new
     private int posReason;
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public String getIdNotVisitReason() {
+        return idNotVisitReason;
+    }
+
+    public void setIdNotVisitReason(String idNotVisitReason) {
+        this.idNotVisitReason = idNotVisitReason;
+    }
+
+    public String getNameNotVisitReason() {
+        return nameNotVisitReason;
+    }
+
+    public void setNameNotVisitReason(String nameNotVisitReason) {
+        this.nameNotVisitReason = nameNotVisitReason;
+    }
+
+    public String getDescNotVisitReason() {
+        return descNotVisitReason;
+    }
+
+    public void setDescNotVisitReason(String descNotVisitReason) {
+        this.descNotVisitReason = descNotVisitReason;
+    }
+
+    public String getPhotoNotVisitReason() {
+        return photoNotVisitReason;
+    }
+
+    public void setPhotoNotVisitReason(String photoNotVisitReason) {
+        this.photoNotVisitReason = photoNotVisitReason;
+    }
+
+    public String getIdNotBuyReason() {
+        return idNotBuyReason;
+    }
+
+    public void setIdNotBuyReason(String idNotBuyReason) {
+        this.idNotBuyReason = idNotBuyReason;
+    }
+
+    public String getNameNotBuyReason() {
+        return nameNotBuyReason;
+    }
+
+    public void setNameNotBuyReason(String nameNotBuyReason) {
+        this.nameNotBuyReason = nameNotBuyReason;
+    }
+
+    public String getDescNotBuyReason() {
+        return descNotBuyReason;
+    }
+
+    public void setDescNotBuyReason(String descNotBuyReason) {
+        this.descNotBuyReason = descNotBuyReason;
+    }
+
+    public String getPhotoNotBuyReason() {
+        return photoNotBuyReason;
+    }
+
+    public void setPhotoNotBuyReason(String photoNotBuyReason) {
+        this.photoNotBuyReason = photoNotBuyReason;
+    }
 
     public boolean isRoute() {
         return isRoute;
@@ -230,38 +298,6 @@ public class VisitSalesman {
 
     public void setPhotoPauseReason(String photoPauseReason) {
         this.photoPauseReason = photoPauseReason;
-    }
-
-    public String getIdCheckOutReason() {
-        return idCheckOutReason;
-    }
-
-    public void setIdCheckOutReason(String idCheckOutReason) {
-        this.idCheckOutReason = idCheckOutReason;
-    }
-
-    public String getNameCheckOutReason() {
-        return nameCheckOutReason;
-    }
-
-    public void setNameCheckOutReason(String nameCheckOutReason) {
-        this.nameCheckOutReason = nameCheckOutReason;
-    }
-
-    public String getDescCheckOutReason() {
-        return descCheckOutReason;
-    }
-
-    public void setDescCheckOutReason(String descCheckOutReason) {
-        this.descCheckOutReason = descCheckOutReason;
-    }
-
-    public String getPhotoCheckOutReason() {
-        return photoCheckOutReason;
-    }
-
-    public void setPhotoCheckOutReason(String photoCheckOutReason) {
-        this.photoCheckOutReason = photoCheckOutReason;
     }
 
     public int isSync() {
