@@ -277,6 +277,7 @@ public class OrderActivity extends BaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 SessionManagerQubes.setOrder(header);
+                SessionManagerQubes.setAlreadyPrint(true);
                 SessionManagerQubes.setCollectionSource(3);
                 Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
                 startActivity(intent);

@@ -190,7 +190,7 @@ public class CollectionLainAdapter extends RecyclerView.Adapter<CollectionLainAd
                         if (!Helper.isEmptyEditText(edtPaid)) {
                             double qty = Double.parseDouble(edtPaid.getText().toString().replace(",", ""));
                             if (qty > mContext.getSisaPrice(holder.getAbsoluteAdapterPosition(), 5, 0)) {
-                                Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "Tidak boleh melebihi sisa harga barang", Toast.LENGTH_SHORT).show();
                             } else if (mContext.calculateLeftLain(qty, holder.getAbsoluteAdapterPosition()) < 0) {
                                 Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
                             } else if (qty > mContext.getTotalAmountLain()) {

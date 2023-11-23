@@ -97,6 +97,11 @@ public class AccountFragment extends BaseFragment {
     private WSMessage messageResponse, logResult;
     private ProgressDialog progressDialog;
     private int sizeData = 0;
+    private List<Customer> nooList = new ArrayList<>();
+    private List<VisitSalesman> visitSalesmanList = new ArrayList<>();
+    private List<Map> storeCheckList = new ArrayList<>(), returnList = new ArrayList<>();
+    private List<CollectionHeader> collectionList = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -217,50 +222,50 @@ public class AccountFragment extends BaseFragment {
                 linearNOO.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 12;
-                    new RequestUrlTransaction().execute();//12
+                    PARAM = 13;
+                    new RequestUrl().execute();//13
                 });
 
                 linearVisit.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 13;
-                    new RequestUrlTransaction().execute();//13
+                    PARAM = 15;
+                    new RequestUrl().execute();//15
                 });
 
                 linearStoreCheck.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 14;
-                    new RequestUrlTransaction().execute();//14
+                    PARAM = 17;
+                    new RequestUrl().execute();//17
                 });
 
                 linearCollection.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 15;
-                    new RequestUrlTransaction().execute();//15
+                    PARAM = 19;
+                    new RequestUrl().execute();//19
                 });
 
                 linearOrder.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 16;
-                    new RequestUrlTransaction().execute();//16
+                    PARAM = 21;
+                    new RequestUrl().execute();//21
                 });
 
                 linearReturn.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 17;
-                    new RequestUrlTransaction().execute();//17
+                    PARAM = 23;
+                    new RequestUrl().execute();//23
                 });
 
                 linearPhoto.setOnClickListener(v -> {
                     alertDialog.dismiss();
                     progress.show();
-                    PARAM = 18;
-                    new RequestUrlTransaction().execute();//18
+                    PARAM = 25;
+                    new RequestUrl().execute();//25
                 });
 
                 btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -535,7 +540,7 @@ public class AccountFragment extends BaseFragment {
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
                     return null;
-                } else {
+                } else if (PARAM == 12) {
                     Map response = (Map) logResult.getResult();
                     List<CustomerType> cusTypeList = new ArrayList<>();
                     CustomerType[] paramArray10 = Helper.ObjectToGSON(response.get("listCustomerType"), CustomerType[].class);
@@ -589,6 +594,56 @@ public class AccountFragment extends BaseFragment {
                     }
 
                     saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 13) {
+                    nooList = setDataCustomerNoo();
+                    if (Helper.isEmptyOrNull(nooList)) {
+                        nooList = new ArrayList<>();
+                    }
+                    sizeData = nooList.size();
+                    return null;
+                } else if (PARAM == 15) {
+                    visitSalesmanList = setDataVisit();
+                    if (Helper.isEmptyOrNull(visitSalesmanList)) {
+                        visitSalesmanList = new ArrayList<>();
+                    }
+                    sizeData = visitSalesmanList.size();
+                    return null;
+                } else if (PARAM == 17) {
+                    storeCheckList = setDataStoreCheck();
+                    if (Helper.isEmptyOrNull(storeCheckList)) {
+                        storeCheckList = new ArrayList<>();
+                    }
+                    sizeData = storeCheckList.size();
+                    return null;
+                } else if (PARAM == 19) {
+                    collectionList = setDataCollection();
+                    if (Helper.isEmptyOrNull(collectionList)) {
+                        collectionList = new ArrayList<>();
+                    }
+                    sizeData = collectionList.size();
+                    return null;
+                } else if (PARAM == 21) {
+                    orderList = setDataOrder();
+                    if (Helper.isEmptyOrNull(orderList)) {
+                        orderList = new ArrayList<>();
+                    }
+                    sizeData = orderList.size();
+                    return null;
+                } else if (PARAM == 23) {
+                    returnList = setDataReturn();
+                    if (Helper.isEmptyOrNull(returnList)) {
+                        returnList = new ArrayList<>();
+                    }
+                    sizeData = returnList.size();
+                    return null;
+                } else {
+                    //25
+//                    photoList = setDataPhoto();
+//                    if (Helper.isEmptyOrNull(photoList)) {
+//                        photoList = new ArrayList<>();
+//                    }
+//                    sizeData = photoList.size();
                     return null;
                 }
             } catch (Exception ex) {
@@ -743,9 +798,63 @@ public class AccountFragment extends BaseFragment {
                 } else {
                     setToast("Gagal menyimpan data customer");
                 }
+            } else if (PARAM == 13) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 14;
+                    new RequestUrlTransaction().execute();//14
+                }
+            } else if (PARAM == 15) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 16;
+                    new RequestUrlTransaction().execute();//16
+                }
+            } else if (PARAM == 17) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 18;
+                    new RequestUrlTransaction().execute();//18
+                }
+            } else if (PARAM == 19) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 20;
+                    new RequestUrlTransaction().execute();//20
+                }
+            } else if (PARAM == 21) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 22;
+                    new RequestUrlTransaction().execute();//22
+                }
+            } else if (PARAM == 23) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 24;
+                    new RequestUrlTransaction().execute();//24
+                }
+            } else if (PARAM == 25) {
+                progress.dismiss();
+                if (sizeData == 0) {
+                    setToast("Tidak ada data atau Semua data sudah di sync");
+                } else {
+                    PARAM = 26;
+                    new RequestUrlTransaction().execute();//26
+                }
             }
-
-
         }
     }
 
@@ -756,13 +865,13 @@ public class AccountFragment extends BaseFragment {
             try {
                 List<WSMessage> listWSMsg = new ArrayList<>();
                 int counter = 0;
-                if (PARAM == 12) {
-                    List<Customer> mList = setDataCustomerNoo();
+                if (PARAM == 14) {
+//                    List<Customer> mList = setDataCustomerNoo();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_CUSTOMER_NOO;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     Map req = new HashMap();
-                    sizeData = mList.size();
-                    for (Customer data : mList) {
+                    for (Customer data : nooList) {
                         counter++;
                         req = new HashMap();
                         req.put("listData", new ArrayList<>().add(data));
@@ -777,13 +886,13 @@ public class AccountFragment extends BaseFragment {
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 13) {
-                    List<VisitSalesman> mList = setDataVisit();
+                } else if (PARAM == 16) {
+//                    List<VisitSalesman> mList = setDataVisit();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_VISIT;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     Map req = new HashMap();
-                    sizeData = mList.size();
-                    for (VisitSalesman data : mList) {
+                    for (VisitSalesman data : visitSalesmanList) {
                         counter++;
                         req = new HashMap();
                         req.put("listData", new ArrayList<>().add(data));
@@ -798,12 +907,12 @@ public class AccountFragment extends BaseFragment {
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 14) {
-                    List<Map> mList = setDataStoreCheck();
+                } else if (PARAM == 18) {
+//                    List<Map> mList = setDataStoreCheck();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_STORE_CHECK;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    sizeData = mList.size();
-                    for (Map data : mList) {
+                    for (Map data : storeCheckList) {
                         counter++;
                         logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
                         if (logResult.getIdMessage() == 1) {
@@ -816,12 +925,12 @@ public class AccountFragment extends BaseFragment {
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 15) {
-                    List<CollectionHeader> mList = setDataCollection();
+                } else if (PARAM == 20) {
+//                    List<CollectionHeader> mList = setDataCollection();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_COLLECTION;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    sizeData = mList.size();
-                    for (CollectionHeader data : mList) {
+                    for (CollectionHeader data : collectionList) {
                         counter++;
                         logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
                         if (logResult.getIdMessage() == 1) {
@@ -834,12 +943,12 @@ public class AccountFragment extends BaseFragment {
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 16) {
-                    List<Order> mList = setDataOrder();
+                } else if (PARAM == 22) {
+//                    List<Order> mList = setDataOrder();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_ORDER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    sizeData = mList.size();
-                    for (Order data : mList) {
+                    for (Order data : orderList) {
                         counter++;
                         logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
                         if (logResult.getIdMessage() == 1) {
@@ -852,53 +961,51 @@ public class AccountFragment extends BaseFragment {
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 17) {
-                    List<Map> mList = setDataReturn();
+                } else if (PARAM == 24) {
+//                    List<Map> mList = setDataReturn();
+//                    sizeData = mList.size();
                     String URL_ = Constants.API_SYNC_RETURN;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    sizeData = mList.size();
-                    for (Map data : mList) {
+                    for (Map data : returnList) {
                         counter++;
                         logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
                         if (logResult.getIdMessage() == 1) {
                             logResult = new WSMessage();
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                            database.updateSyncStoreCheck(data);
+                            database.updateSyncReturn(data);
                         }
                         database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
-                } else if (PARAM == 18) {
-                    List<VisitSalesman> mList = setDataPhoto();
-                    String URL_ = Constants.API_SYNC_PHOTO;
-                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    Map req = new HashMap();
-                    sizeData = mList.size();
-
-                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-                    if (uriBerangkat != null) {
-                        map.add("kmAwalPhoto", new FileSystemResource(uriBerangkat.getPath()));
-                    } else {
-                        map.add("kmAwalPhoto", "");
-                    }
-
-                    for (VisitSalesman data : mList) {
-                        counter++;
-                        req = new HashMap();
-                        req.put("listData", new ArrayList<>().add(data));
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, req);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Photo " + data.getIdHeader() + " success");
-                            database.updateSyncVisitSalesman(data);
-                        }
-                        database.addLog(logResult);
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
+                } else if (PARAM == 26) {
+//                    List<VisitSalesman> mList = setDataPhoto();
+//                    String URL_ = Constants.API_SYNC_PHOTO;
+//                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+//                    Map req = new HashMap();
+//                    sizeData = mList.size();
+//
+//                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+//                    if (uriBerangkat != null) {
+//                        map.add("kmAwalPhoto", new FileSystemResource(uriBerangkat.getPath()));
+//                    } else {
+//                        map.add("kmAwalPhoto", "");
+//                    }
+//
+//                    for (VisitSalesman data : mList) {
+//                        counter++;
+//                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+//                        if (logResult.getIdMessage() == 1) {
+//                            logResult = new WSMessage();
+//                            logResult.setIdMessage(1);
+//                            logResult.setMessage("Sync Photo " + data.getIdHeader() + " success");
+//                            database.updateSyncVisitSalesman(data);
+//                        }
+//                        database.addLog(logResult);
+//                        publishProgress(counter);
+//                        listWSMsg.add(logResult);
+//                    }
                 }
                 return listWSMsg;
             } catch (Exception ex) {
@@ -909,23 +1016,26 @@ public class AccountFragment extends BaseFragment {
                 logResult.setIdMessage(0);
                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
                 switch (PARAM) {
-                    case 12:
-                        logResult.setMessage("Sync noo data failed : " + exMess);
-                        break;
-                    case 13:
-                        logResult.setMessage("Sync visit salesman data failed : " + exMess);
-                        break;
                     case 14:
-                        logResult.setMessage("Sync store check data failed : " + exMess);
-                        break;
-                    case 15:
-                        logResult.setMessage("Sync collection data failed : " + exMess);
+                        logResult.setMessage("Sync noo failed : " + exMess);
                         break;
                     case 16:
-                        logResult.setMessage("Sync order data failed : " + exMess);
+                        logResult.setMessage("Sync visit salesman failed : " + exMess);
                         break;
-                    case 17:
-                        logResult.setMessage("Sync return data failed : " + exMess);
+                    case 18:
+                        logResult.setMessage("Sync store check failed : " + exMess);
+                        break;
+                    case 20:
+                        logResult.setMessage("Sync collection failed : " + exMess);
+                        break;
+                    case 22:
+                        logResult.setMessage("Sync order failed : " + exMess);
+                        break;
+                    case 24:
+                        logResult.setMessage("Sync return failed : " + exMess);
+                        break;
+                    case 25:
+                        logResult.setMessage("Sync photo failed : " + exMess);
                         break;
                 }
                 database.addLog(logResult);
@@ -995,7 +1105,7 @@ public class AccountFragment extends BaseFragment {
         Map header = new HashMap();
         for (Customer customer : customerList) {
             mList.addAll(database.getAllStoreCheckCheckOut(customer.getId()));
-            if (mList.size() != 0) {
+            if (Helper.isNotEmptyOrNull(mList)) {
                 header = new HashMap();
                 header.put("id_mobile", mList.get(0).getIdheader());
                 header.put("date", mList.get(0).getDate());
@@ -1015,7 +1125,7 @@ public class AccountFragment extends BaseFragment {
         Map header = new HashMap();
         for (Customer customer : customerList) {
             mList.addAll(database.getAllReturnCheckOut(customer.getId()));
-            if (mList.size() != 0) {
+            if (Helper.isNotEmptyOrNull(mList)) {
                 header = new HashMap();
                 header.put("id_mobile", mList.get(0).getIdheader());
                 header.put("date", mList.get(0).getDate());

@@ -192,9 +192,12 @@ public class CollectionFormActivity extends BaseActivity {
                     if (colLFrom == 3) {
                         if (totalAmountPaid > orderHeader.getOmzet() || totalAmountPaid == orderHeader.getOmzet()) {
                             request.put("isPaid", 1);
+                            orderHeader.setStatusPaid(true);
                         } else {
                             request.put("isPaid", 0);
+                            orderHeader.setStatusPaid(false);
                         }
+                        SessionManagerQubes.setOrder(orderHeader);
                         request.put("header", orderHeader);
                         saveCollection = database.addCollectionOrder(request);
                     } else {
@@ -251,23 +254,28 @@ public class CollectionFormActivity extends BaseActivity {
                             startActivity(intent);
                             break;
                         case 3:
-                            if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
-                                }
-                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                                }
-                            } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-                            } else {
-                                intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
+                            if (SessionManagerQubes.getAlreadyPrint()) {
+                                intent = new Intent(CollectionFormActivity.this, OrderActivity.class);
                                 startActivity(intent);
+                            } else {
+                                if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                                } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                                } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                                    }
+                                } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                                    }
+                                } else if (ContextCompat.checkSelfPermission(CollectionFormActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(CollectionFormActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                                } else {
+                                    intent = new Intent(CollectionFormActivity.this, ConnectorActivity.class);
+                                    startActivity(intent);
+                                }
                             }
                             break;
                         case 1:
@@ -753,6 +761,13 @@ public class CollectionFormActivity extends BaseActivity {
             mListLain = database.getAllDetailOrder(orderHeader.getIdHeader());
             mListKredit = database.getAllDetailOrder(orderHeader.getIdHeader());
 
+            double paid = 0;
+            if (Helper.isNotEmptyOrNull(mListMaster)) {
+                paid = orderHeader.getOmzet() - mListMaster.get(0).getAmountPaid();
+            } else {
+                paid = orderHeader.getOmzet();
+            }
+
 //            for (Material obj : mListMaster) {
 //                mListCash.add(obj.clone());
 //                mListLain.add(obj.clone());
@@ -760,7 +775,7 @@ public class CollectionFormActivity extends BaseActivity {
 //            }
 
             txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
-            txtAmount.setText("Rp." + format.format(orderHeader.getOmzet()));
+            txtAmount.setText("Rp." + format.format(paid));
             if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
                 String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
                 txtDate.setText(requestDate);
@@ -1138,6 +1153,7 @@ public class CollectionFormActivity extends BaseActivity {
 //        type : 1 cash, 2 tf, 3 giro, 4 che, 5 lain
         double kurangBayar = 0;
         double paid = 0;
+        CollectionDetail collection;
 
         if (type != 1) {
             if (mListCash != null && mListCash.size() != 0) {
@@ -1148,10 +1164,17 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 2) {
             if (mListTransfer != null && mListTransfer.size() != 0) {
                 for (int i = 0; i < mListTransfer.size(); i++) {
-                    CollectionDetail collection = mListTransfer.get(i);
+                    collection = mListTransfer.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }
+                }
+            }
+        } else {
+            if (mListTransfer != null && mListTransfer.size() != 0) {
+                for (int i = 0; i < mListTransfer.size(); i++) {
+                    collection = mListTransfer.get(i);
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                 }
             }
         }
@@ -1159,10 +1182,17 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 3) {
             if (mListGiro != null && mListGiro.size() != 0) {
                 for (int i = 0; i < mListGiro.size(); i++) {
-                    CollectionDetail collection = mListGiro.get(i);
+                    collection = mListGiro.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }
+                }
+            }
+        } else {
+            if (mListGiro != null && mListGiro.size() != 0) {
+                for (int i = 0; i < mListGiro.size(); i++) {
+                    collection = mListGiro.get(i);
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                 }
             }
         }
@@ -1170,10 +1200,17 @@ public class CollectionFormActivity extends BaseActivity {
         if (type == 4) {
             if (mListCheque != null && mListCheque.size() != 0) {
                 for (int i = 0; i < mListCheque.size(); i++) {
-                    CollectionDetail collection = mListCheque.get(i);
+                    collection = mListCheque.get(i);
                     if (i != idHeader) {
                         paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                     }
+                }
+            }
+        } else {
+            if (mListCheque != null && mListCheque.size() != 0) {
+                for (int i = 0; i < mListCheque.size(); i++) {
+                    collection = mListCheque.get(i);
+                    paid = paid + collection.getMaterialList().get(pos).getAmountPaid();
                 }
             }
         }
@@ -1305,7 +1342,7 @@ public class CollectionFormActivity extends BaseActivity {
     }
 
     //print
-    private void print(){
+    private void print() {
         Dialog dialog = new Dialog(this);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

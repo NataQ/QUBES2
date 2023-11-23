@@ -1245,7 +1245,7 @@ public class CreateNooActivity extends BaseActivity {
             try {
                 boolean result = false;
                 saveDataNoo();
-                customerNoo.setId(Constants.ID_NOO_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                customerNoo.setId(Constants.ID_NOO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 int header = database.addNoo(customerNoo, user.getUsername());
                 if (header == -1) {
                     result = false;

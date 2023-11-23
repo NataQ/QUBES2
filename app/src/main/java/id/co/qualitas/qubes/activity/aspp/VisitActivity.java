@@ -440,7 +440,7 @@ public class VisitActivity extends BaseActivity {
                 outRadius = Helper.checkRadius(currLoc, locCustomer);
 
                 visitSalesman = new VisitSalesman();
-                visitSalesman.setIdHeader(Constants.ID_VS_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                visitSalesman.setIdHeader(Constants.ID_VS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 visitSalesman.setStatus(Constants.CHECK_IN_VISIT);
                 visitSalesman.setCheckInTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                 visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
@@ -895,7 +895,7 @@ public class VisitActivity extends BaseActivity {
         vs.setStatus(Constants.CHECK_OUT_VISIT);
         vs.setInside(outRadius);
         vs.setInsideCheckOut(outRadius);
-        vs.setIdHeader(Constants.ID_VS_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+        vs.setIdHeader(Constants.ID_VS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         database.addVisitSalesmanAll(vs);
 
         Customer cus = new Customer();

@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -113,16 +115,24 @@ public class NetworkHelper {
         ResponseEntity<?> responseEntity = null;
         while (flag == 0) {
             flag = 1;
-
             String token = (String) Helper.getItemParam(Constants.TOKEN);
             String bearerToken = Constants.BEARER.concat(token);
 
             RestTemplate restTemplate = new RestTemplate();
+
+            HttpComponentsClientHttpRequestFactory fac = new HttpComponentsClientHttpRequestFactory();
+            fac.setConnectTimeout(1000);
+
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setConnectTimeout(1000);
+
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
             requestHeaders.set("Authorization", bearerToken);
+
             HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
             restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+            restTemplate.setRequestFactory(fac);
 
             try {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);

@@ -210,7 +210,7 @@ public class SummaryDetailActivity extends BaseActivity {
                             totalDiscount = totalDiscount + amount;
                         }
                         param.setTotalDiscount(totalDiscount);
-                        param.setTotal(param.getPrice() + totalDiscount);
+                        param.setTotal(param.getPrice() - totalDiscount);
                     }
                     saveDataSuccess = true;
                     return null;

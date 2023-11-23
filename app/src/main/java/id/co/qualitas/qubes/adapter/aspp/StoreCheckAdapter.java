@@ -136,7 +136,7 @@ public class StoreCheckAdapter extends RecyclerView.Adapter<StoreCheckAdapter.Ho
         String productId = String.valueOf(detail.getId());
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
+        holder.edtQty.setText(detail.getQty() != 0 ?Helper.setDotCurrencyAmount(detail.getQty()) :null);
 
         mAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override

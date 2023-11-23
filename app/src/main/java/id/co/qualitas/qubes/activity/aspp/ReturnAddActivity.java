@@ -167,7 +167,7 @@ public class ReturnAddActivity extends BaseActivity {
                 header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
                 header.put("date", today);
                 header.put("username", user.getUsername());
-                header.put("id_header", Constants.ID_RT_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                header.put("id_header", Constants.ID_RT_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteReturn(header);
 
                 for (Material material : mList) {

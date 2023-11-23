@@ -123,6 +123,39 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <TextView
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Payment"
+                    android:textColor="@color/gray8_aspp" />
+
+                <TextView
+                    style="@style/TextView_Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/colon"
+                    android:textColor="@color/gray8_aspp" />
+
+                <TextView
+                    android:id="@+id/txtPayment"
+                    style="@style/TextView_Small"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:text=""
+                    android:textColor="@color/black_aspp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout

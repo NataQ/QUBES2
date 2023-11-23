@@ -227,7 +227,8 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                         item.connect();
                     } catch (Exception e) {
                         fail("Connection error: " + e.getMessage());
-                        return;
+//                        return;
+                        onBackPressed();
                     }
 
                     try {
@@ -239,7 +240,8 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                             e1.printStackTrace();
                         }
                         fail("Pinpad error: " + e.getMessage());
-                        return;
+//                        return;
+                        onBackPressed();
                     }
 
                     runOnUiThread(new Runnable() {
@@ -247,12 +249,12 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                         public void run() {
                             initPrinter();
                             printText();
+                            onBackPressed();
 //                            Context context = getApplicationContext();
 //                            Intent intent = new Intent(context, PrinterActivity.class);
 //                            startActivityForResult(intent, REQUEST_PRINTER);
                         }
                     });
-
                 } finally {
                     dialog.dismiss();
                 }
@@ -581,7 +583,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 Customer cust = database.getDetailCustomer(order.getId_customer());
                 StockRequest stock = database.getDetailStockRequest(order.getIdStockHeaderDb());
 
-                String no = String.valueOf(order.getIdStockHeaderDb());
+                String no = String.valueOf(order.getIdHeader());
                 String id = Helper.isEmpty(order.getId_customer(), "-");
                 String name = Helper.isEmpty(cust.getNama(), "-");
                 String address = Helper.isEmpty(cust.getAddress(), "-");
@@ -678,6 +680,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
             @Override
             public void run() {
                 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+                onBackPressed();
             }
         });
     }

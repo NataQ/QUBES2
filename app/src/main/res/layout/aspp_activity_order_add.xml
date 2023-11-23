@@ -116,7 +116,6 @@
                     android:layout_weight=".5"
                     android:background="@drawable/edit_text_default"
                     android:drawableRight="@drawable/ic_calendar_aspp"
-                    android:hint="01/01/2023"
                     android:padding="8dp"
                     android:singleLine="true"
                     android:textColor="@color/black_aspp" />

@@ -127,7 +127,7 @@ public class StoreCheckActivity extends BaseActivity {
                 header.put("id_customer", SessionManagerQubes.getOutletHeader().getId());
                 header.put("date", today);
                 header.put("username", user.getUsername());
-                header.put("id_header", Constants.ID_SC_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                header.put("id_header", Constants.ID_SC_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteStoreCheck(header);
 
                 for (Material material : mList) {

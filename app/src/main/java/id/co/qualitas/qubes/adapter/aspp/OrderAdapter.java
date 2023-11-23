@@ -85,7 +85,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtOrderNo, txtOmzet, txtIdMobile, txtStatus;
+        TextView txtOrderNo, txtOmzet, txtIdMobile, txtStatus, txtPayment;
         LinearLayout llStatus;
         OnAdapterListener onAdapterListener;
 
@@ -95,6 +95,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
             txtOrderNo = itemView.findViewById(R.id.txtOrderNo);
             txtOmzet = itemView.findViewById(R.id.txtOmzet);
             txtIdMobile = itemView.findViewById(R.id.txtIdMobile);
+            txtPayment = itemView.findViewById(R.id.txtPayment);
             txtStatus = itemView.findViewById(R.id.txtStatus);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
@@ -120,6 +121,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
         holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
+        holder.txtPayment.setText(detail.isStatusPaid() ? "Lunas" : "Kredit");
 
         if (!Helper.isEmpty(detail.getStatus())) {
             switch (detail.getStatus().toLowerCase()) {

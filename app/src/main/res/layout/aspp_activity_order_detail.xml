@@ -55,6 +55,17 @@
             android:text="Order Detail"
             android:textColor="@color/black_aspp"
             android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPrint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Print"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_small"
+            app:backgroundTint="@color/blue_aspp"
+            app:cornerRadius="5dp" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView

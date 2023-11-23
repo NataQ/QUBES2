@@ -33,6 +33,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_START_DAY = "pref_start_day";
     private static final String PREF_LOGIN = "pref_login";
     private static final String PREF_RETURN = "pref_return";
+    private static final String PREF_ALREADY_PRINT = "pref_already_print";
     private static final String PREF_STOCK_REQUEST_HEADER = "pref_stock_request_header";
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
@@ -54,6 +55,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_URL = "key_url";
     private static final String KEY_IMEI = "key_imei";
     private static final String KEY_RETURN = "key_return";
+    private static final String KEY_ALREADY_PRINT = "key_already_print";
     private static SharedPreferences visitSalesmanReasonPrefs;
     private static SharedPreferences orderPrefs;
     private static SharedPreferences customerNooPrefs;
@@ -66,6 +68,7 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences stockRequestHeaderPrefs;
     private static SharedPreferences collectionHeaderPrefs;
     private static SharedPreferences collectionPrefs;
+    private static SharedPreferences alreadyPrintPrefs;
     private static SharedPreferences collectionHistoryPrefs;
     private static SharedPreferences routeCustomerHeaderPrefs;
 
@@ -84,6 +87,7 @@ public abstract class SessionManagerQubes {
         returnPrefs = context.getSharedPreferences(PREF_RETURN, Context.MODE_PRIVATE);
         orderPrefs = context.getSharedPreferences(PREF_ORDER, Context.MODE_PRIVATE);
         visitSalesmanReasonPrefs = context.getSharedPreferences(PREF_VISIT_SALESMAN_REASON, Context.MODE_PRIVATE);
+        alreadyPrintPrefs = context.getSharedPreferences(PREF_ALREADY_PRINT, Context.MODE_PRIVATE);
     }
 
     public static void setStartDay(int param) {
@@ -200,6 +204,12 @@ public abstract class SessionManagerQubes {
         }
     }
 
+    public static void setAlreadyPrint(boolean alreadyPrint) {
+        synchronized (sync) {
+            alreadyPrintPrefs.edit().putBoolean(KEY_ALREADY_PRINT, alreadyPrint).apply();
+        }
+    }
+
     //---------------------------------------------------------------------------------------------------------------------------------------
 
     public static List<VisitSalesman> getVisitSalesmanReason() {
@@ -228,6 +238,10 @@ public abstract class SessionManagerQubes {
 
     public static String getToken() {
         return loginPrefs.getString(KEY_TOKEN, null);
+    }
+
+    public static boolean getAlreadyPrint() {
+        return alreadyPrintPrefs.getBoolean(KEY_ALREADY_PRINT, false);
     }
 
     public static int getCollectionSource() {
@@ -274,6 +288,10 @@ public abstract class SessionManagerQubes {
 
     public static void clearReturnSession() {
         returnPrefs.edit().clear().apply();
+    }
+
+    public static void clearAlreadyPrintSession() {
+        alreadyPrintPrefs.edit().clear().apply();
     }
 
     public static void clearImageTypeSession() {

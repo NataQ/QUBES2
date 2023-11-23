@@ -1,11 +1,14 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -22,6 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +54,7 @@ import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderAddActivity extends BaseActivity {
@@ -65,12 +71,17 @@ public class OrderAddActivity extends BaseActivity {
     private WSMessage wsMessage;
     boolean getDiscount = false;
     private StockRequest stockHeader;
-    String ket = "";
+    String ketLK = "", ketDB;
     private boolean overLK = false, doubleBon = false;
     Calendar todayDate;
     Date fromDate;
     String fromDateString, paramFromDate;
     Order headerSave = new Order();
+    public static final int PERMISSION_BLUETOOTH = 1;
+    public static final int PERMISSION_BLUETOOTH_ADMIN = 2;
+    public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
+    public static final int PERMISSION_BLUETOOTH_SCAN = 4;
+    private static final int REQUEST_LOCATION_PERMISSION = 5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,7 +118,7 @@ public class OrderAddActivity extends BaseActivity {
                         doubleBon = checkDoubleBon();
                         if (overLK || doubleBon) {
                             if (user.getType_sales().equals("CO")) {
-                                setToast(ket);
+                                setToast(ketLK + ketDB);
                             } else {
                                 dialogConfirm();
                             }
@@ -187,74 +198,8 @@ public class OrderAddActivity extends BaseActivity {
             }
         };
         DatePickerDialog dialog = new DatePickerDialog(OrderAddActivity.this, dateSetListener, year, month, date);
-        dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
+//        dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
         dialog.show();
-    }
-
-    private int validateCO() {
-        int error = 0, result = 0;
-        ket = null;
-        boolean overLK = false;
-        boolean isMaxBon = false;
-        //tim sr/gt/on premise:
-        //-> 2 bon produk existing (KTD-R)
-        //-> 2 bon produk existing (Vitamin n Water)
-        //-> 1 bon produk RBG
-        //-> 1 bon produk batterai
-
-        //tim sr batterai
-        //-> 2 bon produk batterai
-//        if(mList){
-//
-//        }
-
-//perlu ada sync LK cust?
-//        cek lk, -> lk ambil dari customer (back end lk nya ud harus d itung juga)
-//        di mobile, lk d kurang dari invoice yg sudah d bayar kan juga yg is sync nya 0, kalau uda 1 berarti kan ud masuk ke back end
-        //rumus lk => LK - total Order + total paid
-
-        if (!Helper.isEmpty(txtOmzet)) {
-            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
-            if (omzet.equals("0")) {
-                error++;
-            } else {
-                double total = Double.parseDouble(omzet);
-                double LK = database.getLKCustomer(outletHeader);
-
-                if (LK < total) {
-                    overLK = true;
-                    ket = ket + "Over LK\n";
-                }
-            }
-        }
-
-        for (Material material : mList) {
-            double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
-            if (limitBon < 1) {
-                isMaxBon = true;
-                ket = ket + "Double Bon : " + material.getNama() + "\n";
-            }
-        }
-
-        if (isMaxBon || overLK) {
-            if (user.getType_sales().equals("CO")) {
-                result = 1;
-            } else {
-                if (error != 0) {
-                    result = 2;
-                }
-            }
-        } else {
-            if (error != 0) {
-                if (user.getType_sales().equals("CO")) {
-                    result = 1;
-                } else {
-                    result = 2;
-                }
-            }
-        }
-
-        return result;//0->clear, 1-> co, 2-> TO
     }
 
     private boolean checkDiscount() {
@@ -273,7 +218,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private boolean checkOverLk() {
         boolean result = false;
-        ket = "";
+        ketLK = "";
         if (!Helper.isEmpty(txtOmzet)) {
             String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
             if (omzet.equals("0")) {
@@ -284,7 +229,7 @@ public class OrderAddActivity extends BaseActivity {
 
                 if (LK < total) {
                     result = true;
-                    ket = ket + "Over LK\n";
+                    ketLK = ketLK + "Over LK\n";
                 }
             }
         } else {
@@ -335,13 +280,13 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private boolean checkDoubleBon() {
-        ket = "";
+        ketDB = "";
         boolean isMaxBon = false;
         for (Material material : mList) {
             double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
             if (limitBon != 0) {
                 isMaxBon = true;
-                ket = ket + "Double Bon : " + material.getNama() + "\n";
+                ketDB = ketDB + "Double Bon : " + material.getNama() + "\n";
                 break;
             }
         }
@@ -633,7 +578,7 @@ public class OrderAddActivity extends BaseActivity {
     public void calculateOmzet() {
         double omzet = 0;
         for (Material material : mList) {
-            omzet = omzet + material.getPrice() + material.getTotalDiscount();
+            omzet = omzet + (material.getPrice() - material.getTotalDiscount());
         }
 
         txtOmzet.setText("Rp. " + format.format(omzet));
@@ -727,7 +672,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);
                     headerSave.setStatusPaid(false);
-                    headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                    headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                     saveOrder = database.addOrder(headerSave, user);
                     return null;
                 }
@@ -766,21 +711,39 @@ public class OrderAddActivity extends BaseActivity {
                 progress.dismiss();
                 if (saveDiscount) {
                     mAdapter.notifyDataSetChanged();
-                    calculateOmzet();
                 } else {
                     setToast("Failed save discount");
                 }
+                calculateOmzet();
             } else {
                 progress.dismiss();
                 if (saveOrder) {
                     setToast("Save order Success");
                     if (payNow) {
                         SessionManagerQubes.setOrder(headerSave);
+                        SessionManagerQubes.setAlreadyPrint(false);
                         SessionManagerQubes.setCollectionSource(3);
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
                         startActivity(intent);
                     } else {
-                        onBackPressed();
+                        if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                            }
+                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                            }
+                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                        } else {
+                            intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 } else {
                     setToast("Failed save order");
