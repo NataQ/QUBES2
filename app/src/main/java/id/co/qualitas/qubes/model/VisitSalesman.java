@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.model;
 
 public class VisitSalesman {
     private String idHeader;
+    private String idVisit;
     private String customerId;
     private String customerName;
     private String address;
@@ -12,6 +13,8 @@ public class VisitSalesman {
     private int status;
     private String resumeTime;
     private String pauseTime;
+    private double totalOrder;
+
     private double latCheckIn;
     private double longCheckIn;
     private double latCheckOut;
@@ -35,6 +38,22 @@ public class VisitSalesman {
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public double getTotalOrder() {
+        return totalOrder;
+    }
+
+    public void setTotalOrder(double totalOrder) {
+        this.totalOrder = totalOrder;
+    }
+
+    public String getIdVisit() {
+        return idVisit;
+    }
+
+    public void setIdVisit(String idVisit) {
+        this.idVisit = idVisit;
+    }
 
     public String getIdNotVisitReason() {
         return idNotVisitReason;

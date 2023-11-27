@@ -107,7 +107,13 @@ public class OrderActivity extends BaseActivity {
         permissionsList.addAll(Arrays.asList(permissionsStr));
 
         btnAdd.setOnClickListener(y -> {
-            askForPermissions(permissionsList);
+            if (user.getType_sales().equals("CO")) {
+                askForPermissions(permissionsList);
+            } else {
+                SessionManagerQubes.clearOrderSession();
+                Intent intent = new Intent(OrderActivity.this, OrderAddActivity.class);
+                startActivity(intent);
+            }
         });
 
         imgBack.setOnClickListener(v -> {
@@ -200,6 +206,12 @@ public class OrderActivity extends BaseActivity {
 
     private void getFirstDataOffline() {
         outletHeader = SessionManagerQubes.getOutletHeader();
+        if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+            btnAdd.setVisibility(View.VISIBLE);
+        } else {
+            btnAdd.setVisibility(View.GONE);
+        }
+
         setAdapter();
         if (Helper.isEmptyOrNull(mList)) requestData();
     }
@@ -253,7 +265,6 @@ public class OrderActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         intent = new Intent(this, DailySalesmanActivity.class);
         startActivity(intent);
     }

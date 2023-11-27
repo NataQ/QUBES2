@@ -230,13 +230,6 @@
                             android:gravity="center"
                             android:text="No Data"
                             android:visibility="visible" />
-
-                        <TextView
-                            style="@style/TextView_Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/tap_to_refresh" />
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView

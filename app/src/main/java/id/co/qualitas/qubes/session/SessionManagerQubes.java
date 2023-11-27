@@ -31,6 +31,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
     private static final String PREF_START_DAY = "pref_start_day";
+    private static final String PREF_ID_VISIT = "pref_id_visit";
     private static final String PREF_LOGIN = "pref_login";
     private static final String PREF_RETURN = "pref_return";
     private static final String PREF_ALREADY_PRINT = "pref_already_print";
@@ -45,6 +46,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
     private static final String KEY_START_DAY = "key_start_day";
+    private static final String KEY_ID_VISIT = "key_id_visit";
     private static final String KEY_USER_PROFILE = "key_user_profile";
     private static final String KEY_STOCK_REQUEST_HEADER = "key_stock_request_header";
     private static final String KEY_ROUTE_CUSTOMER_HEADER = "key_route_customer_header";
@@ -63,6 +65,7 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences returnPrefs;
     private static SharedPreferences outletHeaderPrefs;
     private static SharedPreferences startDayPrefs;
+    private static SharedPreferences idVisitPrefs;
     private static SharedPreferences prefs;
     private static SharedPreferences loginPrefs;
     private static SharedPreferences stockRequestHeaderPrefs;
@@ -81,6 +84,7 @@ public abstract class SessionManagerQubes {
         collectionPrefs = context.getSharedPreferences(PREF_COLLECTION, Context.MODE_PRIVATE);
         routeCustomerHeaderPrefs = context.getSharedPreferences(PREF_ROUTE_CUSTOMER_HEADER, Context.MODE_PRIVATE);
         startDayPrefs = context.getSharedPreferences(PREF_START_DAY, Context.MODE_PRIVATE);
+        idVisitPrefs = context.getSharedPreferences(PREF_ID_VISIT, Context.MODE_PRIVATE);
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
@@ -93,6 +97,12 @@ public abstract class SessionManagerQubes {
     public static void setStartDay(int param) {
         synchronized (sync) {
             startDayPrefs.edit().putInt(KEY_START_DAY, param).apply();
+        }
+    }
+
+    public static void setIdVisit(int param) {
+        synchronized (sync) {
+            idVisitPrefs.edit().putInt(KEY_ID_VISIT, param).apply();
         }
     }
 
@@ -280,7 +290,28 @@ public abstract class SessionManagerQubes {
         return startDayPrefs.getInt(KEY_START_DAY, 0);
     }
 
+    public static int getIdVisit() {
+        return idVisitPrefs.getInt(KEY_ID_VISIT, 0);
+    }
+
     //------------------------------------------------------------------------------
+
+    public static void clearAllSession(){
+        clearCollectionHistorySession();
+        clearReturnSession();
+        clearAlreadyPrintSession();
+        clearImageTypeSession();
+        clearCustomerNooSession();
+        clearOrderSession();
+        clearOutletHeaderSession();
+        clearStartDaySession();
+        clearIdVisitSession();
+        clearLoginSession();
+        clearStockRequestHeaderSession();
+        clearCollectionHeaderSession();
+        clearRouteCustomerHeaderSession();
+
+    }
 
     public static void clearCollectionHistorySession() {
         collectionHistoryPrefs.edit().clear().apply();
@@ -312,6 +343,10 @@ public abstract class SessionManagerQubes {
 
     public static void clearStartDaySession() {
         startDayPrefs.edit().clear().apply();
+    }
+
+    public static void clearIdVisitSession() {
+        idVisitPrefs.edit().clear().apply();
     }
 
     public static void clearLoginSession() {

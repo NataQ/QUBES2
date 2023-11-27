@@ -898,6 +898,16 @@ public class VisitActivity extends BaseActivity {
         vs.setIdHeader(Constants.ID_VS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         database.addVisitSalesmanAll(vs);
 
+        if (vs.getPhotoNotVisitReason() != null) {
+            Map req = new HashMap();
+            req.put("photo", vs.getPhotoNotVisitReason());
+            req.put("typePhoto", "not_visit");
+            req.put("idDB", vs.getIdHeader());
+            req.put("customerID", vs.getCustomerId());
+            req.put("username", user.getUsername());
+            database.addPhoto(req);
+        }
+
         Customer cus = new Customer();
         cus.setIdHeader(vs.getIdHeader());
         cus.setId(vs.getCustomerId());
@@ -1531,7 +1541,7 @@ public class VisitActivity extends BaseActivity {
                     } else {
                         if (mList.size() != 0) {
                             PARAM = 2;
-                            new RequestUrl().execute();
+                            new RequestUrl().execute();//2
                         } else {
                             progressCircleVisit.setVisibility(View.GONE);
                             progressCircleNoo.setVisibility(View.GONE);

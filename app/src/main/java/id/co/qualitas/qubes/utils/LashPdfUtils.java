@@ -36,11 +36,13 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class LashPdfUtils {
     Font calibriRegularWhite, calibriRegular, bigCalibriBold, bigCalibri, calibriBold, arialRegular, bigArialBold, arialBold, myriadproRegular;
@@ -233,9 +235,11 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
+        String randomNumber = Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime());
+
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "515920230113", bigCalibri);//BD01
+        text = new Phrase(": " + randomNumber, bigCalibri);//BD01
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -245,9 +249,11 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
+        String name = SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getFullName() : "";
+
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "CHRIS (PT. AHEB)", bigCalibri);//SES G.PUSAT PALEM
+        text = new Phrase(": " + name, bigCalibri);//SES G.PUSAT PALEM
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -491,7 +497,6 @@ public class LashPdfUtils {
         table.addCell(cell);
 
         //name
-
         cell = new PdfPCell(new Phrase("ADM", calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
@@ -501,7 +506,9 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", calibriRegular));
+        String name = SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getFullName() : "";
+
+        cell = new PdfPCell(new Phrase(name, calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -510,7 +517,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("CHRIS (PT. AHEB)", calibriRegular));
+        cell = new PdfPCell(new Phrase(name, calibriRegular));
         cell.setUseAscender(true);
         cell.setColspan(3);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -552,7 +559,6 @@ public class LashPdfUtils {
         cell.setBorder(Rectangle.LEFT | Rectangle.BOTTOM | Rectangle.RIGHT);
         cell.setPadding(5);
         table.addCell(cell);
-
 
         return table;
     }
@@ -730,6 +736,8 @@ public class LashPdfUtils {
         cell.setBorder(Rectangle.BOX);
         cell.setPadding(5);
         table.addCell(cell);
+
+
 
         //detail
 

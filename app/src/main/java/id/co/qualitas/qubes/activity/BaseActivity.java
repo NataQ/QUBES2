@@ -359,40 +359,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void clearAllSession() {
-        SessionManagerQubes.clearLoginSession();
-        SessionManagerQubes.clearOrderSession();
-        SessionManagerQubes.clearStockRequestHeaderSession();
-        SessionManagerQubes.clearStartDaySession();
-        SessionManagerQubes.clearOutletHeaderSession();
-        SessionManagerQubes.clearImageTypeSession();
-        SessionManagerQubes.clearCollectionHistorySession();
-        SessionManagerQubes.clearReturnSession();
-        SessionManagerQubes.clearOrderSession();
-        SessionManagerQubes.clearCustomerNooSession();
-        SessionManagerQubes.clearCollectionHeaderSession();
-        SessionManagerQubes.clearRouteCustomerHeaderSession();
-
-        database.deleteStockRequestHeader();
-        database.deleteStockRequestDetail();
-        database.deleteInvoiceHeader();
-        database.deleteInvoiceDetail();
-        database.deleteMasterNonRouteCustomer();
-        database.deleteMasterNonRouteCustomerPromotion();
-        database.deleteCustomer();
-        database.deleteCustomerPromotion();
-        database.deleteVisitSalesman();
-        database.deleteVisitSalesmanNoo();
-        database.deleteNoo();
-        database.deleteMasterBank();
-        database.deleteMasterReason();
-        database.deleteMasterMaterial();
-        database.deleteMasterUom();
-        database.deleteMasterCustomerType();
-        database.deleteMasterDaerahTingkat();
-        database.deleteMasterPriceCode();
-        database.deleteMasterSalesPriceHeader();
-        database.deleteMasterSalesPriceDetail();
-        database.deleteMasterParameter();
+        SessionManagerQubes.clearAllSession();
+        database.deleteAllDatabase();
 
         Helper.removeItemParam(Constants.FROM_VISIT);
         Helper.removeItemParam(Constants.CURRENTPAGE);

@@ -126,6 +126,8 @@ public class CollectionVisitActivity extends BaseActivity {
 
                     Intent intent = new Intent(this, CollectionFormActivity.class);
                     startActivity(intent);
+                } else if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
+                    setToast("Anda sudah pause di customer ini. Jika ingin melakukan pembayaran, silahkan resume customer ini");
                 } else {
                     setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, silahkan pilih menu Collection di halaman Activity");
                 }

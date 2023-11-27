@@ -51,8 +51,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -432,7 +434,7 @@ public class CreateNooActivity extends BaseActivity {
 
         List<String> statusToko = new ArrayList<>();
         statusToko.add("--");
-        statusToko.add("Milik Sendiri");
+        statusToko.add("Pribadi");
         statusToko.add("Sewa");
 
         List<String> statusNPWP = new ArrayList<>();
@@ -1251,6 +1253,37 @@ public class CreateNooActivity extends BaseActivity {
                     result = false;
                 } else {
                     result = true;
+
+                    Map req = new HashMap();
+                    if (customerNoo.getPhotoKtp() != null) {
+                        req = new HashMap();
+                        req.put("photo", customerNoo.getPhotoKtp());
+                        req.put("typePhoto", "ktp");
+                        req.put("idDB", header);
+                        req.put("customerID", customerNoo.getId());
+                        req.put("username", user.getUsername());
+                        database.addPhoto(req);
+                    }
+
+                    if (customerNoo.getPhotoNpwp() != null) {
+                        req = new HashMap();
+                        req.put("photo", customerNoo.getPhotoNpwp());
+                        req.put("typePhoto", "npwp");
+                        req.put("idDB", header);
+                        req.put("customerID", customerNoo.getId());
+                        req.put("username", user.getUsername());
+                        database.addPhoto(req);
+                    }
+
+                    if (customerNoo.getPhotoOutlet() != null) {
+                        req = new HashMap();
+                        req.put("photo", customerNoo.getPhotoOutlet());
+                        req.put("typePhoto", "outlet");
+                        req.put("idDB", header);
+                        req.put("customerID", customerNoo.getId());
+                        req.put("username", user.getUsername());
+                        database.addPhoto(req);
+                    }
                 }
                 return result;
             } catch (Exception ex) {

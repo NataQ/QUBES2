@@ -77,6 +77,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HostnameVerifier;
@@ -739,6 +740,12 @@ public class Helper extends BaseFragment {
         return new BigInteger(String.valueOf((int) Math.floor((1 + Math.random()) * 0x1000)))
                 .toString(16)
                 .substring(1) + String.valueOf(curDate.getTime());
+    }
+
+    public static String getUUID() {
+//        String result = UUID.nameUUIDFromBytes(text.getBytes()).toString();
+        String result = UUID.randomUUID().toString();
+        return result;
     }
 
     public static String splitIdFailed(String input, int pos) {

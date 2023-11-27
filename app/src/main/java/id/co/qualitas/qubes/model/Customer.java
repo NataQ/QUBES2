@@ -54,6 +54,7 @@ public class Customer {
     private String mileage;
     private int idReason;
     private String nameReason;
+    private String createdDate;
     private int posReason;
 //    private Uri photoKTPUri;
 //    private Uri photoNPWPUri;
@@ -95,6 +96,14 @@ public class Customer {
 //        this.photoOutletUri = photoOutletUri;
 //    }
 
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public int getPosReason() {
         return posReason;

@@ -98,9 +98,15 @@ public class OrderDetailActivity extends BaseActivity {
             } else {
                 txtDate.setText("");
             }
-            txtOrderNo.setText(orderHeader.getIdHeader() + " - " +  format.format(orderHeader.getId()));
+            txtOrderNo.setText(orderHeader.getIdHeader() + " - " + format.format(orderHeader.getId()));
             txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
             txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
+
+            if (orderHeader.getOrder_type().equals("TO")) {
+                btnPrint.setVisibility(View.GONE);
+            } else {
+                btnPrint.setVisibility(View.VISIBLE);
+            }
 
             if (!Helper.isEmpty(orderHeader.getStatus())) {
                 switch (orderHeader.getStatus().toLowerCase()) {
@@ -123,6 +129,11 @@ public class OrderDetailActivity extends BaseActivity {
                         llStatus.setVisibility(View.VISIBLE);
                         llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue8_aspp));
                         txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.aspp_blue9));
+                        break;
+                    case "draft":
+                        llStatus.setVisibility(View.VISIBLE);
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gray12_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black1_aspp));
                         break;
                     default:
                         llStatus.setVisibility(View.GONE);

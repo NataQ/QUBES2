@@ -448,10 +448,13 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (response.get("visit") != null) {
                         LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
-                        double id = (double) startDay.get("id");
-                        SessionManagerQubes.setStartDay((int) id);
+                        double statusVisit = (double) startDay.get("statusVisit");
+                        double idVisit = (double) startDay.get("idVisit");
+                        SessionManagerQubes.setStartDay((int) statusVisit);
+                        SessionManagerQubes.setIdVisit((int) idVisit);
                     } else {
                         SessionManagerQubes.setStartDay(0);
+                        SessionManagerQubes.setIdVisit(0);
                     }
 
                     Customer[] paramArray = Helper.ObjectToGSON(response.get("listCustomerSalesman"), Customer[].class);

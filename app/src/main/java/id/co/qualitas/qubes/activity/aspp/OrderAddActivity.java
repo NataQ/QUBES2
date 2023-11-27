@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -24,6 +25,11 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -32,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,12 +90,52 @@ public class OrderAddActivity extends BaseActivity {
     public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final int REQUEST_LOCATION_PERMISSION = 5;
 
+    ArrayList<String> permissionsList;
+    String[] permissionsStr = {
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN
+    };
+    int permissionsCount = 0;
+
+    ActivityResultLauncher<String[]> permissionsLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
+                    new ActivityResultCallback<Map<String, Boolean>>() {
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onActivityResult(Map<String, Boolean> result) {
+                            ArrayList<Boolean> list = new ArrayList<>(result.values());
+                            permissionsList = new ArrayList<>();
+                            permissionsCount = 0;
+                            for (int i = 0; i < list.size(); i++) {
+                                if (shouldShowRequestPermissionRationale(permissionsStr[i])) {
+                                    permissionsList.add(permissionsStr[i]);
+                                } else if (!hasPermission(OrderAddActivity.this, permissionsStr[i])) {
+                                    permissionsCount++;
+                                }
+                            }
+                            if (permissionsList.size() > 0) {
+                                //Some permissions are denied and can be asked again.
+                                askForPermissions(permissionsList);
+                            } else if (permissionsCount > 0) {
+                                //Show alert dialog
+                                showPermissionDialog();
+                            } else {
+                                dialogConfirm();
+                            }
+                        }
+                    });
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aspp_activity_order_add);
 
         initialize();
+        permissionsList = new ArrayList<>();
+        permissionsList.addAll(Arrays.asList(permissionsStr));
 
         btnGetDiscount.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
@@ -123,25 +170,8 @@ public class OrderAddActivity extends BaseActivity {
                                 dialogConfirm();
                             }
                         } else {
-                            dialogConfirm();
+                            askForPermissions(permissionsList);
                         }
-//                    int validate = validateCO();
-//                    switch (validate) {
-//                        case 0:
-//                            if (user.getType_sales().equals("CO")) {
-//                                dialogKredit();
-//                            } else {
-//                                dialogConfirm();
-//                                saveOrderSession();
-//                            }
-//                            break;
-//                        case 1://co
-//                            setToast(ket);
-//                            break;
-//                        case 2://to
-//                            dialogConfirm();
-//                            break;
-//                    }
                     } else {
                         dialogConfirm();
                     }
@@ -667,7 +697,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setOmzet(omzet);
                     headerSave.setIdStockHeaderBE(stockHeader.getId());
                     headerSave.setIdStockHeaderDb(Integer.parseInt(stockHeader.getIdHeader()));
-                    headerSave.setStatus("Pending");
+                    headerSave.setStatus("Draft");
                     headerSave.setIsSync(0);
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);
@@ -775,8 +805,8 @@ public class OrderAddActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 payNow = true;
-                saveOrderSession();//bayar sekarang
                 dialog.dismiss();
+                saveOrderSession();//bayar sekarang
             }
         });
 
@@ -797,8 +827,16 @@ public class OrderAddActivity extends BaseActivity {
         Button btnYes = dialog.findViewById(R.id.btnYes);
 
         txtTitle.setText("Order");
-        if (user.getType_sales().equals("CO")) {
-            txtDialog.setText("Anda yakin sudah selesai order?");
+        if (!Helper.isEmpty(user.getType_sales())) {
+            if (user.getType_sales().equals("CO")) {
+                txtDialog.setText("Anda yakin sudah selesai order?");
+            } else {
+                String text = null;
+                if (overLK) text = text + "Order ini melebihi limit customer.";
+                if (doubleBon)
+                    text = text + "\nOrder ini memiliki double bon.\nAnda yakin ingin menyimpan order ini?";
+                txtDialog.setText(text);
+            }
         } else {
             String text = null;
             if (overLK) text = text + "Order ini melebihi limit customer.";
@@ -818,8 +856,12 @@ public class OrderAddActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (user.getType_sales().equals("CO")) {
-                    dialogKredit();
+                if (!Helper.isEmpty(user.getType_sales())) {
+                    if (user.getType_sales().equals("CO")) {
+                        dialogKredit();
+                    } else {
+                        saveOrderSession();//dialog confirm
+                    }
                 } else {
                     saveOrderSession();//dialog confirm
                 }
@@ -827,5 +869,38 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         dialog.show();
+    }
+
+    private boolean hasPermission(Context context, String permissionStr) {
+        return ContextCompat.checkSelfPermission(context, permissionStr) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void askForPermissions(ArrayList<String> permissionsList) {
+        String[] newPermissionStr = new String[permissionsList.size()];
+        for (int i = 0; i < newPermissionStr.length; i++) {
+            newPermissionStr[i] = permissionsList.get(i);
+        }
+        if (newPermissionStr.length > 0) {
+            permissionsLauncher.launch(newPermissionStr);
+        } else {
+            /* User has pressed 'Deny & Don't ask again' so we have to show the enable permissions dialog
+            which will lead them to app details page to enable permissions from there. */
+            showPermissionDialog();
+        }
+    }
+
+    private void showPermissionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permission required")
+                .setMessage("Some permissions are needed to be allowed to use this app without any problems.")
+                .setPositiveButton("Ok", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+        if (alertDialog == null) {
+            alertDialog = builder.create();
+            if (!alertDialog.isShowing()) {
+                alertDialog.show();
+            }
+        }
     }
 }

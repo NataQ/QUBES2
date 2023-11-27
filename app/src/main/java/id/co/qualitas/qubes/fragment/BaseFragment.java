@@ -368,39 +368,8 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     }
 
     private void clearAllSession() {
-        SessionManagerQubes.clearLoginSession();
-        SessionManagerQubes.clearStockRequestHeaderSession();
-        SessionManagerQubes.clearStartDaySession();
-        SessionManagerQubes.clearCollectionHistorySession();
-        SessionManagerQubes.clearImageTypeSession();
-        SessionManagerQubes.clearReturnSession();
-        SessionManagerQubes.clearCustomerNooSession();
-        SessionManagerQubes.clearOrderSession();
-        SessionManagerQubes.clearOutletHeaderSession();
-        SessionManagerQubes.clearCollectionHeaderSession();
-        SessionManagerQubes.clearRouteCustomerHeaderSession();
-
-        database.deleteStockRequestHeader();
-        database.deleteStockRequestDetail();
-        database.deleteInvoiceHeader();
-        database.deleteInvoiceDetail();
-        database.deleteMasterNonRouteCustomer();
-        database.deleteMasterNonRouteCustomerPromotion();
-        database.deleteCustomer();
-        database.deleteCustomerPromotion();
-        database.deleteVisitSalesman();
-        database.deleteVisitSalesmanNoo();
-        database.deleteNoo();
-        database.deleteMasterBank();
-        database.deleteMasterReason();
-        database.deleteMasterMaterial();
-        database.deleteMasterUom();
-        database.deleteMasterCustomerType();
-        database.deleteMasterDaerahTingkat();
-        database.deleteMasterPriceCode();
-        database.deleteMasterSalesPriceHeader();
-        database.deleteMasterSalesPriceDetail();
-        database.deleteMasterParameter();
+        SessionManagerQubes.clearAllSession();
+        database.deleteAllDatabase();
 
         Helper.removeItemParam(Constants.FROM_VISIT);
         Helper.removeItemParam(Constants.CURRENTPAGE);

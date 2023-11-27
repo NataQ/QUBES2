@@ -169,9 +169,19 @@ public class ReturnAddActivity extends BaseActivity {
                 header.put("username", user.getUsername());
                 header.put("id_header", Constants.ID_RT_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteReturn(header);
+                database.deletePhotoReturn();
 
+                Map req = new HashMap();
                 for (Material material : mList) {
                     database.addReturn(material, header);
+                    req = new HashMap();
+                    req.put("photo", material.getPhotoReason());
+                    req.put("idMaterial", material.getId());
+                    req.put("typePhoto", "return");
+                    req.put("idDB", header.get("id_header").toString());
+                    req.put("customerID", SessionManagerQubes.getOutletHeader().getId());
+                    req.put("username", user.getUsername());
+                    database.addPhoto(req);
                 }
                 return true;
             } catch (Exception ex) {
@@ -221,7 +231,7 @@ public class ReturnAddActivity extends BaseActivity {
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
         if (mList != null && mList.size() != 0) {
             today = mList.get(0).getDate();
-            if(today == null){
+            if (today == null) {
                 today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
             }
             txtReturnDate.setText(Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, today));

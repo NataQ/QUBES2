@@ -254,7 +254,7 @@ public class CollectionFormActivity extends BaseActivity {
                             startActivity(intent);
                             break;
                         case 3:
-                            if (SessionManagerQubes.getAlreadyPrint()) {
+                            if (SessionManagerQubes.getAlreadyPrint() || orderHeader.getOrder_type().equals("TO")) {
                                 intent = new Intent(CollectionFormActivity.this, OrderActivity.class);
                                 startActivity(intent);
                             } else {

@@ -272,11 +272,19 @@ public class DailySalesmanActivity extends BaseActivity {
             imgKTP.setVisibility(View.GONE);
             outletHeader.setPhotoKtp(null);
             SessionManagerQubes.setOutletHeader(outletHeader);
-            if (outletHeader.isNoo()) {
-                database.updatePhotoNoo(outletHeader, user.getUsername());
-            } else {
-                database.updatePhoto(outletHeader, user.getUsername());
-            }
+
+            Map req = new HashMap();
+            req.put("photo", null);
+            req.put("typePhoto", "ktp");
+            req.put("customerID", outletHeader.getId());
+            req.put("username", user.getUsername());
+            database.updatePhoto(req);
+
+//            if (outletHeader.isNoo()) {
+//                database.updatePhotoNoo(outletHeader, user.getUsername());
+//            } else {
+//                database.updatePhoto(outletHeader, user.getUsername());
+//            }
         });
 
         imgDeleteNPWP.setOnClickListener(view -> {
@@ -291,11 +299,19 @@ public class DailySalesmanActivity extends BaseActivity {
             imgNPWP.setVisibility(View.GONE);
             outletHeader.setPhotoNpwp(null);
             SessionManagerQubes.setOutletHeader(outletHeader);
-            if (outletHeader.isNoo()) {
-                database.updatePhotoNoo(outletHeader, user.getUsername());
-            } else {
-                database.updatePhoto(outletHeader, user.getUsername());
-            }
+
+            Map req = new HashMap();
+            req.put("photo", null);
+            req.put("typePhoto", "npwp");
+            req.put("customerID", outletHeader.getId());
+            req.put("username", user.getUsername());
+            database.updatePhoto(req);
+
+//            if (outletHeader.isNoo()) {
+//                database.updatePhotoNoo(outletHeader, user.getUsername());
+//            } else {
+//                database.updatePhoto(outletHeader, user.getUsername());
+//            }
         });
 
         imgDeleteOutlet.setOnClickListener(view -> {
@@ -310,11 +326,18 @@ public class DailySalesmanActivity extends BaseActivity {
             imgOutlet.setVisibility(View.GONE);
             outletHeader.setPhotoOutlet(null);
             SessionManagerQubes.setOutletHeader(outletHeader);
-            if (outletHeader.isNoo()) {
-                database.updatePhotoNoo(outletHeader, user.getUsername());
-            } else {
-                database.updatePhoto(outletHeader, user.getUsername());
-            }
+
+            Map req = new HashMap();
+            req.put("photo", null);
+            req.put("typePhoto", "outlet");
+            req.put("customerID", outletHeader.getId());
+            req.put("username", user.getUsername());
+            database.updatePhoto(req);
+//            if (outletHeader.isNoo()) {
+//                database.updatePhotoNoo(outletHeader, user.getUsername());
+//            } else {
+//                database.updatePhoto(outletHeader, user.getUsername());
+//            }
         });
 
         imgBack.setOnClickListener(v -> {
@@ -480,10 +503,31 @@ public class DailySalesmanActivity extends BaseActivity {
 
         visitSales.setStatus(Constants.CHECK_OUT_VISIT);
 
+        Map req = new HashMap();
         if (visitSales.getIdNotBuyReason() != null) {
             database.updateVisit(visitSales, user.getUsername(), true);
+
+            if (visitSales.getPhotoNotBuyReason() != null) {
+                req = new HashMap();
+                req.put("photo", visitSales.getPhotoNotBuyReason());
+                req.put("typePhoto", "not_buy");
+                req.put("idDB", visitSales.getIdHeader());
+                req.put("customerID", visitSales.getCustomerId());
+                req.put("username", user.getUsername());
+                database.addPhoto(req);
+            }
         } else {
             database.updateVisit(visitSales, user.getUsername(), false);
+
+            if (visitSales.getPhotoNotVisitReason() != null) {
+                req = new HashMap();
+                req.put("photo", visitSales.getPhotoNotVisitReason());
+                req.put("typePhoto", "not_visit");
+                req.put("idDB", visitSales.getIdHeader());
+                req.put("customerID", visitSales.getCustomerId());
+                req.put("username", user.getUsername());
+                database.addPhoto(req);
+            }
         }
         SessionManagerQubes.setOutletHeader(outletHeader);
         onBackPressed();
@@ -830,31 +874,57 @@ public class DailySalesmanActivity extends BaseActivity {
         } else {
             imageType = new ImageType();
         }
+
         typeImage = imageType.getPosImage();
         if (getIntent().getExtras() != null) {
             Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
             getIntent().removeExtra(Constants.OUTPUT_CAMERA);
-//            }
+            Map req = new HashMap();
             switch (typeImage) {
                 case 8:
                     imageType.setPhotoKTP(uri.toString());
                     outletHeader.setPhotoKtp(uri.toString());
+                    req = new HashMap();
+                    req.put("photo", uri.toString());
+                    req.put("typePhoto", "ktp");
+                    req.put("customerID", outletHeader.getId());
+                    req.put("username", user.getUsername());
+                    database.updatePhoto(req);
                     break;
                 case 9:
                     imageType.setPhotoNPWP(uri.toString());
                     outletHeader.setPhotoNpwp(uri.toString());
+                    req = new HashMap();
+                    req.put("photo", uri.toString());
+                    req.put("typePhoto", "npwp");
+                    req.put("customerID", outletHeader.getId());
+                    req.put("username", user.getUsername());
+                    database.updatePhoto(req);
                     break;
                 case 10:
                     imageType.setPhotoOutlet(uri.toString());
                     outletHeader.setPhotoOutlet(uri.toString());
+                    req = new HashMap();
+                    req.put("photo", uri.toString());
+                    req.put("typePhoto", "outlet");
+                    req.put("customerID", outletHeader.getId());
+                    req.put("username", user.getUsername());
+                    database.updatePhoto(req);
                     break;
                 case 11:
                     imageType.setPhotoReason(uri.toString());
                     openDialogPhotoReason(1);
+                    break;
                 case 12:
                     imageType.setPhotoReason(uri.toString());
                     openDialogPhotoReason(2);
+                    break;
             }
+//            if (outletHeader.isNoo()) {
+//                database.updatePhotoNoo(outletHeader, user.getUsername());
+//            } else {
+//                database.updatePhoto(outletHeader, user.getUsername());
+//            }
         }
         if (outletHeader.getPhotoKtp() != null) {
             Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), imgKTP);
@@ -899,11 +969,6 @@ public class DailySalesmanActivity extends BaseActivity {
                 imgAddOutlet.setVisibility(View.GONE);
             }
         }
-        if (outletHeader.isNoo()) {
-            database.updatePhotoNoo(outletHeader, user.getUsername());
-        } else {
-            database.updatePhoto(outletHeader, user.getUsername());
-        }
         SessionManagerQubes.setOutletHeader(outletHeader);
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
     }
@@ -925,6 +990,16 @@ public class DailySalesmanActivity extends BaseActivity {
         visitSales.setResumeTime(null);
         visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
         database.updateVisit(visitSales, user.getUsername(), false);
+
+        if (visitSales.getPhotoPauseReason() != null) {
+            Map req = new HashMap();
+            req.put("photo", visitSales.getPhotoPauseReason());
+            req.put("typePhoto", "not_buy");
+            req.put("idDB", visitSales.getIdHeader());
+            req.put("customerID", visitSales.getCustomerId());
+            req.put("username", user.getUsername());
+            database.addPhoto(req);
+        }
 
         txtStatus.setText("Resume");
         imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
@@ -1303,7 +1378,7 @@ public class DailySalesmanActivity extends BaseActivity {
             try {
                 f.createNewFile();
                 Utils.copyFile(new File(Utils.getRealPathFromURI(DailySalesmanActivity.this, data.getData())), f);
-
+                Map req = new HashMap();
                 switch (typeImage) {
                     case 8:
                         imageType.setPhotoKTP(imagepath);
@@ -1312,6 +1387,13 @@ public class DailySalesmanActivity extends BaseActivity {
                         imgKTP.setVisibility(View.VISIBLE);
                         imgDeleteKTP.setVisibility(View.VISIBLE);
                         imgAddKTP.setVisibility(View.GONE);
+
+                        req = new HashMap();
+                        req.put("photo", imagepath);
+                        req.put("typePhoto", "ktp");
+                        req.put("customerID", outletHeader.getId());
+                        req.put("username", user.getUsername());
+                        database.updatePhoto(req);
                         break;
                     case 9:
                         imageType.setPhotoNPWP(imagepath);
@@ -1320,6 +1402,13 @@ public class DailySalesmanActivity extends BaseActivity {
                         imgNPWP.setVisibility(View.VISIBLE);
                         imgDeleteNPWP.setVisibility(View.VISIBLE);
                         imgAddNPWP.setVisibility(View.GONE);
+
+                        req = new HashMap();
+                        req.put("photo", imagepath);
+                        req.put("typePhoto", "npwp");
+                        req.put("customerID", outletHeader.getId());
+                        req.put("username", user.getUsername());
+                        database.updatePhoto(req);
                         break;
                     case 10:
                         imageType.setPhotoOutlet(imagepath);
@@ -1328,15 +1417,22 @@ public class DailySalesmanActivity extends BaseActivity {
                         imgOutlet.setVisibility(View.VISIBLE);
                         imgDeleteOutlet.setVisibility(View.VISIBLE);
                         imgAddOutlet.setVisibility(View.GONE);
+
+                        req = new HashMap();
+                        req.put("photo", imagepath);
+                        req.put("typePhoto", "outlet");
+                        req.put("customerID", outletHeader.getId());
+                        req.put("username", user.getUsername());
+                        database.updatePhoto(req);
                         break;
                 }
                 SessionManagerQubes.setOutletHeader(outletHeader);
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-                if (outletHeader.isNoo()) {
-                    database.updatePhotoNoo(outletHeader, user.getUsername());
-                } else {
-                    database.updatePhoto(outletHeader, user.getUsername());
-                }
+//                if (outletHeader.isNoo()) {
+//                    database.updatePhotoNoo(outletHeader, user.getUsername());
+//                } else {
+//                    database.updatePhoto(outletHeader, user.getUsername());
+//                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
