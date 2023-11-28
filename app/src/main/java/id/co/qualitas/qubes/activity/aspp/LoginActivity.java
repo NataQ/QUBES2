@@ -422,8 +422,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.get("max_visit") != null) {
                         userResponse.setMax_visit(Integer.parseInt(response.get("max_visit").toString()));
                     }
-
-                    SessionManagerQubes.setUserProfile(userResponse);
                     saveDataSuccess = true;
                     return null;
                 } else if (PARAM == 14) {
@@ -448,8 +446,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (response.get("visit") != null) {
                         LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
-                        double statusVisit = (double) startDay.get("statusVisit");
-                        double idVisit = (double) startDay.get("idVisit");
+                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
+                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") :0;
                         SessionManagerQubes.setStartDay((int) statusVisit);
                         SessionManagerQubes.setIdVisit((int) idVisit);
                     } else {
@@ -684,6 +682,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     progress.dismiss();
                     if (saveDataSuccess) {
+                        SessionManagerQubes.setUserProfile(userResponse);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

@@ -121,7 +121,7 @@ public class NetworkHelper {
             RestTemplate restTemplate = new RestTemplate();
 
             HttpComponentsClientHttpRequestFactory fac = new HttpComponentsClientHttpRequestFactory();
-            fac.setConnectTimeout(1000);
+            fac.setConnectTimeout(10000);
 
             SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
             factory.setConnectTimeout(1000);

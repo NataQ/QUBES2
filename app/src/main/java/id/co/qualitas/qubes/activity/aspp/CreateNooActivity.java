@@ -1037,13 +1037,13 @@ public class CreateNooActivity extends BaseActivity {
 //            }
             switch (typeImage) {
                 case 1:
-                    imageType.setPhotoKTP(uri.toString());
+                    imageType.setPhotoKTP(uri.getPath());
                     break;
                 case 2:
-                    imageType.setPhotoNPWP(uri.toString());
+                    imageType.setPhotoNPWP(uri.getPath());
                     break;
                 case 3:
-                    imageType.setPhotoOutlet(uri.toString());
+                    imageType.setPhotoOutlet(uri.getPath());
                     break;
             }
         }
@@ -1259,7 +1259,7 @@ public class CreateNooActivity extends BaseActivity {
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoKtp());
                         req.put("typePhoto", "ktp");
-                        req.put("idDB", header);
+                        req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
                         database.addPhoto(req);

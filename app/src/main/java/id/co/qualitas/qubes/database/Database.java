@@ -1251,6 +1251,16 @@ public class Database extends SQLiteOpenHelper {
     public int addPhoto(Map req) {
         SQLiteDatabase db = getWritableDatabase();
 
+        if (req.get("idDB") != null) {
+            if (req.get("idMaterial") != null) {
+                db.delete(TABLE_PHOTO, KEY_TYPE_PHOTO + " = ? and " + KEY_ID_DB + " = ?  and " + KEY_MATERIAL_ID + " = ? and " + KEY_CUSTOMER_ID + " = ?",
+                        new String[]{req.get("typePhoto").toString(), req.get("idDB").toString(), req.get("idMaterial").toString(), req.get("customerID").toString()});
+            } else {
+                db.delete(TABLE_PHOTO, KEY_TYPE_PHOTO + " = ? and " + KEY_ID_DB + " = ?  and " + KEY_CUSTOMER_ID + " = ?",
+                        new String[]{req.get("typePhoto").toString(), req.get("idDB").toString(), req.get("customerID").toString()});
+            }
+        }
+
         ContentValues values = new ContentValues();
         values.put(KEY_PHOTO, req.get("photo").toString());
         values.put(KEY_TYPE_PHOTO, req.get("typePhoto").toString());
@@ -4413,7 +4423,9 @@ public class Database extends SQLiteOpenHelper {
         setFormatSeparator();
         List<Customer> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " not like ? ";
+        String selectQuery = "SELECT c.* FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c " +
+                "left join " + TABLE_CUSTOMER + " a on a." + KEY_CUSTOMER_ID + " = c." + KEY_CUSTOMER_ID +
+                " WHERE c." + KEY_ROUTE + " not like ? and a." + KEY_CUSTOMER_ID + " is null";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});

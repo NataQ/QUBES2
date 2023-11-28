@@ -83,6 +83,7 @@ public class ReturnAddActivity extends BaseActivity {
     private ImageType imageType;
     private String today;
     private String imagepath;
+    private Uri uriImagePath;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -276,7 +277,7 @@ public class ReturnAddActivity extends BaseActivity {
             getIntent().removeExtra(Constants.OUTPUT_CAMERA);
             mList = new ArrayList<>();
             mList = SessionManagerQubes.getReturn();
-            mList.get(imageType.getPosMaterial()).setPhotoReason(uri.toString());
+            mList.get(imageType.getPosMaterial()).setPhotoReason(uri.getPath());
         } else {
             mList = new ArrayList<>();
             mList.addAll(database.getAllReturn(SessionManagerQubes.getOutletHeader().getId()));
@@ -539,7 +540,7 @@ public class ReturnAddActivity extends BaseActivity {
     public void openGallery() {
         Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
         imagepath = getDirLoc(getApplicationContext()) + "/return" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
-        Uri uriImagePath = Uri.fromFile(new File(imagepath));
+        uriImagePath = Uri.fromFile(new File(imagepath));
         photoPickerIntent.setType("image/*");
         photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagePath);
         photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.name());
@@ -575,12 +576,13 @@ public class ReturnAddActivity extends BaseActivity {
 
     private void onSelectFromGalleryResult(Intent data) {
         Log.d("onActivityResult", "uriImagePath Gallery :" + data.getData().toString());
-        File f = new File(imagepath);
+//        File f = new File(imagepath);
+        File f = new File(uriImagePath.getPath());
         if (!f.exists()) {
             try {
                 f.createNewFile();
                 Utils.copyFile(new File(Utils.getRealPathFromURI(ReturnAddActivity.this, data.getData())), f);
-                mList.get(posPhoto).setPhotoReason(imagepath);
+                mList.get(posPhoto).setPhotoReason(uriImagePath.getPath());
                 mAdapter.notifyItemChanged(posPhoto, mList.get(posPhoto));
             } catch (IOException e) {
                 // TODO Auto-generated catch block

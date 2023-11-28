@@ -402,7 +402,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     SessionManagerQubes.setUrl(ipAddress);
                 }
             } else {
-                SessionManagerQubes.setUrl("http://192.168.1.13:8282");
+                SessionManagerQubes.setUrl("http://192.168.1.14:8282");
                 Constants.URL = SessionManagerQubes.getUrl();
             }
 

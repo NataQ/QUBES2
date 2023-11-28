@@ -122,6 +122,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private ImageType imageType;
     private String today;
     private String imagepath;
+    private Uri uriImagePath;
     private int typeImage = 0;
     private boolean isLocationPermissionGranted = false;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -278,7 +279,8 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("typePhoto", "ktp");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
-            database.updatePhoto(req);
+            req.put("idDB", visitSales.getIdHeader());
+            database.addPhoto(req);
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -305,7 +307,8 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("typePhoto", "npwp");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
-            database.updatePhoto(req);
+            req.put("idDB", visitSales.getIdHeader());
+            database.addPhoto(req);
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -332,7 +335,8 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("typePhoto", "outlet");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
-            database.updatePhoto(req);
+            req.put("idDB", visitSales.getIdHeader());
+            database.addPhoto(req);
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
 //            } else {
@@ -882,41 +886,44 @@ public class DailySalesmanActivity extends BaseActivity {
             Map req = new HashMap();
             switch (typeImage) {
                 case 8:
-                    imageType.setPhotoKTP(uri.toString());
-                    outletHeader.setPhotoKtp(uri.toString());
+                    imageType.setPhotoKTP(uri.getPath());
+                    outletHeader.setPhotoKtp(uri.getPath());
                     req = new HashMap();
-                    req.put("photo", uri.toString());
+                    req.put("photo", uri.getPath());
                     req.put("typePhoto", "ktp");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
-                    database.updatePhoto(req);
+                    req.put("idDB", visitSales.getIdHeader());
+                    database.addPhoto(req);
                     break;
                 case 9:
-                    imageType.setPhotoNPWP(uri.toString());
-                    outletHeader.setPhotoNpwp(uri.toString());
+                    imageType.setPhotoNPWP(uri.getPath());
+                    outletHeader.setPhotoNpwp(uri.getPath());
                     req = new HashMap();
-                    req.put("photo", uri.toString());
+                    req.put("photo", uri.getPath());
                     req.put("typePhoto", "npwp");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
-                    database.updatePhoto(req);
+                    req.put("idDB", visitSales.getIdHeader());
+                    database.addPhoto(req);
                     break;
                 case 10:
-                    imageType.setPhotoOutlet(uri.toString());
-                    outletHeader.setPhotoOutlet(uri.toString());
+                    imageType.setPhotoOutlet(uri.getPath());
+                    outletHeader.setPhotoOutlet(uri.getPath());
                     req = new HashMap();
-                    req.put("photo", uri.toString());
+                    req.put("photo", uri.getPath());
                     req.put("typePhoto", "outlet");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
-                    database.updatePhoto(req);
+                    req.put("idDB", visitSales.getIdHeader());
+                    database.addPhoto(req);
                     break;
                 case 11:
-                    imageType.setPhotoReason(uri.toString());
+                    imageType.setPhotoReason(uri.getPath());
                     openDialogPhotoReason(1);
                     break;
                 case 12:
-                    imageType.setPhotoReason(uri.toString());
+                    imageType.setPhotoReason(uri.getPath());
                     openDialogPhotoReason(2);
                     break;
             }
@@ -994,7 +1001,7 @@ public class DailySalesmanActivity extends BaseActivity {
         if (visitSales.getPhotoPauseReason() != null) {
             Map req = new HashMap();
             req.put("photo", visitSales.getPhotoPauseReason());
-            req.put("typePhoto", "not_buy");
+            req.put("typePhoto", "pause");
             req.put("idDB", visitSales.getIdHeader());
             req.put("customerID", visitSales.getCustomerId());
             req.put("username", user.getUsername());
@@ -1261,6 +1268,7 @@ public class DailySalesmanActivity extends BaseActivity {
         ImageView photo = dialog.findViewById(R.id.photo);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        layoutGallery.setVisibility(View.VISIBLE);
         btnSave.setVisibility(View.GONE);
 
         switch (typeImage) {
@@ -1363,7 +1371,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imagepath = getDirLoc(getApplicationContext()) + "/outlet" + Helper.getTodayDate(Constants.DATE_TYPE_18) + ".png";
                 break;
         }
-        Uri uriImagePath = Uri.fromFile(new File(imagepath));
+        uriImagePath = Uri.fromFile(new File(imagepath));
         photoPickerIntent.setType("image/*");
         photoPickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriImagePath);
         photoPickerIntent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.name());
@@ -1373,7 +1381,8 @@ public class DailySalesmanActivity extends BaseActivity {
 
     private void onSelectFromGalleryResult(Intent data) {
         Log.d("onActivityResult", "uriImagePathGallery :" + data.getData().toString());
-        File f = new File(imagepath);
+//        File f = new File(imagepath);
+        File f = new File(uriImagePath.getPath());
         if (!f.exists()) {
             try {
                 f.createNewFile();
@@ -1381,49 +1390,52 @@ public class DailySalesmanActivity extends BaseActivity {
                 Map req = new HashMap();
                 switch (typeImage) {
                     case 8:
-                        imageType.setPhotoKTP(imagepath);
+                        imageType.setPhotoKTP(uriImagePath.getPath());
                         Utils.loadImageFit(DailySalesmanActivity.this, imagepath, imgKTP);
-                        outletHeader.setPhotoKtp(imagepath);
+                        outletHeader.setPhotoKtp(uriImagePath.getPath());
                         imgKTP.setVisibility(View.VISIBLE);
                         imgDeleteKTP.setVisibility(View.VISIBLE);
                         imgAddKTP.setVisibility(View.GONE);
 
                         req = new HashMap();
-                        req.put("photo", imagepath);
+                        req.put("photo", uriImagePath.getPath());
                         req.put("typePhoto", "ktp");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
-                        database.updatePhoto(req);
+                        req.put("idDB", visitSales.getIdHeader());
+                        database.addPhoto(req);
                         break;
                     case 9:
-                        imageType.setPhotoNPWP(imagepath);
+                        imageType.setPhotoNPWP(uriImagePath.getPath());
                         Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoNPWP(), imgNPWP);
-                        outletHeader.setPhotoNpwp(imagepath);
+                        outletHeader.setPhotoNpwp(uriImagePath.getPath());
                         imgNPWP.setVisibility(View.VISIBLE);
                         imgDeleteNPWP.setVisibility(View.VISIBLE);
                         imgAddNPWP.setVisibility(View.GONE);
 
                         req = new HashMap();
-                        req.put("photo", imagepath);
+                        req.put("photo", uriImagePath.getPath());
                         req.put("typePhoto", "npwp");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
-                        database.updatePhoto(req);
+                        req.put("idDB", visitSales.getIdHeader());
+                        database.addPhoto(req);
                         break;
                     case 10:
-                        imageType.setPhotoOutlet(imagepath);
+                        imageType.setPhotoOutlet(uriImagePath.getPath());
                         Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoOutlet(), imgOutlet);
-                        outletHeader.setPhotoOutlet(imagepath);
+                        outletHeader.setPhotoOutlet(uriImagePath.getPath());
                         imgOutlet.setVisibility(View.VISIBLE);
                         imgDeleteOutlet.setVisibility(View.VISIBLE);
                         imgAddOutlet.setVisibility(View.GONE);
 
                         req = new HashMap();
-                        req.put("photo", imagepath);
+                        req.put("photo", uriImagePath.getPath());
                         req.put("typePhoto", "outlet");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
-                        database.updatePhoto(req);
+                        req.put("idDB", visitSales.getIdHeader());
+                        database.addPhoto(req);
                         break;
                 }
                 SessionManagerQubes.setOutletHeader(outletHeader);

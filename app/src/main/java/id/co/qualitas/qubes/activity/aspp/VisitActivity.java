@@ -125,7 +125,7 @@ public class VisitActivity extends BaseActivity {
     private LinearLayout llVisit, llNoo;
     private RelativeLayout rlInap, rlDaily;
     private RecyclerView recyclerViewVisit, recyclerViewNoo;
-    private boolean isLocationPermissionGranted = false;
+    private boolean isLocationPermissionGranted = false, swipeRefresh = false;
     private LocationManager lm;
     private Customer outletClicked;
     private LashPdfUtils pdfUtils;
@@ -217,11 +217,19 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            startDayVisit();//start visit
+            if (swipeRefresh) {
+                startDayVisit();//start visit
+            } else {
+                setToast("Silahkan refresh data customer");
+            }
         });
 
         btnNextDay.setOnClickListener(v -> {
-            startDayVisit();//next day
+            if (swipeRefresh) {
+                startDayVisit();//next day
+            } else {
+                setToast("Silahkan refresh data customer");
+            }
         });
 
         btnEndVisit.setOnClickListener(v -> {
@@ -249,6 +257,7 @@ public class VisitActivity extends BaseActivity {
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeRefresh = true;
                 if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
                     requestData();//swipe visit
                 } else {
@@ -605,6 +614,7 @@ public class VisitActivity extends BaseActivity {
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeRefresh = true;
                 if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
                     requestData();//swipe noo
                 } else {
@@ -1224,17 +1234,17 @@ public class VisitActivity extends BaseActivity {
                 case 5:
                     uriPulang = uri;
                     imageType.setPhotoAkhirString(Utils.encodeImageBase64(VisitActivity.this, uriPulang));
-                    imageType.setPhotoAkhir(uriPulang.toString());
+                    imageType.setPhotoAkhir(uriPulang.getPath());
                     openDialogEndVisit();//on resume
                     break;
                 case 6:
                     uriSelesai = uri;
                     imageType.setPhotoSelesaiString(Utils.encodeImageBase64(VisitActivity.this, uriSelesai));
-                    imageType.setPhotoSelesai(uriSelesai.toString());
+                    imageType.setPhotoSelesai(uriSelesai.getPath());
                     openDialogEndVisit();//on resume
                     break;
                 case 13:
-                    imageType.setPhotoReason(uri.toString());
+                    imageType.setPhotoReason(uri.getPath());
                     openDialogReasonNotVisit();//on resume
                     break;
             }

@@ -547,5 +547,6 @@ public class Constants {
     public static final String API_SYNC_COLLECTION = "syncCollection";
     public static final String API_SYNC_RETURN = "syncReturn";
     public static final String API_SYNC_PHOTO = "syncPhoto";
+    public static final String API_SYNC_ONE_PHOTO = "syncOnePhoto";
     public static final String API_GET_IMAGE = "getImage";
 }

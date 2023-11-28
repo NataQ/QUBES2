@@ -749,8 +749,8 @@ public class OrderAddActivity extends BaseActivity {
                 progress.dismiss();
                 if (saveOrder) {
                     setToast("Save order Success");
+                    SessionManagerQubes.setOrder(headerSave);
                     if (payNow) {
-                        SessionManagerQubes.setOrder(headerSave);
                         SessionManagerQubes.setAlreadyPrint(false);
                         SessionManagerQubes.setCollectionSource(3);
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);

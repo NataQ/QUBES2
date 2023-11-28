@@ -555,8 +555,8 @@ public class AccountFragment extends BaseFragment {
 
                     if (response.get("visit") != null) {
                         LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
-                        double statusVisit = (double) startDay.get("statusVisit");
-                        double idVisit = (double) startDay.get("idVisit");
+                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
+                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") : 0;
                         SessionManagerQubes.setStartDay((int) statusVisit);
                         SessionManagerQubes.setIdVisit((int) idVisit);
                     } else {
@@ -1111,6 +1111,7 @@ public class AccountFragment extends BaseFragment {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
                     if (Helper.isNotEmptyOrNull(photoList)) {
+                        sizeData = photoList.size();
                         PARAM = 26;
                         new RequestUrlTransaction().execute();//26
                     } else {
@@ -1145,7 +1146,7 @@ public class AccountFragment extends BaseFragment {
                         noo = new ArrayList<>();
                         noo.add(data);
                         req.put("listData", noo);
-                        if(progressDialog != null){
+                        if (progressDialog != null) {
                             progressDialog.setMessage("Mengirim data noo offline...");
                         }
                         logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
@@ -1154,8 +1155,8 @@ public class AccountFragment extends BaseFragment {
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Noo " + data.getId() + " success");
                             database.updateSyncNoo(data);
+                            database.addLog(logResult);
                         }
-                        database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
@@ -1176,8 +1177,8 @@ public class AccountFragment extends BaseFragment {
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Visit Salesman " + data.getIdHeader() + " success");
                             database.updateSyncVisitSalesman(data);
+                            database.addLog(logResult);
                         }
-                        database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
@@ -1192,8 +1193,8 @@ public class AccountFragment extends BaseFragment {
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
                             database.updateSyncStoreCheck(data);
+                            database.addLog(logResult);
                         }
-                        database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
@@ -1208,8 +1209,8 @@ public class AccountFragment extends BaseFragment {
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
                             database.updateSyncCollectionHeader(data);
+                            database.addLog(logResult);
                         }
-                        database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
@@ -1239,17 +1240,19 @@ public class AccountFragment extends BaseFragment {
                             logResult = new WSMessage();
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+                            database.addLog(logResult);
                             database.updateSyncReturn(data);
                         }
-                        database.addLog(logResult);
+
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
                 } else if (PARAM == 26) {
-                    URL_ = Constants.API_SYNC_PHOTO;
+                    URL_ = Constants.API_SYNC_ONE_PHOTO;
                     url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
 
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                    Map requestData = new HashMap();
                     for (Map data : photoList) {
                         map = new LinkedMultiValueMap<String, Object>();
                         if (data.get("photo") != null) {
@@ -1257,20 +1260,23 @@ public class AccountFragment extends BaseFragment {
                         } else {
                             map.add("photo", "");
                         }
-                        map.add("typePhoto", data.get("typePhoto"));
-                        map.add("id", user.getUsername());
-                        map.add("customerId", data.get("customerId"));
-                        map.add("idDB", data.get("idDB"));
+                        requestData = new HashMap();
+                        requestData.put("typePhoto", data.get("typePhoto"));
+                        requestData.put("id", user.getUsername());
+                        requestData.put("customerId", data.get("customerId"));
+                        requestData.put("idDB", data.get("idDB"));
+                        String json = new Gson().toJson(requestData);
+                        map.add("data", json);
 
                         counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, map);
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
                         if (logResult.getIdMessage() == 1) {
                             logResult = new WSMessage();
                             logResult.setIdMessage(1);
                             logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
+                            database.addLog(logResult);
                             database.updateSyncPhoto(data);
                         }
-                        database.addLog(logResult);
                         publishProgress(counter);
                         listWSMsg.add(logResult);
                     }
@@ -1302,7 +1308,7 @@ public class AccountFragment extends BaseFragment {
                     case 24:
                         logResult.setMessage("Sync return failed : " + exMess);
                         break;
-                    case 25:
+                    case 26:
                         logResult.setMessage("Sync photo failed : " + exMess);
                         break;
                 }
