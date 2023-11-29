@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -93,6 +94,7 @@ import id.co.qualitas.qubes.adapter.aspp.NooListAdapter;
 import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
@@ -100,9 +102,11 @@ import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
+import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.User;
@@ -165,6 +169,15 @@ public class VisitActivity extends BaseActivity {
     WorkManager workManager;
     private WorkRequest workRequest;
     private static final String TAG = VisitActivity.class.getSimpleName();
+    private boolean setDataSyncSuccess = false;
+    private ProgressDialog progressDialog;
+    private List<Customer> nooList = new ArrayList<>();
+    private List<VisitSalesman> visitSalesmanList = new ArrayList<>();
+    private List<Map> storeCheckList = new ArrayList<>(), returnList = new ArrayList<>();
+    private List<CollectionHeader> collectionList = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>();
+    private List<Map> photoList = new ArrayList<>();
+    private int sizeData = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -1342,12 +1355,14 @@ public class VisitActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
-                    btnEndDay.setVisibility(View.GONE);
-                    btnNextDay.setVisibility(View.VISIBLE);
+//                    btnEndDay.setVisibility(View.GONE);
+//                    btnNextDay.setVisibility(View.VISIBLE);
                     Helper.deleteFolder(getDirLoc(getApplicationContext()).getPath());
-                    SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
-                    Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-                    startActivity(intent);
+                    if (user.getType_sales().equals("CO")) {
+                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                        startActivity(intent);
+                    }
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi");
                 }
@@ -1419,14 +1434,6 @@ public class VisitActivity extends BaseActivity {
                     getData();
                     saveDataSuccess = true;
                     return null;
-
-//                    tiap refresh data, apus data di customer, terus add dari customer no rute
-//                    kalau ud d start jangan di add lagi, jadi lksg amil dari table customer aja
-
-//                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
-//                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
-//                    return null;
                 } else if (PARAM == 2) {
                     Map req = new HashMap();
                     req.put("username", user.getUsername());
@@ -1435,14 +1442,9 @@ public class VisitActivity extends BaseActivity {
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
                     return null;
                 } else if (PARAM == 3) {
-//                    ImageType request = new ImageType();
-//                    request.setKmAwal(kmAwal);
-//                    request.put("username", user.getUsername());
                     startDay = new HashMap();
                     startDay.put("kmAwal", kmAwal);
                     startDay.put("username", user.getUsername());
-//                    startDay.put("userLogin", user.getUserLogin());
-//                    startDay.put("photo", Utils.encodeImageBase64(VisitActivity.this, uriBerangkat));
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
                     if (uriBerangkat != null) {
                         map.add("kmAwalPhoto", new FileSystemResource(uriBerangkat.getPath()));
@@ -1453,10 +1455,8 @@ public class VisitActivity extends BaseActivity {
                     map.add("data", json);
 
                     String URL_ = Constants.API_GET_START_DAY_MULTI_PART;
-//                    String URL_ = Constants.API_GET_START_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
-//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, startDay);
                     return null;
                 } else if (PARAM == 4) {
                     endDay = new HashMap();
@@ -1465,32 +1465,234 @@ public class VisitActivity extends BaseActivity {
                     endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
                     endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
 
-//                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-//                    if (imageType.getPhotoAkhir() != null) {
-//                        File file = FileUtils.getFile(String.valueOf(this), imageType.getPhotoAkhir());
-//                        map.add("photoKmAkhir", new FileSystemResource(imageType.getPhotoAkhir()));
-//                    } else {
-//                        map.add("photoKmAkhir", "");
-//                    }
-//                    if (imageType.getPhotoSelesai() != null) {
-//                        map.add("photoCompleted", new FileSystemResource(imageType.getPhotoSelesai()));
-//                    } else {
-//                        map.add("photoCompleted", "");
-//                    }
-//                    String json = new Gson().toJson(endDay);
-//                    map.add("data", json);
+                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                    if (imageType.getPhotoAkhir() != null) {
+                        File file = FileUtils.getFile(String.valueOf(this), imageType.getPhotoAkhir());
+                        map.add("photoKmAkhir", new FileSystemResource(imageType.getPhotoAkhir()));
+                    } else {
+                        map.add("photoKmAkhir", "");
+                    }
+                    if (imageType.getPhotoSelesai() != null) {
+                        map.add("photoCompleted", new FileSystemResource(imageType.getPhotoSelesai()));
+                    } else {
+                        map.add("photoCompleted", "");
+                    }
+                    String json = new Gson().toJson(endDay);
+                    map.add("data", json);
 
-//                    String URL_ = Constants.API_GET_END_DAY_MULTI_PART;
-                    String URL_ = Constants.API_GET_END_DAY;
+                    String URL_ = Constants.API_GET_END_DAY_MULTI_PART;
+//                    String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
                     return null;
-                } else {
+                } else if (PARAM == 5) {
                     validateVisitSalesman();
                     getData();
                     saveDataSuccess = true;
+                    return null;
+                } else if (PARAM == 13) {
+                    nooList = new ArrayList<>();
+                    nooList = database.getAllNoo();
+                    if (nooList == null) {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline data noo failed: " + exMess);
+                    } else {
+                        setDataSyncSuccess = true;
+                    }
+                    return null;
+                } else if (PARAM == 15) {
+                    visitSalesmanList = new ArrayList<>();
+                    visitSalesmanList = database.getAllVisitSalesman();
+                    if (visitSalesmanList == null) {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline data visit failed: " + exMess);
+                    } else {
+                        setDataSyncSuccess = true;
+                    }
+                    return null;
+                } else if (PARAM == 17) {
+                    List<Customer> customerList = database.getAllCustomerCheckOut();
+                    if (customerList != null) {
+                        if (!customerList.isEmpty()) {
+                            List<Material> mList = new ArrayList<>();
+                            Map header = new HashMap();
+                            for (Customer customer : customerList) {
+                                mList = new ArrayList<>();
+                                mList = database.getAllStoreCheckCheckOut(customer.getId());
+                                if (mList != null) {
+                                    if (!mList.isEmpty()) {
+                                        header = new HashMap();
+                                        header.put("id_mobile", mList.get(0).getIdheader());
+                                        header.put("date", mList.get(0).getDate());
+                                        header.put("id_salesman", user.getUsername());
+                                        header.put("id_customer", mList.get(0).getId_customer());
+                                        header.put("listData", mList);
+                                        storeCheckList.add(header);
+                                        setDataSyncSuccess = true;
+                                    } else {
+                                        setDataSyncSuccess = true;
+                                    }
+                                } else {
+                                    setDataSyncSuccess = false;
+                                }
+                            }
 
+                            if (!setDataSyncSuccess) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(0);
+                                logResult.setResult(null);
+                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                                logResult.setMessage("Set offline store check failed: " + exMess);
+                            }
+                        } else {
+                            setDataSyncSuccess = true;
+                            storeCheckList = new ArrayList<>();
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline store check failed: " + exMess);
+                    }
+                    return null;
+                } else if (PARAM == 19) {
+                    List<Customer> customerList = database.getAllCustomerCheckOut();
+                    if (customerList != null) {
+                        if (!customerList.isEmpty()) {
+                            collectionList = new ArrayList<>();
+                            List<CollectionHeader> mList = new ArrayList<>();
+                            for (Customer customer : customerList) {
+                                mList = new ArrayList<>();
+                                mList = database.getAllCollectionHeader(customer.getId());
+                                if (mList != null) {
+                                    if (!mList.isEmpty()) {
+                                        collectionList.addAll(mList);
+                                        setDataSyncSuccess = true;
+                                    } else {
+                                        setDataSyncSuccess = true;
+                                    }
+                                } else {
+                                    setDataSyncSuccess = false;
+                                }
+                            }
+                            if (!setDataSyncSuccess) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(0);
+                                logResult.setResult(null);
+                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                                logResult.setMessage("Set offline collection failed: " + exMess);
+                            }
+                        } else {
+                            setDataSyncSuccess = true;
+                            storeCheckList = new ArrayList<>();
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline collection failed: " + exMess);
+                    }
+                    return null;
+                } else if (PARAM == 21) {
+                    List<Customer> customerList = database.getAllCustomerCheckOut();
+                    if (customerList != null) {
+                        if (!customerList.isEmpty()) {
+                            orderList = new ArrayList<>();
+                            List<Order> mList = new ArrayList<>();
+                            for (Customer customer : customerList) {
+                                mList = new ArrayList<>();
+                                mList = database.getAllOrderHeader(customer.getId(), user.getUsername());
+                                if (mList != null) {
+                                    if (!mList.isEmpty()) {
+                                        orderList.addAll(mList);
+                                        setDataSyncSuccess = true;
+                                    } else {
+                                        setDataSyncSuccess = true;
+                                    }
+                                } else {
+                                    setDataSyncSuccess = false;
+                                }
+                            }
+
+                            if (!setDataSyncSuccess) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(0);
+                                logResult.setResult(null);
+                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                                logResult.setMessage("Set offline order failed: " + exMess);
+                            }
+                        } else {
+                            setDataSyncSuccess = true;
+                            storeCheckList = new ArrayList<>();
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline order failed: " + exMess);
+                    }
+                    return null;
+                } else {
+                    List<Customer> customerList = database.getAllCustomerCheckOut();
+                    if (customerList != null) {
+                        if (!customerList.isEmpty()) {
+                            returnList = new ArrayList<>();
+                            List<Material> mList = new ArrayList<>();
+                            Map header = new HashMap();
+                            for (Customer customer : customerList) {
+                                mList = new ArrayList<>();
+                                mList = database.getAllReturnCheckOut(customer.getId());
+                                if (mList != null) {
+                                    if (!mList.isEmpty()) {
+                                        header = new HashMap();
+                                        header.put("id_mobile", mList.get(0).getIdheader());
+                                        header.put("date", mList.get(0).getDate());
+                                        header.put("id_salesman", user.getUsername());
+                                        header.put("id_customer", mList.get(0).getId_customer());
+                                        header.put("listData", mList);
+                                        returnList.add(header);
+                                        setDataSyncSuccess = true;
+                                    } else {
+                                        setDataSyncSuccess = true;
+                                    }
+                                } else {
+                                    setDataSyncSuccess = false;
+                                }
+                            }
+                            if (!setDataSyncSuccess) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(0);
+                                logResult.setResult(null);
+                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                                logResult.setMessage("Set offline return failed: " + exMess);
+                            }
+                        } else {
+                            setDataSyncSuccess = true;
+                            storeCheckList = new ArrayList<>();
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline return failed: " + exMess);
+                    }
                     return null;
                 }
             } catch (Exception ex) {
@@ -1500,16 +1702,49 @@ public class VisitActivity extends BaseActivity {
                 if (PARAM == 2 || PARAM == 5) {
                     saveDataSuccess = false;
                 } else {
+//                    logResult = new WSMessage();
+//                    logResult.setIdMessage(0);
+//                    logResult.setResult(null);
+//                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+//                    if (PARAM == 1) {
+//                        logResult.setMessage("Today Customer error: " + exMess);
+//                    } else if (PARAM == 3) {
+//                        logResult.setMessage("Start Visit error: " + exMess);
+//                    } else if (PARAM == 4) {
+//                        logResult.setMessage("End Visit error: " + exMess);
+//                    }
                     logResult = new WSMessage();
                     logResult.setIdMessage(0);
                     logResult.setResult(null);
                     String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
-                    if (PARAM == 1) {
-                        logResult.setMessage("Today Customer error: " + exMess);
-                    } else if (PARAM == 3) {
-                        logResult.setMessage("Start Visit error: " + exMess);
-                    } else if (PARAM == 4) {
-                        logResult.setMessage("End Visit error: " + exMess);
+                    switch (PARAM) {
+                        case 1:
+                            logResult.setMessage("Today Customer error: " + exMess);
+                            break;
+                        case 3:
+                            logResult.setMessage("Start Visit error: " + exMess);
+                            break;
+                        case 4:
+                            logResult.setMessage("End Visit error: " + exMess);
+                            break;
+                        case 13:
+                            logResult.setMessage("Set offline data noo failed: " + exMess);
+                            break;
+                        case 15:
+                            logResult.setMessage("Set offline data visit failed: " + exMess);
+                            break;
+                        case 17:
+                            logResult.setMessage("Set offline store check failed: " + exMess);
+                            break;
+                        case 19:
+                            logResult.setMessage("Set offline collection failed: " + exMess);
+                            break;
+                        case 21:
+                            logResult.setMessage("Set offline order failed: " + exMess);
+                            break;
+                        case 23:
+                            logResult.setMessage("Set offline return failed: " + exMess);
+                            break;
                     }
                 }
                 return null;
@@ -1627,18 +1862,19 @@ public class VisitActivity extends BaseActivity {
                 if (logResult.getIdMessage() == 1) {
                     String message = "End Visit : " + logResult.getMessage();
                     logResult.setMessage(message);
-                }
-                database.addLog(logResult);
-                if (logResult.getIdMessage() == 1) {
-//                        setToast(result.getMessage());
+                    database.addLog(logResult);
                     SessionManagerQubes.setStartDay(2);
                     validateButton();//end
                     progress.show();
-                    new AsyncTaskGeneratePDF().execute();
+                    PARAM = 13;
+                    new RequestUrl().execute();
+//                    new AsyncTaskGeneratePDF().execute();
                 } else {
+                    database.addLog(logResult);
                     setToast(logResult.getMessage());
+                    openDialogEndVisit();
                 }
-            } else {
+            } else if (PARAM == 5) {
                 progress.dismiss();
                 if (saveDataSuccess) {
                     mAdapterVisit.notifyDataSetChanged();
@@ -1647,9 +1883,316 @@ public class VisitActivity extends BaseActivity {
                 } else {
                     setToast("Gagal menyimpan data");
                 }
+            } else if (PARAM == 13) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(nooList)) {
+                        sizeData = nooList.size();
+                        PARAM = 14;
+                        new RequestUrlTransaction().execute();//14
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data noo");
+                }
+            } else if (PARAM == 15) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(visitSalesmanList)) {
+                        sizeData = visitSalesmanList.size();
+                        PARAM = 16;
+                        new RequestUrlTransaction().execute();//16
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data visit");
+                }
+            } else if (PARAM == 17) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                        sizeData = storeCheckList.size();
+                        PARAM = 18;
+                        new RequestUrlTransaction().execute();//18
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data store check");
+                }
+            } else if (PARAM == 19) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(collectionList)) {
+                        sizeData = collectionList.size();
+                        PARAM = 20;
+                        new RequestUrlTransaction().execute();//20
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data collection");
+                }
+            } else if (PARAM == 21) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(orderList)) {
+                        sizeData = orderList.size();
+                        PARAM = 22;
+                        new RequestUrlTransaction().execute();//22
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data order");
+                }
+            } else if (PARAM == 23) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(returnList)) {
+                        sizeData = returnList.size();
+                        PARAM = 24;
+                        new RequestUrlTransaction().execute();//24
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah di sync");
+                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data return");
+                }
+            }
+        }
+    }
+
+    private class RequestUrlTransaction extends AsyncTask<Void, Integer, List<WSMessage>> {
+
+        @Override
+        protected List<WSMessage> doInBackground(Void... voids) {
+            try {
+                List<WSMessage> listWSMsg = new ArrayList<>();
+                String URL_ = null, url = null;
+                Map req = new HashMap();
+                int counter = 0;
+
+                if (PARAM == 14) {
+                    URL_ = Constants.API_SYNC_CUSTOMER_NOO;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    req = new HashMap();
+                    List<Customer> noo = new ArrayList<>();
+                    for (Customer data : nooList) {
+                        counter++;
+                        req = new HashMap();
+                        noo = new ArrayList<>();
+                        noo.add(data);
+                        req.put("listData", noo);
+                        if (progressDialog != null) {
+                            progressDialog.setMessage("Mengirim data noo offline...");
+                        }
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Noo " + data.getId() + " success");
+                            database.updateSyncNoo(data);
+                            database.addLog(logResult);
+                        }
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                } else if (PARAM == 16) {
+                    URL_ = Constants.API_SYNC_VISIT;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    req = new HashMap();
+                    List<VisitSalesman> noo = new ArrayList<>();
+                    for (VisitSalesman data : visitSalesmanList) {
+                        counter++;
+                        req = new HashMap();
+                        noo = new ArrayList<>();
+                        noo.add(data);
+                        req.put("listData", noo);
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Visit Salesman " + data.getIdHeader() + " success");
+                            database.updateSyncVisitSalesman(data);
+                            database.addLog(logResult);
+                        }
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                } else if (PARAM == 18) {
+                    URL_ = Constants.API_SYNC_STORE_CHECK;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    for (Map data : storeCheckList) {
+                        counter++;
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
+                            database.updateSyncStoreCheck(data);
+                            database.addLog(logResult);
+                        }
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                } else if (PARAM == 20) {
+                    URL_ = Constants.API_SYNC_COLLECTION;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    for (CollectionHeader data : collectionList) {
+                        counter++;
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
+                            database.updateSyncCollectionHeader(data);
+                            database.addLog(logResult);
+                        }
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                } else if (PARAM == 22) {
+                    URL_ = Constants.API_SYNC_ORDER;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    for (Order data : orderList) {
+                        counter++;
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
+                            database.updateSyncOrderHeader(data);
+                        }
+                        database.addLog(logResult);
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                } else {
+                    URL_ = Constants.API_SYNC_RETURN;
+                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    for (Map data : returnList) {
+                        counter++;
+                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                        if (logResult.getIdMessage() == 1) {
+                            logResult = new WSMessage();
+                            logResult.setIdMessage(1);
+                            logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+                            database.addLog(logResult);
+                            database.updateSyncReturn(data);
+                        }
+
+                        publishProgress(counter);
+                        listWSMsg.add(logResult);
+                    }
+                }
+                return listWSMsg;
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("Sync  offline", ex.getMessage());
+                }
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                switch (PARAM) {
+                    case 14:
+                        logResult.setMessage("Sync noo failed : " + exMess);
+                        break;
+                    case 16:
+                        logResult.setMessage("Sync visit salesman failed : " + exMess);
+                        break;
+                    case 18:
+                        logResult.setMessage("Sync store check failed : " + exMess);
+                        break;
+                    case 20:
+                        logResult.setMessage("Sync collection failed : " + exMess);
+                        break;
+                    case 22:
+                        logResult.setMessage("Sync order failed : " + exMess);
+                        break;
+                    case 24:
+                        logResult.setMessage("Sync return failed : " + exMess);
+                        break;
+                }
+                database.addLog(logResult);
+                return null;
             }
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getApplicationContext());
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMax(sizeData);
+            progressDialog.setMessage(getString(R.string.progress_checkout));
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            progressDialog.setProgress(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<WSMessage> listResult) {
+            if (listResult != null) {
+                int error = 0;
+                for (WSMessage msg : listResult) {
+                    if (msg.getIdMessage() == 0) {
+                        error++;
+                    }
+                }
+                if (listResult.size() == sizeData) {//ganti sizeData
+                    if (error == 0) {
+                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                    } else {
+                        setToast("Gagal mengirim data : " + String.valueOf(error));
+                    }
+                } else {
+                    setToast("Gagal mengirim data : " + String.valueOf(error));
+                }
+            } else {
+                setToast("Gagal mengirim data");
+            }
+            progressDialog.dismiss();
+
+            if (PARAM == 14) {
+                PARAM = 15;
+                progress.show();
+                new RequestUrl().execute();
+            } else if (PARAM == 16) {
+                PARAM = 17;
+                progress.show();
+                new RequestUrl().execute();
+            } else if (PARAM == 18) {
+                PARAM = 19;
+                progress.show();
+                new RequestUrl().execute();
+            } else if (PARAM == 20) {
+                PARAM = 21;
+                progress.show();
+                new RequestUrl().execute();
+            } else if (PARAM == 22) {
+                PARAM = 23;
+                progress.show();
+                new RequestUrl().execute();
+            } else {
+                progress.show();
+                new AsyncTaskGeneratePDF().execute();
+            }
+        }
     }
 
     private void validateButton() {

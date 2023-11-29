@@ -608,7 +608,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data noo error: " + exMess);
+                        logResult.setMessage("Set offline data noo failed: " + exMess);
                     } else {
                         setDataSyncSuccess = true;
                     }
@@ -622,7 +622,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data visit error: " + exMess);
+                        logResult.setMessage("Set offline data visit failed: " + exMess);
                     } else {
                         setDataSyncSuccess = true;
                     }
@@ -659,7 +659,7 @@ public class AccountFragment extends BaseFragment {
                                 logResult.setIdMessage(0);
                                 logResult.setResult(null);
                                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline data store check error: " + exMess);
+                                logResult.setMessage("Set offline store check failed: " + exMess);
                             }
                         } else {
                             setDataSyncSuccess = true;
@@ -671,7 +671,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data store check error: " + exMess);
+                        logResult.setMessage("Set offline store check failed: " + exMess);
                     }
                     return null;
                 } else if (PARAM == 19) {
@@ -699,7 +699,7 @@ public class AccountFragment extends BaseFragment {
                                 logResult.setIdMessage(0);
                                 logResult.setResult(null);
                                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline data collection error: " + exMess);
+                                logResult.setMessage("Set offline collection failed: " + exMess);
                             }
                         } else {
                             setDataSyncSuccess = true;
@@ -711,7 +711,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data collection error: " + exMess);
+                        logResult.setMessage("Set offline collection failed: " + exMess);
                     }
                     return null;
                 } else if (PARAM == 21) {
@@ -740,7 +740,7 @@ public class AccountFragment extends BaseFragment {
                                 logResult.setIdMessage(0);
                                 logResult.setResult(null);
                                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline data order error: " + exMess);
+                                logResult.setMessage("Set offline order failed: " + exMess);
                             }
                         } else {
                             setDataSyncSuccess = true;
@@ -752,7 +752,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data order error: " + exMess);
+                        logResult.setMessage("Set offline order failed: " + exMess);
                     }
                     return null;
                 } else if (PARAM == 23) {
@@ -787,7 +787,7 @@ public class AccountFragment extends BaseFragment {
                                 logResult.setIdMessage(0);
                                 logResult.setResult(null);
                                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline data return error: " + exMess);
+                                logResult.setMessage("Set offline return failed: " + exMess);
                             }
                         } else {
                             setDataSyncSuccess = true;
@@ -799,7 +799,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data return error: " + exMess);
+                        logResult.setMessage("Set offline return failed: " + exMess);
                     }
                     return null;
                 } else {
@@ -827,7 +827,7 @@ public class AccountFragment extends BaseFragment {
                                 logResult.setIdMessage(0);
                                 logResult.setResult(null);
                                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline data photo error: " + exMess);
+                                logResult.setMessage("Set offline data photo failed: " + exMess);
                             }
                         } else {
                             setDataSyncSuccess = true;
@@ -839,7 +839,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setIdMessage(0);
                         logResult.setResult(null);
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data photo error: " + exMess);
+                        logResult.setMessage("Set offline data photo failed: " + exMess);
                     }
                     return null;
                 }
@@ -857,43 +857,43 @@ public class AccountFragment extends BaseFragment {
                     String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
                     switch (PARAM) {
                         case 1:
-                            logResult.setMessage("Get data reason error: " + exMess);
+                            logResult.setMessage("Get data reason failed: " + exMess);
                             break;
                         case 3:
-                            logResult.setMessage("Get data bank error: " + exMess);
+                            logResult.setMessage("Get data bank failed: " + exMess);
                             break;
                         case 5:
-                            logResult.setMessage("Get data daerah tingkat error: " + exMess);
+                            logResult.setMessage("Get data daerah tingkat failed: " + exMess);
                             break;
                         case 7:
-                            logResult.setMessage("Get data material error: " + exMess);
+                            logResult.setMessage("Get data material failed: " + exMess);
                             break;
                         case 9:
-                            logResult.setMessage("Get data parameter error: " + exMess);
+                            logResult.setMessage("Get data parameter failed: " + exMess);
                             break;
                         case 11:
-                            logResult.setMessage("Get data customer error: " + exMess);
+                            logResult.setMessage("Get data customer failed: " + exMess);
                             break;
                         case 13:
-                            logResult.setMessage("Set offline data noo error: " + exMess);
+                            logResult.setMessage("Set offline data noo failed: " + exMess);
                             break;
                         case 15:
-                            logResult.setMessage("Set offline data visit error: " + exMess);
+                            logResult.setMessage("Set offline data visit failed: " + exMess);
                             break;
                         case 17:
-                            logResult.setMessage("Set offline data store check error: " + exMess);
+                            logResult.setMessage("Set offline store check failed: " + exMess);
                             break;
                         case 19:
-                            logResult.setMessage("Set offline data collection error: " + exMess);
+                            logResult.setMessage("Set offline collection failed: " + exMess);
                             break;
                         case 21:
-                            logResult.setMessage("Set offline data order error: " + exMess);
+                            logResult.setMessage("Set offline order failed: " + exMess);
                             break;
                         case 23:
-                            logResult.setMessage("Set offline data return error: " + exMess);
+                            logResult.setMessage("Set offline return failed: " + exMess);
                             break;
                         case 25:
-                            logResult.setMessage("Set offline data photo error: " + exMess);
+                            logResult.setMessage("Set offline data photo failed: " + exMess);
                             break;
                     }
                 }
@@ -1358,86 +1358,5 @@ public class AccountFragment extends BaseFragment {
             }
             progressDialog.dismiss();
         }
-    }
-
-    private List<Customer> setDataCustomerNoo() {
-        List<Customer> mList = new ArrayList<>();
-        mList.addAll(database.getAllNoo());
-        return mList;
-    }
-
-    private List<VisitSalesman> setDataVisit() {
-        List<VisitSalesman> mList = new ArrayList<>();
-        mList.addAll(database.getAllVisitSalesman());
-        return mList;
-    }
-
-    private List<Map> setDataStoreCheck() {
-        List<Map> headerList = new ArrayList<>();
-        List<Customer> customerList = database.getAllCustomerCheckOut();
-        List<Material> mList = new ArrayList<>();
-        Map header = new HashMap();
-        for (Customer customer : customerList) {
-            mList = new ArrayList<>();
-            mList.addAll(database.getAllStoreCheckCheckOut(customer.getId()));
-            if (Helper.isNotEmptyOrNull(mList)) {
-                header = new HashMap();
-                header.put("id_mobile", mList.get(0).getIdheader());
-                header.put("date", mList.get(0).getDate());
-                header.put("id_salesman", user.getUsername());
-                header.put("id_customer", mList.get(0).getId_customer());
-                header.put("listData", mList);
-                headerList.add(header);
-            }
-        }
-        return headerList;
-    }
-
-    private List<Map> setDataReturn() {
-        List<Map> headerList = new ArrayList<>();
-        List<Customer> customerList = database.getAllCustomerCheckOut();
-        List<Material> mList = new ArrayList<>();
-        Map header = new HashMap();
-        for (Customer customer : customerList) {
-            mList = new ArrayList<>();
-            mList.addAll(database.getAllReturnCheckOut(customer.getId()));
-            if (Helper.isNotEmptyOrNull(mList)) {
-                header = new HashMap();
-                header.put("id_mobile", mList.get(0).getIdheader());
-                header.put("date", mList.get(0).getDate());
-                header.put("id_salesman", user.getUsername());
-                header.put("id_customer", mList.get(0).getId_customer());
-                header.put("listData", mList);
-                headerList.add(header);
-            }
-        }
-        return headerList;
-    }
-
-    private List<CollectionHeader> setDataCollection() {
-        List<Customer> customerList = database.getAllCustomerCheckOut();
-        List<CollectionHeader> mListHeader = new ArrayList<>();
-        for (Customer customer : customerList) {
-            mListHeader.addAll(database.getAllCollectionHeader(customer.getId()));
-        }
-        return mListHeader;
-    }
-
-    private List<Order> setDataOrder() {
-        List<Customer> customerList = database.getAllCustomerCheckOut();
-        List<Order> mListHeader = new ArrayList<>();
-        for (Customer customer : customerList) {
-            mListHeader.addAll(database.getAllOrderHeader(customer.getId(), user.getUsername()));
-        }
-        return mListHeader;
-    }
-
-    private List<Order> setDataPhoto() {
-        List<Customer> customerList = database.getAllCustomerCheckOut();
-        List<Order> mListHeader = new ArrayList<>();
-        for (Customer customer : customerList) {
-            mListHeader.addAll(database.getAllOrderHeader(customer.getId(), user.getUsername()));
-        }
-        return mListHeader;
     }
 }

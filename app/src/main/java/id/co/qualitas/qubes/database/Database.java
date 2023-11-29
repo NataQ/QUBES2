@@ -27,6 +27,7 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.Discount;
+import id.co.qualitas.qubes.model.DropDown;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.LogModel;
 import id.co.qualitas.qubes.model.Material;
@@ -3277,39 +3278,57 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public List<Material> getAllStockRequestDetailUnloading(String idHeader) {
-        List<Material> arrayList = new ArrayList<>();
+//        List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
+//        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
+        String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
+                "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
+                "left join " + TABLE_MASTER_UOM + " b on a." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = a." + KEY_UOM + "\n" +
+                "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ?";
+        String selectQueryOrder = "select sum(b." + KEY_QTY + "*c." + KEY_CONVERSION + ") as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
+                "from " + TABLE_ORDER_HEADER + " a join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
+                "left join " + TABLE_MASTER_UOM + " c on b." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = c." + KEY_UOM + "\n" +
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "\n" +
+                "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and b." + KEY_MATERIAL_ID + "=?";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
 
-        if (cursor.moveToFirst()) {
-            do {
-                Material paramModel = new Material();
-                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_DETAIL_DB)));
-                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
-                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_SISA)));
-                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+        Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader});
+        List<Material> matList = new ArrayList<>();
 
-//                Map req = new HashMap();
-//                req.put("id_material", paramModel.getId());
-//                req.put("id_header", idHeader);
-//
-//                double qty = getSumQtyByIdMaterial(req);
-//
-//                paramModel.setQtySisa(paramModel.getQty() - qty);
-//                paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+        if (cursorDetail != null) {
+            if (cursorDetail.moveToFirst()) {
+                do {
+                    Material ma = new Material();
+                    ma.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    ma.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    ma.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
+                    ma.setQtySisa(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
+                    ma.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
 
-                arrayList.add(paramModel);
-            } while (cursor.moveToNext());
+                    Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), idHeader, String.valueOf(ma.getId())});
+                    Material materialOrder = new Material();
+                    if (cursorOrder != null) {
+                        if (cursorOrder.moveToFirst()) {
+                            materialOrder.setQty(cursorOrder.getDouble(cursorOrder.getColumnIndexOrThrow(KEY_QTY)));
+                            materialOrder.setUom(cursorOrder.getString(cursorOrder.getColumnIndexOrThrow(KEY_UOM)));
+                        }
+                    }
+                    cursorOrder.close();
+                    double qty = ma.getQty() - materialOrder.getQty();
+                    ma.setQtySisa(qty);
+
+                    matList.add(ma);
+                } while (cursorDetail.moveToNext());
+            }
+            cursorDetail.close();
         }
-        cursor.close();
-        return arrayList;
+
+        assert cursorDetail != null;
+        cursorDetail.close();
+        return matList;
     }
 
     public List<Material> getAllStockRequestDetail(String idHeader) {
@@ -3513,7 +3532,7 @@ public class Database extends SQLiteOpenHelper {
                             ma.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
                             ma.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
 
-                            Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(result.getId()), result.getIdHeader(), String.valueOf(result.getId())});
+                            Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), result.getIdHeader(), String.valueOf(ma.getId())});
                             Material materialOrder = new Material();
                             if (cursorOrder != null) {
                                 if (cursorOrder.moveToFirst()) {
@@ -5921,6 +5940,42 @@ public class Database extends SQLiteOpenHelper {
 //                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
 //                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
                     arrayList.add(paramModel);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());
+            arrayList = null;
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<DropDown> getDropDown(String type) {
+        List<DropDown> arrayList = new ArrayList<>();
+        String selectQuery = "WITH RECURSIVE split(" + KEY_KEY_PARAMETER + ", " + KEY_VALUE + ", rest) AS (\n" +
+                "   SELECT " + KEY_KEY_PARAMETER + ",'', " + KEY_VALUE + "||';' FROM " + TABLE_MASTER_PARAMETER + " where " + KEY_KEY_PARAMETER + " = ?\n" +
+                "   UNION ALL SELECT\n" +
+                "   substr(rest, 0, instr(rest, ':')) " + KEY_KEY_PARAMETER + ",\n" +
+                "   substr(rest, 0, instr(rest, ';')) value,\n" +
+                "   substr(rest, instr(rest, ';')+1)\n" +
+                "   FROM split WHERE rest!=''\n" +
+                ")\n" +
+                "SELECT " + KEY_KEY_PARAMETER + ", " + KEY_VALUE + "\n" +
+                "FROM split\n" +
+                "WHERE " + KEY_VALUE + "!='';";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{type});
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    DropDown result = new DropDown();
+                    result.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEY_PARAMETER)));
+                    String value = cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALUE));
+                    String[] separated = value.split(":");
+                    result.setValue(separated[1].trim());
+                    arrayList.add(result);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {

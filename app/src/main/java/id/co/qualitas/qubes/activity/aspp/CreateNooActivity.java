@@ -58,6 +58,7 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerAllDropDownAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerDaerahTingkatAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerTypePriceAdapter;
 import id.co.qualitas.qubes.constants.Constants;
@@ -69,6 +70,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
+import id.co.qualitas.qubes.model.DropDown;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -94,7 +96,9 @@ public class CreateNooActivity extends BaseActivity {
     private FilteredSpinnerTypePriceAdapter typeTokoAdapter, priceListAdapter;
     private DaerahTingkat daerahTingkat;
     private Customer customerNoo;
-    private ArrayAdapter<String> sukuAdapter, statusNpwpAdapter, statusTokoAdapter, udf5Adapter;
+    //    private ArrayAdapter<String> sukuAdapter, statusNpwpAdapter, statusTokoAdapter;
+    private ArrayAdapter<String> udf5Adapter;
+    private SpinnerAllDropDownAdapter sukuAdapter, statusNpwpAdapter, statusTokoAdapter;
     private String selectedImage;
     //location
     private FusedLocationProviderClient mFusedLocationClient;
@@ -103,6 +107,7 @@ public class CreateNooActivity extends BaseActivity {
     private LocationRequestCallback<String, Location> addressCallback;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private List<DropDown> statusToko, statusNPWP, suku;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -428,59 +433,72 @@ public class CreateNooActivity extends BaseActivity {
         txtRoute.setText(Helper.getTodayRoute());
         txtCreditLimit.setText(format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
 
-        List<String> suku = new ArrayList<>();
-        suku.add("Indonesia");
-        suku.add("Tiong Hua");
+        statusToko = database.getDropDown(Constants.DROP_DOWN_STATUS_TOKO);
+        statusNPWP = database.getDropDown(Constants.DROP_DOWN_STATUS_NPWP);
+        suku = database.getDropDown(Constants.DROP_DOWN_SUKU);
 
-        List<String> statusToko = new ArrayList<>();
-        statusToko.add("--");
-        statusToko.add("Pribadi");
-        statusToko.add("Sewa");
-
-        List<String> statusNPWP = new ArrayList<>();
-        statusNPWP.add("--");
-        statusNPWP.add("PKP");
-        statusNPWP.add("Non PKP");
+//        List<String> suku = new ArrayList<>();
+//        suku.add("Indonesia");
+//        suku.add("Tiong Hua");
+//
+//        List<String> statusToko = new ArrayList<>();
+//        statusToko.add("--");
+//        statusToko.add("Pribadi");
+//        statusToko.add("Sewa");
+//
+//        List<String> statusNPWP = new ArrayList<>();
+//        statusNPWP.add("--");
+//        statusNPWP.add("PKP");
+//        statusNPWP.add("Non PKP");
 
         List<String> udf5 = new ArrayList<>();
         udf5.add("GT");
         udf5.add("OP");
 
-        sukuAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = view.findViewById(R.id.text1);
-                return view;
-            }
-        };
-        sukuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sukuAdapter.addAll(suku);
+        sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku);
         spnSuku.setAdapter(sukuAdapter);
 
-        statusTokoAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = view.findViewById(R.id.text1);
-                return view;
-            }
-        };
-        statusTokoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        statusTokoAdapter.addAll(statusToko);
+        statusTokoAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusToko);
         spnStatusToko.setAdapter(statusTokoAdapter);
 
-        statusNpwpAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = view.findViewById(R.id.text1);
-                return view;
-            }
-        };
-        statusNpwpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        statusNpwpAdapter.addAll(statusNPWP);
+        statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP);
         spnStatusNpwp.setAdapter(statusNpwpAdapter);
+
+//        sukuAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
+//            @Override
+//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text = view.findViewById(R.id.text1);
+//                return view;
+//            }
+//        };
+//        sukuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        sukuAdapter.addAll(suku);
+//        spnSuku.setAdapter(sukuAdapter);
+//
+//        statusTokoAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
+//            @Override
+//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text = view.findViewById(R.id.text1);
+//                return view;
+//            }
+//        };
+//        statusTokoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        statusTokoAdapter.addAll(statusToko);
+//        spnStatusToko.setAdapter(statusTokoAdapter);
+//
+//        statusNpwpAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
+//            @Override
+//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text = view.findViewById(R.id.text1);
+//                return view;
+//            }
+//        };
+//        statusNpwpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        statusNpwpAdapter.addAll(statusNPWP);
+//        spnStatusNpwp.setAdapter(statusNpwpAdapter);
 
         udf5Adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
             @Override
@@ -505,8 +523,10 @@ public class CreateNooActivity extends BaseActivity {
                 if (customerNoo == null) {
                     customerNoo = new Customer();
                 }
+                String id = suku.get(i).getId();
                 String text = adapterView.getItemAtPosition(i).toString();
-                customerNoo.setSuku(text);
+                customerNoo.setSuku(id);
+                customerNoo.setSuku_pos(i);
 //                }
             }
 
@@ -523,8 +543,10 @@ public class CreateNooActivity extends BaseActivity {
                     if (customerNoo == null) {
                         customerNoo = new Customer();
                     }
+                    String id = statusToko.get(i).getId();
                     String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setStatus_toko(text);
+                    customerNoo.setStatus_toko(id);
+                    customerNoo.setStatus_toko_pos(i);
                 }
             }
 
@@ -541,8 +563,10 @@ public class CreateNooActivity extends BaseActivity {
                     if (customerNoo == null) {
                         customerNoo = new Customer();
                     }
+                    String id = statusNPWP.get(i).getId();
                     String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setStatus_npwp(text);
+                    customerNoo.setStatus_npwp(id);
+                    customerNoo.setStatus_npwp_pos(i);
                 }
             }
 
@@ -1090,14 +1114,14 @@ public class CreateNooActivity extends BaseActivity {
         txtCreditLimit.setText(customerNoo.getLimit_kredit() != 0 ? format.format(customerNoo.getLimit_kredit()) : format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
         txtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRoute()));
 
-        int spinnerPositionSuku = sukuAdapter.getPosition(customerNoo.getSuku());
-        int spinnerPositionStatusToko = statusTokoAdapter.getPosition(customerNoo.getStatus_toko());
-        int spinnerPositionStatusNpwp = statusNpwpAdapter.getPosition(customerNoo.getStatus_npwp());
-        int spinnerPositionUdf5 = statusNpwpAdapter.getPosition(customerNoo.getUdf_5_desc());
+//        int spinnerPositionSuku = sukuAdapter.getPosition(customerNoo.getSuku());
+//        int spinnerPositionStatusToko = statusTokoAdapter.getPosition(customerNoo.getStatus_toko());
+//        int spinnerPositionStatusNpwp = statusNpwpAdapter.getPosition(customerNoo.getStatus_npwp());
+        int spinnerPositionUdf5 = udf5Adapter.getPosition(customerNoo.getUdf_5_desc());
 
-        spnSuku.setSelection(spinnerPositionSuku);
-        spnStatusToko.setSelection(spinnerPositionStatusToko);
-        spnStatusNpwp.setSelection(spinnerPositionStatusNpwp);
+        spnSuku.setSelection(customerNoo.getSuku_pos());
+        spnStatusToko.setSelection(customerNoo.getStatus_toko_pos());
+        spnStatusNpwp.setSelection(customerNoo.getStatus_npwp_pos());
         spnUdf5.setSelection(spinnerPositionUdf5);
     }
 

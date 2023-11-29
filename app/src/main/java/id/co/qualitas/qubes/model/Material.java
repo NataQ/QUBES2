@@ -45,6 +45,7 @@ public class Material implements Cloneable {
     private String date;
     //return
     private String condition;
+    private int condition_pos;
     private String idReason;
     private String nameReason;
     private String descReason;
@@ -92,6 +93,14 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public int getCondition_pos() {
+        return condition_pos;
+    }
+
+    public void setCondition_pos(int condition_pos) {
+        this.condition_pos = condition_pos;
     }
 
     public int getIdStockRequestHeaderDB() {

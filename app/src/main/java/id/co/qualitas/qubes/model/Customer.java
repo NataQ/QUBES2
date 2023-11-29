@@ -26,14 +26,17 @@ public class Customer {
     private String npwp_name;
     private String npwp_address;
     private String status_npwp;
+    private int status_npwp_pos;
     private String nama_pemilik;
     private String alamat_pemilik;
     private String nik;
     private String status_toko;
+    private int status_toko_pos;
     private String location;
     private String jenis_usaha;
     private String lama_usaha;
     private String suku;
+    private int suku_pos;
     private String type_customer;
     private String name_type_customer;
     private String type_price;
@@ -72,30 +75,29 @@ public class Customer {
         this.longitude = longitude;
     }
 
-//    public Uri getPhotoKTPUri() {
-//        return photoKTPUri;
-//    }
-//
-//    public void setPhotoKTPUri(Uri photoKTPUri) {
-//        this.photoKTPUri = photoKTPUri;
-//    }
-//
-//    public Uri getPhotoNPWPUri() {
-//        return photoNPWPUri;
-//    }
-//
-//    public void setPhotoNPWPUri(Uri photoNPWPUri) {
-//        this.photoNPWPUri = photoNPWPUri;
-//    }
-//
-//    public Uri getPhotoOutletUri() {
-//        return photoOutletUri;
-//    }
-//
-//    public void setPhotoOutletUri(Uri photoOutletUri) {
-//        this.photoOutletUri = photoOutletUri;
-//    }
+    public int getStatus_npwp_pos() {
+        return status_npwp_pos;
+    }
 
+    public void setStatus_npwp_pos(int status_npwp_pos) {
+        this.status_npwp_pos = status_npwp_pos;
+    }
+
+    public int getStatus_toko_pos() {
+        return status_toko_pos;
+    }
+
+    public void setStatus_toko_pos(int status_toko_pos) {
+        this.status_toko_pos = status_toko_pos;
+    }
+
+    public int getSuku_pos() {
+        return suku_pos;
+    }
+
+    public void setSuku_pos(int suku_pos) {
+        this.suku_pos = suku_pos;
+    }
 
     public String getCreatedDate() {
         return createdDate;

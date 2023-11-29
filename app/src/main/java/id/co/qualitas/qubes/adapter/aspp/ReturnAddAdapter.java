@@ -43,6 +43,7 @@ import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.DropDown;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.utils.Utils;
@@ -53,8 +54,9 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
     private LayoutInflater mInflater;
     private ReturnAddActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private ArrayAdapter<String> uomAdapter, conditionAdapter;
+    private ArrayAdapter<String> uomAdapter;//conditionAdapter;
     private ArrayAdapter<String> reasonAdapter;
+    private SpinnerAllDropDownAdapter conditionAdapter;
     private Reason reasonDetail;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
@@ -188,9 +190,10 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             listSpinner.add("-");
         }
 
-        List<String> conditionList = new ArrayList<>();
-        conditionList.add("Good");
-        conditionList.add("Bad");
+        List<DropDown> conditionList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
+//        List<String> conditionList = new ArrayList<>();
+//        conditionList.add("Good");
+//        conditionList.add("Bad");
 
         List<String> reasonList = new ArrayList<>();
         reasonList.addAll(new Database(mContext).getAllStringReason(Constants.REASON_TYPE_RETURN));
@@ -200,6 +203,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.edtProduct.setText(productId + " - " + productName);
         holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
         holder.edtDescReason.setText(Helper.isEmpty(detail.getDescReason(), ""));
+
         if (!Helper.isNullOrEmpty(detail.getExpiredDate())) {
             String expDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getExpiredDate());
             holder.edtExpDate.setText(expDate);
@@ -265,18 +269,28 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.autoCompleteUom.setAdapter(uomAdapter);
         holder.autoCompleteUom.setText(detail.getUom(), false);
 
-        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = view.findViewById(R.id.text1);
-                return view;
-            }
-        };
-        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        conditionAdapter.addAll(conditionList);
+        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList);
         holder.autoCompleteCondition.setAdapter(conditionAdapter);
         holder.autoCompleteCondition.setText(detail.getCondition(), false);
+
+//        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+//            @Override
+//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                View view = super.getView(position, convertView, parent);
+//                TextView text = view.findViewById(R.id.text1);
+//                return view;
+//            }
+//        };
+//        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        conditionAdapter.addAll(conditionList);
+//        holder.autoCompleteCondition.setAdapter(conditionAdapter);
+
+        holder.autoCompleteCondition.setOnItemClickListener((adapterView, view, i, l) -> {
+            String id = conditionList.get(i).getId();
+            String selected = conditionList.get(i).toString();
+            detail.setCondition(id);
+            detail.setCondition_pos(i);
+        });
 
         reasonAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override
@@ -294,11 +308,6 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
-        });
-
-        holder.autoCompleteCondition.setOnItemClickListener((adapterView, view, i, l) -> {
-            String selected = conditionList.get(i).toString();
-            detail.setCondition(selected);
         });
 
         holder.autoCompleteReason.setOnItemClickListener((adapterView, view, i, l) -> {
