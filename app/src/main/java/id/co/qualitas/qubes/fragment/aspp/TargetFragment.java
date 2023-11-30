@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.internal.LinkedTreeMap;
 
@@ -58,6 +59,18 @@ public class TargetFragment extends BaseFragment {
         initFragment();
         initialize();
 
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
+                R.color.green_aspp,
+                R.color.yellow_krang,
+                R.color.red_krang);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestData();
+                swipeLayout.setRefreshing(false);
+            }
+        });
+
         requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -98,16 +111,20 @@ public class TargetFragment extends BaseFragment {
 
     private void getFirstDataOffline() {
         getData();
-        if (mList == null || mList.isEmpty()) {
-            requestData();
-        } else {
+        if (Helper.isNotEmptyOrNull(mList)) {
             setAdapter();
+        } else {
+            requestData();
         }
     }
 
     private void getData() {
         mList = new ArrayList<>();
-//        mList = database.getTodayCustomer(currentLocation, false);
+        try {
+            mList = SessionManagerQubes.getTarget() != null ? SessionManagerQubes.getTarget() : new ArrayList<>();
+        }catch (Exception e){
+            mList = new ArrayList<>();
+        }
     }
 
     private void requestData() {
@@ -147,27 +164,32 @@ public class TargetFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage wsMessage) {
             progressCircle.setVisibility(View.GONE);
-            if (logResult.getIdMessage() == 1) {
-                String message = "Target : " + logResult.getMessage();
-                logResult.setMessage(message);
-            }
-            database.addLog(logResult);
-            if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
-                mList = new ArrayList<>();
-                List<Target> arrayList = new ArrayList<>();
-                Target[] matArray = Helper.ObjectToGSON(logResult.getResult(), Target[].class);
-                if (matArray != null) {
-                    Collections.addAll(arrayList, matArray);
+            if (logResult != null) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Target : " + logResult.getMessage();
+                    logResult.setMessage(message);
+
+                    if (logResult.getResult() != null) {
+                        mList = new ArrayList<>();
+                        List<Target> arrayList = new ArrayList<>();
+                        Target[] matArray = Helper.ObjectToGSON(logResult.getResult(), Target[].class);
+                        if (matArray != null) {
+                            Collections.addAll(arrayList, matArray);
+                        }
+                        mList.addAll(arrayList);
+                        SessionManagerQubes.setTargetDashboard(mList);
+                        setAdapter();
+                    }
                 }
-                mList.addAll(arrayList);
-                setAdapter();
-            }
-            if (Helper.isEmptyOrNull(mList)) {
-                recyclerView.setVisibility(View.GONE);
-                llNoData.setVisibility(View.VISIBLE);
-            } else {
-                recyclerView.setVisibility(View.VISIBLE);
-                llNoData.setVisibility(View.GONE);
+                database.addLog(logResult);
+
+                if (Helper.isEmptyOrNull(mList)) {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
+                }
             }
         }
     }

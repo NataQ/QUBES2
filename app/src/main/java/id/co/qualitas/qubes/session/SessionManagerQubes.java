@@ -17,7 +17,9 @@ import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.StockRequest;
+import id.co.qualitas.qubes.model.Target;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 
@@ -27,11 +29,11 @@ public abstract class SessionManagerQubes {
     private static final Object sync = new Object();
     private static final String PREF_VISIT_SALESMAN_REASON = "pref_visit_salesman_reason";
     private static final String PREF_ORDER = "pref_order";
+    private static final String PREF_TARGET = "pref_target";
     private static final String PREF_CUSTOMER_NOO = "pref_customer_noo";
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
-    private static final String PREF_START_DAY = "pref_start_day";
-    private static final String PREF_ID_VISIT = "pref_id_visit";
+    private static final String PREF_START_VISIT = "pref_start_visit";
     private static final String PREF_LOGIN = "pref_login";
     private static final String PREF_RETURN = "pref_return";
     private static final String PREF_ALREADY_PRINT = "pref_already_print";
@@ -41,12 +43,12 @@ public abstract class SessionManagerQubes {
     private static final String PREF_COLLECTION = "PREF_COLLECTION";
     private static final String PREF_COLLECTION_HISTORY = "PREF_COLLECTION_HISTORY";
     private static final String KEY_VISIT_SALESMAN_REASON = "key_visit_salesman_reason";
+    private static final String KEY_TARGET = "key_target";
     private static final String KEY_ORDER = "key_order";
     private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
-    private static final String KEY_START_DAY = "key_start_day";
-    private static final String KEY_ID_VISIT = "key_id_visit";
+    private static final String KEY_START_VISIT = "key_start_visit";
     private static final String KEY_USER_PROFILE = "key_user_profile";
     private static final String KEY_STOCK_REQUEST_HEADER = "key_stock_request_header";
     private static final String KEY_ROUTE_CUSTOMER_HEADER = "key_route_customer_header";
@@ -65,7 +67,6 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences returnPrefs;
     private static SharedPreferences outletHeaderPrefs;
     private static SharedPreferences startDayPrefs;
-    private static SharedPreferences idVisitPrefs;
     private static SharedPreferences prefs;
     private static SharedPreferences loginPrefs;
     private static SharedPreferences stockRequestHeaderPrefs;
@@ -74,17 +75,18 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences alreadyPrintPrefs;
     private static SharedPreferences collectionHistoryPrefs;
     private static SharedPreferences routeCustomerHeaderPrefs;
+    private static SharedPreferences targetPrefs;
 
     public static void init(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        targetPrefs = context.getSharedPreferences(PREF_TARGET, Context.MODE_PRIVATE);
         loginPrefs = context.getSharedPreferences(PREF_LOGIN, Context.MODE_PRIVATE);
         stockRequestHeaderPrefs = context.getSharedPreferences(PREF_STOCK_REQUEST_HEADER, Context.MODE_PRIVATE);
         collectionHistoryPrefs = context.getSharedPreferences(PREF_COLLECTION_HISTORY, Context.MODE_PRIVATE);
         collectionHeaderPrefs = context.getSharedPreferences(PREF_COLLECTION_HEADER, Context.MODE_PRIVATE);
         collectionPrefs = context.getSharedPreferences(PREF_COLLECTION, Context.MODE_PRIVATE);
         routeCustomerHeaderPrefs = context.getSharedPreferences(PREF_ROUTE_CUSTOMER_HEADER, Context.MODE_PRIVATE);
-        startDayPrefs = context.getSharedPreferences(PREF_START_DAY, Context.MODE_PRIVATE);
-        idVisitPrefs = context.getSharedPreferences(PREF_ID_VISIT, Context.MODE_PRIVATE);
+        startDayPrefs = context.getSharedPreferences(PREF_START_VISIT, Context.MODE_PRIVATE);
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
@@ -94,21 +96,23 @@ public abstract class SessionManagerQubes {
         alreadyPrintPrefs = context.getSharedPreferences(PREF_ALREADY_PRINT, Context.MODE_PRIVATE);
     }
 
-    public static void setStartDay(int param) {
-        synchronized (sync) {
-            startDayPrefs.edit().putInt(KEY_START_DAY, param).apply();
-        }
-    }
-
-    public static void setIdVisit(int param) {
-        synchronized (sync) {
-            idVisitPrefs.edit().putInt(KEY_ID_VISIT, param).apply();
+    public static void setStartDay(StartVisit param) {
+        if (param != null) {
+            synchronized (sync) {
+                startDayPrefs.edit().putString(KEY_START_VISIT, gson.toJson(param)).apply();
+            }
         }
     }
 
     public static void setUrl(String url) {
         synchronized (sync) {
             prefs.edit().putString(KEY_URL, url).apply();
+        }
+    }
+
+    public static void setTargetDashboard(List<Target> param) {
+        synchronized (sync) {
+            targetPrefs.edit().putString(KEY_TARGET, gson.toJson(param)).apply();
         }
     }
 
@@ -226,6 +230,10 @@ public abstract class SessionManagerQubes {
         return Arrays.asList(gson.fromJson(visitSalesmanReasonPrefs.getString(KEY_VISIT_SALESMAN_REASON, null), VisitSalesman[].class));
     }
 
+    public static List<Target> getTarget() {
+        return Arrays.asList(gson.fromJson(targetPrefs.getString(KEY_TARGET, null), Target[].class));
+    }
+
     public static List<Material> getReturn() {
         return Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class));
     }
@@ -278,20 +286,16 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(orderPrefs.getString(KEY_ORDER, null), Order.class);
     }
 
+    public static StartVisit getStartDay() {
+        return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
+    }
+
     public static String getImei() {
         return loginPrefs.getString(KEY_IMEI, null);
     }
 
     public static String getUrl() {
         return prefs.getString(KEY_URL, Constants.URL);
-    }
-
-    public static int getStartDay() {
-        return startDayPrefs.getInt(KEY_START_DAY, 0);
-    }
-
-    public static int getIdVisit() {
-        return idVisitPrefs.getInt(KEY_ID_VISIT, 0);
     }
 
     //------------------------------------------------------------------------------
@@ -305,20 +309,27 @@ public abstract class SessionManagerQubes {
         clearOrderSession();
         clearOutletHeaderSession();
         clearStartDaySession();
-        clearIdVisitSession();
         clearLoginSession();
         clearStockRequestHeaderSession();
         clearCollectionHeaderSession();
         clearRouteCustomerHeaderSession();
-
+        clearVisitSalesmanReasonSession();
+        clearTargetSession();
     }
 
     public static void clearCollectionHistorySession() {
         collectionHistoryPrefs.edit().clear().apply();
     }
 
+    public static void clearVisitSalesmanReasonSession() {
+        visitSalesmanReasonPrefs.edit().clear().apply();
+    }
     public static void clearReturnSession() {
         returnPrefs.edit().clear().apply();
+    }
+
+    public static void clearTargetSession() {
+        targetPrefs.edit().clear().apply();
     }
 
     public static void clearAlreadyPrintSession() {
@@ -343,10 +354,6 @@ public abstract class SessionManagerQubes {
 
     public static void clearStartDaySession() {
         startDayPrefs.edit().clear().apply();
-    }
-
-    public static void clearIdVisitSession() {
-        idVisitPrefs.edit().clear().apply();
     }
 
     public static void clearLoginSession() {

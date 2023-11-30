@@ -66,6 +66,7 @@ import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -445,14 +446,16 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     if (response.get("visit") != null) {
-                        LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
-                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
-                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") :0;
-                        SessionManagerQubes.setStartDay((int) statusVisit);
-                        SessionManagerQubes.setIdVisit((int) idVisit);
+                        StartVisit startDay = Helper.ObjectToGSON(response.get("visit"), StartVisit.class);
+                        SessionManagerQubes.setStartDay(startDay);
+//                        LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
+//                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
+//                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") :0;
+//                        SessionManagerQubes.setStartDay((int) statusVisit);
+//                        SessionManagerQubes.setIdVisit((int) idVisit);
                     } else {
-                        SessionManagerQubes.setStartDay(0);
-                        SessionManagerQubes.setIdVisit(0);
+                        SessionManagerQubes.setStartDay(null);
+//                        SessionManagerQubes.setIdVisit(0);
                     }
 
                     Customer[] paramArray = Helper.ObjectToGSON(response.get("listCustomerSalesman"), Customer[].class);

@@ -201,23 +201,26 @@ public class DashboardFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage wsMessage) {
 //            progressCircle.setVisibility(View.GONE);
-            if (logResult.getIdMessage() == 1) {
-                String message = "Dashboard : " + logResult.getMessage();
-                logResult.setMessage(message);
-            }
-            database.addLog(logResult);
-            if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
-                Map res = (Map) logResult.getResult();
-                if (res != null) {
-                    double at = (double) res.get("at");
-                    user.setAt(at);
-                    SessionManagerQubes.setUserProfile(user);
-                    try {
-                        txtAT.setText(format.format(user.getAt()));
-                    } catch (Exception e) {
+            if (logResult != null) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Dashboard : " + logResult.getMessage();
+                    logResult.setMessage(message);
 
+                    if (logResult.getResult() != null) {
+                        Map res = (Map) logResult.getResult();
+                        if (res != null) {
+                            double at = (double) res.get("at");
+                            user.setAt(at);
+                            SessionManagerQubes.setUserProfile(user);
+                            try {
+                                txtAT.setText(format.format(user.getAt()));
+                            } catch (Exception e) {
+
+                            }
+                        }
                     }
                 }
+                database.addLog(logResult);
             }
         }
     }

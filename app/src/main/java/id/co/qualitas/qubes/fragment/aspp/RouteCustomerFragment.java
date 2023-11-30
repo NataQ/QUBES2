@@ -60,6 +60,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
@@ -299,13 +300,21 @@ public class RouteCustomerFragment extends BaseFragment {
                     mList = new ArrayList<>();
                     List<Customer> mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
+
                     if (result.get("visit") != null) {
-                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
-                        double id = (double) startDay.get("id");
-                        SessionManagerQubes.setStartDay((int) id);
+                        StartVisit startDay = Helper.ObjectToGSON(result.get("visit"), StartVisit.class);
+                        SessionManagerQubes.setStartDay(startDay);
                     } else {
-                        SessionManagerQubes.setStartDay(0);
+                        SessionManagerQubes.setStartDay(null);
                     }
+
+//                    if (result.get("visit") != null) {
+//                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+//                        double id = (double) startDay.get("id");
+//                        SessionManagerQubes.setStartDay((int) id);
+//                    } else {
+//                        SessionManagerQubes.setStartDay(0);
+//                    }
                     Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
                     if (param1Array != null) {
                         Collections.addAll(mListNonRoute, param1Array);

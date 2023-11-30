@@ -109,6 +109,7 @@ import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -178,6 +179,7 @@ public class VisitActivity extends BaseActivity {
     private List<Order> orderList = new ArrayList<>();
     private List<Map> photoList = new ArrayList<>();
     private int sizeData = 0;
+    private StartVisit startVisit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -271,11 +273,21 @@ public class VisitActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 swipeRefresh = true;
-                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    requestData();//swipe visit
+                if (startVisit != null) {
+                    if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
+                        requestData();//swipe visit
+                    } else {
+                        setToast("Sudah start visit");
+                    }
                 } else {
-                    setToast("Sudah start visit");
+                    requestData();//swipe visit
                 }
+
+//                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
+//                    requestData();//swipe visit
+//                } else {
+//                    setToast("Sudah start visit");
+//                }
                 swipeLayoutVisit.setRefreshing(false);
             }
         });
@@ -300,11 +312,21 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddVisit.setOnClickListener(v -> {
-            if (SessionManagerQubes.getStartDay() == 1) {
-                openDialogAdd();
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                    openDialogAdd();
+                } else {
+                    setToast("Please start visit first");
+                }
             } else {
                 setToast("Please start visit first");
             }
+
+//            if (SessionManagerQubes.getStartDay() == 1) {
+//                openDialogAdd();
+//            } else {
+//                setToast("Please start visit first");
+//            }
         });
     }
 
@@ -339,26 +361,30 @@ public class VisitActivity extends BaseActivity {
             header.setNoo(false);
             outletClicked = header;
             fromNoo = false;
-            if (SessionManagerQubes.getStartDay() != 0) {
-                if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
-                    SessionManagerQubes.setOutletHeader(outletClicked);
-                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                    startActivity(intent);
-                } else {
-                    endVisit = false;
-                    if (checkOutletStatus()) {
-                        if (header.isRoute()) {
-                            moveCheckInDaily(header);
-                        } else {
-                            if (checkNonRouteCheckIn()) {
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null) {
+                    if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
+                        SessionManagerQubes.setOutletHeader(outletClicked);
+                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                        startActivity(intent);
+                    } else {
+                        endVisit = false;
+                        if (checkOutletStatus()) {
+                            if (header.isRoute()) {
                                 moveCheckInDaily(header);
                             } else {
-                                setToast("Anda sudah mencapai max visit non route");
+                                if (checkNonRouteCheckIn()) {
+                                    moveCheckInDaily(header);
+                                } else {
+                                    setToast("Anda sudah mencapai max visit non route");
+                                }
                             }
+                        } else {
+                            setToast("Selesaikan customer yang sedang check in");
                         }
-                    } else {
-                        setToast("Selesaikan customer yang sedang check in");
                     }
+                } else {
+                    setToast("Please start visit first");
                 }
             } else {
                 setToast("Please start visit first");
@@ -614,24 +640,38 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddNoo.setOnClickListener(v -> {
-            if (SessionManagerQubes.getStartDay() == 1) {
-                SessionManagerQubes.clearCustomerNooSession();
-                Helper.removeItemParam(Constants.IMAGE_TYPE);
-                Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-                startActivity(intent);
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                    SessionManagerQubes.clearCustomerNooSession();
+                    Helper.removeItemParam(Constants.IMAGE_TYPE);
+                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+                    startActivity(intent);
+                } else {
+                    setToast("Please start visit first");
+                }
             } else {
                 setToast("Please start visit first");
             }
+
+//            if (SessionManagerQubes.getStartDay() == 1) {
+//
+//            } else {
+//                setToast("Please start visit first");
+//            }
         });
 
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefresh = true;
-                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    requestData();//swipe noo
+                if (startVisit != null) {
+                    if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
+                        requestData();//swipe noo
+                    } else {
+                        setToast("Sudah start visit");
+                    }
                 } else {
-                    setToast("Sudah start visit");
+                    requestData();//swipe noo
                 }
                 swipeLayoutNoo.setRefreshing(false);
             }
@@ -662,26 +702,30 @@ public class VisitActivity extends BaseActivity {
             header.setNoo(true);
             outletClicked = header;
             fromNoo = true;
-            if (SessionManagerQubes.getStartDay() != 0) {
-                if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
-                    SessionManagerQubes.setOutletHeader(outletClicked);
-                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                    startActivity(intent);
-                } else {
-                    endVisit = false;
-                    if (checkOutletStatus()) {
-                        if (header.isRoute()) {
-                            moveCheckInDaily(header);
-                        } else {
-                            if (checkNonRouteCheckIn()) {
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null) {
+                    if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
+                        SessionManagerQubes.setOutletHeader(outletClicked);
+                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                        startActivity(intent);
+                    } else {
+                        endVisit = false;
+                        if (checkOutletStatus()) {
+                            if (header.isRoute()) {
                                 moveCheckInDaily(header);
                             } else {
-                                setToast("Anda sudah mencapai max visit non route");
+                                if (checkNonRouteCheckIn()) {
+                                    moveCheckInDaily(header);
+                                } else {
+                                    setToast("Anda sudah mencapai max visit non route");
+                                }
                             }
+                        } else {
+                            setToast("Selesaikan customer yang sedang check in");
                         }
-                    } else {
-                        setToast("Selesaikan customer yang sedang check in");
                     }
+                } else {
+                    setToast("Please start visit first");
                 }
             } else {
                 setToast("Please start visit first");
@@ -824,7 +868,6 @@ public class VisitActivity extends BaseActivity {
         });
 
         layoutCamera.setOnClickListener(v -> {
-
             SessionManagerQubes.setVisitSalesmanReason(listCust);
             openCamera(null);
         });
@@ -992,8 +1035,8 @@ public class VisitActivity extends BaseActivity {
             }
 //            ImageType imageType = new ImageType();
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.toString() : imageType.getPhotoAkhir());
-            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.toString() : imageType.getPhotoSelesai());
+            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
+            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
             imageType.setPosImage(5);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
@@ -1007,8 +1050,8 @@ public class VisitActivity extends BaseActivity {
 //            ImageType imageType = new ImageType();
             imageType.setPosImage(6);
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.toString() : imageType.getPhotoAkhir());
-            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.toString() : imageType.getPhotoSelesai());
+            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
+            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
@@ -1059,7 +1102,7 @@ public class VisitActivity extends BaseActivity {
         LinearLayout llImgBerangkat = dialog.findViewById(R.id.llImgBerangkat);
 
         if (uriBerangkat != null) {
-            Utils.loadImageFit(VisitActivity.this, uriBerangkat.toString(), imgBerangkat);
+            Utils.loadImageFit(VisitActivity.this, uriBerangkat.getPath(), imgBerangkat);
 //            imgBerangkat.setImageURI(uriBerangkat);
             imgAdd.setVisibility(View.GONE);
         } else {
@@ -1072,7 +1115,7 @@ public class VisitActivity extends BaseActivity {
             ImageType imageType = new ImageType();
             imageType.setKmAwal(txtKmAwal.getText().toString().trim());
             imageType.setPosImage(4);
-            imageType.setPhotoKmAwal(uriBerangkat != null ? uriBerangkat.toString() : null);
+            imageType.setPhotoKmAwal(uriBerangkat != null ? uriBerangkat.getPath() : null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
@@ -1337,8 +1380,11 @@ public class VisitActivity extends BaseActivity {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/lash.pdf");
-                success = pdfUtils.createPDF(pdfFile);
+                String nameLash = user.getUsername() + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_7, SessionManagerQubes.getStartDay().getDate());
+                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/" + nameLash + ".pdf");
+                List<Map> lashList = new ArrayList<>();
+                lashList = database.getDatalash();
+                success = pdfUtils.createPDF(pdfFile, lashList, nameLash);
                 return success;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1374,6 +1420,7 @@ public class VisitActivity extends BaseActivity {
     private void getFirstDataOffline() {
         rlInap.setVisibility(View.GONE);
         rlDaily.setVisibility(View.GONE);
+        startVisit = SessionManagerQubes.getStartDay();
         getData();
         setAdapterVisit();
         setAdapterNoo();
@@ -1462,8 +1509,8 @@ public class VisitActivity extends BaseActivity {
                     endDay = new HashMap();
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
-                    endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
-                    endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
+//                    endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
+//                    endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
 
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
                     if (imageType.getPhotoAkhir() != null) {
@@ -1484,7 +1531,7 @@ public class VisitActivity extends BaseActivity {
 //                    String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
-                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
+//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
                     return null;
                 } else if (PARAM == 5) {
                     validateVisitSalesman();
@@ -1760,7 +1807,18 @@ public class VisitActivity extends BaseActivity {
         protected void onPostExecute(WSMessage result) {
             if (PARAM == 1) {
                 if (saveDataSuccess) {
-                    if (SessionManagerQubes.getStartDay() == 1) {
+                    boolean start = false;
+                    if (startVisit != null) {
+                        if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                            start = true;
+                        } else {
+                            start = false;
+                        }
+                    } else {
+                        start = false;
+                    }
+
+                    if (start) {
                         progressCircleVisit.setVisibility(View.GONE);
                         progressCircleNoo.setVisibility(View.GONE);
                         mAdapterVisit.setData(mList);
@@ -1818,13 +1876,21 @@ public class VisitActivity extends BaseActivity {
                 progressCircleNoo.setVisibility(View.GONE);
                 mAdapterVisit.setData(mList);
                 mAdapterNoo.setData(mListNoo);
-
-                if (SessionManagerQubes.getStartDay() == 1) {
-                    workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
-                    workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
-                } else {
-
+                if (logResult != null) {
+                    if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+                        StartVisit mData = Helper.ObjectToGSON(logResult.getResult(), StartVisit.class);
+                        SessionManagerQubes.setStartDay(mData);
+                        startVisit = SessionManagerQubes.getStartDay();
+                    }
                 }
+
+                if (startVisit != null) {
+                    if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                        workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
+                        workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+                    }
+                }
+
                 validateButton();//after get data
                 if (Helper.isEmptyOrNull(mList)) {
                     recyclerViewVisit.setVisibility(View.GONE);
@@ -1850,7 +1916,11 @@ public class VisitActivity extends BaseActivity {
                 database.addLog(logResult);
                 if (logResult.getIdMessage() == 1) {
                     setToast(logResult.getMessage());
-                    SessionManagerQubes.setStartDay(1);
+                    startVisit.setStart_time(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    startVisit.setKm_awal(kmAwal);
+                    startVisit.setPhoto_km_awal(uriBerangkat.getPath());
+                    SessionManagerQubes.setStartDay(startVisit);
+
                     workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
                     workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
                     validateButton();//start
@@ -1863,7 +1933,13 @@ public class VisitActivity extends BaseActivity {
                     String message = "End Visit : " + logResult.getMessage();
                     logResult.setMessage(message);
                     database.addLog(logResult);
-                    SessionManagerQubes.setStartDay(2);
+
+                    startVisit.setEnd_time(Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    startVisit.setKm_akhir(kmAkhir);
+                    startVisit.setPhoto_km_akhir(imageType.getPhotoAkhir());
+                    startVisit.setPhoto_complete(imageType.getPhotoSelesai());
+                    SessionManagerQubes.setStartDay(startVisit);
+
                     validateButton();//end
                     progress.show();
                     PARAM = 13;
@@ -1886,86 +1962,104 @@ public class VisitActivity extends BaseActivity {
             } else if (PARAM == 13) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(nooList)) {
-                        sizeData = nooList.size();
-                        PARAM = 14;
-                        new RequestUrlTransaction().execute();//14
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(nooList)) {
+//                        kalau gk ad adata lajut ke api lain
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
+                    sizeData = nooList.size();
+                    PARAM = 14;
+                    new RequestUrlTransaction().execute();//14
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data noo");
+                    progress.show();
+                    PARAM = 15;
+                    new RequestUrl().execute();//14
                 }
             } else if (PARAM == 15) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(visitSalesmanList)) {
-                        sizeData = visitSalesmanList.size();
-                        PARAM = 16;
-                        new RequestUrlTransaction().execute();//16
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(visitSalesmanList)) {
+                    sizeData = visitSalesmanList.size();
+                    PARAM = 16;
+                    new RequestUrlTransaction().execute();//16
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data visit");
+                    PARAM = 17;
+                    progress.show();
+                    new RequestUrl().execute();
                 }
             } else if (PARAM == 17) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
-                        sizeData = storeCheckList.size();
-                        PARAM = 18;
-                        new RequestUrlTransaction().execute();//18
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                    sizeData = storeCheckList.size();
+                    PARAM = 18;
+                    new RequestUrlTransaction().execute();//18
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data store check");
+                    PARAM = 19;
+                    progress.show();
+                    new RequestUrl().execute();
                 }
             } else if (PARAM == 19) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(collectionList)) {
-                        sizeData = collectionList.size();
-                        PARAM = 20;
-                        new RequestUrlTransaction().execute();//20
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(collectionList)) {
+                    sizeData = collectionList.size();
+                    PARAM = 20;
+                    new RequestUrlTransaction().execute();//20
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data collection");
+                    PARAM = 21;
+                    progress.show();
+                    new RequestUrl().execute();
                 }
             } else if (PARAM == 21) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(orderList)) {
-                        sizeData = orderList.size();
-                        PARAM = 22;
-                        new RequestUrlTransaction().execute();//22
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(orderList)) {
+                    sizeData = orderList.size();
+                    PARAM = 22;
+                    new RequestUrlTransaction().execute();//22
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data order");
+                    PARAM = 23;
+                    progress.show();
+                    new RequestUrl().execute();
                 }
             } else if (PARAM == 23) {
                 progress.dismiss();
                 if (setDataSyncSuccess) {
-                    if (Helper.isNotEmptyOrNull(returnList)) {
-                        sizeData = returnList.size();
-                        PARAM = 24;
-                        new RequestUrlTransaction().execute();//24
-                    } else {
-                        setToast("Tidak ada data atau Semua data sudah di sync");
-                    }
+//                    if (Helper.isNotEmptyOrNull(returnList)) {
+                    sizeData = returnList.size();
+                    PARAM = 24;
+                    new RequestUrlTransaction().execute();//24
+//                    } else {
+//                        setToast("Tidak ada data atau Semua data sudah di sync");
+//                    }
                 } else {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data return");
+                    progress.show();
+                    new AsyncTaskGeneratePDF().execute();
                 }
             }
         }
@@ -2204,7 +2298,18 @@ public class VisitActivity extends BaseActivity {
             rlDaily.setVisibility(View.VISIBLE);
         }
 
-        switch (SessionManagerQubes.getStartDay()) {
+        int status = 0;
+        if (startVisit != null) {
+            if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                status = 1;
+            } else if (startVisit.getStart_time() != null && startVisit.getEnd_time() != null) {
+                status = 2;
+            }
+        } else {
+            status = 0;
+        }
+
+        switch (status) {
             case 0:
                 btnStartVisit.setVisibility(View.VISIBLE);
                 btnNextDay.setVisibility(View.VISIBLE);
@@ -2280,7 +2385,12 @@ public class VisitActivity extends BaseActivity {
                                 currentLocation.put("longitude", location.getLongitude());
                                 currentLocation.put("address", result.getAddressLine(0));
                                 if (endVisit) {
-                                    openDialogReasonNotVisit();//end visit
+                                    if (database.getCountNotVisit() == 0) {
+                                        openDialogEndVisit();
+                                    } else {
+                                        openDialogReasonNotVisit();//end visit
+                                    }
+
                                 } else {
                                     openDialogMapCheckIn();
                                 }

@@ -371,17 +371,18 @@ public class StockRequestDetailActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
             progress.dismiss();
-            if (logResult.getIdMessage() == 1) {
-                String message = "Verification Stock Request : " + logResult.getMessage();
-                logResult.setMessage(message);
-            }
-            database.addLog(logResult);
-            if (logResult.getIdMessage() == 1) {
-                database.updateStockRequestVerification(header, user.getUsername());
-                setToast("Verifikasi sukses");
-                onBackPressed();
-            } else {
-                setToast(logResult.getMessage());
+            if (logResult != null) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Verification Stock Request : " + logResult.getMessage();
+                    logResult.setMessage(message);
+
+                    database.updateStockRequestVerification(header, user.getUsername());
+                    setToast("Verifikasi sukses");
+                    onBackPressed();
+                }else{
+                    setToast(logResult.getMessage());
+                }
+                database.addLog(logResult);
             }
         }
     }

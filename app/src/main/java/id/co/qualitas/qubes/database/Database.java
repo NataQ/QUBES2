@@ -39,7 +39,6 @@ import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.StockRequest;
-import id.co.qualitas.qubes.model.StoreCheck;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
@@ -2302,6 +2301,7 @@ public class Database extends SQLiteOpenHelper {
             requestHeader.put("id_header", Constants.ID_CI_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
             requestHeader.put("customer_id", header.getId_customer());
             requestHeader.put("no_invoice", header.getNo_invoice());
+            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
             requestHeader.put("invoice_date", header.getInvoice_date());
             requestHeader.put("status", "paid");
             requestHeader.put("total_paid", totalAmountPaid);
@@ -2316,6 +2316,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
             values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
             values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+            values.put(KEY_DATE, requestHeader.get("date").toString());
             values.put(KEY_STATUS, requestHeader.get("status").toString());
             values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
             values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
@@ -3305,8 +3306,8 @@ public class Database extends SQLiteOpenHelper {
                     ma.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                     ma.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                     ma.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
-                    ma.setQtySisa(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
                     ma.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
+                    ma.setUomSisa(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
 
                     Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), idHeader, String.valueOf(ma.getId())});
                     Material materialOrder = new Material();
@@ -4490,6 +4491,68 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Map> getDatalash() {
+        List<Map> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT a.* FROM (\n" +
+                "SELECT a.*, nilai - tunai - giro - cheque- transfer - lain2 sisa_piutang FROM\n" +
+                "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, '' tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan\n" +
+                "FROM VisitSalesman a\n" +
+                "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
+                "LEFT JOIN NOO z ON z.idNooDB = a.customerId\n" +
+                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date \n" +
+                "LEFT JOIN CollectionHeader e on e.invoiceNo = c.idOrderHeaderDB\n" +
+                "LEFT JOIN CollectionDetail f on f.idCollectionHeaderDB = e.idCollectionHeaderDB AND f.typePayment = 'cash'\n" +
+                "LEFT JOIN CollectionDetail g on g.idCollectionHeaderDB = e.idCollectionHeaderDB AND g.typePayment = 'giro'\n" +
+                "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
+                "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
+                "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
+                "GROUP BY a.customerId, b.customerName, z.nameNoo, c.idOrderHeaderDB) a\n" +
+                "UNION\n" +
+                "SELECT b.*, jumlah - tunai - giro - cheque- transfer - lain2 sisa_piutang\n" +
+                "FROM\n" +
+                "(SELECT a.customerId no_customer, b.customerName nama_outlet, c.invoiceDate tanggal,c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai,\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan\n" +
+                "FROM  VisitSalesman a\n" +
+                "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
+                "INNER JOIN InvoiceHeader c on c.customerId = a.customerId AND c.date = a.date\n" +
+                "LEFT JOIN CollectionHeader e on e.invoiceNo = c.invoiceNo\n" +
+                "LEFT JOIN CollectionDetail f on f.idCollectionHeaderDB = e.idCollectionHeaderDB AND f.typePayment = 'cash'\n" +
+                "LEFT JOIN CollectionDetail g on g.idCollectionHeaderDB = e.idCollectionHeaderDB AND g.typePayment = 'giro'\n" +
+                "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
+                "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
+                "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
+                "GROUP BY a.customerId, b.customerName, c.invoiceNo, c.invoiceDate, c.invoiceTotal) b\n" +
+                ")a order by a.no_customer";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Map paramModel = new HashMap();
+                paramModel.put("no_customer", cursor.getString(cursor.getColumnIndexOrThrow("no_customer")));
+                paramModel.put("nama_outlet", cursor.getString(cursor.getColumnIndexOrThrow("nama_outlet")));
+                paramModel.put("tanggal", cursor.getString(cursor.getColumnIndexOrThrow("tanggal")));
+                paramModel.put("no", cursor.getString(cursor.getColumnIndexOrThrow("no")));
+                paramModel.put("jumlah", cursor.getDouble(cursor.getColumnIndexOrThrow("jumlah")));
+                paramModel.put("no_order", cursor.getString(cursor.getColumnIndexOrThrow("no_order")));
+                paramModel.put("nilai", cursor.getDouble(cursor.getColumnIndexOrThrow("nilai")));
+                paramModel.put("tunai", cursor.getDouble(cursor.getColumnIndexOrThrow("tunai")));
+                paramModel.put("giro", cursor.getDouble(cursor.getColumnIndexOrThrow("giro")));
+                paramModel.put("cheque", cursor.getDouble(cursor.getColumnIndexOrThrow("cheque")));
+                paramModel.put("transfer", cursor.getDouble(cursor.getColumnIndexOrThrow("transfer")));
+                paramModel.put("lain2", cursor.getDouble(cursor.getColumnIndexOrThrow("lain2")));
+                paramModel.put("sisa_piutang", cursor.getDouble(cursor.getColumnIndexOrThrow("sisa_piutang")));
+                paramModel.put("keterangan", cursor.getString(cursor.getColumnIndexOrThrow("keterangan")));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<CollectionHeader> getAllInvoiceHistoryCustomer(String request) {
         List<CollectionHeader> arrayList = new ArrayList<>();
         // Select All Query
@@ -4790,6 +4853,25 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursorVisit, cursorNoo;
         countQueryVisit = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = " + Constants.PAUSE_VISIT;
         countQueryNoo = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = " + Constants.PAUSE_VISIT;
+
+        cursorVisit = db.rawQuery(countQueryVisit, null);
+        int count = cursorVisit.getCount();
+        cursorVisit.close();
+
+        cursorNoo = db.rawQuery(countQueryNoo, null);
+        int countNoo = cursorNoo.getCount();
+        cursorNoo.close();
+
+        // return count
+        return count + countNoo;
+    }
+
+    public int getCountNotVisit() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQueryVisit, countQueryNoo;
+        Cursor cursorVisit, cursorNoo;
+        countQueryVisit = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = 0";
+        countQueryNoo = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = 0";
 
         cursorVisit = db.rawQuery(countQueryVisit, null);
         int count = cursorVisit.getCount();

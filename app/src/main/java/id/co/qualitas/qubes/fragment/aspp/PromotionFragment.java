@@ -109,7 +109,7 @@ public class PromotionFragment extends BaseFragment {
         getData();
         setAdapter();
 
-        if (mList == null || mList.isEmpty()) {
+        if (Helper.isEmptyOrNull(mList)) {
             requestData();
         }
     }
@@ -177,26 +177,32 @@ public class PromotionFragment extends BaseFragment {
         @Override
         protected void onPostExecute(WSMessage r) {
             if (PARAM == 1) {
-                if (logResult.getIdMessage() == 1) {
-                    String message = "Promotion : " + logResult.getMessage();
-                    logResult.setMessage(message);
-                }
-                database.addLog(logResult);
-                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
-                    resultWsMessage = logResult;
-                    PARAM = 2;
-                    new RequestUrl().execute();
-                } else {
-                    progressCircle.setVisibility(View.GONE);
-                    getData();
-                    mAdapter.setData(mList);
-                    if (Helper.isEmptyOrNull(mList)) {
-                        recyclerView.setVisibility(View.GONE);
-                        llNoData.setVisibility(View.VISIBLE);
-                    } else {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        llNoData.setVisibility(View.GONE);
+                if (logResult != null) {
+                    if (logResult.getIdMessage() == 1) {
+                        String message = "Promotion : " + logResult.getMessage();
+                        logResult.setMessage(message);
+
+                        if (logResult.getResult() != null) {
+                            resultWsMessage = logResult;
+                            PARAM = 2;
+                            new RequestUrl().execute();
+                        } else {
+                            progressCircle.setVisibility(View.GONE);
+                            getData();
+                            mAdapter.setData(mList);
+                        }
                     }
+                    database.addLog(logResult);
+                } else {
+                    setToast(getString(R.string.serverError));
+                }
+
+                if (Helper.isEmptyOrNull(mList)) {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
                 }
             } else {
                 progressCircle.setVisibility(View.GONE);

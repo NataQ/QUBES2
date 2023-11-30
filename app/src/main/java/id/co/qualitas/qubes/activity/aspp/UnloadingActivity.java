@@ -349,21 +349,22 @@ public class UnloadingActivity extends BaseActivity {
         @Override
         protected void onPostExecute(WSMessage WsMessage) {
             progress.dismiss();
-            if (logResult.getIdMessage() == 1) {
-                String message = "Unloading Stock Request : " + logResult.getMessage();
-                logResult.setMessage(message);
-            }
-            database.addLog(logResult);
-            if (logResult.getIdMessage() == 1) {
-                header.setIs_unloading(1);
+            if (logResult != null) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Unloading Stock Request : " + logResult.getMessage();
+                    logResult.setMessage(message);
+
+                    header.setIs_unloading(1);
 //                    header.setSync(0);
 //                    header.setStatus(Constants.STATUS_UNLOADING);
-                database.updateUnloading(header, user.getUsername());
-                setToast("Unloading sukses");
-                progress.show();
-                new AsyncTaskGeneratePDF().execute();
-            } else {
-                setToast(logResult.getMessage());
+                    database.updateUnloading(header, user.getUsername());
+                    setToast("Unloading sukses");
+                    progress.show();
+                    new AsyncTaskGeneratePDF().execute();
+                } else {
+                    setToast(logResult.getMessage());
+                }
+                database.addLog(logResult);
             }
         }
     }

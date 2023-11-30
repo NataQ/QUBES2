@@ -1,12 +1,9 @@
 package id.co.qualitas.qubes.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
-import com.lowagie.text.BadElementException;
-import com.lowagie.text.Cell;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -16,9 +13,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.Barcode39;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -35,13 +30,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.DepoRegion;
+import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class LashPdfUtils {
@@ -75,6 +71,7 @@ public class LashPdfUtils {
     private static LashPdfUtils instance;
     private Context context;
     private static final String TAG = "LashPdfUtils";
+    private User user;
 
     public static LashPdfUtils getInstance(Context context) {
         if (instance == null) {
@@ -186,7 +183,35 @@ public class LashPdfUtils {
         return table;
     }
 
-    public PdfPTable createPDFTop() {
+    private String getDepo() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + depoRegion.getDepo_name();
+                if (i != user.getDepoRegionList().size() - 1) {
+                    depo = depo.concat("\n");
+                }
+            }
+        }
+        return depo;
+    }
+
+    private String getRegion() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + depoRegion.getRegion_name();
+                if (i != user.getDepoRegionList().size() - 1) {
+                    depo = depo.concat("-");
+                }
+            }
+        }
+        return depo;
+    }
+
+    public PdfPTable createPDFTop(String nameLash) {
         PdfPCell cell;
         Phrase text;
 
@@ -225,7 +250,7 @@ public class LashPdfUtils {
 
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + "DKI", bigCalibri);//BD01
+        text = new Phrase(": " + getDepo(), bigCalibri);//BD01
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -235,11 +260,9 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
-        String randomNumber = Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime());
-
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + randomNumber, bigCalibri);//BD01
+        text = new Phrase(": " + nameLash, bigCalibri);//BD01
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -249,11 +272,9 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
-        String name = SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getFullName() : "";
-
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + name, bigCalibri);//SES G.PUSAT PALEM
+        text = new Phrase(": " + user.getFull_name() + "(" + getRegion() + ")", bigCalibri);//SES G.PUSAT PALEM
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -263,9 +284,11 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
+        String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, SessionManagerQubes.getStartDay().getDate());
+
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
-        text = new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_1), bigCalibri);//SES G.PUSAT PALEM
+        text = new Phrase(": " + date, bigCalibri);//SES G.PUSAT PALEM
         cell.addElement(text);
         mainTable.addCell(cell);
 
@@ -563,7 +586,7 @@ public class LashPdfUtils {
         return table;
     }
 
-    public PdfPTable createPDFHeaderTable() {
+    public PdfPTable createPDFHeaderTable(List<Map> lashList) {
         setFormatSeparator();
         PdfPCell cell;
         Phrase text;
@@ -681,7 +704,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("No. Faktur", calibriBold));
+        cell = new PdfPCell(new Phrase("No. Order", calibriBold));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -705,7 +728,15 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Giro/Cheque", calibriBold));
+        cell = new PdfPCell(new Phrase("Giro", calibriBold));
+        cell.setUseAscender(true);
+        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        cell.setBorder(Rectangle.BOX);
+        cell.setPadding(5);
+        table.addCell(cell);
+
+        cell = new PdfPCell(new Phrase("Cheque", calibriBold));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -721,14 +752,6 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase("Retur", calibriBold));
-        cell.setUseAscender(true);
-        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        cell.setBorder(Rectangle.BOX);
-        cell.setPadding(5);
-        table.addCell(cell);
-
         cell = new PdfPCell(new Phrase("Lain2", calibriBold));
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -737,20 +760,20 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-
-
         //detail
-
-        double totalJumlah = 0.0, totalNilai = 0.0, totalTunai = 0.0, totalGiro = 0.0, totalTf = 0.0, totalRetur = 0.0, totalLain = 0.0, totalSaldo = 0.0;
-        for (int i = 0; i < 6; i++) {
-            totalJumlah = totalJumlah + (i + 3);
-            totalNilai = totalNilai + (72000 + i + 1);
-            totalTunai = totalTunai + (0);
-            totalGiro = totalGiro + (0);
-            totalTf = totalTf + (0);
-            totalRetur = totalRetur + (0);
-            totalLain = totalLain + (0);
-            totalSaldo = totalSaldo + (72000 + i + 1);
+        String date;
+        Map detail;
+        double totalJumlah = 0.0, totalNilai = 0.0, totalTunai = 0.0, totalGiro = 0.0, totalCheque = 0.0, totalTf = 0.0, totalLain = 0.0, totalSaldo = 0.0;
+        for (int i = 0; i < lashList.size(); i++) {
+            detail = lashList.get(i);
+            totalJumlah = totalJumlah + (detail.get("jumlah") != null ? (double) detail.get("jumlah") : 0);
+            totalNilai = totalNilai + (detail.get("nilai") != null ? (double) detail.get("nilai") : 0);
+            totalTunai = totalTunai + (detail.get("tunai") != null ? (double) detail.get("tunai") : 0);
+            totalGiro = totalGiro + (detail.get("giro") != null ? (double) detail.get("giro") : 0);
+            totalTf = totalTf + (detail.get("cheque") != null ? (double) detail.get("cheque") : 0);
+            totalCheque = totalCheque + (detail.get("transfer") != null ? (double) detail.get("transfer") : 0);
+            totalLain = totalLain +(detail.get("lain2") != null ? (double) detail.get("lain2") : 0);
+            totalSaldo = totalSaldo + (detail.get("sisa_piutang") != null ? (double) detail.get("sisa_piutang") : 0);
 
             cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
             cell.setUseAscender(true);
@@ -760,7 +783,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("20002000" + String.valueOf(i + 1), calibriRegular));//no cust
+            cell = new PdfPCell(new Phrase(detail.get("no_customer") != null ? detail.get("no_customer").toString() : "".toString(), calibriRegular));//no cust
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -768,7 +791,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("karel" + String.valueOf(i + 1), calibriRegular));//name outlet
+            cell = new PdfPCell(new Phrase(detail.get("nama_outlet") != null ? detail.get("nama_outlet").toString() : "", calibriRegular));//name outlet
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -776,7 +799,9 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(Helper.getTodayDate(Constants.DATE_FORMAT_1) + String.valueOf(i + 1), calibriRegular));//tgl
+            date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, detail.get("tanggal").toString());
+
+            cell = new PdfPCell(new Phrase(date, calibriRegular));//tgl
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -784,7 +809,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("000" + String.valueOf(i + 1), calibriRegular));//no tagihan
+            cell = new PdfPCell(new Phrase(detail.get("no") != null ? detail.get("no").toString() : "", calibriRegular));//no tagihan
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -792,7 +817,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format((i + 3)), calibriRegular));//jumlah
+            cell = new PdfPCell(new Phrase(detail.get("jumlah") != null ? format.format(detail.get("jumlah")) : "0", calibriRegular));//jumlah
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -800,7 +825,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("105159000002" + String.valueOf(i + 2), calibriRegular));//no faktur
+            cell = new PdfPCell(new Phrase(detail.get("no_order") != null ? detail.get("no_order").toString() : "", calibriRegular));//no faktur
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -808,7 +833,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format((72000 + i + 1)), calibriRegular));//nilai
+            cell = new PdfPCell(new Phrase(detail.get("nilai") != null ? format.format(detail.get("nilai")) : "0", calibriRegular));//nilai
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -816,7 +841,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//tunai
+            cell = new PdfPCell(new Phrase(detail.get("tunai") != null ? format.format(detail.get("tunai")) : "0", calibriRegular));//tunai
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -824,7 +849,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//giro
+            cell = new PdfPCell(new Phrase(detail.get("giro") != null ? format.format(detail.get("giro")) : "0", calibriRegular));//giro
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -832,7 +857,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//tf
+            cell = new PdfPCell(new Phrase(detail.get("cheque") != null ? format.format(detail.get("cheque")) : "0", calibriRegular));//tf
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -840,7 +865,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//retur
+            cell = new PdfPCell(new Phrase(detail.get("transfer") != null ? format.format(detail.get("transfer")) : "0", calibriRegular));//lain2
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -848,7 +873,7 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(0), calibriRegular));//lain2
+            cell = new PdfPCell(new Phrase(detail.get("lain2") != null ? format.format(detail.get("lain2")) : "0", calibriRegular));//saldo piutang
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -856,15 +881,15 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(format.format(72000 + i + 1), calibriRegular));//saldo piutang
+            cell = new PdfPCell(new Phrase(detail.get("sisa_piutang") != null ? format.format(detail.get("sisa_piutang")) : "0", calibriRegular));//ket
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("", calibriRegular));//ket
+            cell = new PdfPCell(new Phrase(detail.get("keterangan") != null ? detail.get("keterangan").toString() : "", calibriRegular));//retur
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -940,7 +965,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(format.format(totalTf), calibriRegular));//tf
+        cell = new PdfPCell(new Phrase(format.format(totalCheque), calibriRegular));//retur
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -948,7 +973,7 @@ public class LashPdfUtils {
         cell.setPadding(5);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(format.format(totalRetur), calibriRegular));//retur
+        cell = new PdfPCell(new Phrase(format.format(totalTf), calibriRegular));//tf
         cell.setUseAscender(true);
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -1017,9 +1042,10 @@ public class LashPdfUtils {
         return table;
     }
 
-    public Boolean createPDF(File pdfFile) {
+    public Boolean createPDF(File pdfFile, List<Map> lashList, String nameLash) {
         initFontPdf();
         Boolean isGood = false;
+        user = SessionManagerQubes.getUserProfile();
         Document document = new Document(PageSize.A4.rotate());//landscape
         class HeaderFooterPageEvent extends PdfPageEventHelper {
             private PdfTemplate t;
@@ -1063,8 +1089,8 @@ public class LashPdfUtils {
             document.open();
 
             document.add(createPDFTitle());
-            document.add(createPDFTop());
-            document.add(createPDFHeaderTable());
+            document.add(createPDFTop(nameLash));
+            document.add(createPDFHeaderTable(lashList));
             document.add(createPDFSign());
             isGood = true;
 
