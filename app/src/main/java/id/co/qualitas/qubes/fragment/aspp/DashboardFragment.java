@@ -162,7 +162,7 @@ public class DashboardFragment extends BaseFragment {
         if (user.getDepoRegionList() != null) {
             for (int i = 0; i < user.getDepoRegionList().size(); i++) {
                 DepoRegion depoRegion = user.getDepoRegionList().get(i);
-                depo = depo + String.valueOf(depoRegion.getId_depo()) + " - " + depoRegion.getDepo_name() + " (" + String.valueOf(depoRegion.getId_region()) + " - " + depoRegion.getRegion_name() + ")";
+                depo = depo + depoRegion.getId_depo() + " - " + depoRegion.getDepo_name() + " (" + depoRegion.getId_region() + " - " + depoRegion.getRegion_name() + ")";
                 if (i != user.getDepoRegionList().size() - 1) {
                     depo = depo.concat("\n");
                 }
@@ -209,7 +209,7 @@ public class DashboardFragment extends BaseFragment {
                     if (logResult.getResult() != null) {
                         Map res = (Map) logResult.getResult();
                         if (res != null) {
-                            double at = (double) res.get("at");
+                            double at = res.get("at") != null ? (double) res.get("at") : 0;
                             user.setAt(at);
                             SessionManagerQubes.setUserProfile(user);
                             try {

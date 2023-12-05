@@ -56,6 +56,7 @@ public class User implements Serializable {
     private String full_name;
     private String imei;
     private String regis_id;
+    private String apk_version;
     private String tipe;
     private int rute_inap;
     private String id_sales_group;
@@ -70,6 +71,14 @@ public class User implements Serializable {
     private float radius;
     private int max_visit;
     private List<DepoRegion> depoRegionList;
+
+    public String getApk_version() {
+        return apk_version;
+    }
+
+    public void setApk_version(String apk_version) {
+        this.apk_version = apk_version;
+    }
 
     public double getAt() {
         return at;

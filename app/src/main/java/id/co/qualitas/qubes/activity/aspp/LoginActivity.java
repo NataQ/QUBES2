@@ -247,6 +247,7 @@ public class LoginActivity extends AppCompatActivity {
                     param.setUserLogin(userId);
                     param.setImei(Helper.getImei(getApplicationContext()));
                     param.setRegis_id(registerID);
+                    param.setApk_version(BuildConfig.VERSION_NAME);
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
@@ -258,6 +259,7 @@ public class LoginActivity extends AppCompatActivity {
                         userResponse.setImei(Helper.getImei(getApplicationContext()));
                         userResponse.setToken(loginResponse.getAccess_token());
                         userResponse.setRegis_id(registerID);
+                        userResponse.setApk_version(BuildConfig.VERSION_NAME);
 
                         List<DepoRegion> arrayList = new ArrayList<>();
                         DepoRegion[] paramArray = Helper.ObjectToGSON(response.getDepoRegion(), DepoRegion[].class);

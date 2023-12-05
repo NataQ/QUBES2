@@ -702,6 +702,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);
                     headerSave.setStatusPaid(false);
+                    headerSave.setOrder_type(user.getType_sales().equals("CO") ? "CO" : "TO");
                     headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                     saveOrder = database.addOrder(headerSave, user);
                     return null;

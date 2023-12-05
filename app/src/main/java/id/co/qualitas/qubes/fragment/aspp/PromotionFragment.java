@@ -194,6 +194,7 @@ public class PromotionFragment extends BaseFragment {
                     }
                     database.addLog(logResult);
                 } else {
+                    progressCircle.setVisibility(View.GONE);
                     setToast(getString(R.string.serverError));
                 }
 

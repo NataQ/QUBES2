@@ -277,6 +277,10 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
             case 12:
                 resultIntent = new Intent(CameraActivity.this, DailySalesmanActivity.class);
                 break;
+            case 14:
+            case 15:
+                resultIntent = new Intent(CameraActivity.this, UnloadingActivity.class);
+                break;
         }
 //        if (imageType.getPosImage() > 3) {
 //            resultIntent = new Intent(CameraActivity.this, VisitActivity.class);
@@ -312,9 +316,11 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
                 imageFileName = "KM_Awal" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 5:
+            case 14:
                 imageFileName = "KM_Akhir" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 6:
+            case 15:
                 imageFileName = "completed" + "_" + imageType.getIdName() + "_" + Helper.getTodayDate(Constants.DATE_TYPE_18);
                 break;
             case 7:

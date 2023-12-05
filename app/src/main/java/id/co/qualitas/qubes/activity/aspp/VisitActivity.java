@@ -106,6 +106,7 @@ import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.OfflineData;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
@@ -167,12 +168,11 @@ public class VisitActivity extends BaseActivity {
     private Map currentLocation;
     private boolean endVisit = false;
     private List<VisitSalesman> listVisitSalesman;
-    WorkManager workManager;
-    private WorkRequest workRequest;
     private static final String TAG = VisitActivity.class.getSimpleName();
     private boolean setDataSyncSuccess = false;
     private ProgressDialog progressDialog;
     private List<Customer> nooList = new ArrayList<>();
+    private List<OfflineData> offlineData = new ArrayList<>();
     private List<VisitSalesman> visitSalesmanList = new ArrayList<>();
     private List<Map> storeCheckList = new ArrayList<>(), returnList = new ArrayList<>();
     private List<CollectionHeader> collectionList = new ArrayList<>();
@@ -273,21 +273,25 @@ public class VisitActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 swipeRefresh = true;
-                if (startVisit != null) {
-                    if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
-                        requestData();//swipe visit
+                if (database.getCountOfflineData() == 0) {
+                    if (startVisit != null) {
+                        if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
+                            requestData();//swipe visit
+                        } else {
+                            setToast("Sudah start visit");
+                        }
                     } else {
-                        setToast("Sudah start visit");
+                        requestData();//swipe visit
                     }
-                } else {
-                    requestData();//swipe visit
-                }
 
 //                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
 //                    requestData();//swipe visit
 //                } else {
 //                    setToast("Sudah start visit");
 //                }
+                } else {
+                    setToast("Pastikan semua data offline sudah di sync");
+                }
                 swipeLayoutVisit.setRefreshing(false);
             }
         });
@@ -312,14 +316,18 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddVisit.setOnClickListener(v -> {
-            if (startVisit != null) {
-                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                    openDialogAdd();
+            if (database.getCountOfflineData() == 0) {
+                if (startVisit != null) {
+                    if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                        openDialogAdd();
+                    } else {
+                        setToast("Please start visit first");
+                    }
                 } else {
                     setToast("Please start visit first");
                 }
             } else {
-                setToast("Please start visit first");
+                setToast("Pastikan semua data offline sudah di sync");
             }
 
 //            if (SessionManagerQubes.getStartDay() == 1) {
@@ -331,17 +339,56 @@ public class VisitActivity extends BaseActivity {
     }
 
     private void startDayVisit() {
-        boolean invoice = database.getCountInvoiceToday() != 0 && (database.getCountInvoiceToday() == database.getCountInvoiceVerifToday());
+        boolean invoice = database.getCountInvoiceToday() != 0;
+        boolean verifIncoice = database.getCountInvoiceToday() == database.getCountInvoiceVerifToday();
         boolean stockRequest = user.getType_sales().equals("CO") ? database.getCountStockRequestToday() != 0 : true;
         if (stockRequest) {
             if (invoice) {
-                openDialogStartVisit();
+                if (verifIncoice) {
+                    openDialogStartVisit();
+                } else {
+                    setToast("Pastikan invoice sudah di verifikasi");
+                }
             } else {
-                setToast("Pastikan invoice sudah di verifikasi");
+                openDialogConfirmInvoice();
             }
         } else {
             setToast("Pastikan sudah input stock request dan sudah di verifikasi");
         }
+    }
+
+    private void openDialogConfirmInvoice() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+
+        txtTitle.setText("Invoice Tidak ada");
+        txtDialog.setText("Anda tidak memiliki invoice untuk di tagihkan. Anda yakin ingin memulai visit?");
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                openDialogStartVisit();
+            }
+        });
+
+        dialog.show();
     }
 
     private void endTodayVisit() {
@@ -640,19 +687,22 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddNoo.setOnClickListener(v -> {
-            if (startVisit != null) {
-                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                    SessionManagerQubes.clearCustomerNooSession();
-                    Helper.removeItemParam(Constants.IMAGE_TYPE);
-                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-                    startActivity(intent);
+            if (database.getCountOfflineData() == 0) {
+                if (startVisit != null) {
+                    if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                        SessionManagerQubes.clearCustomerNooSession();
+                        Helper.removeItemParam(Constants.IMAGE_TYPE);
+                        Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+                        startActivity(intent);
+                    } else {
+                        setToast("Please start visit first");
+                    }
                 } else {
                     setToast("Please start visit first");
                 }
             } else {
-                setToast("Please start visit first");
+                setToast("Pastikan semua data offline sudah di sync");
             }
-
 //            if (SessionManagerQubes.getStartDay() == 1) {
 //
 //            } else {
@@ -664,16 +714,20 @@ public class VisitActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 swipeRefresh = true;
-                if (startVisit != null) {
-                    if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
-                        requestData();//swipe noo
+                if (database.getCountOfflineData() == 0) {
+                    if (startVisit != null) {
+                        if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
+                            requestData();//swipe noo
+                        } else {
+                            setToast("Sudah start visit");
+                        }
                     } else {
-                        setToast("Sudah start visit");
+                        requestData();//swipe noo
                     }
+                    swipeLayoutNoo.setRefreshing(false);
                 } else {
-                    requestData();//swipe noo
+                    setToast("Pastikan semua data offline sudah di sync");
                 }
-                swipeLayoutNoo.setRefreshing(false);
             }
         });
 
@@ -1002,12 +1056,10 @@ public class VisitActivity extends BaseActivity {
         ImageView imgAddSelesai = dialog.findViewById(R.id.imgAddSelesai);
         ImageView imgPulang = dialog.findViewById(R.id.imgPulang);
         ImageView imgAddPulang = dialog.findViewById(R.id.imgAddPulang);
-//        yg ud d foto bisa ilang kalau foto lagi, d check lagi
 
         if (imageType != null) {
             if (imageType.getPhotoSelesai() != null) {
                 Utils.loadImageFit(VisitActivity.this, imageType.getPhotoSelesai(), imgSelesai);
-//            imgSelesai.setImageURI(uriSelesai);
                 imgAddSelesai.setVisibility(View.GONE);
             } else {
                 imgAddSelesai.setVisibility(View.VISIBLE);
@@ -1033,13 +1085,11 @@ public class VisitActivity extends BaseActivity {
             if (imageType == null) {
                 imageType = new ImageType();
             }
-//            ImageType imageType = new ImageType();
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
             imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
             imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
             imageType.setPosImage(5);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-//            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
 
@@ -1047,13 +1097,11 @@ public class VisitActivity extends BaseActivity {
             if (imageType == null) {
                 imageType = new ImageType();
             }
-//            ImageType imageType = new ImageType();
             imageType.setPosImage(6);
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
             imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
             imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-//            SessionManagerQubes.setImageType(imageType);
             askPermissionCamera();
         });
 
@@ -1073,7 +1121,6 @@ public class VisitActivity extends BaseActivity {
                 PARAM = 4;
                 new RequestUrl().execute();//4
                 progress.show();
-//                endDayDayDummy();
                 dialog.dismiss();
             }
         });
@@ -1401,19 +1448,19 @@ public class VisitActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
-//                    btnEndDay.setVisibility(View.GONE);
-//                    btnNextDay.setVisibility(View.VISIBLE);
                     Helper.deleteFolder(getDirLoc(getApplicationContext()).getPath());
                     if (user.getType_sales().equals("CO")) {
                         SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST,0);
                         Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
                         startActivity(intent);
+                    }else{
+                        new RequestUrlSync().execute();
                     }
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi");
                 }
             }
-
         }
     }
 
@@ -1465,6 +1512,8 @@ public class VisitActivity extends BaseActivity {
                         database.deleteCustomerPromotion();
                         database.deleteVisitSalesman();
                         database.deleteNoo();
+                        SessionManagerQubes.clearStartDaySession();//remove start visit
+                        startVisit = new StartVisit();
                         for (Customer customer : custList) {
                             int idHeader = database.addCustomer(customer, user.getUsername());
                             List<Promotion> promoList = database.getPromotionNonRouteByIdCustomer(customer.getId());
@@ -1509,8 +1558,6 @@ public class VisitActivity extends BaseActivity {
                     endDay = new HashMap();
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
-//                    endDay.put("photoKmAkhir", imageType.getPhotoAkhirString());
-//                    endDay.put("photoCompleted", imageType.getPhotoSelesaiString());
 
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
                     if (imageType.getPhotoAkhir() != null) {
@@ -1528,218 +1575,16 @@ public class VisitActivity extends BaseActivity {
                     map.add("data", json);
 
                     String URL_ = Constants.API_GET_END_DAY_MULTI_PART;
-//                    String URL_ = Constants.API_GET_END_DAY;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
-//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, endDay);
                     return null;
                 } else if (PARAM == 5) {
                     validateVisitSalesman();
                     getData();
                     saveDataSuccess = true;
                     return null;
-                } else if (PARAM == 13) {
-                    nooList = new ArrayList<>();
-                    nooList = database.getAllNoo();
-                    if (nooList == null) {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data noo failed: " + exMess);
-                    } else {
-                        setDataSyncSuccess = true;
-                    }
-                    return null;
-                } else if (PARAM == 15) {
-                    visitSalesmanList = new ArrayList<>();
-                    visitSalesmanList = database.getAllVisitSalesman();
-                    if (visitSalesmanList == null) {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline data visit failed: " + exMess);
-                    } else {
-                        setDataSyncSuccess = true;
-                    }
-                    return null;
-                } else if (PARAM == 17) {
-                    List<Customer> customerList = database.getAllCustomerCheckOut();
-                    if (customerList != null) {
-                        if (!customerList.isEmpty()) {
-                            List<Material> mList = new ArrayList<>();
-                            Map header = new HashMap();
-                            for (Customer customer : customerList) {
-                                mList = new ArrayList<>();
-                                mList = database.getAllStoreCheckCheckOut(customer.getId());
-                                if (mList != null) {
-                                    if (!mList.isEmpty()) {
-                                        header = new HashMap();
-                                        header.put("id_mobile", mList.get(0).getIdheader());
-                                        header.put("date", mList.get(0).getDate());
-                                        header.put("id_salesman", user.getUsername());
-                                        header.put("id_customer", mList.get(0).getId_customer());
-                                        header.put("listData", mList);
-                                        storeCheckList.add(header);
-                                        setDataSyncSuccess = true;
-                                    } else {
-                                        setDataSyncSuccess = true;
-                                    }
-                                } else {
-                                    setDataSyncSuccess = false;
-                                }
-                            }
-
-                            if (!setDataSyncSuccess) {
-                                logResult = new WSMessage();
-                                logResult.setIdMessage(0);
-                                logResult.setResult(null);
-                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline store check failed: " + exMess);
-                            }
-                        } else {
-                            setDataSyncSuccess = true;
-                            storeCheckList = new ArrayList<>();
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline store check failed: " + exMess);
-                    }
-                    return null;
-                } else if (PARAM == 19) {
-                    List<Customer> customerList = database.getAllCustomerCheckOut();
-                    if (customerList != null) {
-                        if (!customerList.isEmpty()) {
-                            collectionList = new ArrayList<>();
-                            List<CollectionHeader> mList = new ArrayList<>();
-                            for (Customer customer : customerList) {
-                                mList = new ArrayList<>();
-                                mList = database.getAllCollectionHeader(customer.getId());
-                                if (mList != null) {
-                                    if (!mList.isEmpty()) {
-                                        collectionList.addAll(mList);
-                                        setDataSyncSuccess = true;
-                                    } else {
-                                        setDataSyncSuccess = true;
-                                    }
-                                } else {
-                                    setDataSyncSuccess = false;
-                                }
-                            }
-                            if (!setDataSyncSuccess) {
-                                logResult = new WSMessage();
-                                logResult.setIdMessage(0);
-                                logResult.setResult(null);
-                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline collection failed: " + exMess);
-                            }
-                        } else {
-                            setDataSyncSuccess = true;
-                            storeCheckList = new ArrayList<>();
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline collection failed: " + exMess);
-                    }
-                    return null;
-                } else if (PARAM == 21) {
-                    List<Customer> customerList = database.getAllCustomerCheckOut();
-                    if (customerList != null) {
-                        if (!customerList.isEmpty()) {
-                            orderList = new ArrayList<>();
-                            List<Order> mList = new ArrayList<>();
-                            for (Customer customer : customerList) {
-                                mList = new ArrayList<>();
-                                mList = database.getAllOrderHeader(customer.getId(), user.getUsername());
-                                if (mList != null) {
-                                    if (!mList.isEmpty()) {
-                                        orderList.addAll(mList);
-                                        setDataSyncSuccess = true;
-                                    } else {
-                                        setDataSyncSuccess = true;
-                                    }
-                                } else {
-                                    setDataSyncSuccess = false;
-                                }
-                            }
-
-                            if (!setDataSyncSuccess) {
-                                logResult = new WSMessage();
-                                logResult.setIdMessage(0);
-                                logResult.setResult(null);
-                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline order failed: " + exMess);
-                            }
-                        } else {
-                            setDataSyncSuccess = true;
-                            storeCheckList = new ArrayList<>();
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline order failed: " + exMess);
-                    }
-                    return null;
                 } else {
-                    List<Customer> customerList = database.getAllCustomerCheckOut();
-                    if (customerList != null) {
-                        if (!customerList.isEmpty()) {
-                            returnList = new ArrayList<>();
-                            List<Material> mList = new ArrayList<>();
-                            Map header = new HashMap();
-                            for (Customer customer : customerList) {
-                                mList = new ArrayList<>();
-                                mList = database.getAllReturnCheckOut(customer.getId());
-                                if (mList != null) {
-                                    if (!mList.isEmpty()) {
-                                        header = new HashMap();
-                                        header.put("id_mobile", mList.get(0).getIdheader());
-                                        header.put("date", mList.get(0).getDate());
-                                        header.put("id_salesman", user.getUsername());
-                                        header.put("id_customer", mList.get(0).getId_customer());
-                                        header.put("listData", mList);
-                                        returnList.add(header);
-                                        setDataSyncSuccess = true;
-                                    } else {
-                                        setDataSyncSuccess = true;
-                                    }
-                                } else {
-                                    setDataSyncSuccess = false;
-                                }
-                            }
-                            if (!setDataSyncSuccess) {
-                                logResult = new WSMessage();
-                                logResult.setIdMessage(0);
-                                logResult.setResult(null);
-                                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                                logResult.setMessage("Set offline return failed: " + exMess);
-                            }
-                        } else {
-                            setDataSyncSuccess = true;
-                            storeCheckList = new ArrayList<>();
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                        logResult = new WSMessage();
-                        logResult.setIdMessage(0);
-                        logResult.setResult(null);
-                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                        logResult.setMessage("Set offline return failed: " + exMess);
-                    }
+                    setDataOffline();
                     return null;
                 }
             } catch (Exception ex) {
@@ -1749,17 +1594,6 @@ public class VisitActivity extends BaseActivity {
                 if (PARAM == 2 || PARAM == 5) {
                     saveDataSuccess = false;
                 } else {
-//                    logResult = new WSMessage();
-//                    logResult.setIdMessage(0);
-//                    logResult.setResult(null);
-//                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
-//                    if (PARAM == 1) {
-//                        logResult.setMessage("Today Customer error: " + exMess);
-//                    } else if (PARAM == 3) {
-//                        logResult.setMessage("Start Visit error: " + exMess);
-//                    } else if (PARAM == 4) {
-//                        logResult.setMessage("End Visit error: " + exMess);
-//                    }
                     logResult = new WSMessage();
                     logResult.setIdMessage(0);
                     logResult.setResult(null);
@@ -1773,24 +1607,6 @@ public class VisitActivity extends BaseActivity {
                             break;
                         case 4:
                             logResult.setMessage("End Visit error: " + exMess);
-                            break;
-                        case 13:
-                            logResult.setMessage("Set offline data noo failed: " + exMess);
-                            break;
-                        case 15:
-                            logResult.setMessage("Set offline data visit failed: " + exMess);
-                            break;
-                        case 17:
-                            logResult.setMessage("Set offline store check failed: " + exMess);
-                            break;
-                        case 19:
-                            logResult.setMessage("Set offline collection failed: " + exMess);
-                            break;
-                        case 21:
-                            logResult.setMessage("Set offline order failed: " + exMess);
-                            break;
-                        case 23:
-                            logResult.setMessage("Set offline return failed: " + exMess);
                             break;
                     }
                 }
@@ -1916,6 +1732,9 @@ public class VisitActivity extends BaseActivity {
                 database.addLog(logResult);
                 if (logResult.getIdMessage() == 1) {
                     setToast(logResult.getMessage());
+                    if (startVisit == null) {
+                        startVisit = new StartVisit();
+                    }
                     startVisit.setStart_time(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     startVisit.setKm_awal(kmAwal);
                     startVisit.setPhoto_km_awal(uriBerangkat.getPath());
@@ -1942,130 +1761,287 @@ public class VisitActivity extends BaseActivity {
 
                     validateButton();//end
                     progress.show();
-                    PARAM = 13;
-                    new RequestUrl().execute();
-//                    new AsyncTaskGeneratePDF().execute();
+                    PARAM = 6;
+                    new RequestUrl().execute();//6
                 } else {
                     database.addLog(logResult);
                     setToast(logResult.getMessage());
-                    openDialogEndVisit();
+                    openDialogEndVisit();//if failed end viist
                 }
             } else if (PARAM == 5) {
                 progress.dismiss();
                 if (saveDataSuccess) {
                     mAdapterVisit.notifyDataSetChanged();
                     mAdapterNoo.notifyDataSetChanged();
-                    openDialogEndVisit();
+                    openDialogEndVisit();//after save daily salesman
                 } else {
                     setToast("Gagal menyimpan data");
                 }
-            } else if (PARAM == 13) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(nooList)) {
-//                        kalau gk ad adata lajut ke api lain
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                    sizeData = nooList.size();
-                    PARAM = 14;
-                    new RequestUrlTransaction().execute();//14
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data noo");
-                    progress.show();
-                    PARAM = 15;
-                    new RequestUrl().execute();//14
-                }
-            } else if (PARAM == 15) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(visitSalesmanList)) {
-                    sizeData = visitSalesmanList.size();
-                    PARAM = 16;
-                    new RequestUrlTransaction().execute();//16
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data visit");
-                    PARAM = 17;
-                    progress.show();
-                    new RequestUrl().execute();
-                }
-            } else if (PARAM == 17) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
-                    sizeData = storeCheckList.size();
-                    PARAM = 18;
-                    new RequestUrlTransaction().execute();//18
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data store check");
-                    PARAM = 19;
-                    progress.show();
-                    new RequestUrl().execute();
-                }
-            } else if (PARAM == 19) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(collectionList)) {
-                    sizeData = collectionList.size();
-                    PARAM = 20;
-                    new RequestUrlTransaction().execute();//20
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data collection");
-                    PARAM = 21;
-                    progress.show();
-                    new RequestUrl().execute();
-                }
-            } else if (PARAM == 21) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(orderList)) {
-                    sizeData = orderList.size();
-                    PARAM = 22;
-                    new RequestUrlTransaction().execute();//22
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data order");
-                    PARAM = 23;
-                    progress.show();
-                    new RequestUrl().execute();
-                }
-            } else if (PARAM == 23) {
-                progress.dismiss();
-                if (setDataSyncSuccess) {
-//                    if (Helper.isNotEmptyOrNull(returnList)) {
-                    sizeData = returnList.size();
-                    PARAM = 24;
-                    new RequestUrlTransaction().execute();//24
-//                    } else {
-//                        setToast("Tidak ada data atau Semua data sudah di sync");
-//                    }
-                } else {
-                    database.addLog(logResult);
-                    setToast("Gagal menyiapkan data return");
-                    progress.show();
-                    new AsyncTaskGeneratePDF().execute();
-                }
+            } else if (PARAM == 6) {
+                progress.show();
+                new AsyncTaskGeneratePDF().execute();
             }
         }
     }
 
-    private class RequestUrlTransaction extends AsyncTask<Void, Integer, List<WSMessage>> {
+    private void setDataOffline() {
+        offlineData = new ArrayList<>();
+
+        //noo
+        nooList = new ArrayList<>();
+        nooList = database.getAllNoo();
+        if (nooList == null) {
+            logResult = new WSMessage();
+            logResult.setIdMessage(0);
+            logResult.setResult(null);
+            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+            logResult.setMessage("Set offline data noo failed: " + exMess);
+        } else {
+            nooList = new ArrayList<>();
+        }
+        OfflineData offData = new OfflineData();
+        offData.setNooList(nooList);
+        offlineData.add(0, offData);
+
+        //visit
+        visitSalesmanList = new ArrayList<>();
+        visitSalesmanList = database.getAllVisitSalesman();
+        if (visitSalesmanList == null) {
+            logResult = new WSMessage();
+            logResult.setIdMessage(0);
+            logResult.setResult(null);
+            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+            logResult.setMessage("Set offline data visit failed: " + exMess);
+        } else {
+            visitSalesmanList = new ArrayList<>();
+        }
+        offData = new OfflineData();
+        offData.setVisitSalesmanList(visitSalesmanList);
+        offlineData.add(1, offData);
+
+        List<Customer> customerList = database.getAllCustomerCheckOut();
+
+        if (customerList != null) {
+            if (!customerList.isEmpty()) {
+                Map headerStoreCheck = new HashMap();
+                storeCheckList = new ArrayList<>();
+                List<Material> storeCheck = new ArrayList<>();
+                collectionList = new ArrayList<>();
+                List<CollectionHeader> collection = new ArrayList<>();
+                orderList = new ArrayList<>();
+                List<Order> order = new ArrayList<>();
+                Map headerReturn = new HashMap();
+                returnList = new ArrayList<>();
+                List<Material> returnO = new ArrayList<>();
+                photoList = new ArrayList<>();
+                List<Map> photos = new ArrayList<>();
+
+                for (Customer customer : customerList) {
+                    //store check
+                    storeCheck = database.getAllStoreCheckCheckOut(customer.getId());
+                    if (storeCheck != null) {
+                        if (!storeCheck.isEmpty()) {
+                            headerStoreCheck = new HashMap();
+                            headerStoreCheck.put("id_mobile", storeCheck.get(0).getIdheader());
+                            headerStoreCheck.put("date", storeCheck.get(0).getDate());
+                            headerStoreCheck.put("id_salesman", user.getUsername());
+                            headerStoreCheck.put("id_customer", storeCheck.get(0).getId_customer());
+                            headerStoreCheck.put("listData", storeCheck);
+                            storeCheckList.add(headerStoreCheck);
+                            setDataSyncSuccess = true;
+                        } else {
+                            setDataSyncSuccess = true;
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                    }
+
+                    //collection
+                    collection = database.getAllCollectionHeader(customer.getId());
+                    if (collection != null) {
+                        if (!collection.isEmpty()) {
+                            collectionList.addAll(collection);
+                            setDataSyncSuccess = true;
+                        } else {
+                            setDataSyncSuccess = true;
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                    }
+
+                    //order
+                    order = database.getAllOrderHeader(customer.getId(), user.getUsername());
+                    if (order != null) {
+                        if (!order.isEmpty()) {
+                            orderList.addAll(order);
+                            setDataSyncSuccess = true;
+                        } else {
+                            setDataSyncSuccess = true;
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                    }
+
+                    //return
+                    returnO = database.getAllReturnCheckOut(customer.getId());
+                    if (returnO != null) {
+                        if (!returnO.isEmpty()) {
+                            headerReturn = new HashMap();
+                            headerReturn.put("id_mobile", returnO.get(0).getIdheader());
+                            headerReturn.put("date", returnO.get(0).getDate());
+                            headerReturn.put("id_salesman", user.getUsername());
+                            headerReturn.put("id_customer", returnO.get(0).getId_customer());
+                            headerReturn.put("listData", returnO);
+                            returnList.add(headerReturn);
+                            setDataSyncSuccess = true;
+                        } else {
+                            setDataSyncSuccess = true;
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                    }
+
+                    //photo
+                    photos = database.getAllPhoto(customer.getId());
+                    if (photos != null) {
+                        if (!photos.isEmpty()) {
+                            photoList.addAll(photos);
+                            setDataSyncSuccess = true;
+                        } else {
+                            setDataSyncSuccess = true;
+                        }
+                    } else {
+                        setDataSyncSuccess = false;
+                    }
+                }
+
+                if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                    storeCheckList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(collectionList)) {
+                    collectionList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(orderList)) {
+                    orderList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(returnList)) {
+                    returnList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(photoList)) {
+                    photoList = new ArrayList<>();
+                }
+                offData = new OfflineData();
+                offData.setStoreCheckList(storeCheckList);
+                offlineData.add(2, offData);
+
+                offData = new OfflineData();
+                offData.setCollectionList(collectionList);
+                offlineData.add(3, offData);
+
+                offData = new OfflineData();
+                offData.setOrderList(orderList);
+                offlineData.add(4, offData);
+
+                offData = new OfflineData();
+                offData.setReturnList(returnList);
+                offlineData.add(5, offData);
+
+                offData = new OfflineData();
+                offData.setPhotoList(photoList);
+                offlineData.add(6, offData);
+
+                if (!setDataSyncSuccess) {
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                    logResult.setMessage("Set offline customer failed: " + exMess);
+                }
+            } else {
+                setDataSyncSuccess = true;
+                if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                    storeCheckList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(collectionList)) {
+                    collectionList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(orderList)) {
+                    orderList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(returnList)) {
+                    returnList = new ArrayList<>();
+                }
+                if (Helper.isNotEmptyOrNull(photoList)) {
+                    photoList = new ArrayList<>();
+                }
+
+                offData = new OfflineData();
+                offData.setStoreCheckList(storeCheckList);
+                offlineData.add(2, offData);
+
+                offData = new OfflineData();
+                offData.setCollectionList(collectionList);
+                offlineData.add(3, offData);
+
+                offData = new OfflineData();
+                offData.setOrderList(orderList);
+                offlineData.add(4, offData);
+
+                offData = new OfflineData();
+                offData.setReturnList(returnList);
+                offlineData.add(5, offData);
+
+                offData = new OfflineData();
+                offData.setPhotoList(photoList);
+                offlineData.add(6, offData);
+            }
+        } else {
+            logResult = new WSMessage();
+            logResult.setIdMessage(0);
+            logResult.setResult(null);
+            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+            logResult.setMessage("Set offline customer failed: " + exMess);
+
+            if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                storeCheckList = new ArrayList<>();
+            }
+            if (Helper.isNotEmptyOrNull(collectionList)) {
+                collectionList = new ArrayList<>();
+            }
+            if (Helper.isNotEmptyOrNull(orderList)) {
+                orderList = new ArrayList<>();
+            }
+            if (Helper.isNotEmptyOrNull(returnList)) {
+                returnList = new ArrayList<>();
+            }
+            if (Helper.isNotEmptyOrNull(photoList)) {
+                photoList = new ArrayList<>();
+            }
+
+            offData = new OfflineData();
+            offData.setStoreCheckList(storeCheckList);
+            offlineData.add(2, offData);
+
+            offData = new OfflineData();
+            offData.setCollectionList(collectionList);
+            offlineData.add(3, offData);
+
+            offData = new OfflineData();
+            offData.setOrderList(orderList);
+            offlineData.add(4, offData);
+
+            offData = new OfflineData();
+            offData.setReturnList(returnList);
+            offlineData.add(5, offData);
+
+            offData = new OfflineData();
+            offData.setPhotoList(photoList);
+            offlineData.add(6, offData);
+        }
+        setToast("OFFLINEDATA");
+    }
+
+    private class RequestUrlSync extends AsyncTask<Void, Integer, List<WSMessage>> {
 
         @Override
         protected List<WSMessage> doInBackground(Void... voids) {
@@ -2074,118 +2050,142 @@ public class VisitActivity extends BaseActivity {
                 String URL_ = null, url = null;
                 Map req = new HashMap();
                 int counter = 0;
+                for (int i = 0; i < offlineData.size(); i++) {
+                    switch (i) {
+                        case 0:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_CUSTOMER_NOO);
+                            req = new HashMap();
+                            req.put("listData", offlineData.get(i).getNooList());
+                            if (progressDialog != null) {
+                                progressDialog.setMessage("Mengirim data noo offline...");
+                            }
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Noo success");
+                                for (Customer data : offlineData.get(i).getNooList()) {
+                                    database.updateSyncNoo(data);
+                                }
+                            }
+                            database.addLog(logResult);
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 1:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_VISIT);
+                            counter++;
+                            req = new HashMap();
+                            req.put("listData", offlineData.get(i).getVisitSalesmanList());
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Visit Salesman success");
+                                for (VisitSalesman data : offlineData.get(i).getVisitSalesmanList()) {
+                                    database.updateSyncVisitSalesman(data);
+                                }
+                            }
+                            database.addLog(logResult);
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 2:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_STORE_CHECK);
+                            counter++;
+                            for (Map data : offlineData.get(i).getStoreCheckList()) {
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
+                                    database.updateSyncStoreCheck(data);
+                                }
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 3:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_COLLECTION);
+                            counter++;
+                            for (CollectionHeader data : offlineData.get(i).getCollectionList()) {
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
+                                    database.updateSyncCollectionHeader(data);
+                                }
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 4:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ORDER);
+                            counter++;
+                            for (Order data : offlineData.get(i).getOrderList()) {
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
+                                    database.updateSyncOrderHeader(data);
+                                }
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 5:
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
+                            counter++;
+                            for (Map data : offlineData.get(i).getReturnList()) {
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+                                    database.updateSyncReturn(data);
+                                }
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
+                        case 6:
+                            counter++;
+                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ONE_PHOTO);
+                            MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                            Map requestData = new HashMap();
+                            for (Map data : offlineData.get(i).getPhotoList()) {
+                                map = new LinkedMultiValueMap<String, Object>();
+                                if (data.get("photo") != null) {
+                                    map.add("photo", new FileSystemResource(data.get("photo").toString()));
+                                } else {
+                                    map.add("photo", "");
+                                }
+                                requestData = new HashMap();
+                                requestData.put("typePhoto", data.get("typePhoto"));
+                                requestData.put("id", user.getUsername());
+                                requestData.put("customerId", data.get("customerId"));
+                                requestData.put("idDB", data.get("idDB"));
+                                String json = new Gson().toJson(requestData);
+                                map.add("data", json);
 
-                if (PARAM == 14) {
-                    URL_ = Constants.API_SYNC_CUSTOMER_NOO;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    req = new HashMap();
-                    List<Customer> noo = new ArrayList<>();
-                    for (Customer data : nooList) {
-                        counter++;
-                        req = new HashMap();
-                        noo = new ArrayList<>();
-                        noo.add(data);
-                        req.put("listData", noo);
-                        if (progressDialog != null) {
-                            progressDialog.setMessage("Mengirim data noo offline...");
-                        }
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Noo " + data.getId() + " success");
-                            database.updateSyncNoo(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 16) {
-                    URL_ = Constants.API_SYNC_VISIT;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    req = new HashMap();
-                    List<VisitSalesman> noo = new ArrayList<>();
-                    for (VisitSalesman data : visitSalesmanList) {
-                        counter++;
-                        req = new HashMap();
-                        noo = new ArrayList<>();
-                        noo.add(data);
-                        req.put("listData", noo);
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Visit Salesman " + data.getIdHeader() + " success");
-                            database.updateSyncVisitSalesman(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 18) {
-                    URL_ = Constants.API_SYNC_STORE_CHECK;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Map data : storeCheckList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
-                            database.updateSyncStoreCheck(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 20) {
-                    URL_ = Constants.API_SYNC_COLLECTION;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (CollectionHeader data : collectionList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
-                            database.updateSyncCollectionHeader(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 22) {
-                    URL_ = Constants.API_SYNC_ORDER;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Order data : orderList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
-                            database.updateSyncOrderHeader(data);
-                        }
-                        database.addLog(logResult);
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else {
-                    URL_ = Constants.API_SYNC_RETURN;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Map data : returnList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                            database.addLog(logResult);
-                            database.updateSyncReturn(data);
-                        }
-
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
+                                    database.updateSyncPhoto(data);
+                                }
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                            break;
                     }
                 }
                 return listWSMsg;
@@ -2196,26 +2196,7 @@ public class VisitActivity extends BaseActivity {
                 logResult = new WSMessage();
                 logResult.setIdMessage(0);
                 String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
-                switch (PARAM) {
-                    case 14:
-                        logResult.setMessage("Sync noo failed : " + exMess);
-                        break;
-                    case 16:
-                        logResult.setMessage("Sync visit salesman failed : " + exMess);
-                        break;
-                    case 18:
-                        logResult.setMessage("Sync store check failed : " + exMess);
-                        break;
-                    case 20:
-                        logResult.setMessage("Sync collection failed : " + exMess);
-                        break;
-                    case 22:
-                        logResult.setMessage("Sync order failed : " + exMess);
-                        break;
-                    case 24:
-                        logResult.setMessage("Sync return failed : " + exMess);
-                        break;
-                }
+                logResult.setMessage("Sync offline data failed : " + exMess);
                 database.addLog(logResult);
                 return null;
             }
@@ -2224,11 +2205,11 @@ public class VisitActivity extends BaseActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getApplicationContext());
+            progressDialog = new ProgressDialog(VisitActivity.this);
             progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMax(sizeData);
+            progressDialog.setMax(offlineData.size());
             progressDialog.setMessage(getString(R.string.progress_checkout));
             progressDialog.show();
         }
@@ -2248,7 +2229,7 @@ public class VisitActivity extends BaseActivity {
                         error++;
                     }
                 }
-                if (listResult.size() == sizeData) {//ganti sizeData
+                if (listResult.size() == offlineData.size()) {//ganti sizeData
                     if (error == 0) {
                         setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
                     } else {
@@ -2261,31 +2242,6 @@ public class VisitActivity extends BaseActivity {
                 setToast("Gagal mengirim data");
             }
             progressDialog.dismiss();
-
-            if (PARAM == 14) {
-                PARAM = 15;
-                progress.show();
-                new RequestUrl().execute();
-            } else if (PARAM == 16) {
-                PARAM = 17;
-                progress.show();
-                new RequestUrl().execute();
-            } else if (PARAM == 18) {
-                PARAM = 19;
-                progress.show();
-                new RequestUrl().execute();
-            } else if (PARAM == 20) {
-                PARAM = 21;
-                progress.show();
-                new RequestUrl().execute();
-            } else if (PARAM == 22) {
-                PARAM = 23;
-                progress.show();
-                new RequestUrl().execute();
-            } else {
-                progress.show();
-                new AsyncTaskGeneratePDF().execute();
-            }
         }
     }
 
@@ -2348,7 +2304,6 @@ public class VisitActivity extends BaseActivity {
             Helper.takePhoto(VisitActivity.this);
         } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
             endTodayVisit();//end day/visit
-//            new AsyncTaskGeneratePDF().execute();
         } else if (requestCode == Constants.LOCATION_PERMISSION_REQUEST
                 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
@@ -2386,7 +2341,7 @@ public class VisitActivity extends BaseActivity {
                                 currentLocation.put("address", result.getAddressLine(0));
                                 if (endVisit) {
                                     if (database.getCountNotVisit() == 0) {
-                                        openDialogEndVisit();
+                                        openDialogEndVisit();//get location
                                     } else {
                                         openDialogReasonNotVisit();//end visit
                                     }

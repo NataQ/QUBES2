@@ -78,6 +78,7 @@ public class StockRequestDetailActivity extends BaseActivity {
         });
 
         btnUnloading.setOnClickListener(v -> {
+            Helper.setItemParam(Constants.FROM_STOCK_REQUEST,1);
             Intent intent = new Intent(getApplicationContext(), UnloadingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);

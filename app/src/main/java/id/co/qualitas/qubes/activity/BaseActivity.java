@@ -59,11 +59,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +74,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -97,6 +102,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.CheckInOutRequest;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.MaterialResponse;
 import id.co.qualitas.qubes.model.MessageResponse;
@@ -117,6 +123,8 @@ import id.co.qualitas.qubes.utils.Utils;
 //import android.support.multidex.MultiDex;
 
 public class BaseActivity extends AppCompatActivity {
+    protected WorkManager workManager;
+    protected WorkRequest workRequest;
     protected LinearLayout llNoData;
     protected ProgressBar progressCircle;
     protected Context context;
@@ -289,6 +297,12 @@ public class BaseActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    public String getOrderType(Customer outletHeader, User user) {
+        String orderType;
+        //outletHeader.getOrder_type() != null ? (outletHeader.getOrder_type().equals("CO") ? "Canvas Order" : "Taking Order") :
+        orderType = user.getType_sales().equals("CO") ? "Canvas Order" : "Taking Order";
+        return orderType;
+    }
 
     public void logOut(Activity activity) {
         LayoutInflater inflater = LayoutInflater.from(activity);
@@ -311,8 +325,12 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                progress.show();
-                new requestLogOut().execute();
+                if (database.getCountOfflineData() == 0) {
+                    progress.show();
+                    new requestLogOut().execute();
+                } else {
+                    setToast("Pastikan semua data offline sudah di sync");
+                }
             }
         });
 
@@ -1723,57 +1741,6 @@ public class BaseActivity extends AppCompatActivity {
             encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         }
         return encodedImage;
-    }
-
-    public void exportDB(Context context) {
-        File sd = Environment.getExternalStorageDirectory();
-        File data = Environment.getDataDirectory();
-        FileChannel source = null;
-        FileChannel destination = null;
-        String currentDBPath1 = "//data//" + getPackageName() + "//databases//POD.db";
-        String currentDBPath = getDbPath(context, "POD.db");
-        String backupDBPath = Utils.getDirLocPDF(context) + "/pod_backup.db";
-        File currentDB = new File(currentDBPath);
-        File backupDB = new File(backupDBPath);
-        try {
-            source = new FileInputStream(currentDB).getChannel();
-            destination = new FileOutputStream(backupDB).getChannel();
-            destination.transferFrom(source, 0, source.size());
-            source.close();
-            destination.close();
-            Toast.makeText(context, "Your Database is Exported !!", Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            setToast(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void importDB(Context context) {
-        String dir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File sd = new File(dir);
-        File data = Environment.getDataDirectory();
-        FileChannel source = null;
-        FileChannel destination = null;
-        String currentDBPath = getDbPath(context, "POD.db");
-        String backupDBPath = Utils.getDirLocPDF(context) + "/pod_backup.db";
-        File currentDB = new File(currentDBPath);
-        File backupDB = new File(backupDBPath);
-
-        try {
-            source = new FileInputStream(currentDB).getChannel();
-            destination = new FileOutputStream(backupDB).getChannel();
-            destination.transferFrom(source, 0, source.size());
-            source.close();
-            destination.close();
-            Toast.makeText(context, "Your Database is Imported !!", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            setToast(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public String getDbPath(Context context, String YourDbName) {
-        return context.getDatabasePath(YourDbName).getAbsolutePath();
     }
 
     public void hideKeyboard() {

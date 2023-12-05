@@ -113,15 +113,15 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
         setFormatSeparator();
         Target detail = mFilteredList.get(position);
         holder.txtGroupMat.setText(detail.getMaterial_group_name());
-        holder.txtTgtAt.setText(format.format(detail.getTgtat()));
+        holder.txtTgtAt.setText(format.format(detail.getTgt_at()));
         holder.txtAt.setText(format.format(detail.getAt()));
-        holder.txtTgtOms.setText(format.format(detail.getTgtoms()));
+        holder.txtTgtOms.setText(format.format(detail.getTgt_oms()));
         holder.txtOms.setText(format.format(detail.getOms()));
 
-        double totalPercentAT = ((double) detail.getAt() / detail.getTgtat()) * 100;
-        double totalPercentOMS = ((double) detail.getOms() / detail.getTgtoms()) * 100;
-        double totalAT = detail.getAt() - detail.getTgtat();
-        double totalOMS = detail.getOms() - detail.getTgtoms();
+        double totalPercentAT = ((double) detail.getAt() / detail.getTgt_at()) * 100;
+        double totalPercentOMS = ((double) detail.getOms() / detail.getTgt_oms()) * 100;
+        double totalAT = detail.getAt() - detail.getTgt_at();
+        double totalOMS = detail.getOms() - detail.getTgt_oms();
 
         holder.txtTotalPercentageAT.setText(format.format(Math.round(totalPercentAT)) + "%");
         holder.txtTotalPercentageOMS.setText(format.format(Math.round(totalPercentOMS)) + "%");

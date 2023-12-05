@@ -47,7 +47,7 @@ public class StockRequestListActivity extends BaseActivity {
         initialize();
 
         btnAdd.setOnClickListener(v -> {
-            if (database.checkUnloadingRequest()) {
+            if (database.checkUnloadingRequest() == 0) {
                 intent = new Intent(this, StockRequestAddActivity.class);
                 startActivity(intent);
             } else {

@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
@@ -29,6 +30,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -51,6 +53,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -58,6 +62,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -92,6 +97,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.User;
+import id.co.qualitas.qubes.utils.Utils;
 
 public class Helper extends BaseFragment {
     public static int totalItem;
@@ -984,5 +990,60 @@ public class Helper extends BaseFragment {
             outside = true;
         }
         return outside;
+    }
+
+    public static File exportDB(Context context, String username) {
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source = null;
+        FileChannel destination = null;
+//        String currentDBPath1 = "/data/data/" + context.getPackageName() + "//databases//Qubes.db";
+//        String currentDBPath = getDbPath(context, "Qubes.db");
+        String currentDBPath = context.getDatabasePath("Qubes").getPath();
+        String backupDBPath = Utils.getDirLocPDF(context) + "/Qubes_backup_" + username + ".db";
+        File currentDB = new File(currentDBPath);
+        File backupDB = new File(backupDBPath);
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(context, "Your Database is Exported !!", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        return backupDB;
+    }
+
+    public static void importDB(Context context, String username) {
+        String dir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File sd = new File(dir);
+        File data = Environment.getDataDirectory();
+        FileChannel source = null;
+        FileChannel destination = null;
+//        String currentDBPath1 = "/data/data/" + context.getPackageName() + "//databases//Qubes.db";
+//        String currentDBPath = getDbPath(context, "Qubes.db");
+        String currentDBPath = context.getDatabasePath("Qubes").getPath();
+        String backupDBPath = Utils.getDirLocPDF(context) + "/Qubes_backup_" + username + ".db";
+        File currentDB = new File(currentDBPath);
+        File backupDB = new File(backupDBPath);
+
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(context, "Your Database is Imported !!", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
+    public static String getDbPath(Context context, String YourDbName) {
+        return context.getDatabasePath(YourDbName).getAbsolutePath();
     }
 }

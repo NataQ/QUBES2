@@ -5,19 +5,19 @@ import java.io.Serializable;
 public class Target implements Serializable {
     public String id_material_group;
     public String material_group_name;
-    public double tgtat;
+    public double tgt_at;
     public double at;
-    public double tgtoms;
+    public double tgt_oms;
     public double oms;
 
     public Target() {
     }
 
-    public Target(String material_group_name, double tgtat, double at, double tgtoms, double oms) {
+    public Target(String material_group_name, double tgt_at, double at, double tgt_oms, double oms) {
         this.material_group_name = material_group_name;
-        this.tgtat = tgtat;
+        this.tgt_at = tgt_at;
         this.at = at;
-        this.tgtoms = tgtoms;
+        this.tgt_oms = tgt_oms;
         this.oms = oms;
     }
 
@@ -29,12 +29,12 @@ public class Target implements Serializable {
         this.material_group_name = material_group_name;
     }
 
-    public double getTgtat() {
-        return tgtat;
+    public double getTgt_at() {
+        return tgt_at;
     }
 
-    public void setTgtat(double tgtat) {
-        this.tgtat = tgtat;
+    public void setTgt_at(double tgt_at) {
+        this.tgt_at = tgt_at;
     }
 
     public double getAt() {
@@ -45,12 +45,12 @@ public class Target implements Serializable {
         this.at = at;
     }
 
-    public double getTgtoms() {
-        return tgtoms;
+    public double getTgt_oms() {
+        return tgt_oms;
     }
 
-    public void setTgtoms(double tgtoms) {
-        this.tgtoms = tgtoms;
+    public void setTgt_oms(double tgt_oms) {
+        this.tgt_oms = tgt_oms;
     }
 
     public double getOms() {

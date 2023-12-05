@@ -87,7 +87,7 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class DailySalesmanActivity extends BaseActivity {
-    private TextView txtOutlet, txtTypeOutlet, txtStatus;
+    private TextView txtOutlet, txtTypeOutlet, txtStatus, txtOrder;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
@@ -761,10 +761,11 @@ public class DailySalesmanActivity extends BaseActivity {
                 txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
                 txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
                 txtTotalTagihan.setText(format.format(database.getTotalTagihanCustomer(outletHeader.getId())));
-                txtSisaKreditLimit.setText(format.format(outletHeader.getSisaCreditLimit()));
+                txtSisaKreditLimit.setText(format.format(database.getLKCustomer(outletHeader)));
                 txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
                 txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
                 txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
+                txtOrder.setText(getOrderType(outletHeader, user));
 
                 String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
                 String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
@@ -859,6 +860,7 @@ public class DailySalesmanActivity extends BaseActivity {
         llOrder = findViewById(R.id.llOrder);
         llCollection = findViewById(R.id.llCollection);
         llReturn = findViewById(R.id.llReturn);
+        txtOrder = findViewById(R.id.txtOrder);
         txtStatus = findViewById(R.id.txtStatus);
         imgPause = findViewById(R.id.imgPause);
         imgLogOut = findViewById(R.id.imgLogOut);

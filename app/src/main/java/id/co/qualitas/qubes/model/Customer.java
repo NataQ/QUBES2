@@ -59,6 +59,8 @@ public class Customer {
     private String nameReason;
     private String createdDate;
     private int posReason;
+    private String order_type;
+    private String route_order;
 //    private Uri photoKTPUri;
 //    private Uri photoNPWPUri;
 //    private Uri photoOutletUri;
@@ -73,6 +75,22 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getOrder_type() {
+        return order_type;
+    }
+
+    public void setOrder_type(String order_type) {
+        this.order_type = order_type;
+    }
+
+    public String getRoute_order() {
+        return route_order;
+    }
+
+    public void setRoute_order(String route_order) {
+        this.route_order = route_order;
     }
 
     public int getStatus_npwp_pos() {

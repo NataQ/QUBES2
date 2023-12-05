@@ -36,6 +36,7 @@ import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Parameter;
@@ -65,7 +66,7 @@ public class NotiWorker extends Worker {
     private List<VisitSalesman> visitSalesmanList = new ArrayList<>();
     private List<Map> storeCheckList = new ArrayList<>(), returnList = new ArrayList<>();
     private List<CollectionHeader> collectionList = new ArrayList<>();
-    private List<Order> orderList = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>(), orderEmptyDiscount = new ArrayList<>();
     private List<Map> photoList = new ArrayList<>();
     private int sizeData = 0;
     private Database database;
@@ -94,6 +95,7 @@ public class NotiWorker extends Worker {
 //                }
 //            }).start();
             setSession();
+            getOrderDiscount();
             syncDataNOO();
             syncDataVisit();
             syncDataStoreCheck();
@@ -110,6 +112,98 @@ public class NotiWorker extends Worker {
         }
     }
 
+    private void getOrderDiscount() {
+        saveSuccess = false;
+        orderEmptyDiscount = new ArrayList<>();
+        orderEmptyDiscount = database.getAllOrderHeaderEmptyDiscount(user.getIdSalesman());
+        if (orderEmptyDiscount == null) {
+            logResult = new WSMessage();
+            logResult.setIdMessage(0);
+            logResult.setResult(null);
+            exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+            logResult.setMessage("Set order discount failed: " + exMess);
+            database.addLog(logResult);
+        } else {
+            req = new HashMap();
+            List<Order> mList = new ArrayList<>();
+            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_GET_DISCOUNT_ORDER);
+            Map request = new HashMap();
+            for (Order data : orderEmptyDiscount) {
+                request = new HashMap();
+                request.put("id_customer", data.getId_customer());
+                request.put("tipe_outlet", data.getOrder_type());
+                request.put("id", data.getIdHeader());
+                request.put("order_date", data.getOrder_date());
+
+                List<Map> listBarang = new ArrayList<>();
+                double omzet = 0;
+                Map tempBarang = new HashMap<>();
+                for (Material material : data.getMaterialList()) {
+                    if (material.getQty() != 0) {
+                        tempBarang = new HashMap<>();
+                        tempBarang.put("id", material.getId());
+                        tempBarang.put("harga", material.getPrice());
+                        tempBarang.put("qty", material.getQty());
+                        tempBarang.put("satuan", material.getUom());
+                        listBarang.add(tempBarang);
+                    }
+                }
+                request.put("listDetail", listBarang);
+                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                if (logResult != null) {
+                    saveSuccess = true;
+                    if (logResult.getIdMessage() == 1) {
+                        logResult.setMessage("Sync order discount " + data.getId() + " success");
+                        Map resultMap = (Map) logResult.getResult();
+                        List<Map> barangList = new ArrayList<>();
+                        barangList = (List<Map>) resultMap.get("barang");
+                        for (Map barangMap : barangList) {
+                            String kodeBarang = barangMap.get("kodeBarang").toString();
+
+                            //diskon
+                            Map<String, String> map = (Map<String, String>) barangMap.get("diskon");
+                            double totalDisc = 0;
+                            List<Discount> discList = new ArrayList<>();
+                            for (Map.Entry<String, String> pair : map.entrySet()) {
+                                Discount disc = new Discount();
+                                disc.setKeydiskon(pair.getKey());
+                                disc.setValuediskon(pair.getValue());
+                                totalDisc = totalDisc + Double.parseDouble(pair.getValue());
+                                discList.add(disc);
+                            }
+                            //diskon
+                            Discount extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
+                            for (Material material : data.getMaterialList()) {
+                                if (material.getId().equals(kodeBarang)) {
+//                                material.setDiscount(discount);
+                                    material.setExtraDiscount(extra);
+                                    material.setTotalDiscount(totalDisc);
+                                    material.setDiskonList(discList);
+                                }
+                                omzet = 0;
+                                omzet = omzet + (material.getPrice() - material.getTotalDiscount());
+                            }
+                            data.setOmzet(omzet);
+                            database.updateOrderDiscount(data, user.getUsername());
+                        }
+                    } else {
+                        exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Sync order discount failed : " + exMess);
+                    }
+                    database.addLog(logResult);
+                } else {
+                    saveSuccess = false;
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    logResult.setResult(null);
+                    exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                    logResult.setMessage("Set order discount failed: " + exMess);
+                    database.addLog(logResult);
+                }
+            }
+        }
+    }
+
     private void syncDataNOO() {
         saveSuccess = false;
         nooList = new ArrayList<>();
@@ -119,7 +213,7 @@ public class NotiWorker extends Worker {
             logResult.setIdMessage(0);
             logResult.setResult(null);
             exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-            logResult.setMessage("Set offline noo failed: " + exMess);
+            logResult.setMessage("Set noo failed: " + exMess);
             database.addLog(logResult);
         } else {
             url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_CUSTOMER_NOO);
@@ -147,7 +241,7 @@ public class NotiWorker extends Worker {
                     logResult.setIdMessage(0);
                     logResult.setResult(null);
                     exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                    logResult.setMessage("Set offline noo failed: " + exMess);
+                    logResult.setMessage("Set noo failed: " + exMess);
                     database.addLog(logResult);
                 }
             }

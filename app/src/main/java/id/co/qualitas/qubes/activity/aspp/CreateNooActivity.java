@@ -70,6 +70,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
+import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.DropDown;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.User;
@@ -1264,6 +1265,17 @@ public class CreateNooActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    private String getDepo() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + depoRegion.getId_depo();
+            }
+        }
+        return depo;
+    }
+
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
 
         @Override
@@ -1272,6 +1284,8 @@ public class CreateNooActivity extends BaseActivity {
                 boolean result = false;
                 saveDataNoo();
                 customerNoo.setId(Constants.ID_NOO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+                customerNoo.setOrder_type(user.getType_sales());
+                customerNoo.setRoute_order(getDepo());
                 int header = database.addNoo(customerNoo, user.getUsername());
                 if (header == -1) {
                     result = false;

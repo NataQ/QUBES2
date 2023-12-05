@@ -31,6 +31,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,6 +57,7 @@ import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
+import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.FreeGoods;
 import id.co.qualitas.qubes.model.JenisJualandTop;
 import id.co.qualitas.qubes.model.LastLog;
@@ -101,9 +103,10 @@ public class AccountFragment extends BaseFragment {
     private List<VisitSalesman> visitSalesmanList = new ArrayList<>();
     private List<Map> storeCheckList = new ArrayList<>(), returnList = new ArrayList<>();
     private List<CollectionHeader> collectionList = new ArrayList<>();
-    private List<Order> orderList = new ArrayList<>();
+    private List<Order> orderList = new ArrayList<>(), orderEmptyDiscount = new ArrayList<>();
     private List<Map> photoList = new ArrayList<>();
     private int sizeData = 0;
+    private File pathDB;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,7 +137,14 @@ public class AccountFragment extends BaseFragment {
         llUploadDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Upload DB", Toast.LENGTH_SHORT).show();
+                try {
+                    pathDB = Helper.exportDB(getActivity(), user.getUsername());
+                    progress.show();
+                    PARAM = 29;
+                    new RequestUrl().execute();
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), e.getMessage() != null ? e.getMessage() : "Failed export DB", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -176,6 +186,7 @@ public class AccountFragment extends BaseFragment {
                 LinearLayout linearOrder = alertDialog.findViewById(R.id.linearOrder);
                 LinearLayout linearPhoto = alertDialog.findViewById(R.id.linearPhoto);
                 LinearLayout linearReturn = alertDialog.findViewById(R.id.linearReturn);
+                LinearLayout linearDiscount = alertDialog.findViewById(R.id.linearDiscount);
                 Button btnCancel = alertDialog.findViewById(R.id.btnCancel);
 
                 linearReason.setOnClickListener(v -> {
@@ -267,6 +278,13 @@ public class AccountFragment extends BaseFragment {
                     alertDialog.dismiss();
                     progress.show();
                     PARAM = 25;
+                    new RequestUrl().execute();//25
+                });
+
+                linearDiscount.setOnClickListener(v -> {
+                    alertDialog.dismiss();
+                    progress.show();
+                    PARAM = 27;
                     new RequestUrl().execute();//25
                 });
 
@@ -805,7 +823,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setMessage("Set offline return failed: " + exMess);
                     }
                     return null;
-                } else {
+                } else if (PARAM == 25) {
                     List<Customer> customerList = database.getAllCustomerCheckOut();
                     if (customerList != null) {
                         if (!customerList.isEmpty()) {
@@ -844,6 +862,22 @@ public class AccountFragment extends BaseFragment {
                         String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
                         logResult.setMessage("Set offline data photo failed: " + exMess);
                     }
+                    return null;
+                } else {
+                    Map req = new HashMap();
+                    req.put("username", user.getUsername());
+                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                    if (pathDB != null) {
+                        map.add("database", new FileSystemResource(pathDB.getPath()));
+                    } else {
+                        map.add("database", "");
+                    }
+                    String json = new Gson().toJson(req);
+                    map.add("data", json);
+
+                    String URL_ = Constants.API_SEND_DATABASE_LOCAL;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
                     return null;
                 }
             } catch (Exception ex) {
@@ -897,6 +931,12 @@ public class AccountFragment extends BaseFragment {
                             break;
                         case 25:
                             logResult.setMessage("Set offline data photo failed: " + exMess);
+                            break;
+                        case 26:
+                            logResult.setMessage("Set order failed: " + exMess);
+                            break;
+                        case 29:
+                            logResult.setMessage("Send database offline failed: " + exMess);
                             break;
                     }
                 }
@@ -1124,242 +1164,339 @@ public class AccountFragment extends BaseFragment {
                     database.addLog(logResult);
                     setToast("Gagal menyiapkan data photo");
                 }
-            }
-        }
-    }
-
-    private class RequestUrlTransaction extends AsyncTask<Void, Integer, List<WSMessage>> {
-
-        @Override
-        protected List<WSMessage> doInBackground(Void... voids) {
-            try {
-                List<WSMessage> listWSMsg = new ArrayList<>();
-                String URL_ = null, url = null;
-                Map req = new HashMap();
-                int counter = 0;
-
-                if (PARAM == 14) {
-                    URL_ = Constants.API_SYNC_CUSTOMER_NOO;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    req = new HashMap();
-                    List<Customer> noo = new ArrayList<>();
-                    for (Customer data : nooList) {
-                        counter++;
-                        req = new HashMap();
-                        noo = new ArrayList<>();
-                        noo.add(data);
-                        req.put("listData", noo);
-                        if (progressDialog != null) {
-                            progressDialog.setMessage("Mengirim data noo offline...");
-                        }
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Noo " + data.getId() + " success");
-                            database.updateSyncNoo(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
+            } else if (PARAM == 27) {
+                progress.dismiss();
+                if (setDataSyncSuccess) {
+                    if (Helper.isNotEmptyOrNull(orderEmptyDiscount)) {
+                        sizeData = orderEmptyDiscount.size();
+                        PARAM = 28;
+                        new RequestUrlTransaction().execute();//14
+                    } else {
+                        setToast("Tidak ada data atau Semua data sudah ada diskon");
                     }
-                } else if (PARAM == 16) {
-                    URL_ = Constants.API_SYNC_VISIT;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    req = new HashMap();
-                    List<VisitSalesman> noo = new ArrayList<>();
-                    for (VisitSalesman data : visitSalesmanList) {
-                        counter++;
-                        req = new HashMap();
-                        noo = new ArrayList<>();
-                        noo.add(data);
-                        req.put("listData", noo);
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Visit Salesman " + data.getIdHeader() + " success");
-                            database.updateSyncVisitSalesman(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 18) {
-                    URL_ = Constants.API_SYNC_STORE_CHECK;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Map data : storeCheckList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
-                            database.updateSyncStoreCheck(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 20) {
-                    URL_ = Constants.API_SYNC_COLLECTION;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (CollectionHeader data : collectionList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
-                            database.updateSyncCollectionHeader(data);
-                            database.addLog(logResult);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 22) {
-                    URL_ = Constants.API_SYNC_ORDER;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Order data : orderList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
-                            database.updateSyncOrderHeader(data);
-                        }
-                        database.addLog(logResult);
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 24) {
-                    URL_ = Constants.API_SYNC_RETURN;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    for (Map data : returnList) {
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                            database.addLog(logResult);
-                            database.updateSyncReturn(data);
-                        }
-
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
-                } else if (PARAM == 26) {
-                    URL_ = Constants.API_SYNC_ONE_PHOTO;
-                    url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-
-                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-                    Map requestData = new HashMap();
-                    for (Map data : photoList) {
-                        map = new LinkedMultiValueMap<String, Object>();
-                        if (data.get("photo") != null) {
-                            map.add("photo", new FileSystemResource(data.get("photo").toString()));
-                        } else {
-                            map.add("photo", "");
-                        }
-                        requestData = new HashMap();
-                        requestData.put("typePhoto", data.get("typePhoto"));
-                        requestData.put("id", user.getUsername());
-                        requestData.put("customerId", data.get("customerId"));
-                        requestData.put("idDB", data.get("idDB"));
-                        String json = new Gson().toJson(requestData);
-                        map.add("data", json);
-
-                        counter++;
-                        logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
-                        if (logResult.getIdMessage() == 1) {
-                            logResult = new WSMessage();
-                            logResult.setIdMessage(1);
-                            logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
-                            database.addLog(logResult);
-                            database.updateSyncPhoto(data);
-                        }
-                        publishProgress(counter);
-                        listWSMsg.add(logResult);
-                    }
+                } else {
+                    database.addLog(logResult);
+                    setToast("Gagal menyiapkan data order");
                 }
-                return listWSMsg;
-            } catch (Exception ex) {
-                if (ex.getMessage() != null) {
-                    Log.e("Sync  offline", ex.getMessage());
-                }
-                logResult = new WSMessage();
-                logResult.setIdMessage(0);
-                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
-                switch (PARAM) {
-                    case 14:
-                        logResult.setMessage("Sync noo failed : " + exMess);
-                        break;
-                    case 16:
-                        logResult.setMessage("Sync visit salesman failed : " + exMess);
-                        break;
-                    case 18:
-                        logResult.setMessage("Sync store check failed : " + exMess);
-                        break;
-                    case 20:
-                        logResult.setMessage("Sync collection failed : " + exMess);
-                        break;
-                    case 22:
-                        logResult.setMessage("Sync order failed : " + exMess);
-                        break;
-                    case 24:
-                        logResult.setMessage("Sync return failed : " + exMess);
-                        break;
-                    case 26:
-                        logResult.setMessage("Sync photo failed : " + exMess);
-                        break;
+            } else if (PARAM == 29) {
+                progress.dismiss();
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Send database offline : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                    setToast(logResult.getMessage());
+                }else{
+                    setToast(logResult.getMessage());
                 }
                 database.addLog(logResult);
-                return null;
             }
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setCancelable(false);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setMax(sizeData);
-            progressDialog.setMessage(getString(R.string.progress_checkout));
-            progressDialog.show();
-        }
+        private class RequestUrlTransaction extends AsyncTask<Void, Integer, List<WSMessage>> {
 
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            progressDialog.setProgress(values[0]);
-        }
+            @Override
+            protected List<WSMessage> doInBackground(Void... voids) {
+                try {
+                    List<WSMessage> listWSMsg = new ArrayList<>();
+                    String URL_ = null, url = null;
+                    Map req = new HashMap();
+                    int counter = 0;
 
-        @Override
-        protected void onPostExecute(List<WSMessage> listResult) {
-            if (listResult != null) {
-                int error = 0;
-                for (WSMessage msg : listResult) {
-                    if (msg.getIdMessage() == 0) {
-                        error++;
+                    if (PARAM == 14) {
+                        URL_ = Constants.API_SYNC_CUSTOMER_NOO;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        req = new HashMap();
+                        List<Customer> noo = new ArrayList<>();
+                        for (Customer data : nooList) {
+                            counter++;
+                            req = new HashMap();
+                            noo = new ArrayList<>();
+                            noo.add(data);
+                            req.put("listData", noo);
+                            if (progressDialog != null) {
+                                progressDialog.setMessage("Mengirim data noo offline...");
+                            }
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Noo " + data.getId() + " success");
+                                database.updateSyncNoo(data);
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 16) {
+                        URL_ = Constants.API_SYNC_VISIT;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        req = new HashMap();
+                        List<VisitSalesman> noo = new ArrayList<>();
+                        for (VisitSalesman data : visitSalesmanList) {
+                            counter++;
+                            req = new HashMap();
+                            noo = new ArrayList<>();
+                            noo.add(data);
+                            req.put("listData", noo);
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Visit Salesman " + data.getIdHeader() + " success");
+                                database.updateSyncVisitSalesman(data);
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 18) {
+                        URL_ = Constants.API_SYNC_STORE_CHECK;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        for (Map data : storeCheckList) {
+                            counter++;
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
+                                database.updateSyncStoreCheck(data);
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 20) {
+                        URL_ = Constants.API_SYNC_COLLECTION;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        for (CollectionHeader data : collectionList) {
+                            counter++;
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
+                                database.updateSyncCollectionHeader(data);
+                                database.addLog(logResult);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 22) {
+                        URL_ = Constants.API_SYNC_ORDER;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        for (Order data : orderList) {
+                            counter++;
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
+                                database.updateSyncOrderHeader(data);
+                            }
+                            database.addLog(logResult);
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 24) {
+                        URL_ = Constants.API_SYNC_RETURN;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                        for (Map data : returnList) {
+                            counter++;
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+                                database.addLog(logResult);
+                                database.updateSyncReturn(data);
+                            }
+
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 26) {
+                        URL_ = Constants.API_SYNC_ONE_PHOTO;
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+
+                        MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                        Map requestData = new HashMap();
+                        for (Map data : photoList) {
+                            map = new LinkedMultiValueMap<String, Object>();
+                            if (data.get("photo") != null) {
+                                map.add("photo", new FileSystemResource(data.get("photo").toString()));
+                            } else {
+                                map.add("photo", "");
+                            }
+                            requestData = new HashMap();
+                            requestData.put("typePhoto", data.get("typePhoto"));
+                            requestData.put("id", user.getUsername());
+                            requestData.put("customerId", data.get("customerId"));
+                            requestData.put("idDB", data.get("idDB"));
+                            String json = new Gson().toJson(requestData);
+                            map.add("data", json);
+
+                            counter++;
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                            if (logResult.getIdMessage() == 1) {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
+                                database.addLog(logResult);
+                                database.updateSyncPhoto(data);
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
+                    } else if (PARAM == 28) {
+                        req = new HashMap();
+                        List<Order> mList = new ArrayList<>();
+                        url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_GET_DISCOUNT_ORDER);
+                        Map request = new HashMap();
+                        for (Order data : orderEmptyDiscount) {
+                            counter++;
+                            request = new HashMap();
+                            request.put("id_customer", data.getId_customer());
+                            request.put("tipe_outlet", data.getOrder_type());
+                            request.put("id", data.getIdHeader());
+                            request.put("order_date", data.getOrder_date());
+                            List<Map> listBarang = new ArrayList<>();
+                            double omzet = 0;
+                            Map tempBarang = new HashMap<>();
+                            for (Material material : data.getMaterialList()) {
+                                if (material.getQty() != 0) {
+                                    tempBarang = new HashMap<>();
+                                    tempBarang.put("id", material.getId());
+                                    tempBarang.put("harga", material.getPrice());
+                                    tempBarang.put("qty", material.getQty());
+                                    tempBarang.put("satuan", material.getUom());
+                                    listBarang.add(tempBarang);
+                                }
+                            }
+                            request.put("listDetail", listBarang);
+                            if (progressDialog != null) {
+                                progressDialog.setMessage("Mengirim data order...");
+                            }
+                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                            if (logResult != null) {
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult.setMessage("Sync order discount " + data.getId() + " success");
+                                    database.addLog(logResult);
+                                    Map resultMap = (Map) logResult.getResult();
+                                    List<Map> barangList = new ArrayList<>();
+                                    barangList = (List<Map>) resultMap.get("barang");
+                                    for (Map barangMap : barangList) {
+                                        String kodeBarang = barangMap.get("kodeBarang").toString();
+                                        //diskon
+                                        Map<String, String> map = (Map<String, String>) barangMap.get("diskon");
+                                        double totalDisc = 0;
+                                        List<Discount> discList = new ArrayList<>();
+                                        for (Map.Entry<String, String> pair : map.entrySet()) {
+                                            Discount disc = new Discount();
+                                            disc.setKeydiskon(pair.getKey());
+                                            disc.setValuediskon(pair.getValue());
+                                            totalDisc = totalDisc + Double.parseDouble(pair.getValue());
+                                            discList.add(disc);
+                                        }
+                                        //diskon
+                                        Discount extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
+                                        for (Material material : data.getMaterialList()) {
+                                            if (material.getId().equals(kodeBarang)) {
+//                                material.setDiscount(discount);
+                                                material.setExtraDiscount(extra);
+                                                material.setTotalDiscount(totalDisc);
+                                                material.setDiskonList(discList);
+                                            }
+                                            omzet = 0;
+                                            omzet = omzet + (material.getPrice() - material.getTotalDiscount());
+                                        }
+                                        data.setOmzet(omzet);
+                                        database.updateOrderDiscount(data, user.getUsername());
+                                    }
+                                }
+                            }
+                            publishProgress(counter);
+                            listWSMsg.add(logResult);
+                        }
                     }
+                    return listWSMsg;
+                } catch (Exception ex) {
+                    if (ex.getMessage() != null) {
+                        Log.e("Sync  offline", ex.getMessage());
+                    }
+                    logResult = new WSMessage();
+                    logResult.setIdMessage(0);
+                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : ex.getMessage();
+                    switch (PARAM) {
+                        case 14:
+                            logResult.setMessage("Sync noo failed : " + exMess);
+                            break;
+                        case 16:
+                            logResult.setMessage("Sync visit salesman failed : " + exMess);
+                            break;
+                        case 18:
+                            logResult.setMessage("Sync store check failed : " + exMess);
+                            break;
+                        case 20:
+                            logResult.setMessage("Sync collection failed : " + exMess);
+                            break;
+                        case 22:
+                            logResult.setMessage("Sync order failed : " + exMess);
+                            break;
+                        case 24:
+                            logResult.setMessage("Sync return failed : " + exMess);
+                            break;
+                        case 26:
+                            logResult.setMessage("Sync photo failed : " + exMess);
+                            break;
+                        case 28:
+                            logResult.setMessage("Get discount failed : " + exMess);
+                            break;
+                    }
+                    database.addLog(logResult);
+                    return null;
                 }
-                if (listResult.size() == sizeData) {//ganti sizeData
-                    if (error == 0) {
-                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setCancelable(false);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setMax(sizeData);
+                progressDialog.setMessage(getString(R.string.progress_checkout));
+                progressDialog.show();
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                super.onProgressUpdate(values);
+                progressDialog.setProgress(values[0]);
+            }
+
+            @Override
+            protected void onPostExecute(List<WSMessage> listResult) {
+                if (listResult != null) {
+                    int error = 0;
+                    for (WSMessage msg : listResult) {
+                        if (msg.getIdMessage() == 0) {
+                            error++;
+                        }
+                    }
+                    if (listResult.size() == sizeData) {//ganti sizeData
+                        if (error == 0) {
+                            setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                        } else {
+                            setToast("Gagal mengirim data : " + String.valueOf(error));
+                        }
                     } else {
                         setToast("Gagal mengirim data : " + String.valueOf(error));
                     }
                 } else {
-                    setToast("Gagal mengirim data : " + String.valueOf(error));
+                    setToast("Gagal mengirim data");
                 }
-            } else {
-                setToast("Gagal mengirim data");
+                progressDialog.dismiss();
             }
-            progressDialog.dismiss();
         }
     }
 }

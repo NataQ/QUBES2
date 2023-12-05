@@ -12,6 +12,7 @@ public class Constants {
     public static final String STATUS_UNLOADING = "unloading";
     public static final String UNAUTHORIZED = "401 Unauthorized";
     public static final String FROM_VISIT = "FROM VISIT";
+    public static final String FROM_STOCK_REQUEST = "FROM UNLOADING";
     public static final String REASON_TYPE_PAUSE = "Pause";
     public static final String REASON_TYPE_NOT_VISIT = "Not Visit";
     public static final String REASON_TYPE_NOT_BUY = "Not Buy";
@@ -553,4 +554,5 @@ public class Constants {
     public static final String API_SYNC_PHOTO = "syncPhoto";
     public static final String API_SYNC_ONE_PHOTO = "syncOnePhoto";
     public static final String API_GET_IMAGE = "getImage";
+    public static final String API_SEND_DATABASE_LOCAL = "sendDatabaseLocal";
 }
