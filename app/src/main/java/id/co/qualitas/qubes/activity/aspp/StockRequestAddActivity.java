@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import id.co.qualitas.qubes.R;
@@ -115,6 +116,7 @@ public class StockRequestAddActivity extends BaseActivity {
         headerRequest = new StockRequest();
         String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
         headerRequest.setReq_date(date);
+        headerRequest.setId_mobile(Constants.ID_RS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         headerRequest.setId_salesman(user.getUsername());
         headerRequest.setStatus(Constants.STATUS_PENDING);
         headerRequest.setEnabled(1);

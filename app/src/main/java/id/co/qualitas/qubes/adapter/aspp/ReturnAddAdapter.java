@@ -43,6 +43,7 @@ import id.co.qualitas.qubes.activity.aspp.ReturnAddActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.DropDown;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Reason;
@@ -269,9 +270,11 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.autoCompleteUom.setAdapter(uomAdapter);
         holder.autoCompleteUom.setText(detail.getUom(), false);
 
-        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList);
+        String result = getDetailDropDown(conditionList,detail.getCondition());
+
+        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList, (det, po) -> {});
         holder.autoCompleteCondition.setAdapter(conditionAdapter);
-        holder.autoCompleteCondition.setText(detail.getCondition(), false);
+        holder.autoCompleteCondition.setText(result, false);
 
 //        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
 //            @Override
@@ -287,9 +290,10 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
         holder.autoCompleteCondition.setOnItemClickListener((adapterView, view, i, l) -> {
             String id = conditionList.get(i).getId();
-            String selected = conditionList.get(i).toString();
+            String selected = conditionList.get(i).getValue();
             detail.setCondition(id);
             detail.setCondition_pos(i);
+            holder.autoCompleteCondition.setText(selected);
         });
 
         reasonAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
@@ -407,6 +411,17 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 //                }
             }
         });
+    }
+
+    private String getDetailDropDown(List<DropDown> mList, String req) {
+        String result = null;
+        for(DropDown dropDown : mList){
+            if(dropDown.getId().equals(req)){
+                result = dropDown.getValue();
+                break;
+            }
+        }
+        return result;
     }
 
     @Override

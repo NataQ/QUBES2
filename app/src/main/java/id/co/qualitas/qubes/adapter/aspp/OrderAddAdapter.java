@@ -493,39 +493,39 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
                                             if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty : minMaxOrder.getQtyMax())) {
                                                 String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
-//                                                mContext.runOnUiThread(new Runnable() {
-//                                                    public void run() {
-                                                        Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                mContext.runOnUiThread(new Runnable() {
+                                                    public void run() {
                                                         holder.edtQty.clearFocus();
                                                         holder.edtQty.setText("0");
-                                                        detail.setQty(0);
-                                                        detail.setPrice(0);
-                                                        detail.setDiskonList(null);
-                                                        detail.setTotalDiscount(0);
                                                         holder.txtPrice.setText("0");
                                                         holder.txtTotal.setText("0");
                                                         holder.llDiscountAll.setVisibility(View.GONE);
-//                                                    }
-//                                                });
+                                                    }
+                                                });
+                                                Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                detail.setQty(0);
+                                                detail.setPrice(0);
+                                                detail.setDiskonList(null);
+                                                detail.setTotalDiscount(0);
                                             } else if (itemOrder.getQty() > stockItem.getQty()) {
                                                 String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
-//                                                mContext.runOnUiThread(new Runnable() {
-//                                                    public void run() {
-                                                        Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                mContext.runOnUiThread(new Runnable() {
+                                                    public void run() {
                                                         holder.edtQty.clearFocus();
                                                         holder.edtQty.setText("0");
-                                                        detail.setQty(0);
-                                                        detail.setPrice(0);
-                                                        detail.setDiskonList(null);
-                                                        detail.setTotalDiscount(0);
                                                         holder.txtPrice.setText("0");
                                                         holder.txtTotal.setText("0");
                                                         holder.llDiscountAll.setVisibility(View.GONE);
-//                                                    }
-//                                                });
+                                                    }
+                                                });
+                                                Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                detail.setQty(0);
+                                                detail.setPrice(0);
+                                                detail.setDiskonList(null);
+                                                detail.setTotalDiscount(0);
                                             } else {
-//                                                mContext.runOnUiThread(new Runnable() {
-//                                                    public void run() {
+                                                mContext.runOnUiThread(new Runnable() {
+                                                    public void run() {
                                                         detail.setQty(qty);
                                                         if (!Helper.isNullOrEmpty(detail.getUom())) {
                                                             detail.setPrice(new Database(mContext).getPrice(detail));
@@ -533,15 +533,15 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                                             double priceTotal = detail.getPrice() - detail.getTotalDiscount();
                                                             holder.txtTotal.setText("Rp. " + format.format(priceTotal));
                                                         }
-//                                                    }
-//                                                });
+                                                    }
+                                                });
                                             }
                                         } else {
-//                                            mContext.runOnUiThread(new Runnable() {
-//                                                public void run() {
+                                            mContext.runOnUiThread(new Runnable() {
+                                                public void run() {
                                                     detail.setQty(qty);
-//                                                }
-//                                            });
+                                                }
+                                            });
                                         }
                                     }
                                 }

@@ -279,7 +279,7 @@ public class UnloadingPdfUtils {
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
 
-        String noOrder = Helper.isEmpty(header.getNo_doc(), "");
+        String noOrder = Helper.isEmpty(header.getId_mobile(), "");
         cell = new PdfPCell(new Phrase(": " + noOrder, bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable2.addCell(cell);
@@ -309,7 +309,7 @@ public class UnloadingPdfUtils {
         } else {
             tgl = "";
         }
-        cell = new PdfPCell(new Phrase(": " + tgl, bigCalibri));
+        cell = new PdfPCell(new Phrase(": " + Helper.getTodayDate(Constants.DATE_FORMAT_5), bigCalibri));
         cell.setBorder(Rectangle.NO_BORDER);
         rightTable3.addCell(cell);
 

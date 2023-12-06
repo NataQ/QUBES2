@@ -139,6 +139,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_UPDATED_BY = "updatedBy";
     private static final String KEY_UPDATED_DATE = "updatedDate";
     private static final String KEY_IS_SYNC = "isSync";
+    private static final String KEY_IS_DISCOUNT = "isDiscount";
 
     //column table non route customer
     private static final String KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB = "idNonRouteCustomerHeaderDB";
@@ -367,6 +368,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_REQUEST_DATE + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
+            + KEY_ID_MOBILE + " TEXT,"
             + KEY_NO_DOC + " TEXT,"
             + KEY_TANGGAL_KIRIM + " TEXT,"
             + KEY_NO_SURAT_JALAN + " TEXT,"
@@ -715,6 +717,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_ORDER_BACK_END + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
+            + KEY_TYPE_CUSTOMER + " TEXT,"
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " TEXT,"
             + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_TANGGAL_KIRIM + " TEXT,"
@@ -722,6 +725,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TOP + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_OMZET + " REAL,"
+            + KEY_IS_DISCOUNT + " INTEGER DEFAULT 0,"
             + KEY_STATUS + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
@@ -1143,6 +1147,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, param.getId());
         values.put(KEY_REQUEST_DATE, param.getReq_date());
         values.put(KEY_ID_SALESMAN, idSales);
+        values.put(KEY_ID_MOBILE, param.getId_mobile());
         values.put(KEY_NO_DOC, param.getNo_doc());
         values.put(KEY_TANGGAL_KIRIM, param.getTanggal_kirim());
         values.put(KEY_NO_SURAT_JALAN, param.getNo_surat_jalan());
@@ -1629,6 +1634,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_ID_ORDER_BACK_END, request.getId());
             values.put(KEY_CUSTOMER_ID, request.getId_customer());
             values.put(KEY_ORDER_TYPE, request.getOrder_type());
+            values.put(KEY_TYPE_CUSTOMER, request.getType_customer());
             values.put(KEY_TOP, request.getTop());
             values.put(KEY_ID_STOCK_REQUEST_HEADER_DB, request.getIdStockHeaderDb());
             values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, request.getIdStockHeaderBE());
@@ -1643,6 +1649,7 @@ public class Database extends SQLiteOpenHelper {
 
             db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
 
+            int getDiscount = 0;
             if (Helper.isNotEmptyOrNull(request.getMaterialList())) {
                 for (Material param : request.getMaterialList()) {
                     int idOrderDetail = -1;
@@ -1684,6 +1691,9 @@ public class Database extends SQLiteOpenHelper {
                             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
                             int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);
                         }
+                        getDiscount= 1;
+                    } else{
+                       getDiscount = 0;
                     }
 
                     if (Helper.isNotEmptyOrNull(param.getExtraItem())) {
@@ -1712,6 +1722,13 @@ public class Database extends SQLiteOpenHelper {
                     }
                 }
             }
+
+            values = new ContentValues();
+            values.put(KEY_IS_DISCOUNT, getDiscount);
+            values.put(KEY_UPDATED_BY, user.getUsername());
+            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+            db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{request.getIdHeader()});
             db.setTransactionSuccessful();
             result = true;
         } catch (Exception e) {
@@ -1720,30 +1737,6 @@ public class Database extends SQLiteOpenHelper {
 
         db.endTransaction();
         return result;
-    }
-
-    public int addOrderHeader(Order param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_ORDER_BACK_END, param.getId());
-        values.put(KEY_CUSTOMER_ID, param.getId_customer());
-//        values.put(KEY_ORDER_TYPE, user.getType_sales().equals("CO") ?"CO" :"TO");
-        values.put(KEY_DATE, param.getOrder_date());
-        values.put(KEY_OMZET, param.getOmzet());
-        values.put(KEY_STATUS, param.getStatus());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_ORDER_HEADER, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
     }
 
     public int addOrderDetail(Material param, Map detailHeader) {
@@ -3220,6 +3213,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
                 paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+                paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
@@ -3249,6 +3243,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
             paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
             paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
             paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
             paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
             paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
@@ -3470,6 +3465,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
                 result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+                result.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
                 result.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
@@ -3508,6 +3504,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                 result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+                result.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
                 result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
@@ -4769,8 +4766,10 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
                 paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
                 paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
-                paramModel.setIdStockHeaderDb(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                 paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
@@ -5470,10 +5469,10 @@ public class Database extends SQLiteOpenHelper {
         return paramModel;
     }
 
-    public StockRequest getDetailStockRequest(int idHeader) {
+    public StockRequest getDetailStockRequest(String idHeader) {
         StockRequest paramModel = new StockRequest();
         // Select All Query
-        String selectQuery = "SELECT* FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? limit 1";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_ID_MOBILE + " = ? limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(idHeader)});
@@ -5483,6 +5482,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
             paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
             paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+            paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
         }
         cursor.close();
         return paramModel;
@@ -6010,7 +6010,18 @@ public class Database extends SQLiteOpenHelper {
         selectQueryNoo = "SELECT * FROM " + TABLE_NOO + " where " + KEY_STATUS + " = " + Constants.CHECK_OUT_VISIT;
 
         try {
-            cursor = db.rawQuery(query, null);
+//            cursor = db.rawQuery(query, null);
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    Customer paramModel = new Customer();
+//                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
+//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+//
+//                    arrayList.add(paramModel);
+//                } while (cursor.moveToNext());
+//            }
+
+            cursor = db.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
                 do {
                     Customer paramModel = new Customer();
@@ -6021,27 +6032,16 @@ public class Database extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
 
-//            cursor = db.rawQuery(selectQuery, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Customer paramModel = new Customer();
-//                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUSTOMER_DB)));
-//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-//
-//                    arrayList.add(paramModel);
-//                } while (cursor.moveToNext());
-//            }
-//
-//            cursor = db.rawQuery(selectQueryNoo, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Customer paramModel = new Customer();
-//                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
-//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
-//
-//                    arrayList.add(paramModel);
-//                } while (cursor.moveToNext());
-//            }
+            cursor = db.rawQuery(selectQueryNoo, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    Customer paramModel = new Customer();
+                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+
+                    arrayList.add(paramModel);
+                } while (cursor.moveToNext());
+            }
         } catch (Exception e) {
             Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());
             arrayList = null;
@@ -6264,7 +6264,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
-                    paramModel.setIdStockHeaderDb(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                    paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                     paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                     paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
@@ -6301,11 +6301,13 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
-                    paramModel.setIdStockHeaderDb(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                    paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                     paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                     paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                    paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                    paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
                     paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
                     paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
@@ -6584,6 +6586,7 @@ public class Database extends SQLiteOpenHelper {
             db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{req.getIdHeader()});
 
             if (Helper.isNotEmptyOrNull(req.getMaterialList())) {
+                int getDiscount = 0;
                 for (Material param : req.getMaterialList()) {
                     if (Helper.isNotEmptyOrNull(param.getDiskonList())) {
                         for (Discount discount : param.getDiskonList()) {
@@ -6599,9 +6602,19 @@ public class Database extends SQLiteOpenHelper {
                             values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
                             int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);
+                            getDiscount = 1;
                         }
+                    }else{
+                        getDiscount = 0;
                     }
                 }
+                values = new ContentValues();
+                values.put(KEY_IS_DISCOUNT, getDiscount);
+                values.put(KEY_UPDATED_BY, username);
+                values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+                db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{req.getIdHeader()});
+
                 db.setTransactionSuccessful();
                 result = true;
             }

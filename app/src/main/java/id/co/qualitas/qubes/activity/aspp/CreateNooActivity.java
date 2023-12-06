@@ -456,13 +456,31 @@ public class CreateNooActivity extends BaseActivity {
         udf5.add("GT");
         udf5.add("OP");
 
-        sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku);
+        sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku, (detail, pos) -> {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
+            customerNoo.setSuku(detail.getId());
+            customerNoo.setSuku_pos(pos);
+        });
         spnSuku.setAdapter(sukuAdapter);
-
-        statusTokoAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusToko);
+MASIH ERROR
+        statusTokoAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusToko, (detail, pos) -> {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
+            customerNoo.setStatus_toko(detail.getId());
+            customerNoo.setStatus_toko_pos(pos);
+        });
         spnStatusToko.setAdapter(statusTokoAdapter);
 
-        statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP);
+        statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP, (detail, pos) -> {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
+            customerNoo.setStatus_npwp(detail.getId());
+            customerNoo.setStatus_npwp_pos(pos);
+        });
         spnStatusNpwp.setAdapter(statusNpwpAdapter);
 
 //        sukuAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
@@ -516,66 +534,64 @@ public class CreateNooActivity extends BaseActivity {
 //        setSpinnerData(suku, spnSuku);
 //        setSpinnerData(statusToko, spnStatusToko);
 //        setSpinnerData(statusNPWP, spnStatusNpwp);
-
-        spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (i != 0) {
-                if (customerNoo == null) {
-                    customerNoo = new Customer();
-                }
-                String id = suku.get(i).getId();
-                String text = adapterView.getItemAtPosition(i).toString();
-                customerNoo.setSuku(id);
-                customerNoo.setSuku_pos(i);
+//        spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+////                if (i != 0) {
+//                if (customerNoo == null) {
+//                    customerNoo = new Customer();
 //                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        spnStatusToko.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    if (customerNoo == null) {
-                        customerNoo = new Customer();
-                    }
-                    String id = statusToko.get(i).getId();
-                    String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setStatus_toko(id);
-                    customerNoo.setStatus_toko_pos(i);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        spnStatusNpwp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    if (customerNoo == null) {
-                        customerNoo = new Customer();
-                    }
-                    String id = statusNPWP.get(i).getId();
-                    String text = adapterView.getItemAtPosition(i).toString();
-                    customerNoo.setStatus_npwp(id);
-                    customerNoo.setStatus_npwp_pos(i);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+//                String id = suku.get(i).getId();
+//                String text = adapterView.getItemAtPosition(i).toString();
+//                customerNoo.setSuku(id);
+//                customerNoo.setSuku_pos(i);
+////                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+//
+//        spnStatusToko.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                if (i != 0) {
+//                    if (customerNoo == null) {
+//                        customerNoo = new Customer();
+//                    }
+//                    String id = statusToko.get(i).getId();
+//                    String text = adapterView.getItemAtPosition(i).toString();
+//                    customerNoo.setStatus_toko(id);
+//                    customerNoo.setStatus_toko_pos(i);
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+//        spnStatusNpwp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                if (i != 0) {
+//                    if (customerNoo == null) {
+//                        customerNoo = new Customer();
+//                    }
+//                    String id = statusNPWP.get(i).getId();
+//                    String text = adapterView.getItemAtPosition(i).toString();
+//                    customerNoo.setStatus_npwp(id);
+//                    customerNoo.setStatus_npwp_pos(i);
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
 
         spnUdf5.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

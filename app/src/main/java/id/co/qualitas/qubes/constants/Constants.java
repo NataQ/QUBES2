@@ -476,6 +476,7 @@ public class Constants {
     public static final String ID_VS_MOBILE = "VS";//visit salesman
     public static final String ID_CI_MOBILE = "CI";//collection invoice
     public static final String ID_CO_MOBILE = "CO";//collection order
+    public static final String ID_RS_MOBILE = "RS";//request stock
 
     public static final String ATTACHMENT = "attachment";
 

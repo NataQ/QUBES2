@@ -6,10 +6,11 @@ public class Order {
     private String order_type;
     private String status;
     private String top;
-    private int idStockHeaderDb;
+    private String idStockHeaderDb;
     private int idStockHeaderBE;
     private String order_date;
     private String tanggal_kirim;
+    private String type_customer;
     private String soNo;
     private int id;//id from back end
     private String id_customer;
@@ -18,12 +19,29 @@ public class Order {
     private String idHeader;//id sqlite
     private List<Material> materialList;
     private List<Material> extraList;
+    private boolean isDiscount;
     private boolean statusPaid;
     private double omzet;
     private int isSync;
 
     public Order() {
 
+    }
+
+    public boolean isDiscount() {
+        return isDiscount;
+    }
+
+    public void setDiscount(boolean discount) {
+        isDiscount = discount;
+    }
+
+    public String getType_customer() {
+        return type_customer;
+    }
+
+    public void setType_customer(String type_customer) {
+        this.type_customer = type_customer;
     }
 
     public String getId_salesman() {
@@ -58,11 +76,11 @@ public class Order {
         this.statusPaid = statusPaid;
     }
 
-    public int getIdStockHeaderDb() {
+    public String getIdStockHeaderDb() {
         return idStockHeaderDb;
     }
 
-    public void setIdStockHeaderDb(int idStockHeaderDb) {
+    public void setIdStockHeaderDb(String idStockHeaderDb) {
         this.idStockHeaderDb = idStockHeaderDb;
     }
 

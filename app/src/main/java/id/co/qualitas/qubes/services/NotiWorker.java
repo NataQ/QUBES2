@@ -574,6 +574,7 @@ public class NotiWorker extends Worker {
             Helper.setItemParam(Constants.URL, Constants.URL);
         }
         database = new Database(context);
+        user = SessionManagerQubes.getUserProfile();
     }
 
     @Override

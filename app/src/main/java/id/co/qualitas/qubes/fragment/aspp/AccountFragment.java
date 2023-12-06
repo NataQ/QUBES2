@@ -1400,7 +1400,6 @@ public class AccountFragment extends BaseFragment {
                                         Discount extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
                                         for (Material material : data.getMaterialList()) {
                                             if (material.getId().equals(kodeBarang)) {
-//                                material.setDiscount(discount);
                                                 material.setExtraDiscount(extra);
                                                 material.setTotalDiscount(totalDisc);
                                                 material.setDiskonList(discList);

@@ -5,6 +5,7 @@ import java.util.List;
 public class StockRequest {
     private String idHeader;
     private int id;
+    private String id_mobile;
     private String id_salesman;
     private String req_date;
     private String no_doc;
@@ -19,6 +20,14 @@ public class StockRequest {
     private List<Material> materialList;
 
     public StockRequest() {
+    }
+
+    public String getId_mobile() {
+        return id_mobile;
+    }
+
+    public void setId_mobile(String id_mobile) {
+        this.id_mobile = id_mobile;
     }
 
     public String getIdHeader() {

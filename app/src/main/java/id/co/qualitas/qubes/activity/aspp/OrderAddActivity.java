@@ -696,11 +696,13 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setTanggal_kirim(date);
                     headerSave.setOmzet(omzet);
                     headerSave.setIdStockHeaderBE(stockHeader.getId());
-                    headerSave.setIdStockHeaderDb(Integer.parseInt(stockHeader.getIdHeader()));
+                    headerSave.setIdStockHeaderDb(stockHeader.getId_mobile());
                     headerSave.setStatus("Draft");
                     headerSave.setIsSync(0);
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);
+                    headerSave.setDiscount(getDiscount);
+                    headerSave.setType_customer(outletHeader.getType_customer());
                     headerSave.setStatusPaid(false);
                     headerSave.setOrder_type(user.getType_sales().equals("CO") ? "CO" : "TO");
                     headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));

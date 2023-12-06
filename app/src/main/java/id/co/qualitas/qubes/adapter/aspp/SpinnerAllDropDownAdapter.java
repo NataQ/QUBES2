@@ -11,16 +11,19 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.model.DropDown;
+import id.co.qualitas.qubes.model.Material;
 
 public class SpinnerAllDropDownAdapter extends ArrayAdapter<DropDown> {
     Context context;
     List<DropDown> mFilteredList;
     LayoutInflater inflater;
+    private OnAdapterListener onAdapterListener;
 
-    public SpinnerAllDropDownAdapter(Context applicationContext, List<DropDown> mFilteredList) {
+    public SpinnerAllDropDownAdapter(Context applicationContext, List<DropDown> mFilteredList, OnAdapterListener onAdapterListener) {
         super(applicationContext, 0, mFilteredList);
         this.context = applicationContext;
         this.mFilteredList = mFilteredList;
+        this.onAdapterListener = onAdapterListener;
         inflater = (LayoutInflater.from(applicationContext));
     }
 
@@ -40,6 +43,11 @@ public class SpinnerAllDropDownAdapter extends ArrayAdapter<DropDown> {
         DropDown detail = mFilteredList.get(i);
         TextView text1 = (TextView) view.findViewById(R.id.text1);
         text1.setText(detail.getValue());
+        onAdapterListener.onAdapterClick(mFilteredList.get(i), i);
         return view;
+    }
+
+    public interface OnAdapterListener {
+        void onAdapterClick(DropDown dp, int pos);
     }
 }

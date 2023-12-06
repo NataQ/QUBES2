@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.se.omapi.Session;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -216,6 +217,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         imgLogOut.setOnClickListener(v -> {
+            SessionManagerQubes.clearStartDaySession();
             logOut(VisitActivity.this);
         });
     }
@@ -687,7 +689,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddNoo.setOnClickListener(v -> {
-            if (database.getCountOfflineData() == 0) {
+//            if (database.getCountOfflineData() == 0) {
                 if (startVisit != null) {
                     if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
                         SessionManagerQubes.clearCustomerNooSession();
@@ -700,9 +702,9 @@ public class VisitActivity extends BaseActivity {
                 } else {
                     setToast("Please start visit first");
                 }
-            } else {
-                setToast("Pastikan semua data offline sudah di sync");
-            }
+//            } else {
+//                setToast("Pastikan semua data offline sudah di sync");
+//            }
 //            if (SessionManagerQubes.getStartDay() == 1) {
 //
 //            } else {
@@ -1728,10 +1730,9 @@ public class VisitActivity extends BaseActivity {
                 if (logResult.getIdMessage() == 1) {
                     String message = "Start Visit : " + logResult.getMessage();
                     logResult.setMessage(message);
-                }
-                database.addLog(logResult);
-                if (logResult.getIdMessage() == 1) {
+                    database.addLog(logResult);
                     setToast(logResult.getMessage());
+                    startVisit = Helper.ObjectToGSON(logResult.getResult(), StartVisit.class);
                     if (startVisit == null) {
                         startVisit = new StartVisit();
                     }
@@ -1743,8 +1744,10 @@ public class VisitActivity extends BaseActivity {
                     workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
                     workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
                     validateButton();//start
-                } else {
+                }else{
+                    database.addLog(logResult);
                     setToast(logResult.getMessage());
+                    openDialogStartVisit();
                 }
             } else if (PARAM == 4) {
                 progress.dismiss();
