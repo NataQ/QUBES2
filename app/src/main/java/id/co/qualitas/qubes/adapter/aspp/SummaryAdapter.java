@@ -131,29 +131,39 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.Holder> 
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtInvoiceNo.setText(!Helper.isEmpty(detail.getSoNo()) ? detail.getSoNo() : "-");
         holder.txtOutlet.setText(idCust + " - " + nameCust);
-        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
+//        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
 
         if (!Helper.isEmpty(detail.getStatus())) {
-            switch (detail.getStatus().toLowerCase()) {
-                case "approve":
+            switch (detail.getStatus()) {
+                case Constants.STATUS_APPROVE:
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.green3_aspp));
+                    holder.txtStatus.setText("Approve");
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.green_aspp));
                     break;
-                case "reject":
+                case Constants.STATUS_REJECTED:
+                    holder.txtStatus.setText("Reject");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.red_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.red2_aspp));
                     break;
-                case "pending":
+                case Constants.STATUS_PENDING:
+                    holder.txtStatus.setText("Pending");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.yellow3_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.yellow_aspp));
                     break;
-                case "sync success":
+                case Constants.STATUS_SYNC_SUCCESS:
+                    holder.txtStatus.setText("Sync Success");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.blue8_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.aspp_blue9));
+                    break;
+                case Constants.STATUS_DRAFT:
+                    holder.txtStatus.setText("Draft");
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getContext(), R.color.gray12_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getContext(), R.color.black1_aspp));
                     break;
                 default:
                     holder.llStatus.setVisibility(View.GONE);

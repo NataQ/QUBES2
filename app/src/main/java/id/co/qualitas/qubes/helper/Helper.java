@@ -894,6 +894,7 @@ public class Helper extends BaseFragment {
 
         if (dayWeek == 0) {
             dayWeek = 7;
+            weekYear = weekYear - 1;
         }
 
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);
@@ -917,6 +918,7 @@ public class Helper extends BaseFragment {
 
         if (dayWeek == 0) {
             dayWeek = 7;
+            weekYear = weekYear - 1;
         }
 
         result = "P" + String.valueOf(weekYear) + "H" + String.valueOf(dayWeek);

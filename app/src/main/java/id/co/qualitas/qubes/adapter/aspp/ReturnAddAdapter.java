@@ -272,7 +272,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
         String result = getDetailDropDown(conditionList,detail.getCondition());
 
-        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList, (det, po) -> {});
+        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList);
         holder.autoCompleteCondition.setAdapter(conditionAdapter);
         holder.autoCompleteCondition.setText(result, false);
 

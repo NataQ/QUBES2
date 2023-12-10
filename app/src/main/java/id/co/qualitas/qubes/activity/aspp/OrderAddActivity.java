@@ -697,7 +697,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setOmzet(omzet);
                     headerSave.setIdStockHeaderBE(stockHeader.getId());
                     headerSave.setIdStockHeaderDb(stockHeader.getId_mobile());
-                    headerSave.setStatus("Draft");
+                    headerSave.setStatus(Constants.STATUS_DRAFT);
                     headerSave.setIsSync(0);
                     headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setMaterialList(mList);

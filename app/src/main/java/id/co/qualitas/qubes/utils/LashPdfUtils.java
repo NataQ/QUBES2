@@ -284,7 +284,12 @@ public class LashPdfUtils {
         cell.addElement(text);
         mainTable.addCell(cell);
 
-        String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, SessionManagerQubes.getStartDay().getDate());
+        String date;
+        try {
+            date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, SessionManagerQubes.getStartDay().getDate());
+        } catch (Exception e) {
+            date = Helper.getTodayDate(Constants.DATE_TYPE_15);
+        }
 
         cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
@@ -772,7 +777,7 @@ public class LashPdfUtils {
             totalGiro = totalGiro + (detail.get("giro") != null ? (double) detail.get("giro") : 0);
             totalTf = totalTf + (detail.get("cheque") != null ? (double) detail.get("cheque") : 0);
             totalCheque = totalCheque + (detail.get("transfer") != null ? (double) detail.get("transfer") : 0);
-            totalLain = totalLain +(detail.get("lain2") != null ? (double) detail.get("lain2") : 0);
+            totalLain = totalLain + (detail.get("lain2") != null ? (double) detail.get("lain2") : 0);
             totalSaldo = totalSaldo + (detail.get("sisa_piutang") != null ? (double) detail.get("sisa_piutang") : 0);
 
             cell = new PdfPCell(new Phrase(String.valueOf(i + 1), calibriRegular));//no
@@ -799,7 +804,11 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, detail.get("tanggal").toString());
+            if (detail.get("tanggal") != null) {
+                date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, detail.get("tanggal").toString());
+            } else {
+                date = "";
+            }
 
             cell = new PdfPCell(new Phrase(date, calibriRegular));//tgl
             cell.setUseAscender(true);

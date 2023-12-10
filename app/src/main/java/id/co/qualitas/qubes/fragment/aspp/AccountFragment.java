@@ -20,10 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
@@ -41,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
@@ -94,7 +99,7 @@ import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class AccountFragment extends BaseFragment {
-    private CardView llUploadDB, llSync, llLog, llChangePassword;
+    private CardView llUploadDB, llSync, llLog, llChangePassword, llUpdateRegisterID;
     private LogAdapter mAdapter;
     private boolean saveDataSuccess = false, setDataSyncSuccess = false;
     private WSMessage messageResponse, logResult;
@@ -134,6 +139,33 @@ public class AccountFragment extends BaseFragment {
             }
         });
 
+        llUpdateRegisterID.setOnClickListener(v -> {
+            try {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w("TAG", "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
+                                String refreshedToken = task.getResult();
+                                if (refreshedToken != null) {
+                                    Helper.setItemParam(Constants.REGIISTERID, refreshedToken);
+                                    user.setRegis_id(refreshedToken);
+                                    SessionManagerQubes.setUserProfile(user);
+
+                                    progress.show();
+                                    PARAM = 30;
+                                    new RequestUrl().execute();
+                                }
+                            }
+                        });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         llUploadDB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,7 +183,6 @@ public class AccountFragment extends BaseFragment {
         llChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ((MainActivity) getActivity()).changePage(7);
                 openDialogChangePassword();
             }
         });
@@ -378,6 +409,7 @@ public class AccountFragment extends BaseFragment {
 
     private void initialize() {
         database = new Database(getContext());
+        llUpdateRegisterID = rootView.findViewById(R.id.llUpdateRegisterID);
         llUploadDB = rootView.findViewById(R.id.llUploadDB);
         llSync = rootView.findViewById(R.id.llSync);
         llLog = rootView.findViewById(R.id.llLog);
@@ -863,7 +895,7 @@ public class AccountFragment extends BaseFragment {
                         logResult.setMessage("Set offline data photo failed: " + exMess);
                     }
                     return null;
-                } else {
+                } else if (PARAM == 29) {
                     Map req = new HashMap();
                     req.put("username", user.getUsername());
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
@@ -878,6 +910,16 @@ public class AccountFragment extends BaseFragment {
                     String URL_ = Constants.API_SEND_DATABASE_LOCAL;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                    return null;
+                } else {
+                    String URL_ = Constants.API_UPDATE_REGISTER_ID;
+                    User param = new User();
+                    param.setUserLogin(user.getUserLogin());
+                    param.setUsername(user.getUsername());
+                    param.setRegis_id(user.getRegis_id());
+                    param.setApk_version(BuildConfig.VERSION_NAME);
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
                 }
             } catch (Exception ex) {
@@ -937,6 +979,9 @@ public class AccountFragment extends BaseFragment {
                             break;
                         case 29:
                             logResult.setMessage("Send database offline failed: " + exMess);
+                            break;
+                        case 30:
+                            logResult.setMessage("Update register id failed: " + exMess);
                             break;
                     }
                 }
@@ -1184,7 +1229,17 @@ public class AccountFragment extends BaseFragment {
                     String message = "Send database offline : " + logResult.getMessage();
                     logResult.setMessage(message);
                     setToast(logResult.getMessage());
-                }else{
+                } else {
+                    setToast(logResult.getMessage());
+                }
+                database.addLog(logResult);
+            } else if (PARAM == 30) {
+                progress.dismiss();
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Send update register id : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                    setToast(logResult.getMessage());
+                } else {
                     setToast(logResult.getMessage());
                 }
                 database.addLog(logResult);
@@ -1485,6 +1540,9 @@ public class AccountFragment extends BaseFragment {
                     if (listResult.size() == sizeData) {//ganti sizeData
                         if (error == 0) {
                             setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                            if (PARAM == 26) {
+                                Helper.deleteFolder(getDirLoc(getActivity()).getPath());
+                            }
                         } else {
                             setToast("Gagal mengirim data : " + String.valueOf(error));
                         }

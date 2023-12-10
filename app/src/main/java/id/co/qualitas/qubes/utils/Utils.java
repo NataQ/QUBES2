@@ -644,7 +644,6 @@ public class Utils {
 
         return newDir;
     }
-
     public static Uri cropPhoto(Activity activity, Uri photoUri) {
         try {
             Uri outputUri = Uri.fromFile(createImageFile(activity.getApplicationContext()));

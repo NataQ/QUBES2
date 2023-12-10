@@ -1151,7 +1151,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_NO_DOC, param.getNo_doc());
         values.put(KEY_TANGGAL_KIRIM, param.getTanggal_kirim());
         values.put(KEY_NO_SURAT_JALAN, param.getNo_surat_jalan());
-        values.put(KEY_STATUS, param.getStatus().toLowerCase());
+        values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_SIGN, param.getSignature());
         values.put(KEY_IS_UNLOADING, param.getIs_unloading());
         values.put(KEY_IS_VERIF, param.getIs_verif());
@@ -1531,11 +1531,13 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_ID_VISIT_SALESMAN_DB, param.getIdHeader());
         values.put(KEY_CUSTOMER_ID, param.getCustomerId());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_ID_VISIT, param.getIdVisit());
         values.put(KEY_DATE, param.getDate());
         values.put(KEY_CHECK_IN_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+        values.put(KEY_CHECK_OUT_TIME, Helper.getTodayDate(Constants.DATE_FORMAT_2));
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_INSIDE, param.isInside());
         values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
@@ -1691,9 +1693,9 @@ public class Database extends SQLiteOpenHelper {
                             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
                             int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);
                         }
-                        getDiscount= 1;
-                    } else{
-                       getDiscount = 0;
+                        getDiscount = 1;
+                    } else {
+                        getDiscount = 0;
                     }
 
                     if (Helper.isNotEmptyOrNull(param.getExtraItem())) {
@@ -3201,7 +3203,7 @@ public class Database extends SQLiteOpenHelper {
     public List<StockRequest> getAllStockRequestHeader() {
         List<StockRequest> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " asc";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_REQUEST_DATE + " desc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -3232,7 +3234,7 @@ public class Database extends SQLiteOpenHelper {
     public StockRequest getLastStockRequest() {
         StockRequest paramModel = new StockRequest();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " asc limit 1";
+        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -3283,7 +3285,7 @@ public class Database extends SQLiteOpenHelper {
         return paramModel;
     }
 
-    public List<Material> getAllStockRequestDetailUnloading(String idHeader) {
+    public List<Material> getAllStockRequestDetailUnloading(StockRequest header) {
 //        List<Material> arrayList = new ArrayList<>();
         // Select All Query
 //        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
@@ -3291,7 +3293,7 @@ public class Database extends SQLiteOpenHelper {
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
                 "left join " + TABLE_MASTER_UOM + " b on a." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = a." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ?";
-        String selectQueryOrder = "select sum(b." + KEY_QTY + "*c." + KEY_CONVERSION + ") as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
+        String selectQueryOrder = "select coalesce(sum(b." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_ORDER_HEADER + " a join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
                 "left join " + TABLE_MASTER_UOM + " c on b." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "\n" +
@@ -3301,7 +3303,7 @@ public class Database extends SQLiteOpenHelper {
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
 
-        Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader});
+        Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{header.getIdHeader()});
         List<Material> matList = new ArrayList<>();
 
         if (cursorDetail != null) {
@@ -3314,7 +3316,7 @@ public class Database extends SQLiteOpenHelper {
                     ma.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
                     ma.setUomSisa(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
 
-                    Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), idHeader, String.valueOf(ma.getId())});
+                    Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), header.getId_mobile(), String.valueOf(ma.getId())});
                     Material materialOrder = new Material();
                     if (cursorOrder != null) {
                         if (cursorOrder.moveToFirst()) {
@@ -3361,58 +3363,6 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public double getSumQtyByIdMaterial(Map request) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String countQuery;
-        Cursor cursor;
-        double qty = 0;
-
-//        select od.id_order_header, od.id_material, au.id_material, od.qty, od.uom, au.uom, au.conversion, (od.qty*au.conversion) as total
-//        from order_detail od
-//        join assign_uom au on od.id_material = au.id_material and od.uom = au.uom
-//        where id_order_header in ('26','32');
-
-        countQuery = "SELECT sum(" + KEY_QTY + ") as " + KEY_QTY
-                + " FROM " + TABLE_ORDER_DETAIL
-                + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
-        cursor = db.rawQuery(countQuery, new String[]{request.get("id_header").toString(), request.get("id_material").toString()});
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                qty = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY));
-            }
-        }
-
-        assert cursor != null;
-        cursor.close();
-        return qty;
-    }
-
-    public int getConversionMaterialUom(Map request) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String countQuery;
-        Cursor cursor;
-        int qty = 0;
-
-//        select od.id_order_header, od.id_material, au.id_material, od.qty, od.uom, au.uom, au.conversion, (od.qty*au.conversion) as total
-//        from order_detail od
-//        join assign_uom au on od.id_material = au.id_material and od.uom = au.uom
-//        where id_order_header in ('26','32');
-
-        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM + " = ? ";
-        cursor = db.rawQuery(countQuery, new String[]{request.get("id_material").toString(), request.get("uom").toString()});
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                qty = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION));
-            }
-        }
-
-        assert cursor != null;
-        cursor.close();
-        return qty;
-    }
-
     public Material getQtySmallUom(Material mat) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
@@ -3440,13 +3390,19 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int checkUnloadingRequest() {
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS+" = ? and " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc";
+        int count = 0;
+        String selectQuery = "select b.total - count(*) as " + KEY_TOTAL + " from stockrequestheader a,\n" +
+                "(select count(*) as total from stockrequestheader) b \n" +
+                "where a.isUnloading = 0";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
-        int count = cursor.getCount();
-        cursor.close();
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_TOTAL));
+            }
+        }
         return count;
     }
 
@@ -3484,7 +3440,7 @@ public class Database extends SQLiteOpenHelper {
     public StockRequest getAllStockMaterial() {
         // Select All Query
         StockRequest result = new StockRequest();
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " asc limit 1";
+        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
         String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
                 "left join " + TABLE_MASTER_UOM + " b on a." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = a." + KEY_UOM + "\n" +
@@ -3520,7 +3476,7 @@ public class Database extends SQLiteOpenHelper {
                             ma.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
                             ma.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
 
-                            Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), result.getIdHeader(), String.valueOf(ma.getId())});
+                            Cursor cursorOrder = db.rawQuery(selectQueryOrder, new String[]{String.valueOf(ma.getId()), result.getId_mobile(), String.valueOf(ma.getId())});
                             Material materialOrder = new Material();
                             if (cursorOrder != null) {
                                 if (cursorOrder.moveToFirst()) {
@@ -3549,7 +3505,7 @@ public class Database extends SQLiteOpenHelper {
     public Material getStockMaterial(Map req) {
         // Select All Query
         Material result = null;
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? ";
+        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
 //        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
         String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
@@ -3566,7 +3522,7 @@ public class Database extends SQLiteOpenHelper {
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB));
+                String idHeader = cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE));
 
                 Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{idHeader, req.get("id_material").toString()});
                 if (cursorDetail != null) {
@@ -3657,49 +3613,6 @@ public class Database extends SQLiteOpenHelper {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT));
-            }
-        }
-
-        assert cursor != null;
-        cursor.close();
-        return result;
-    }
-
-    public StockRequest getLastStockRequest(Map req) {
-        // Select All Query
-        StockRequest result = null;
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? ";
-        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
-
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                result = new StockRequest();
-                result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
-
-                List<Material> materialList = new ArrayList<>();
-                Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{req.get("id_material").toString()});
-                if (cursorDetail != null) {
-                    if (cursor.moveToFirst()) {
-                        do {
-                            Material paramModel = new Material();
-                            paramModel.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                            paramModel.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                            paramModel.setQty(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_QTY)));
-                            paramModel.setUom(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_UOM)));
-
-                            Material conversion = getQtySmallUom(paramModel);
-                            paramModel.setQty(conversion.getQty());
-                            paramModel.setUom(conversion.getUom());
-                            materialList.add(paramModel);
-                        } while (cursorDetail.moveToNext());
-                    }
-                    cursorDetail.close();
-                }
-                result.setMaterialList(materialList);
             }
         }
 
@@ -4495,7 +4408,7 @@ public class Database extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT a.* FROM (\n" +
                 "SELECT a.*, nilai - tunai - giro - cheque- transfer - lain2 sisa_piutang FROM\n" +
-                "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, '' tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
+                "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, c.date tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
                 "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan\n" +
                 "FROM VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
@@ -4980,8 +4893,8 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ?";
-        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString(), req.get("date").toString()});
+        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";//and " + KEY_DATE + " = ?";
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});
 
         int count = cursor.getCount();
         cursor.close();
@@ -5472,7 +5385,7 @@ public class Database extends SQLiteOpenHelper {
     public StockRequest getDetailStockRequest(String idHeader) {
         StockRequest paramModel = new StockRequest();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_ID_MOBILE + " = ? limit 1";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_ID_MOBILE + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(idHeader)});
@@ -6579,12 +6492,6 @@ public class Database extends SQLiteOpenHelper {
         db.beginTransactionNonExclusive();
         ContentValues values = new ContentValues();
         try {
-            values.put(KEY_OMZET, req.getOmzet());
-            values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-            db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{req.getIdHeader()});
-
             if (Helper.isNotEmptyOrNull(req.getMaterialList())) {
                 int getDiscount = 0;
                 for (Material param : req.getMaterialList()) {
@@ -6604,12 +6511,13 @@ public class Database extends SQLiteOpenHelper {
                             int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT, null, values);
                             getDiscount = 1;
                         }
-                    }else{
+                    } else {
                         getDiscount = 0;
                     }
                 }
                 values = new ContentValues();
                 values.put(KEY_IS_DISCOUNT, getDiscount);
+                values.put(KEY_OMZET, req.getOmzet());
                 values.put(KEY_UPDATED_BY, username);
                 values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 

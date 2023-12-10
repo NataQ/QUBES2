@@ -80,8 +80,8 @@ import id.co.qualitas.qubes.utils.Utils;
 public class CreateNooActivity extends BaseActivity {
     private Button btnSave;
     private TextView txtKodePos, txtKelurahan, txtKecamatan, txtKotaKabupaten, txtProvinsi;
-    private TextView txtTypeToko, txtPriceListType, txtCreditLimit, txtRoute, txtGPSLocation;
-    private EditText edtPhone, edtNamaToko, edtAddress, edtNoNpwp, edtNamaNpwp;
+    private TextView txtTypeToko, txtPriceListType, txtCreditLimit, txtGPSLocation;
+    private EditText edtPhone, edtNamaToko, edtAddress, edtNoNpwp, edtNamaNpwp, edtRoute;
     private EditText edtAlamatNpwp, edtNamaPemilik, edtNIK, edtLokasi, edtJenisUsaha, edtLamaUsaha;
     private Spinner spnSuku, spnStatusToko, spnStatusNpwp, spnUdf5;
     private RelativeLayout llKTP, llNPWP, llOutlet;
@@ -270,8 +270,8 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(edtLamaUsaha)) {
             customerNoo.setLama_usaha(edtLamaUsaha.getText().toString().trim());
         }
-        if (!Helper.isEmptyEditText(txtRoute)) {
-            customerNoo.setRute(txtRoute.getText().toString().trim());
+        if (!Helper.isEmptyEditText(edtRoute)) {
+            customerNoo.setRute(edtRoute.getText().toString().trim());
         }
         if (!Helper.isEmptyEditText(txtCreditLimit)) {
             customerNoo.setLimit_kredit(Double.parseDouble(txtCreditLimit.getText().toString().trim().replace(".", "")));
@@ -431,7 +431,7 @@ public class CreateNooActivity extends BaseActivity {
     }
 
     private void setDataDefault() {
-        txtRoute.setText(Helper.getTodayRoute());
+        edtRoute.setText(Helper.getTodayRoute());
         txtCreditLimit.setText(format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
 
         statusToko = database.getDropDown(Constants.DROP_DOWN_STATUS_TOKO);
@@ -456,31 +456,13 @@ public class CreateNooActivity extends BaseActivity {
         udf5.add("GT");
         udf5.add("OP");
 
-        sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku, (detail, pos) -> {
-            if (customerNoo == null) {
-                customerNoo = new Customer();
-            }
-            customerNoo.setSuku(detail.getId());
-            customerNoo.setSuku_pos(pos);
-        });
+        sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku);
         spnSuku.setAdapter(sukuAdapter);
-MASIH ERROR
-        statusTokoAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusToko, (detail, pos) -> {
-            if (customerNoo == null) {
-                customerNoo = new Customer();
-            }
-            customerNoo.setStatus_toko(detail.getId());
-            customerNoo.setStatus_toko_pos(pos);
-        });
+
+        statusTokoAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusToko);
         spnStatusToko.setAdapter(statusTokoAdapter);
 
-        statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP, (detail, pos) -> {
-            if (customerNoo == null) {
-                customerNoo = new Customer();
-            }
-            customerNoo.setStatus_npwp(detail.getId());
-            customerNoo.setStatus_npwp_pos(pos);
-        });
+        statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP);
         spnStatusNpwp.setAdapter(statusNpwpAdapter);
 
 //        sukuAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
@@ -534,64 +516,62 @@ MASIH ERROR
 //        setSpinnerData(suku, spnSuku);
 //        setSpinnerData(statusToko, spnStatusToko);
 //        setSpinnerData(statusNPWP, spnStatusNpwp);
-//        spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-////                if (i != 0) {
-//                if (customerNoo == null) {
-//                    customerNoo = new Customer();
-//                }
-//                String id = suku.get(i).getId();
-//                String text = adapterView.getItemAtPosition(i).toString();
-//                customerNoo.setSuku(id);
-//                customerNoo.setSuku_pos(i);
-////                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-//
-//        spnStatusToko.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (i != 0) {
-//                    if (customerNoo == null) {
-//                        customerNoo = new Customer();
-//                    }
-//                    String id = statusToko.get(i).getId();
-//                    String text = adapterView.getItemAtPosition(i).toString();
-//                    customerNoo.setStatus_toko(id);
-//                    customerNoo.setStatus_toko_pos(i);
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-//        spnStatusNpwp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (i != 0) {
-//                    if (customerNoo == null) {
-//                        customerNoo = new Customer();
-//                    }
-//                    String id = statusNPWP.get(i).getId();
-//                    String text = adapterView.getItemAtPosition(i).toString();
-//                    customerNoo.setStatus_npwp(id);
-//                    customerNoo.setStatus_npwp_pos(i);
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
+        spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                DropDown clickedItem = (DropDown) adapterView.getItemAtPosition(i);
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
+                }
+                String id = clickedItem.getId();
+                String text = clickedItem.getValue();
+                customerNoo.setSuku(id);
+                customerNoo.setSuku_pos(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spnStatusToko.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                DropDown clickedItem = (DropDown) adapterView.getItemAtPosition(i);
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
+                }
+                String id = clickedItem.getId();
+                String text = clickedItem.getValue();
+                customerNoo.setStatus_toko(id);
+                customerNoo.setStatus_toko_pos(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        spnStatusNpwp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                // It returns the clicked item.
+                DropDown clickedItem = (DropDown) adapterView.getItemAtPosition(i);
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
+                }
+                String id = clickedItem.getId();
+                String text = clickedItem.getValue();
+                customerNoo.setStatus_npwp(id);
+                customerNoo.setStatus_npwp_pos(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         spnUdf5.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1023,7 +1003,7 @@ MASIH ERROR
         edtLamaUsaha = findViewById(R.id.edtLamaUsaha);
         txtTypeToko = findViewById(R.id.txtTypeToko);
         txtCreditLimit = findViewById(R.id.txtCreditLimit);
-        txtRoute = findViewById(R.id.txtRoute);
+        edtRoute = findViewById(R.id.edtRoute);
         txtPriceListType = findViewById(R.id.txtPriceListType);
         spnStatusNpwp = findViewById(R.id.spnStatusNpwp);
         spnSuku = findViewById(R.id.spnSuku);
@@ -1061,6 +1041,7 @@ MASIH ERROR
             setDataToView();
         } else {
             customerNoo = new Customer();
+            getLocationGPS();
         }
         typeImage = imageType.getPosImage();
 
@@ -1109,6 +1090,9 @@ MASIH ERROR
     }
 
     private void setDataToView() {
+        if (Helper.isEmptyEditText(txtGPSLocation)) {
+            getLocationGPS();
+        }
         txtKodePos.setText(Helper.isEmpty(customerNoo.getKode_pos(), ""));
         txtGPSLocation.setText(String.valueOf(customerNoo.getLatitude()) + "," + String.valueOf(customerNoo.getLongitude()));
         txtKelurahan.setText(Helper.isEmpty(customerNoo.getKelurahan(), ""));
@@ -1129,7 +1113,7 @@ MASIH ERROR
         txtTypeToko.setText(Helper.isEmpty(customerNoo.getType_customer(), ""));
         txtPriceListType.setText(Helper.isEmpty(customerNoo.getType_price(), ""));
         txtCreditLimit.setText(customerNoo.getLimit_kredit() != 0 ? format.format(customerNoo.getLimit_kredit()) : format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
-        txtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRoute()));
+        edtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRoute()));
 
 //        int spinnerPositionSuku = sukuAdapter.getPosition(customerNoo.getSuku());
 //        int spinnerPositionStatusToko = statusTokoAdapter.getPosition(customerNoo.getStatus_toko());
@@ -1323,7 +1307,7 @@ MASIH ERROR
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoNpwp());
                         req.put("typePhoto", "npwp");
-                        req.put("idDB", header);
+                        req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
                         database.addPhoto(req);
@@ -1333,7 +1317,7 @@ MASIH ERROR
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoOutlet());
                         req.put("typePhoto", "outlet");
-                        req.put("idDB", header);
+                        req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
                         database.addPhoto(req);

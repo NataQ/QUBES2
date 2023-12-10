@@ -203,6 +203,63 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/llUpdateRegisterID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_bg_route"
+                    android:orientation="horizontal">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        app:cardCornerRadius="10dp"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="@dimen/icon_home_bg"
+                            android:layout_height="@dimen/icon_home_bg"
+                            android:background="@color/orange2_aspp"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_db_aspp" />
+
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:text="Update Register ID"
+                        android:textColor="@color/black_aspp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/ic_select_right" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:id="@+id/llChangePassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -126,7 +126,7 @@ public class VisitActivity extends BaseActivity {
     private List<Customer> mList, mListNonRoute;
     private List<Customer> mListNoo;
     private MovableFloatingActionButton btnAddVisit, btnAddNoo;
-    private Button btnEndDay, btnNextDay, btnStartVisit, btnEndVisit;
+    private Button btnEndDay, btnStartDay, btnStartVisit, btnEndVisit;
     private TextView txtVisit, txtVisitLine, txtNOO, txtNOOLine;
     private EditText edtSearchVisit, edtSearchNoo;
     private LinearLayout llVisit, llNoo;
@@ -181,6 +181,8 @@ public class VisitActivity extends BaseActivity {
     private List<Map> photoList = new ArrayList<>();
     private int sizeData = 0;
     private StartVisit startVisit;
+    private String resultOffline = null;
+    private boolean salesInap = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -241,30 +243,30 @@ public class VisitActivity extends BaseActivity {
             }
         });
 
-        btnNextDay.setOnClickListener(v -> {
-            if (swipeRefresh) {
-                startDayVisit();//next day
-            } else {
-                setToast("Silahkan refresh data customer");
-            }
+        btnStartDay.setOnClickListener(v -> {
+            startVisit.setStartDay(true);
+            SessionManagerQubes.setStartDay(startVisit);
         });
 
         btnEndVisit.setOnClickListener(v -> {
-            if (checkPermission()) {
-                endTodayVisit();//end visit
+            if (user.getRute_inap() == 1 && !startVisit.isEndDay()) {
+                setToast("Silahkan end day terlebih dahulu sebelum end visit");
             } else {
-                setToast(getString(R.string.pleaseEnablePermission));
-                requestPermission();
+                if (checkPermission()) {
+                    endTodayVisit();//end visit
+                } else {
+                    setToast(getString(R.string.pleaseEnablePermission));
+                    requestPermission();
+                }
             }
         });
 
         btnEndDay.setOnClickListener(v -> {
-            if (checkPermission()) {
-                endTodayVisit();//end day
-            } else {
-                setToast(getString(R.string.pleaseEnablePermission));
-                requestPermission();
-            }
+            startVisit.setEndDay(true);
+            SessionManagerQubes.setStartDay(startVisit);
+            progress.show();
+            PARAM = 6;
+            new RequestUrl().execute();//rute inap
         });
 
         btnAddVisit.setOnClickListener(v -> {
@@ -280,17 +282,19 @@ public class VisitActivity extends BaseActivity {
                         if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
                             requestData();//swipe visit
                         } else {
-                            setToast("Sudah start visit");
+                            if (user.getRute_inap() == 1) {
+                                if (startVisit.isStartDay()) {
+                                    setToast("Sudah start visit");
+                                } else {
+                                    requestData();//swipe visit
+                                }
+                            } else {
+                                setToast("Sudah start visit");
+                            }
                         }
                     } else {
                         requestData();//swipe visit
                     }
-
-//                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-//                    requestData();//swipe visit
-//                } else {
-//                    setToast("Sudah start visit");
-//                }
                 } else {
                     setToast("Pastikan semua data offline sudah di sync");
                 }
@@ -690,18 +694,18 @@ public class VisitActivity extends BaseActivity {
 
         btnAddNoo.setOnClickListener(v -> {
 //            if (database.getCountOfflineData() == 0) {
-                if (startVisit != null) {
-                    if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                        SessionManagerQubes.clearCustomerNooSession();
-                        Helper.removeItemParam(Constants.IMAGE_TYPE);
-                        Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-                        startActivity(intent);
-                    } else {
-                        setToast("Please start visit first");
-                    }
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                    SessionManagerQubes.clearCustomerNooSession();
+                    Helper.removeItemParam(Constants.IMAGE_TYPE);
+                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+                    startActivity(intent);
                 } else {
                     setToast("Please start visit first");
                 }
+            } else {
+                setToast("Please start visit first");
+            }
 //            } else {
 //                setToast("Pastikan semua data offline sudah di sync");
 //            }
@@ -721,15 +725,23 @@ public class VisitActivity extends BaseActivity {
                         if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
                             requestData();//swipe noo
                         } else {
-                            setToast("Sudah start visit");
+                            if (user.getRute_inap() == 1) {
+                                if (startVisit.isStartDay()) {
+                                    setToast("Sudah start visit");
+                                } else {
+                                    requestData();//swipe noo rute inap
+                                }
+                            } else {
+                                setToast("Sudah start visit");
+                            }
                         }
                     } else {
                         requestData();//swipe noo
                     }
-                    swipeLayoutNoo.setRefreshing(false);
                 } else {
                     setToast("Pastikan semua data offline sudah di sync");
                 }
+                swipeLayoutNoo.setRefreshing(false);
             }
         });
 
@@ -995,6 +1007,7 @@ public class VisitActivity extends BaseActivity {
                 }
             }
         }
+
     }
 
     private void saveVisitSalesman(VisitSalesman vs) {
@@ -1016,6 +1029,7 @@ public class VisitActivity extends BaseActivity {
         vs.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
         vs.setStatus(Constants.CHECK_OUT_VISIT);
         vs.setInside(outRadius);
+        vs.setIdVisit(String.valueOf(startVisit.getId()));
         vs.setInsideCheckOut(outRadius);
         vs.setIdHeader(Constants.ID_VS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         database.addVisitSalesmanAll(vs);
@@ -1039,8 +1053,6 @@ public class VisitActivity extends BaseActivity {
         } else {
             database.updateStatusOutletVisit(cus, user.getUsername());
         }
-//        mAdapterVisit.notifyDataSetChanged();
-//        mAdapterNoo.notifyDataSetChanged();
     }
 
     private void openDialogEndVisit() {
@@ -1285,7 +1297,7 @@ public class VisitActivity extends BaseActivity {
         btnEndVisit = findViewById(R.id.btnEndVisit);
         btnStartVisit = findViewById(R.id.btnStartVisit);
         btnEndDay = findViewById(R.id.btnEndDay);
-        btnNextDay = findViewById(R.id.btnNextDay);
+        btnStartDay = findViewById(R.id.btnStartDay);
         imgBack = findViewById(R.id.imgBack);
         imgLogOut = findViewById(R.id.imgLogOut);
         edtSearchNoo = findViewById(R.id.edtSearchNoo);
@@ -1450,17 +1462,23 @@ public class VisitActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
-                    Helper.deleteFolder(getDirLoc(getApplicationContext()).getPath());
-                    if (user.getType_sales().equals("CO")) {
-                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
-                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST,0);
-                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-                        startActivity(intent);
-                    }else{
-                        new RequestUrlSync().execute();
-                    }
                 } else {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi");
+                }
+
+                if (user.getRute_inap() != 1) {
+                    //bukan rute inap
+                    if (user.getType_sales().equals("TO")) {
+                        new RequestUrlSync().execute();
+                    } else {
+                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    btnStartDay.setVisibility(View.VISIBLE);
+                    btnEndDay.setVisibility(View.GONE);
                 }
             }
         }
@@ -1513,6 +1531,7 @@ public class VisitActivity extends BaseActivity {
                         database.deleteCustomerDct();
                         database.deleteCustomerPromotion();
                         database.deleteVisitSalesman();
+                        database.deletePhoto();
                         database.deleteNoo();
                         SessionManagerQubes.clearStartDaySession();//remove start visit
                         startVisit = new StartVisit();
@@ -1558,6 +1577,7 @@ public class VisitActivity extends BaseActivity {
                     return null;
                 } else if (PARAM == 4) {
                     endDay = new HashMap();
+                    endDay.put("idVisit", startVisit.getId());
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
 
@@ -1744,7 +1764,7 @@ public class VisitActivity extends BaseActivity {
                     workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
                     workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
                     validateButton();//start
-                }else{
+                } else {
                     database.addLog(logResult);
                     setToast(logResult.getMessage());
                     openDialogStartVisit();
@@ -1763,9 +1783,17 @@ public class VisitActivity extends BaseActivity {
                     SessionManagerQubes.setStartDay(startVisit);
 
                     validateButton();//end
-                    progress.show();
-                    PARAM = 6;
-                    new RequestUrl().execute();//6
+                    if (user.getRute_inap() == 1 && user.getType_sales().equals("CO")) {
+                        //rute inap dan dia co
+                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                        startActivity(intent);
+                    } else {
+                        progress.show();
+                        PARAM = 6;
+                        new RequestUrl().execute();//6
+                    }
                 } else {
                     database.addLog(logResult);
                     setToast(logResult.getMessage());
@@ -1774,194 +1802,247 @@ public class VisitActivity extends BaseActivity {
             } else if (PARAM == 5) {
                 progress.dismiss();
                 if (saveDataSuccess) {
-                    mAdapterVisit.notifyDataSetChanged();
-                    mAdapterNoo.notifyDataSetChanged();
+                    setAdapterVisit();
+                    setAdapterNoo();
+//                    if (user.getType_sales().equals("CO")) {
+//                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+//                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+//                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+//                        startActivity(intent);
+//                    } else {
                     openDialogEndVisit();//after save daily salesman
+//                    }
                 } else {
                     setToast("Gagal menyimpan data");
                 }
             } else if (PARAM == 6) {
                 progress.show();
-                new AsyncTaskGeneratePDF().execute();
+                new AsyncTaskGeneratePDF().execute();//bukan sales inap
+                //dia rute inap dan lagi end day
+
             }
         }
     }
 
     private void setDataOffline() {
         offlineData = new ArrayList<>();
-
-        //noo
-        nooList = new ArrayList<>();
-        nooList = database.getAllNoo();
-        if (nooList == null) {
-            logResult = new WSMessage();
-            logResult.setIdMessage(0);
-            logResult.setResult(null);
-            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-            logResult.setMessage("Set offline data noo failed: " + exMess);
-        } else {
+        resultOffline = null;
+        try {
+            //noo
             nooList = new ArrayList<>();
-        }
-        OfflineData offData = new OfflineData();
-        offData.setNooList(nooList);
-        offlineData.add(0, offData);
+            nooList = database.getAllNoo();
+            if (nooList == null) {
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setResult(null);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                logResult.setMessage("Set offline data noo failed: " + exMess);
+            } else {
+                nooList = new ArrayList<>();
+            }
+            OfflineData offData = new OfflineData();
+            offData.setNooList(nooList);
+            offlineData.add(0, offData);
 
-        //visit
-        visitSalesmanList = new ArrayList<>();
-        visitSalesmanList = database.getAllVisitSalesman();
-        if (visitSalesmanList == null) {
-            logResult = new WSMessage();
-            logResult.setIdMessage(0);
-            logResult.setResult(null);
-            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-            logResult.setMessage("Set offline data visit failed: " + exMess);
-        } else {
+            //visit
             visitSalesmanList = new ArrayList<>();
-        }
-        offData = new OfflineData();
-        offData.setVisitSalesmanList(visitSalesmanList);
-        offlineData.add(1, offData);
+            visitSalesmanList = database.getAllVisitSalesman();
+            if (visitSalesmanList == null) {
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setResult(null);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                logResult.setMessage("Set offline data visit failed: " + exMess);
+            } else {
+                visitSalesmanList = new ArrayList<>();
+            }
+            offData = new OfflineData();
+            offData.setVisitSalesmanList(visitSalesmanList);
+            offlineData.add(1, offData);
 
-        List<Customer> customerList = database.getAllCustomerCheckOut();
+            List<Customer> customerList = database.getAllCustomerCheckOut();
 
-        if (customerList != null) {
-            if (!customerList.isEmpty()) {
-                Map headerStoreCheck = new HashMap();
-                storeCheckList = new ArrayList<>();
-                List<Material> storeCheck = new ArrayList<>();
-                collectionList = new ArrayList<>();
-                List<CollectionHeader> collection = new ArrayList<>();
-                orderList = new ArrayList<>();
-                List<Order> order = new ArrayList<>();
-                Map headerReturn = new HashMap();
-                returnList = new ArrayList<>();
-                List<Material> returnO = new ArrayList<>();
-                photoList = new ArrayList<>();
-                List<Map> photos = new ArrayList<>();
-
-                for (Customer customer : customerList) {
-                    //store check
-                    storeCheck = database.getAllStoreCheckCheckOut(customer.getId());
-                    if (storeCheck != null) {
-                        if (!storeCheck.isEmpty()) {
-                            headerStoreCheck = new HashMap();
-                            headerStoreCheck.put("id_mobile", storeCheck.get(0).getIdheader());
-                            headerStoreCheck.put("date", storeCheck.get(0).getDate());
-                            headerStoreCheck.put("id_salesman", user.getUsername());
-                            headerStoreCheck.put("id_customer", storeCheck.get(0).getId_customer());
-                            headerStoreCheck.put("listData", storeCheck);
-                            storeCheckList.add(headerStoreCheck);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                    }
-
-                    //collection
-                    collection = database.getAllCollectionHeader(customer.getId());
-                    if (collection != null) {
-                        if (!collection.isEmpty()) {
-                            collectionList.addAll(collection);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                    }
-
-                    //order
-                    order = database.getAllOrderHeader(customer.getId(), user.getUsername());
-                    if (order != null) {
-                        if (!order.isEmpty()) {
-                            orderList.addAll(order);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                    }
-
-                    //return
-                    returnO = database.getAllReturnCheckOut(customer.getId());
-                    if (returnO != null) {
-                        if (!returnO.isEmpty()) {
-                            headerReturn = new HashMap();
-                            headerReturn.put("id_mobile", returnO.get(0).getIdheader());
-                            headerReturn.put("date", returnO.get(0).getDate());
-                            headerReturn.put("id_salesman", user.getUsername());
-                            headerReturn.put("id_customer", returnO.get(0).getId_customer());
-                            headerReturn.put("listData", returnO);
-                            returnList.add(headerReturn);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                    }
-
-                    //photo
-                    photos = database.getAllPhoto(customer.getId());
-                    if (photos != null) {
-                        if (!photos.isEmpty()) {
-                            photoList.addAll(photos);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
-                    } else {
-                        setDataSyncSuccess = false;
-                    }
-                }
-
-                if (Helper.isNotEmptyOrNull(storeCheckList)) {
+            if (customerList != null) {
+                if (!customerList.isEmpty()) {
+                    Map headerStoreCheck = new HashMap();
                     storeCheckList = new ArrayList<>();
-                }
-                if (Helper.isNotEmptyOrNull(collectionList)) {
+                    List<Material> storeCheck = new ArrayList<>();
                     collectionList = new ArrayList<>();
-                }
-                if (Helper.isNotEmptyOrNull(orderList)) {
+                    List<CollectionHeader> collection = new ArrayList<>();
                     orderList = new ArrayList<>();
-                }
-                if (Helper.isNotEmptyOrNull(returnList)) {
+                    List<Order> order = new ArrayList<>();
+                    Map headerReturn = new HashMap();
                     returnList = new ArrayList<>();
-                }
-                if (Helper.isNotEmptyOrNull(photoList)) {
+                    List<Material> returnO = new ArrayList<>();
                     photoList = new ArrayList<>();
-                }
-                offData = new OfflineData();
-                offData.setStoreCheckList(storeCheckList);
-                offlineData.add(2, offData);
+                    List<Map> photos = new ArrayList<>();
 
-                offData = new OfflineData();
-                offData.setCollectionList(collectionList);
-                offlineData.add(3, offData);
+                    for (Customer customer : customerList) {
+                        //store check
+                        storeCheck = database.getAllStoreCheckCheckOut(customer.getId());
+                        if (storeCheck != null) {
+                            if (!storeCheck.isEmpty()) {
+                                headerStoreCheck = new HashMap();
+                                headerStoreCheck.put("id_mobile", storeCheck.get(0).getIdheader());
+                                headerStoreCheck.put("date", storeCheck.get(0).getDate());
+                                headerStoreCheck.put("id_salesman", user.getUsername());
+                                headerStoreCheck.put("id_customer", storeCheck.get(0).getId_customer());
+                                headerStoreCheck.put("listData", storeCheck);
+                                storeCheckList.add(headerStoreCheck);
+                                setDataSyncSuccess = true;
+                            } else {
+                                setDataSyncSuccess = true;
+                            }
+                        } else {
+                            setDataSyncSuccess = false;
+                        }
 
-                offData = new OfflineData();
-                offData.setOrderList(orderList);
-                offlineData.add(4, offData);
+                        //collection
+                        collection = database.getAllCollectionHeader(customer.getId());
+                        if (collection != null) {
+                            if (!collection.isEmpty()) {
+                                collectionList.addAll(collection);
+                                setDataSyncSuccess = true;
+                            } else {
+                                setDataSyncSuccess = true;
+                            }
+                        } else {
+                            setDataSyncSuccess = false;
+                        }
 
-                offData = new OfflineData();
-                offData.setReturnList(returnList);
-                offlineData.add(5, offData);
+                        //order
+                        order = database.getAllOrderHeader(customer.getId(), user.getUsername());
+                        if (order != null) {
+                            if (!order.isEmpty()) {
+                                orderList.addAll(order);
+                                setDataSyncSuccess = true;
+                            } else {
+                                setDataSyncSuccess = true;
+                            }
+                        } else {
+                            setDataSyncSuccess = false;
+                        }
 
-                offData = new OfflineData();
-                offData.setPhotoList(photoList);
-                offlineData.add(6, offData);
+                        //return
+                        returnO = database.getAllReturnCheckOut(customer.getId());
+                        if (returnO != null) {
+                            if (!returnO.isEmpty()) {
+                                headerReturn = new HashMap();
+                                headerReturn.put("id_mobile", returnO.get(0).getIdheader());
+                                headerReturn.put("date", returnO.get(0).getDate());
+                                headerReturn.put("id_salesman", user.getUsername());
+                                headerReturn.put("id_customer", returnO.get(0).getId_customer());
+                                headerReturn.put("listData", returnO);
+                                returnList.add(headerReturn);
+                                setDataSyncSuccess = true;
+                            } else {
+                                setDataSyncSuccess = true;
+                            }
+                        } else {
+                            setDataSyncSuccess = false;
+                        }
 
-                if (!setDataSyncSuccess) {
-                    logResult = new WSMessage();
-                    logResult.setIdMessage(0);
-                    logResult.setResult(null);
-                    String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-                    logResult.setMessage("Set offline customer failed: " + exMess);
+                        //photo
+                        photos = database.getAllPhoto(customer.getId());
+                        if (photos != null) {
+                            if (!photos.isEmpty()) {
+                                photoList.addAll(photos);
+                                setDataSyncSuccess = true;
+                            } else {
+                                setDataSyncSuccess = true;
+                            }
+                        } else {
+                            setDataSyncSuccess = false;
+                        }
+                    }
+
+                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                        storeCheckList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(collectionList)) {
+                        collectionList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(orderList)) {
+                        orderList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(returnList)) {
+                        returnList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(photoList)) {
+                        photoList = new ArrayList<>();
+                    }
+                    offData = new OfflineData();
+                    offData.setStoreCheckList(storeCheckList);
+                    offlineData.add(2, offData);
+
+                    offData = new OfflineData();
+                    offData.setCollectionList(collectionList);
+                    offlineData.add(3, offData);
+
+                    offData = new OfflineData();
+                    offData.setOrderList(orderList);
+                    offlineData.add(4, offData);
+
+                    offData = new OfflineData();
+                    offData.setReturnList(returnList);
+                    offlineData.add(5, offData);
+
+                    offData = new OfflineData();
+                    offData.setPhotoList(photoList);
+                    offlineData.add(6, offData);
+
+                    if (!setDataSyncSuccess) {
+                        logResult = new WSMessage();
+                        logResult.setIdMessage(0);
+                        logResult.setResult(null);
+                        String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                        logResult.setMessage("Set offline customer failed: " + exMess);
+                    }
+                } else {
+                    setDataSyncSuccess = true;
+                    if (Helper.isNotEmptyOrNull(storeCheckList)) {
+                        storeCheckList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(collectionList)) {
+                        collectionList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(orderList)) {
+                        orderList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(returnList)) {
+                        returnList = new ArrayList<>();
+                    }
+                    if (Helper.isNotEmptyOrNull(photoList)) {
+                        photoList = new ArrayList<>();
+                    }
+
+                    offData = new OfflineData();
+                    offData.setStoreCheckList(storeCheckList);
+                    offlineData.add(2, offData);
+
+                    offData = new OfflineData();
+                    offData.setCollectionList(collectionList);
+                    offlineData.add(3, offData);
+
+                    offData = new OfflineData();
+                    offData.setOrderList(orderList);
+                    offlineData.add(4, offData);
+
+                    offData = new OfflineData();
+                    offData.setReturnList(returnList);
+                    offlineData.add(5, offData);
+
+                    offData = new OfflineData();
+                    offData.setPhotoList(photoList);
+                    offlineData.add(6, offData);
                 }
             } else {
-                setDataSyncSuccess = true;
+                logResult = new WSMessage();
+                logResult.setIdMessage(0);
+                logResult.setResult(null);
+                String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
+                logResult.setMessage("Set offline customer failed: " + exMess);
+
                 if (Helper.isNotEmptyOrNull(storeCheckList)) {
                     storeCheckList = new ArrayList<>();
                 }
@@ -1998,50 +2079,9 @@ public class VisitActivity extends BaseActivity {
                 offData.setPhotoList(photoList);
                 offlineData.add(6, offData);
             }
-        } else {
-            logResult = new WSMessage();
-            logResult.setIdMessage(0);
-            logResult.setResult(null);
-            String exMess = Helper.getItemParam(Constants.LOG_EXCEPTION) != null ? Helper.getItemParam(Constants.LOG_EXCEPTION).toString() : "";
-            logResult.setMessage("Set offline customer failed: " + exMess);
-
-            if (Helper.isNotEmptyOrNull(storeCheckList)) {
-                storeCheckList = new ArrayList<>();
-            }
-            if (Helper.isNotEmptyOrNull(collectionList)) {
-                collectionList = new ArrayList<>();
-            }
-            if (Helper.isNotEmptyOrNull(orderList)) {
-                orderList = new ArrayList<>();
-            }
-            if (Helper.isNotEmptyOrNull(returnList)) {
-                returnList = new ArrayList<>();
-            }
-            if (Helper.isNotEmptyOrNull(photoList)) {
-                photoList = new ArrayList<>();
-            }
-
-            offData = new OfflineData();
-            offData.setStoreCheckList(storeCheckList);
-            offlineData.add(2, offData);
-
-            offData = new OfflineData();
-            offData.setCollectionList(collectionList);
-            offlineData.add(3, offData);
-
-            offData = new OfflineData();
-            offData.setOrderList(orderList);
-            offlineData.add(4, offData);
-
-            offData = new OfflineData();
-            offData.setReturnList(returnList);
-            offlineData.add(5, offData);
-
-            offData = new OfflineData();
-            offData.setPhotoList(photoList);
-            offlineData.add(6, offData);
+        } catch (Exception e) {
+            resultOffline = e.getMessage() != null ? e.getMessage() : "Failed";
         }
-        setToast("OFFLINEDATA");
     }
 
     private class RequestUrlSync extends AsyncTask<Void, Integer, List<WSMessage>> {
@@ -2245,6 +2285,10 @@ public class VisitActivity extends BaseActivity {
                 setToast("Gagal mengirim data");
             }
             progressDialog.dismiss();
+
+            if (user.getRute_inap() == 1) {
+
+            }
         }
     }
 
@@ -2271,7 +2315,7 @@ public class VisitActivity extends BaseActivity {
         switch (status) {
             case 0:
                 btnStartVisit.setVisibility(View.VISIBLE);
-                btnNextDay.setVisibility(View.VISIBLE);
+                btnStartDay.setVisibility(View.VISIBLE);
                 btnEndVisit.setVisibility(View.GONE);
                 btnEndDay.setVisibility(View.GONE);
                 btnAddVisit.setVisibility(View.GONE);
@@ -2280,7 +2324,7 @@ public class VisitActivity extends BaseActivity {
                 break;
             case 1:
                 btnStartVisit.setVisibility(View.GONE);
-                btnNextDay.setVisibility(View.GONE);
+                btnStartDay.setVisibility(View.GONE);
                 btnEndVisit.setVisibility(View.VISIBLE);
                 btnEndDay.setVisibility(View.VISIBLE);
                 btnAddVisit.setVisibility(View.VISIBLE);
@@ -2288,7 +2332,7 @@ public class VisitActivity extends BaseActivity {
                 break;
             case 2:
                 btnStartVisit.setVisibility(View.GONE);
-                btnNextDay.setVisibility(View.GONE);
+                btnStartDay.setVisibility(View.GONE);
                 btnEndVisit.setVisibility(View.GONE);
                 btnEndDay.setVisibility(View.GONE);
                 btnAddVisit.setVisibility(View.GONE);

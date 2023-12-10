@@ -175,14 +175,16 @@ public class ReturnAddActivity extends BaseActivity {
                 Map req = new HashMap();
                 for (Material material : mList) {
                     database.addReturn(material, header);
-                    req = new HashMap();
-                    req.put("photo", material.getPhotoReason());
-                    req.put("idMaterial", material.getId());
-                    req.put("typePhoto", "return");
-                    req.put("idDB", header.get("id_header").toString());
-                    req.put("customerID", SessionManagerQubes.getOutletHeader().getId());
-                    req.put("username", user.getUsername());
-                    database.addPhoto(req);
+                    if(material.getPhotoReason() != null) {
+                        req = new HashMap();
+                        req.put("photo", material.getPhotoReason());
+                        req.put("idMaterial", material.getId());
+                        req.put("typePhoto", "return");
+                        req.put("idDB", header.get("id_header").toString());
+                        req.put("customerID", SessionManagerQubes.getOutletHeader().getId());
+                        req.put("username", user.getUsername());
+                        database.addPhoto(req);
+                    }
                 }
                 return true;
             } catch (Exception ex) {

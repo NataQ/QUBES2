@@ -189,7 +189,7 @@ public class StockRequestDetailActivity extends BaseActivity {
             }
 
             if (header.getStatus() != null) {
-                switch (header.getStatus().toLowerCase()) {
+                switch (header.getStatus()) {
 //                    case Constants.STATUS_PENDING:
 //                    case Constants.STATUS_REJECTED:
 //                    case Constants.STATUS_UNLOADING:

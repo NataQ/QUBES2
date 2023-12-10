@@ -15,6 +15,24 @@ public class StartVisit implements Serializable {
     private String km_akhir;
     private String photo_km_akhir;
     private String photo_complete;
+    private boolean endDay;
+    private boolean startDay;
+
+    public boolean isStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(boolean startDay) {
+        this.startDay = startDay;
+    }
+
+    public boolean isEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(boolean endDay) {
+        this.endDay = endDay;
+    }
 
     public int getId() {
         return id;

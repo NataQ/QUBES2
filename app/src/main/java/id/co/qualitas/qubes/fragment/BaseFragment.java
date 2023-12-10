@@ -3275,4 +3275,38 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     protected void setToast(String msg) {
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
+
+    public File getDirLoc(Context applicationContext) {
+        String PDF_FOLDER_NAME = "/Qubes/";
+        File directory = null;
+        //if there is no SD card, create new directory objects to make directory on device
+        if (Environment.getExternalStorageState() == null) {
+            //create new file directory object
+            directory = new File(Environment.getDataDirectory() + PDF_FOLDER_NAME);
+            // if no directory exists, create new directory
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            // if phone DOES have sd card
+        } else if (Environment.getExternalStorageState() != null) {
+            // search for directory on SD card
+            try {
+                int version = Build.VERSION.SDK_INT;
+                if (version >= 30) {
+                    directory = new File(applicationContext.getFilesDir() + PDF_FOLDER_NAME);
+                } else {
+                    directory = new File(Environment.getExternalStorageDirectory() + PDF_FOLDER_NAME);
+                }
+                // results
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+            } catch (Exception ex) {
+                setToast(ex.getMessage());
+            }
+        }// end of SD card checking
+
+        return directory;
+    }
 }

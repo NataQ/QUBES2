@@ -126,21 +126,23 @@ public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestLi
         } else {
             holder.txtTglKirim.setText("");
         }
-        holder.txtStatus.setText(detail.getStatus());
 
         if (!Helper.isEmpty(detail.getStatus())) {
-            switch (detail.getStatus().toLowerCase()) {
+            switch (detail.getStatus()) {
                 case Constants.STATUS_PENDING:
+                    holder.txtStatus.setText("Pending");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.yellow2_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.yellow_aspp));
                     break;
                 case Constants.STATUS_REJECTED:
+                    holder.txtStatus.setText("Reject");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.red_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.red2_aspp));
                     break;
                 case Constants.STATUS_APPROVE:
+                    holder.txtStatus.setText("Approve");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.green2_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));

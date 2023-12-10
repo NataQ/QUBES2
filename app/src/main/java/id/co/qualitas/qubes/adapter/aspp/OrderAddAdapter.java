@@ -464,7 +464,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             }
 
             private Timer timer = new Timer();
-            private final long DELAY = 1000; // Milliseconds
+            private final long DELAY = 2000; // Milliseconds
 
             @Override
             public void afterTextChanged(Editable s) {

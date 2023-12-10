@@ -46,6 +46,7 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/editbox"
             android:padding="5dp"
+            android:inputType="numberDecimal"
             android:textColor="@color/gray8_aspp"
             android:textSize="@dimen/superSmallFont" />
 

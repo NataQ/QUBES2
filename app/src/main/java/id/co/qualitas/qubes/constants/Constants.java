@@ -5,11 +5,13 @@ public class Constants {
     public static final String FCM = "fcm";
     public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
-    public static final String STATUS_PENDING = "pending";
-    public static final String STATUS_APPROVE = "approve";
-    public static final String STATUS_REJECTED = "rejected";
-    public static final String STATUS_VERIFICATION = "verification";
-    public static final String STATUS_UNLOADING = "unloading";
+    public static final String STATUS_PENDING = "P";//pending
+    public static final String STATUS_APPROVE = "A";//aprove
+    public static final String STATUS_REJECTED = "R";//reject
+    public static final String STATUS_VERIFICATION = "V";//verification
+    public static final String STATUS_UNLOADING = "U";//unloading
+    public static final String STATUS_DRAFT = "D";//draft
+    public static final String STATUS_SYNC_SUCCESS = "S";//sync success
     public static final String UNAUTHORIZED = "401 Unauthorized";
     public static final String FROM_VISIT = "FROM VISIT";
     public static final String FROM_STOCK_REQUEST = "FROM UNLOADING";
@@ -556,4 +558,5 @@ public class Constants {
     public static final String API_SYNC_ONE_PHOTO = "syncOnePhoto";
     public static final String API_GET_IMAGE = "getImage";
     public static final String API_SEND_DATABASE_LOCAL = "sendDatabaseLocal";
+    public static final String API_UPDATE_REGISTER_ID = "updateRegisterId";
 }

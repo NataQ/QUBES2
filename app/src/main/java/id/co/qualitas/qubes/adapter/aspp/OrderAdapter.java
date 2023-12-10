@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderActivity;
+import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Order;
 
@@ -120,32 +121,37 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
         holder.txtOrderNo.setText(format.format(detail.getId()));
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
-        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
+//        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
         holder.txtPayment.setText(detail.isStatusPaid() ? "Lunas" : "Kredit");
 
         if (!Helper.isEmpty(detail.getStatus())) {
-            switch (detail.getStatus().toLowerCase()) {
-                case "approve":
+            switch (detail.getStatus()) {
+                case Constants.STATUS_APPROVE:
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.green3_aspp));
+                    holder.txtStatus.setText("Approve");
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.green_aspp));
                     break;
-                case "reject":
+                case Constants.STATUS_REJECTED:
+                    holder.txtStatus.setText("Reject");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.red_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.red2_aspp));
                     break;
-                case "pending":
+                case Constants.STATUS_PENDING:
+                    holder.txtStatus.setText("Pending");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.yellow3_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.yellow_aspp));
                     break;
-                case "sync success":
+                case Constants.STATUS_SYNC_SUCCESS:
+                    holder.txtStatus.setText("Sync Success");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.blue8_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.aspp_blue9));
                     break;
-                case "draft":
+                case Constants.STATUS_DRAFT:
+                    holder.txtStatus.setText("Draft");
                     holder.llStatus.setVisibility(View.VISIBLE);
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.gray12_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.black1_aspp));

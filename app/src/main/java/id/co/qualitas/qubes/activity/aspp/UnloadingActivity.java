@@ -203,19 +203,27 @@ public class UnloadingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (fromUnloading == 1) {
+                if (checkPermission()) {
                     progress.show();
                     PARAM = 1;
                     new RequestUrl().execute();//1
-                    progress.show();
                 } else {
-                    if (checkPermission()) {
-                        checkLocationPermission();//end visit
-                    } else {
-                        setToast(getString(R.string.pleaseEnablePermission));
-                        requestPermission();
-                    }
+                    setToast(getString(R.string.pleaseEnablePermission));
+                    requestPermission();
                 }
+
+//                if (fromUnloading == 1) {
+//                progress.show();
+//                PARAM = 1;
+//                new RequestUrl().execute();//1
+//                } else {
+//                    if (checkPermission()) {
+//                        checkLocationPermission();//end visit
+//                    } else {
+//                        setToast(getString(R.string.pleaseEnablePermission));
+//                        requestPermission();
+//                    }
+//                }
             }
         });
 
@@ -433,7 +441,10 @@ public class UnloadingActivity extends BaseActivity {
         switch (requestCode) {
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    checkLocationPermission();//end visit
+//                    checkLocationPermission();//end visit
+                    progress.show();
+                    PARAM = 1;
+                    new RequestUrl().execute();//1
                 } else {
                     setToast(getString(R.string.pleaseEnablePermission));
                 }
@@ -468,7 +479,7 @@ public class UnloadingActivity extends BaseActivity {
 
     private void getDataOffline() {
         mList = new ArrayList<>();
-        mList = database.getAllStockRequestDetailUnloading(header.getIdHeader());
+        mList = database.getAllStockRequestDetailUnloading(header);
 
         if (mList == null || mList.isEmpty()) {
             llNoData.setVisibility(View.VISIBLE);
@@ -548,14 +559,15 @@ public class UnloadingActivity extends BaseActivity {
                         database.updateUnloading(header, user.getUsername());
                         setToast("Unloading sukses");
                         btnSubmit.setVisibility(View.GONE);
-                        if (fromUnloading == 1) {
+
+//                        if (fromUnloading == 1) {
                             PARAM = 5;
                             new AsyncTaskGeneratePDF().execute();//5
-                        } else {
-                            progress.show();
-                            PARAM = 3;
-                            new RequestUrl().execute();//3
-                        }
+//                        } else {
+//                            progress.show();
+//                            PARAM = 3;
+//                            new RequestUrl().execute();//3
+//                        }
                     } else {
                         setToast(logResult.getMessage());
                     }
@@ -1258,6 +1270,7 @@ public class UnloadingActivity extends BaseActivity {
                 setToast("Gagal mengirim data");
             }
             progressDialog.dismiss();
+
 //            new AsyncTaskGeneratePDF().execute();
         }
     }

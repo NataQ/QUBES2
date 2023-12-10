@@ -100,7 +100,7 @@ public class OrderDetailActivity extends BaseActivity {
             }
             txtOrderNo.setText(orderHeader.getIdHeader() + " - " + format.format(orderHeader.getId()));
             txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
-            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
+//            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
 
             if (orderHeader.getOrder_type().equals("TO")) {
                 btnPrint.setVisibility(View.GONE);
@@ -109,31 +109,36 @@ public class OrderDetailActivity extends BaseActivity {
             }
 
             if (!Helper.isEmpty(orderHeader.getStatus())) {
-                switch (orderHeader.getStatus().toLowerCase()) {
-                    case "approve":
+                switch (orderHeader.getStatus()) {
+                    case Constants.STATUS_APPROVE:
                         llStatus.setVisibility(View.VISIBLE);
-                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.green3_aspp));
-                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.green_aspp));
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(OrderDetailActivity.this, R.color.green3_aspp));
+                        txtStatus.setText("Approve");
+                        txtStatus.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.green_aspp));
                         break;
-                    case "reject":
+                    case Constants.STATUS_REJECTED:
+                        txtStatus.setText("Reject");
                         llStatus.setVisibility(View.VISIBLE);
-                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.red_aspp));
-                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.red2_aspp));
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(OrderDetailActivity.this, R.color.red_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.red2_aspp));
                         break;
-                    case "pending":
+                    case Constants.STATUS_PENDING:
+                        txtStatus.setText("Pending");
                         llStatus.setVisibility(View.VISIBLE);
-                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.yellow3_aspp));
-                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.yellow_aspp));
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(OrderDetailActivity.this, R.color.yellow3_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.yellow_aspp));
                         break;
-                    case "sync success":
+                    case Constants.STATUS_SYNC_SUCCESS:
+                        txtStatus.setText("Sync Success");
                         llStatus.setVisibility(View.VISIBLE);
-                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.blue8_aspp));
-                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.aspp_blue9));
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(OrderDetailActivity.this, R.color.blue8_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.aspp_blue9));
                         break;
-                    case "draft":
+                    case Constants.STATUS_DRAFT:
+                        txtStatus.setText("Draft");
                         llStatus.setVisibility(View.VISIBLE);
-                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), R.color.gray12_aspp));
-                        txtStatus.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.black1_aspp));
+                        llStatus.setBackgroundTintList(ContextCompat.getColorStateList(OrderDetailActivity.this, R.color.gray12_aspp));
+                        txtStatus.setTextColor(ContextCompat.getColor(OrderDetailActivity.this, R.color.black1_aspp));
                         break;
                     default:
                         llStatus.setVisibility(View.GONE);
