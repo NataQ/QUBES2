@@ -45,6 +45,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,6 +60,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
+import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Reason;
@@ -84,6 +86,13 @@ public class ReturnAddActivity extends BaseActivity {
     private String today;
     private String imagepath;
     private Uri uriImagePath;
+    int offset;
+    private String searchMat;
+    private LinearLayoutManager linearLayoutManMaterial;
+    private boolean loading = true;
+    protected int pastVisiblesItems, visibleItemCount, totalItemCount;
+    LinearLayout loadingDataBottom;
+    RecyclerViewMaxHeight rv;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,38 +128,49 @@ public class ReturnAddActivity extends BaseActivity {
                     if (reason.getIs_freetext() == 1) {
                         if (Helper.isNullOrEmpty(material.getDescReason())) {
                             param++;
+                            break;
                         }
                     }
 
                     if (reason.getIs_photo() == 1) {
                         if (Helper.isNullOrEmpty(material.getPhotoReason())) {
                             param++;
+                            break;
                         }
                     }
                 } else {
                     param++;
+                    break;
                 }
 
                 if (material.getQty() == 0) {
                     param++;
+                    break;
                 }
 
-                if (Helper.isNullOrEmpty(material.getUom())) {
+                if (!Helper.isNullOrEmpty(material.getUom())) {
+                    if (material.getUom().equals("-")) {
+                        param++;
+                        break;
+                    }
+                } else {
                     param++;
+                    break;
                 }
 
                 if (Helper.isNullOrEmpty(material.getExpiredDate())) {
                     param++;
+                    break;
                 }
 
                 if (Helper.isNullOrEmpty(material.getCondition())) {
                     param++;
+                    break;
                 }
             }
         } else {
             param++;
         }
-
 
         if (param == 0) {
             progress.show();
@@ -175,7 +195,7 @@ public class ReturnAddActivity extends BaseActivity {
                 Map req = new HashMap();
                 for (Material material : mList) {
                     database.addReturn(material, header);
-                    if(material.getPhotoReason() != null) {
+                    if (material.getPhotoReason() != null) {
                         req = new HashMap();
                         req.put("photo", material.getPhotoReason());
                         req.put("idMaterial", material.getId());
@@ -277,11 +297,11 @@ public class ReturnAddActivity extends BaseActivity {
         if (getIntent().getExtras() != null) {
             Uri uri = (Uri) getIntent().getExtras().get(Constants.OUTPUT_CAMERA);
             getIntent().removeExtra(Constants.OUTPUT_CAMERA);
-            mList = new ArrayList<>();
+            mList = new LinkedList<>();
             mList = SessionManagerQubes.getReturn();
             mList.get(imageType.getPosMaterial()).setPhotoReason(uri.getPath());
         } else {
-            mList = new ArrayList<>();
+            mList = new LinkedList<>();
             mList.addAll(database.getAllReturn(SessionManagerQubes.getOutletHeader().getId()));
         }
 
@@ -289,6 +309,8 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     private void addProduct() {
+        searchMat = null;
+        offset = 0;
         Dialog dialog = new Dialog(ReturnAddActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
@@ -298,42 +320,56 @@ public class ReturnAddActivity extends BaseActivity {
 
         cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
         cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-        EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.rv);
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        EditText editText = dialog.findViewById(R.id.edit_text);
 
-        listSpinner = new ArrayList<>();
-        listSpinner.addAll(initDataMaterial());
-
-        spinnerAdapter = new SpinnerProductReturnAdapter(ReturnAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
-        });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv = dialog.findViewById(R.id.rv);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
         rv.setHasFixedSize(true);
         rv.setNestedScrollingEnabled(false);
+
+        listSpinner = new LinkedList<>();
+        listSpinner = initDataMaterial(searchMat);
+        spinnerAdapter = new SpinnerProductReturnAdapter(ReturnAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        });
         rv.setAdapter(spinnerAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCount();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCount();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                spinnerAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                searchMat = editText.getText().toString().trim();
+                offset = 0;
+                listSpinner = initDataMaterial(searchMat);
+                spinnerAdapter = new SpinnerProductReturnAdapter(ReturnAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+                });
+                rv.setAdapter(spinnerAdapter);
             }
         });
 
         cvCheckedAll.setOnClickListener(v -> {
             if (listFilteredSpinner == null) {
-                listFilteredSpinner = new ArrayList<>();
+                listFilteredSpinner = new LinkedList<>();
             }
             checkedAll = false;
             if (!listFilteredSpinner.isEmpty()) {
@@ -352,7 +388,7 @@ public class ReturnAddActivity extends BaseActivity {
 
         cvUnCheckAll.setOnClickListener(v -> {
             if (listFilteredSpinner == null) {
-                listFilteredSpinner = new ArrayList<>();
+                listFilteredSpinner = new LinkedList<>();
             }
             checkedAll = true;
             if (!listFilteredSpinner.isEmpty()) {
@@ -374,7 +410,7 @@ public class ReturnAddActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-            List<Material> addList = new ArrayList<>();
+            List<Material> addList = new LinkedList<>();
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
                     mat.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
@@ -384,6 +420,23 @@ public class ReturnAddActivity extends BaseActivity {
             addNew(addList);
             dialog.dismiss();
         });
+    }
+
+    public void itemCount() {
+        visibleItemCount = linearLayoutManMaterial.getChildCount();
+        totalItemCount = linearLayoutManMaterial.getItemCount();
+        pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                listSpinner.addAll(initDataMaterial(searchMat));
+                spinnerAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void setCheckedAll() {
@@ -407,7 +460,7 @@ public class ReturnAddActivity extends BaseActivity {
     }
 
     public void setFilteredData(List<Material> mFilteredList) {
-        listFilteredSpinner = new ArrayList<>();
+        listFilteredSpinner = new LinkedList<>();
         listFilteredSpinner.addAll(mFilteredList);
 
         int checked = 0;
@@ -429,10 +482,10 @@ public class ReturnAddActivity extends BaseActivity {
         }
     }
 
-    private List<Material> initDataMaterial() {
-        List<Material> listSpinner = new ArrayList<>();
-        List<Material> listMat = new ArrayList<>();
-        listMat.addAll(database.getAllMasterMaterial());
+    private List<Material> initDataMaterial(String searchString) {
+        List<Material> listSpinner = new LinkedList<>();
+        List<Material> listMat = new LinkedList<>();
+        listMat.addAll(database.getAllMasterMaterial(offset, searchString));
 
         for (Material param : listMat) {
             int exist = 0;

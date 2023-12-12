@@ -72,16 +72,36 @@
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@drawable/editbox"
                 android:hint="Search..."
                 android:padding="8dp"
                 android:singleLine="true" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSearch"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:layout_marginStart="8dp"
+                android:textSize="@dimen/text_small"
+                app:backgroundTint="@color/blue_aspp"
+                app:cornerRadius="5dp"/>
+
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <id.co.qualitas.qubes.helper.RecyclerViewMaxHeight
             android:id="@+id/rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <include
+            android:id="@+id/loadingDataBottom"
+            android:visibility="gone"
+            layout="@layout/aspp_layout_loading_data_bottom" />
 
         <LinearLayout
             android:layout_width="match_parent"

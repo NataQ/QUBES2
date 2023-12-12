@@ -59,7 +59,7 @@ public class Constants {
     public static final String CLIENT_ID = "000";
     public static final String INVALID_GRANT = "invalid_grant";
     public static final String PIPE_ = "|";
-    public static final int LIMIT_ITEM_LIST = 10;
+    public static final int LIMIT_ITEM_LIST = 15;
     public static final long LONG_1000 = 1000;
     public static final long LONG_100 = 400;
     public static final int REQUEST_CAMERA_CODE = 4;

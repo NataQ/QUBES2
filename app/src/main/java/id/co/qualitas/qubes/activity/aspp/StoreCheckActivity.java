@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -33,6 +34,7 @@ import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductReturnAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStoreCheckAdapter;
 import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
@@ -42,6 +44,7 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.MovableFloatingActionButton;
 import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StoreCheck;
 import id.co.qualitas.qubes.model.User;
@@ -61,6 +64,13 @@ public class StoreCheckActivity extends BaseActivity {
     boolean checkedAll = false;
     private SpinnerProductStoreCheckAdapter spinnerAdapter;
     private String today;
+    int offset;
+    private String searchMat;
+    private LinearLayoutManager linearLayoutManMaterial;
+    private boolean loading = true;
+    protected int pastVisiblesItems, visibleItemCount, totalItemCount;
+    LinearLayout loadingDataBottom;
+    RecyclerViewMaxHeight rv;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,13 +108,10 @@ public class StoreCheckActivity extends BaseActivity {
         int param = 0;
 
         if (Helper.isNotEmptyOrNull(mList)) {
-            for (Material material : mList) {
-                if (material.getQty() == 0) {
+            for (Material mat : mList) {
+                if (mat.getQty() == 0 || mat.getUom().equals("-")) {
                     param++;
-                }
-
-                if (Helper.isNullOrEmpty(material.getUom())) {
-                    param++;
+                    break;
                 }
             }
         } else {
@@ -159,44 +166,6 @@ public class StoreCheckActivity extends BaseActivity {
         }
     }
 
-//    private void setDate() {
-//        fromDate = Helper.getTodayDate();
-//        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(fromDate);
-//
-//        txtDate.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                hideKeyboard();
-//                todayDate = Calendar.getInstance();
-//                final Calendar calendar = Calendar.getInstance();
-//                calendar.setTime(fromDate);
-//                final int year = calendar.get(Calendar.YEAR);
-//                final int month = calendar.get(Calendar.MONTH);
-//                final int date = calendar.get(Calendar.DATE);
-//
-//                DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-//                    @Override
-//                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-//                        calendar.set(Calendar.YEAR, year);
-//                        calendar.set(Calendar.MONTH, month);
-//                        calendar.set(Calendar.DATE, dayOfMonth);
-//
-//                        fromDate = calendar.getTime();
-//                        fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-//                        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-//                        txtDate.setText(fromDateString);
-//                        txtDate.setError(null);
-//                    }
-//                };
-//                DatePickerDialog dialog = new DatePickerDialog(StoreCheckActivity.this, dateSetListener, year, month, date);
-//                dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-//                ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                dialog.getDatePicker().setLayoutParams(params);
-//                dialog.show();
-//            }
-//        });
-//    }
-
     private void initData() {
         llNoData.setVisibility(View.GONE);
         today = Helper.getTodayDate(Constants.DATE_FORMAT_3);
@@ -247,6 +216,8 @@ public class StoreCheckActivity extends BaseActivity {
     }
 
     private void addProduct() {
+        searchMat = null;
+        offset = 0;
         Dialog dialog = new Dialog(StoreCheckActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
@@ -256,36 +227,50 @@ public class StoreCheckActivity extends BaseActivity {
 
         cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
         cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-        EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.rv);
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        EditText editText = dialog.findViewById(R.id.edit_text);
 
-        listSpinner = new ArrayList<>();
-        listSpinner.addAll(initDataMaterial());
-
-        spinnerAdapter = new SpinnerProductStoreCheckAdapter(StoreCheckActivity.this, listSpinner, (nameItem, adapterPosition) -> {
-        });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv = dialog.findViewById(R.id.rv);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
         rv.setHasFixedSize(true);
         rv.setNestedScrollingEnabled(false);
+
+        listSpinner = new ArrayList<>();
+        listSpinner = initDataMaterial(searchMat);
+        spinnerAdapter = new SpinnerProductStoreCheckAdapter(StoreCheckActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        });
         rv.setAdapter(spinnerAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCount();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCount();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                spinnerAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v ->{
+            if(!Helper.isEmptyEditText(editText)) {
+                searchMat = editText.getText().toString().trim();
+                offset = 0;
+                listSpinner = initDataMaterial(searchMat);
+                spinnerAdapter = new SpinnerProductStoreCheckAdapter(StoreCheckActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+                });
+                rv.setAdapter(spinnerAdapter);
             }
         });
 
@@ -343,6 +328,23 @@ public class StoreCheckActivity extends BaseActivity {
         });
     }
 
+    public void itemCount() {
+        visibleItemCount = linearLayoutManMaterial.getChildCount();
+        totalItemCount = linearLayoutManMaterial.getItemCount();
+        pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                listSpinner.addAll(initDataMaterial(searchMat));
+                spinnerAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
     public void setCheckedAll() {
         int checked = 0;
         for (Material mat : listSpinner) {
@@ -386,10 +388,10 @@ public class StoreCheckActivity extends BaseActivity {
         }
     }
 
-    private List<Material> initDataMaterial() {
+    private List<Material> initDataMaterial(String searchString) {
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
-        listMat.addAll(database.getAllMasterMaterial());
+        listMat.addAll(database.getAllMasterMaterial(offset, searchString));
 
         for (Material param : listMat) {
             int exist = 0;

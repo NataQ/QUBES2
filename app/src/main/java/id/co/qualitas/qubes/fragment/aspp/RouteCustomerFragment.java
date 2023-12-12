@@ -442,7 +442,7 @@ public class RouteCustomerFragment extends BaseFragment {
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getRouteCustomer(mLastLocation, false);
+        mList = database.getRouteCustomer(mLastLocation, false, 0 , null);
     }
 
 }

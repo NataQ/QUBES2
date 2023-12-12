@@ -71,16 +71,17 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEndDay"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:visibility="gone"
                     android:text="End Day"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
+                    android:textColor="@color/blue6_aspp"
                     android:textSize="@dimen/text_small"
-                    android:visibility="gone"
-                    app:backgroundTint="@color/blue_aspp"
-                    app:cornerRadius="5dp" />
+                    app:cornerRadius="5dp"
+                    app:strokeColor="@color/blue6_aspp"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStartDay"

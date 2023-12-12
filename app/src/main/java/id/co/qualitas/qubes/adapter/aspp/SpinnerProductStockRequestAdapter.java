@@ -16,6 +16,7 @@ import java.util.List;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
+import id.co.qualitas.qubes.listener.OnLoadMoreListener;
 import id.co.qualitas.qubes.model.Material;
 
 public class SpinnerProductStockRequestAdapter extends RecyclerView.Adapter<SpinnerProductStockRequestAdapter.Holder> implements Filterable {
@@ -24,6 +25,9 @@ public class SpinnerProductStockRequestAdapter extends RecyclerView.Adapter<Spin
     private LayoutInflater mInflater;
     private StockRequestAddActivity mContext;
     private OnAdapterListener onAdapterListener;
+    private OnLoadMoreListener onLoadMoreListener;
+    private boolean isLoading = false;
+
 
     public SpinnerProductStockRequestAdapter(StockRequestAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -108,6 +112,12 @@ public class SpinnerProductStockRequestAdapter extends RecyclerView.Adapter<Spin
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
         holder.text.setText(detail.getId() + " - " + detail.getNama());
+        // Bind data to the view holder
+        // Check if the last item is reached and trigger onLoadMore
+//        if (position == mFilteredList.size() - 1 && onLoadMoreListener != null && !isLoading) {
+//            isLoading = true;
+//            onLoadMoreListener.onLoadMore();
+//        }
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);

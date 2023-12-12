@@ -228,6 +228,8 @@ public class DirectionFragment extends BaseFragment {
 
         EditText editText = alertDialog.findViewById(R.id.edit_text);
         RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+        Button btnSearch = alertDialog.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
 
         SpinnerCustomerAdapter spinnerAdapter = new SpinnerCustomerAdapter(getContext(), custList, (header, adapterPosition) -> {
             endPointCustomer = (Customer) header;
@@ -270,6 +272,8 @@ public class DirectionFragment extends BaseFragment {
 
         EditText editText = alertDialog.findViewById(R.id.edit_text);
         RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+        Button btnSearch = alertDialog.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
 
         SpinnerCustomerAdapter spinnerAdapter = new SpinnerCustomerAdapter(getContext(), custList, (header, adapterPosition) -> {
             startPointCustomer = (Customer) header;
@@ -307,7 +311,7 @@ public class DirectionFragment extends BaseFragment {
         if (SessionManagerQubes.getRouteCustomerHeader() != null) {
             routeCustHeader = SessionManagerQubes.getRouteCustomerHeader();
             custList = new ArrayList<>();
-            custList = database.getRouteCustomer(null, false);
+            custList = database.getRouteCustomer(null, false, 0, null);
 
             txtStore.setText(routeCustHeader.getId() + " - " + routeCustHeader.getNama());
             txtAddress.setText(routeCustHeader.getAddress());

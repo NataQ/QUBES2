@@ -246,6 +246,7 @@ public class VisitActivity extends BaseActivity {
         btnStartDay.setOnClickListener(v -> {
             startVisit.setStartDay(true);
             SessionManagerQubes.setStartDay(startVisit);
+            validateButton();
         });
 
         btnEndVisit.setOnClickListener(v -> {
@@ -270,7 +271,25 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddVisit.setOnClickListener(v -> {
-            openDialogAdd();
+//            if (database.getCountOfflineData() == 0) {
+            if (startVisit != null) {
+                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+                    openDialogAdd();
+                } else {
+                    setToast("Please start visit first");
+                }
+            } else {
+                setToast("Please start visit first");
+            }
+//            } else {
+//                setToast("Pastikan semua data offline sudah di sync");
+//            }
+
+//            if (SessionManagerQubes.getStartDay() == 1) {
+//                openDialogAdd();
+//            } else {
+//                setToast("Please start visit first");
+//            }
         });
 
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -284,7 +303,7 @@ public class VisitActivity extends BaseActivity {
                         } else {
                             if (user.getRute_inap() == 1) {
                                 if (startVisit.isStartDay()) {
-                                    setToast("Sudah start visit");
+                                    setToast("Sudah start day");
                                 } else {
                                     requestData();//swipe visit
                                 }
@@ -319,28 +338,6 @@ public class VisitActivity extends BaseActivity {
             public void afterTextChanged(Editable editable) {
 
             }
-        });
-
-        btnAddVisit.setOnClickListener(v -> {
-            if (database.getCountOfflineData() == 0) {
-                if (startVisit != null) {
-                    if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                        openDialogAdd();
-                    } else {
-                        setToast("Please start visit first");
-                    }
-                } else {
-                    setToast("Please start visit first");
-                }
-            } else {
-                setToast("Pastikan semua data offline sudah di sync");
-            }
-
-//            if (SessionManagerQubes.getStartDay() == 1) {
-//                openDialogAdd();
-//            } else {
-//                setToast("Please start visit first");
-//            }
         });
     }
 
@@ -547,8 +544,10 @@ public class VisitActivity extends BaseActivity {
                 visitSalesman.setLatCheckIn(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
                 visitSalesman.setLongCheckIn(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);
                 visitSalesman.setInside(outRadius);
+                visitSalesman.setIdVisit(String.valueOf(startVisit.getId()));
                 visitSalesman.setIdSalesman(user.getUsername());
                 visitSalesman.setCustomerId(outletClicked.getId());
+                visitSalesman.setCustomerName(outletClicked.getNama());
                 visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
                 visitSalesman.setSync(0);
 
@@ -727,7 +726,7 @@ public class VisitActivity extends BaseActivity {
                         } else {
                             if (user.getRute_inap() == 1) {
                                 if (startVisit.isStartDay()) {
-                                    setToast("Sudah start visit");
+                                    setToast("Sudah start day");
                                 } else {
                                     requestData();//swipe noo rute inap
                                 }
@@ -1232,6 +1231,8 @@ public class VisitActivity extends BaseActivity {
 
         EditText editText = alertDialog.findViewById(R.id.edit_text);
         RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+        Button btnSearch = alertDialog.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
 
         List<Customer> groupList = new ArrayList<>();
         groupList.addAll(database.getAllNonRouteCustomer());
@@ -1759,6 +1760,7 @@ public class VisitActivity extends BaseActivity {
                     startVisit.setStart_time(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     startVisit.setKm_awal(kmAwal);
                     startVisit.setPhoto_km_awal(uriBerangkat.getPath());
+                    startVisit.setStartDay(true);
                     SessionManagerQubes.setStartDay(startVisit);
 
                     workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
@@ -2293,13 +2295,13 @@ public class VisitActivity extends BaseActivity {
     }
 
     private void validateButton() {
-        if (user.getRute_inap() == 1) {
-            rlInap.setVisibility(View.VISIBLE);
-            rlDaily.setVisibility(View.GONE);
-        } else {
-            rlInap.setVisibility(View.GONE);
-            rlDaily.setVisibility(View.VISIBLE);
-        }
+//        if (user.getRute_inap() == 1) {
+        rlInap.setVisibility(View.VISIBLE);
+//            rlDaily.setVisibility(View.GONE);
+//        } else {
+//            rlInap.setVisibility(View.GONE);
+        rlDaily.setVisibility(View.VISIBLE);
+//        }
 
         int status = 0;
         if (startVisit != null) {
@@ -2315,7 +2317,7 @@ public class VisitActivity extends BaseActivity {
         switch (status) {
             case 0:
                 btnStartVisit.setVisibility(View.VISIBLE);
-                btnStartDay.setVisibility(View.VISIBLE);
+                btnStartDay.setVisibility(View.GONE);
                 btnEndVisit.setVisibility(View.GONE);
                 btnEndDay.setVisibility(View.GONE);
                 btnAddVisit.setVisibility(View.GONE);
@@ -2323,10 +2325,21 @@ public class VisitActivity extends BaseActivity {
                 workManager.cancelAllWork();
                 break;
             case 1:
+                if (user.getRute_inap() == 1) {
+                    if (!startVisit.isStartDay() && !startVisit.isEndDay()) {
+                        btnStartDay.setVisibility(View.VISIBLE);
+                        btnEndDay.setVisibility(View.GONE);
+                    } else if (startVisit.isStartDay() && !startVisit.isEndDay()) {
+                        btnStartDay.setVisibility(View.GONE);
+                        btnEndDay.setVisibility(View.VISIBLE);
+                    } else if (startVisit.isStartDay() && startVisit.isEndDay()) {
+                        btnStartDay.setVisibility(View.GONE);
+                        btnEndDay.setVisibility(View.GONE);
+                    }
+                }
+
                 btnStartVisit.setVisibility(View.GONE);
-                btnStartDay.setVisibility(View.GONE);
                 btnEndVisit.setVisibility(View.VISIBLE);
-                btnEndDay.setVisibility(View.VISIBLE);
                 btnAddVisit.setVisibility(View.VISIBLE);
                 btnAddNoo.setVisibility(View.VISIBLE);
                 break;

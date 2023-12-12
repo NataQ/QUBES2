@@ -10,7 +10,7 @@ public class DaerahTingkat {
     String nama_provinsi;
     String kode_kabupaten;
     String nama_kabupaten;
-    int kode_pos;
+    Integer kode_pos;
 
     public String getIdHeader() {
         return idHeader;
@@ -84,11 +84,11 @@ public class DaerahTingkat {
         this.nama_kabupaten = nama_kabupaten;
     }
 
-    public int getKode_pos() {
+    public Integer getKode_pos() {
         return kode_pos;
     }
 
-    public void setKode_pos(int kode_pos) {
+    public void setKode_pos(Integer kode_pos) {
         this.kode_pos = kode_pos;
     }
 }

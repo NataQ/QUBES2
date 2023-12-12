@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +35,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -70,8 +72,8 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             this.mList = mList;
             this.mFilteredList = mList;
         } else {
-            this.mList = new ArrayList<>();
-            this.mFilteredList = new ArrayList<>();
+            this.mList = new LinkedList<>();
+            this.mFilteredList = new LinkedList<>();
         }
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
@@ -93,7 +95,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Material> filteredList = new ArrayList<>();
+                    List<Material> filteredList = new LinkedList<>();
                     for (Material row : mList) {
 
                         /*filter by name*/
@@ -112,7 +114,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Material>) filterResults.values;
+                mFilteredList = (LinkedList<Material>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -192,11 +194,11 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         }
 
         List<DropDown> conditionList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
-//        List<String> conditionList = new ArrayList<>();
+//        List<String> conditionList = new LinkedList<>();
 //        conditionList.add("Good");
 //        conditionList.add("Bad");
 
-        List<String> reasonList = new ArrayList<>();
+        List<String> reasonList = new LinkedList<>();
         reasonList.addAll(new Database(mContext).getAllStringReason(Constants.REASON_TYPE_RETURN));
 
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
@@ -375,8 +377,12 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    try {
+                        mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                        notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    }catch (Exception e){
+                        Toast.makeText(mContext, "Failed remove item", Toast.LENGTH_SHORT).show();
+                    }
                     alertDialog.dismiss();
                 }
             });

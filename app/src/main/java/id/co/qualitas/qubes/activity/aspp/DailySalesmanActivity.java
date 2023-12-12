@@ -484,12 +484,6 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void checkOutCustomer() {
-        outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
-        if (outletHeader.isNoo()) {
-            database.updateStatusOutletNoo(outletHeader, user.getUsername());
-        } else {
-            database.updateStatusOutletVisit(outletHeader, user.getUsername());
-        }
         Location locCustomer = new Location(LocationManager.GPS_PROVIDER);
         locCustomer.setLatitude(outletHeader.getLatitude());
         locCustomer.setLongitude(outletHeader.getLongitude());
@@ -506,37 +500,33 @@ public class DailySalesmanActivity extends BaseActivity {
         }
 
         visitSales.setStatus(Constants.CHECK_OUT_VISIT);
-
+        boolean notBuy = visitSales.getIdNotBuyReason() != null ? true : false;
+        String typePhoto = visitSales.getIdNotBuyReason() != null ? "not_buy" : "not_visit";
         Map req = new HashMap();
-        if (visitSales.getIdNotBuyReason() != null) {
-            database.updateVisit(visitSales, user.getUsername(), true);
-
+        boolean result = database.updateVisit(visitSales, user.getUsername(), notBuy);
+        if (result) {
             if (visitSales.getPhotoNotBuyReason() != null) {
                 req = new HashMap();
                 req.put("photo", visitSales.getPhotoNotBuyReason());
-                req.put("typePhoto", "not_buy");
+                req.put("typePhoto", typePhoto);
                 req.put("idDB", visitSales.getIdHeader());
                 req.put("customerID", visitSales.getCustomerId());
                 req.put("username", user.getUsername());
                 database.addPhoto(req);
             }
+            outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
+            if (outletHeader.isNoo()) {
+                database.updateStatusOutletNoo(outletHeader, user.getUsername());
+            } else {
+                database.updateStatusOutletVisit(outletHeader, user.getUsername());
+            }
+            SessionManagerQubes.setOutletHeader(outletHeader);
+            onBackPressed();
+            setToast("Check Out Success");
         } else {
-            database.updateVisit(visitSales, user.getUsername(), false);
-
-            if (visitSales.getPhotoNotVisitReason() != null) {
-                req = new HashMap();
-                req.put("photo", visitSales.getPhotoNotVisitReason());
-                req.put("typePhoto", "not_visit");
-                req.put("idDB", visitSales.getIdHeader());
-                req.put("customerID", visitSales.getCustomerId());
-                req.put("username", user.getUsername());
-                database.addPhoto(req);
-            }
+            setToast("Check Out Failed");
         }
-        SessionManagerQubes.setOutletHeader(outletHeader);
-        onBackPressed();
     }
-
 
     public void openDialogPause() {
         imageType = new ImageType();
@@ -983,35 +973,34 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void pauseTimer() {
-        timerValue.stop();
-
-        outletHeader.setStatus(Constants.PAUSE_VISIT);
-        if (outletHeader.isNoo()) {
-            database.updateStatusOutletNoo(outletHeader, user.getUsername());
-        } else {
-            database.updateStatusOutletVisit(outletHeader, user.getUsername());
-        }
-
-        SessionManagerQubes.setOutletHeader(outletHeader);
-
         visitSales.setStatus(Constants.PAUSE_VISIT);
-//        visitSales.setPauseTime(Helper.getTodayDate(Constants.DATE_FORMAT_2));
         visitSales.setResumeTime(null);
         visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
-        database.updateVisit(visitSales, user.getUsername(), false);
-
-        if (visitSales.getPhotoPauseReason() != null) {
-            Map req = new HashMap();
-            req.put("photo", visitSales.getPhotoPauseReason());
-            req.put("typePhoto", "pause");
-            req.put("idDB", visitSales.getIdHeader());
-            req.put("customerID", visitSales.getCustomerId());
-            req.put("username", user.getUsername());
-            database.addPhoto(req);
+        boolean result = database.updateVisit(visitSales, user.getUsername(), false);
+        if(result) {
+            setToast("Pause Success");
+            timerValue.stop();
+            if (visitSales.getPhotoPauseReason() != null) {
+                Map req = new HashMap();
+                req.put("photo", visitSales.getPhotoPauseReason());
+                req.put("typePhoto", "pause");
+                req.put("idDB", visitSales.getIdHeader());
+                req.put("customerID", visitSales.getCustomerId());
+                req.put("username", user.getUsername());
+                database.addPhoto(req);
+            }
+            outletHeader.setStatus(Constants.PAUSE_VISIT);
+            if (outletHeader.isNoo()) {
+                database.updateStatusOutletNoo(outletHeader, user.getUsername());
+            } else {
+                database.updateStatusOutletVisit(outletHeader, user.getUsername());
+            }
+            SessionManagerQubes.setOutletHeader(outletHeader);
+            txtStatus.setText("Resume");
+            imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
+        }else{
+            setToast("Pause Failed");
         }
-
-        txtStatus.setText("Resume");
-        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
     }
 
     private void resumeTimer() {

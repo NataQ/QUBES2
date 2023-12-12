@@ -7,7 +7,9 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import id.co.qualitas.qubes.constants.Constants;
@@ -227,15 +229,15 @@ public abstract class SessionManagerQubes {
     //---------------------------------------------------------------------------------------------------------------------------------------
 
     public static List<VisitSalesman> getVisitSalesmanReason() {
-        return Arrays.asList(gson.fromJson(visitSalesmanReasonPrefs.getString(KEY_VISIT_SALESMAN_REASON, null), VisitSalesman[].class));
+        return new LinkedList<>(Arrays.asList(gson.fromJson(visitSalesmanReasonPrefs.getString(KEY_VISIT_SALESMAN_REASON, null), VisitSalesman[].class)));
     }
 
     public static List<Target> getTarget() {
-        return Arrays.asList(gson.fromJson(targetPrefs.getString(KEY_TARGET, null), Target[].class));
+        return new LinkedList<>(Arrays.asList(gson.fromJson(targetPrefs.getString(KEY_TARGET, null), Target[].class)));
     }
 
     public static List<Material> getReturn() {
-        return Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class));
+        return  new LinkedList<>(Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class)));
     }
 
     public static Invoice getCollectionHeader() {

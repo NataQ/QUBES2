@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         login.setOnClickListener(v -> {
-            userId = edtUsername.getText().toString().trim().toLowerCase();
+            userId = edtUsername.getText().toString().trim();
             password = edtPassword.getText().toString().trim();
 
             if (userId.isEmpty()) {

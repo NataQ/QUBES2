@@ -90,7 +90,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="5dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -112,6 +112,20 @@
                     <!--                        android:textColor="@color/black_aspp"-->
                     <!--                        android:text="Filter"/>-->
                 </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSearch"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="Search"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:layout_marginStart="5dp"
+                    android:textSize="@dimen/text_small"
+                    app:backgroundTint="@color/blue_aspp"
+                    app:cornerRadius="5dp"/>
             </LinearLayout>
 
             <FrameLayout
@@ -175,6 +189,11 @@
                         android:layout_height="match_parent"
                         android:clipToPadding="false"
                         tools:listitem="@layout/aspp_row_view_route_customer" />
+
+                    <include
+                        android:id="@+id/loadingDataBottom"
+                        android:visibility="gone"
+                        layout="@layout/aspp_layout_loading_data_bottom" />
                 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             </FrameLayout>
 

@@ -61,10 +61,12 @@ import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerAllDropDownAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerDaerahTingkatAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerTypePriceAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
 import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
@@ -109,6 +111,12 @@ public class CreateNooActivity extends BaseActivity {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private List<DropDown> statusToko, statusNPWP, suku;
+    int offset;
+    LinearLayout loadingDataBottom;
+    RecyclerViewMaxHeight rv;
+    List<DaerahTingkat> daerahTingkatList;
+    private LinearLayoutManager linearLayoutManMaterial;
+    private boolean loading = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -629,6 +637,8 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
         EditText editText = dialog.findViewById(R.id.edit_text);
         RecyclerView rv = dialog.findViewById(R.id.list_view);
 
@@ -678,6 +688,8 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        btnSearch.setVisibility(View.GONE);
         EditText editText = dialog.findViewById(R.id.edit_text);
         RecyclerView rv = dialog.findViewById(R.id.list_view);
 
@@ -720,6 +732,8 @@ public class CreateNooActivity extends BaseActivity {
     }
 
     private void openDialogProvinsi() {
+        offset = 0;
+        loading = true;
         Dialog dialog = new Dialog(CreateNooActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -727,14 +741,25 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
         EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.list_view);
-        setDataDaerahTingkat();
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
+        rv = dialog.findViewById(R.id.list_view);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        setDataDaerahTingkat();//rpvinsi
 
-        List<DaerahTingkat> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllProvinsi(daerahTingkat));
+//        List<DaerahTingkat> arrayList = new ArrayList<>();
+//        arrayList.addAll(database.getAllProvinsi(daerahTingkat));
 
-        provinsiAdpater = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 5, arrayList, (header, adapterPosition) -> {
+        daerahTingkatList = new ArrayList<>();
+        if (!Helper.isEmptyEditText(editText)) {
+            daerahTingkat.setNama_provinsi(editText.getText().toString().trim());
+        }
+        daerahTingkatList = database.getAllProvinsi(daerahTingkat, offset);
+        provinsiAdpater = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 5, daerahTingkatList, (header, adapterPosition) -> {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
@@ -743,31 +768,66 @@ public class CreateNooActivity extends BaseActivity {
             txtProvinsi.setText(header.getNama_provinsi());
             dialog.dismiss();
         });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv.setHasFixedSize(true);
-        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(provinsiAdpater);
 
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                provinsiAdpater.getFilter().filter(s);
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCountProvinsi();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCountProvinsi();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                provinsiAdpater.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                daerahTingkat.setNama_provinsi(editText.getText().toString().trim());
+                offset = 0;
+                loading = true;
+                daerahTingkatList = database.getAllProvinsi(daerahTingkat, offset);
+                provinsiAdpater = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 5, daerahTingkatList, (header, adapterPosition) -> {
+                    if (customerNoo == null) {
+                        customerNoo = new Customer();
+                    }
+                    customerNoo.setProvinsi(header.getNama_provinsi());
+                    customerNoo.setIdProvinsi(header.getKode_provinsi());
+                    txtProvinsi.setText(header.getNama_provinsi());
+                    dialog.dismiss();
+                });
+                rv.setAdapter(provinsiAdpater);
             }
         });
     }
 
     private void openDialogKabupaten() {
+        offset = 0;
+        loading = true;
         Dialog dialog = new Dialog(CreateNooActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -775,14 +835,25 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
         EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.list_view);
-        setDataDaerahTingkat();
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
+        rv = dialog.findViewById(R.id.list_view);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        setDataDaerahTingkat();//kota
 
-        List<DaerahTingkat> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllKabupaten(daerahTingkat));
+//        List<DaerahTingkat> arrayList = new ArrayList<>();
+//        arrayList.addAll(database.getAllKabupaten(daerahTingkat));
 
-        kabupatenAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 4, arrayList, (header, adapterPosition) -> {
+        daerahTingkatList = new ArrayList<>();
+        if (!Helper.isEmptyEditText(editText)) {
+            daerahTingkat.setNama_kabupaten(editText.getText().toString().trim());
+        }
+        daerahTingkatList = database.getAllKabupaten(daerahTingkat, offset);
+        kabupatenAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 4, daerahTingkatList, (header, adapterPosition) -> {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
@@ -791,31 +862,66 @@ public class CreateNooActivity extends BaseActivity {
             txtKotaKabupaten.setText(header.getNama_kabupaten());
             dialog.dismiss();
         });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv.setHasFixedSize(true);
-        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(kabupatenAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                kabupatenAdapter.getFilter().filter(s);
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCountKota();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCountKota();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                kabupatenAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                daerahTingkat.setNama_kabupaten(editText.getText().toString().trim());
+                offset = 0;
+                loading = true;
+                daerahTingkatList = database.getAllKabupaten(daerahTingkat, offset);
+                kabupatenAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 4, daerahTingkatList, (header, adapterPosition) -> {
+                    if (customerNoo == null) {
+                        customerNoo = new Customer();
+                    }
+                    customerNoo.setKota(header.getNama_kabupaten());
+                    customerNoo.setIdKota(header.getKode_kabupaten());
+                    txtKotaKabupaten.setText(header.getNama_kabupaten());
+                    dialog.dismiss();
+                });
+                rv.setAdapter(kabupatenAdapter);
             }
         });
     }
 
     private void openDialogKecamatan() {
+        offset = 0;
+        loading = true;
         Dialog dialog = new Dialog(CreateNooActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -823,14 +929,25 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
         EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.list_view);
-        setDataDaerahTingkat();
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
+        rv = dialog.findViewById(R.id.list_view);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        setDataDaerahTingkat();//kecamatan
 
-        List<DaerahTingkat> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllKecamatan(daerahTingkat));
+//        List<DaerahTingkat> arrayList = new ArrayList<>();
+//        arrayList.addAll(database.getAllKecamatan(daerahTingkat));
 
-        kecamatanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 3, arrayList, (header, adapterPosition) -> {
+        daerahTingkatList = new ArrayList<>();
+        if (!Helper.isEmptyEditText(editText)) {
+            daerahTingkat.setNama_kecamatan(editText.getText().toString().trim());
+        }
+        daerahTingkatList = database.getAllKecamatan(daerahTingkat, offset);
+        kecamatanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 3, daerahTingkatList, (header, adapterPosition) -> {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
@@ -839,28 +956,61 @@ public class CreateNooActivity extends BaseActivity {
             txtKecamatan.setText(header.getNama_kecamatan());
             dialog.dismiss();
         });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv.setHasFixedSize(true);
-        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(kecamatanAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                kecamatanAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCountKecamatan();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCountKecamatan();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
         });
+
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                daerahTingkat.setNama_kecamatan(editText.getText().toString().trim());
+                offset = 0;
+                loading = true;
+                daerahTingkatList = database.getAllKecamatan(daerahTingkat, offset);
+                kecamatanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 3, daerahTingkatList, (header, adapterPosition) -> {
+                    if (customerNoo == null) {
+                        customerNoo = new Customer();
+                    }
+                    customerNoo.setKecamatan(header.getNama_kecamatan());
+                    customerNoo.setIdKecamatan(header.getKode_kecamatan());
+                    txtKecamatan.setText(header.getNama_kecamatan());
+                    dialog.dismiss();
+                });
+                rv.setAdapter(kecamatanAdapter);
+            }
+        });
+
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                kecamatanAdapter.getFilter().filter(s);
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
     }
 
     private void setDataDaerahTingkat() {
@@ -873,6 +1023,8 @@ public class CreateNooActivity extends BaseActivity {
     }
 
     private void openDialogKodePos() {
+        offset = 0;
+        loading = true;
         Dialog dialog = new Dialog(CreateNooActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -880,14 +1032,68 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
         EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.list_view);
-        setDataDaerahTingkat();
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
+        rv = dialog.findViewById(R.id.list_view);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
+        setDataDaerahTingkat();//kode pos
 
-        List<DaerahTingkat> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllKodePos(daerahTingkat));
+//        List<DaerahTingkat> arrayList = new ArrayList<>();
+//       
+//        arrayList.addAll(database.getAllKodePos(daerahTingkat, offset));
+//
+//        kodePosAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 1, arrayList, (header, adapterPosition) -> {
+//            if (customerNoo == null) {
+//                customerNoo = new Customer();
+//            }
+//            customerNoo.setKode_pos(String.valueOf(header.getKode_pos()));
+//            customerNoo.setKelurahan(header.getNama_kelurahan());
+//            customerNoo.setIdKelurahan(header.getKode_kelurahan());
+//            customerNoo.setKecamatan(header.getNama_kecamatan());
+//            customerNoo.setIdKecamatan(header.getKode_kecamatan());
+//            customerNoo.setKota(header.getNama_kabupaten());
+//            customerNoo.setIdKota(header.getKode_kabupaten());
+//            customerNoo.setProvinsi(header.getNama_provinsi());
+//            customerNoo.setIdProvinsi(header.getKode_provinsi());
+//
+//            txtKodePos.setText(String.valueOf(header.getKode_pos()));
+//            txtKelurahan.setText(header.getNama_kelurahan());
+//            txtKecamatan.setText(header.getNama_kecamatan());
+//            txtKotaKabupaten.setText(header.getNama_kabupaten());
+//            txtProvinsi.setText(header.getNama_provinsi());
+//            dialog.dismiss();
+//        });
+//        rv.setAdapter(kodePosAdapter);
+//
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                kodePosAdapter.getFilter().filter(s);
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
-        kodePosAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 1, arrayList, (header, adapterPosition) -> {
+        daerahTingkatList = new ArrayList<>();
+        if (!Helper.isEmptyEditText(editText)) {
+            daerahTingkat.setKode_pos(Integer.parseInt(editText.getText().toString().trim()));
+        }else{
+            daerahTingkat.setKode_pos(null);
+        }
+        daerahTingkatList = database.getAllKodePos(daerahTingkat, offset);
+        kodePosAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 1, daerahTingkatList, (header, adapterPosition) -> {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
@@ -908,31 +1114,146 @@ public class CreateNooActivity extends BaseActivity {
             txtProvinsi.setText(header.getNama_provinsi());
             dialog.dismiss();
         });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv.setHasFixedSize(true);
-        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(kodePosAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCountKodePos();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCountKodePos();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                kodePosAdapter.getFilter().filter(s);
-            }
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                daerahTingkat.setKode_pos(Integer.parseInt(editText.getText().toString().trim()));
+                offset = 0;
+                loading = true;
+                daerahTingkatList = database.getAllKodePos(daerahTingkat, offset);
+                kodePosAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 1, daerahTingkatList, (header, adapterPosition) -> {
+                    if (customerNoo == null) {
+                        customerNoo = new Customer();
+                    }
+                    customerNoo.setKode_pos(String.valueOf(header.getKode_pos()));
+                    customerNoo.setKelurahan(header.getNama_kelurahan());
+                    customerNoo.setIdKelurahan(header.getKode_kelurahan());
+                    customerNoo.setKecamatan(header.getNama_kecamatan());
+                    customerNoo.setIdKecamatan(header.getKode_kecamatan());
+                    customerNoo.setKota(header.getNama_kabupaten());
+                    customerNoo.setIdKota(header.getKode_kabupaten());
+                    customerNoo.setProvinsi(header.getNama_provinsi());
+                    customerNoo.setIdProvinsi(header.getKode_provinsi());
 
-            @Override
-            public void afterTextChanged(Editable s) {
-
+                    txtKodePos.setText(String.valueOf(header.getKode_pos()));
+                    txtKelurahan.setText(header.getNama_kelurahan());
+                    txtKecamatan.setText(header.getNama_kecamatan());
+                    txtKotaKabupaten.setText(header.getNama_kabupaten());
+                    txtProvinsi.setText(header.getNama_provinsi());
+                    dialog.dismiss();
+                });
+                rv.setAdapter(kodePosAdapter);
             }
         });
     }
 
+    public void itemCountKodePos() {
+        int visibleItemCount = linearLayoutManMaterial.getChildCount();
+        int totalItemCount = linearLayoutManMaterial.getItemCount();
+        int pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                daerahTingkatList.addAll(database.getAllKodePos(daerahTingkat, offset));
+                kodePosAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void itemCountKelurahan() {
+        int visibleItemCount = linearLayoutManMaterial.getChildCount();
+        int totalItemCount = linearLayoutManMaterial.getItemCount();
+        int pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                daerahTingkatList = database.getAllKelurahan(daerahTingkat, offset);
+                kelurahanAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void itemCountKecamatan() {
+        int visibleItemCount = linearLayoutManMaterial.getChildCount();
+        int totalItemCount = linearLayoutManMaterial.getItemCount();
+        int pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                daerahTingkatList = database.getAllKecamatan(daerahTingkat, offset);
+                kecamatanAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void itemCountKota() {
+        int visibleItemCount = linearLayoutManMaterial.getChildCount();
+        int totalItemCount = linearLayoutManMaterial.getItemCount();
+        int pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                daerahTingkatList = database.getAllKabupaten(daerahTingkat, offset);
+                kabupatenAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    public void itemCountProvinsi() {
+        int visibleItemCount = linearLayoutManMaterial.getChildCount();
+        int totalItemCount = linearLayoutManMaterial.getItemCount();
+        int pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                daerahTingkatList = database.getAllProvinsi(daerahTingkat, offset);
+                provinsiAdpater.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void openDialogKelurahan() {
+        offset = 0;
+        loading = true;
         Dialog dialog = new Dialog(CreateNooActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner);
@@ -940,14 +1261,25 @@ public class CreateNooActivity extends BaseActivity {
         dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.show();
 
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
         EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.list_view);
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
+        rv = dialog.findViewById(R.id.list_view);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
+        rv.setHasFixedSize(true);
+        rv.setNestedScrollingEnabled(false);
 
-        setDataDaerahTingkat();
-        List<DaerahTingkat> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllKelurahan(daerahTingkat));
+        setDataDaerahTingkat();//kelurahan
+//        List<DaerahTingkat> arrayList = new ArrayList<>();
+//        arrayList.addAll(database.getAllKelurahan(daerahTingkat));
 
-        kelurahanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 2, arrayList, (header, adapterPosition) -> {
+        daerahTingkatList = new ArrayList<>();
+        if (!Helper.isEmptyEditText(editText)) {
+            daerahTingkat.setNama_kelurahan(editText.getText().toString().trim());
+        }
+        daerahTingkatList = database.getAllKelurahan(daerahTingkat, offset);
+        kelurahanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 2, daerahTingkatList, (header, adapterPosition) -> {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
@@ -956,26 +1288,59 @@ public class CreateNooActivity extends BaseActivity {
             txtKelurahan.setText(header.getNama_kelurahan());
             dialog.dismiss();
         });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        rv.setHasFixedSize(true);
-        rv.setNestedScrollingEnabled(false);
         rv.setAdapter(kelurahanAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//        editText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                kelurahanAdapter.getFilter().filter(s);
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCountKelurahan();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCountKelurahan();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                kelurahanAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                daerahTingkat.setNama_kelurahan(editText.getText().toString().trim());
+                offset = 0;
+                loading = true;
+                daerahTingkatList = database.getAllKelurahan(daerahTingkat, offset);
+                kelurahanAdapter = new FilteredSpinnerDaerahTingkatAdapter(CreateNooActivity.this, 2, daerahTingkatList, (header, adapterPosition) -> {
+                    if (customerNoo == null) {
+                        customerNoo = new Customer();
+                    }
+                    customerNoo.setKelurahan(header.getNama_kelurahan());
+                    customerNoo.setIdKelurahan(header.getKode_kelurahan());
+                    txtKelurahan.setText(header.getNama_kelurahan());
+                    dialog.dismiss();
+                });
+                rv.setAdapter(kelurahanAdapter);
             }
         });
     }

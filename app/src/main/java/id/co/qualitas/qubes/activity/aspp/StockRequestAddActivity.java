@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -37,6 +38,8 @@ import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
+import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
+import id.co.qualitas.qubes.listener.OnLoadMoreListener;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
@@ -57,6 +60,13 @@ public class StockRequestAddActivity extends BaseActivity {
     private StockRequest headerRequest;
     private boolean saveDataSuccess = false;
     private WSMessage logResult;
+    int offset;
+    LinearLayout loadingDataBottom;
+    private String searchMat;
+    RecyclerViewMaxHeight rv;
+    private LinearLayoutManager linearLayoutManMaterial;
+    private boolean loading = true;
+    protected int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +101,7 @@ public class StockRequestAddActivity extends BaseActivity {
     }
 
     private void validateData() {
-        int param = 0;
+        int param = 0, paramMat = 0;
 
         if (Helper.isEmpty(txtDate)) {
             param++;
@@ -104,6 +114,18 @@ public class StockRequestAddActivity extends BaseActivity {
             param++;
             setToast(getString(R.string.emptyMaterial));
         }
+
+        for (Material mat : mList) {
+            if (mat.getQty() == 0 || mat.getUom().equals("-")) {
+                paramMat++;
+                break;
+            }
+        }
+        if (paramMat > 0) {
+            setToast("Qty dan Uom tidak boleh kosong");
+        }
+
+        param = param + paramMat;
 
         if (param == 0) {
             PARAM = 1;
@@ -194,6 +216,8 @@ public class StockRequestAddActivity extends BaseActivity {
     }
 
     private void addProduct() {
+        searchMat = null;
+        offset = 0;
         Dialog dialog = new Dialog(StockRequestAddActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
@@ -203,45 +227,50 @@ public class StockRequestAddActivity extends BaseActivity {
 
         cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
         cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-        EditText editText = dialog.findViewById(R.id.edit_text);
-        RecyclerView rv = dialog.findViewById(R.id.rv);
+        loadingDataBottom = dialog.findViewById(R.id.loadingDataBottom);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
+        Button btnSearch = dialog.findViewById(R.id.btnSearch);
+        EditText editText = dialog.findViewById(R.id.edit_text);
 
-        listSpinner = new ArrayList<>();
-        listSpinner.addAll(initDataMaterial());
-
-//        for (int i = 0; i < mList.size(); i++) {
-//            Material mat = mList.get(i);
-//            for (Material spinMat : listSpinner) {
-//                if (mat.getId().equals(spinMat.getId())) {
-//                    mList.remove(i);
-//                }
-//            }
-//        }
-
-        spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
-        });
-
-        rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        rv = dialog.findViewById(R.id.rv);
+        linearLayoutManMaterial = new LinearLayoutManager(getApplicationContext());
+        rv.setLayoutManager(linearLayoutManMaterial);
         rv.setHasFixedSize(true);
         rv.setNestedScrollingEnabled(false);
+
+        listSpinner = new ArrayList<>();
+        listSpinner = initDataMaterial(searchMat);
+        spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        });
         rv.setAdapter(spinnerAdapter);
 
-        editText.addTextChangedListener(new TextWatcher() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCount();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCount();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                spinnerAdapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
+                searchMat = editText.getText().toString().trim();
+                offset = 0;
+                listSpinner = initDataMaterial(searchMat);
+                spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+                });
+                rv.setAdapter(spinnerAdapter);
             }
         });
 
@@ -299,6 +328,23 @@ public class StockRequestAddActivity extends BaseActivity {
         });
     }
 
+    public void itemCount() {
+        visibleItemCount = linearLayoutManMaterial.getChildCount();
+        totalItemCount = linearLayoutManMaterial.getItemCount();
+        pastVisiblesItems = linearLayoutManMaterial.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                listSpinner.addAll(initDataMaterial(searchMat));
+                spinnerAdapter.notifyDataSetChanged();
+                loadingDataBottom.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
@@ -313,10 +359,10 @@ public class StockRequestAddActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
     }
 
-    private List<Material> initDataMaterial() {
+    private List<Material> initDataMaterial(String searchString) {
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
-        listMat.addAll(database.getAllMasterMaterial());
+        listMat.addAll(database.getAllMasterMaterial(offset, searchString));
 
         for (Material param : listMat) {
             int exist = 0;
@@ -329,7 +375,6 @@ public class StockRequestAddActivity extends BaseActivity {
                 listSpinner.add(param);
             }
         }
-
         return listSpinner;
     }
 

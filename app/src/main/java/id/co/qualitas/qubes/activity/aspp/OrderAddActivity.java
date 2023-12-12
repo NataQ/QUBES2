@@ -281,6 +281,7 @@ public class OrderAddActivity extends BaseActivity {
         if (txtTglKirim.getText().toString().equals("")) {
             empty++;
         }
+
         empty = empty + checkMaterial();
 
         return empty == 0;
@@ -290,13 +291,13 @@ public class OrderAddActivity extends BaseActivity {
         int empty = 0;
         if (Helper.isNotEmptyOrNull(mList)) {
             for (Material material : mList) {
-                if (material.getQty() == 0 && material.getUom() != null) {
+                if (material.getQty() == 0 &&  material.getUom().equals("-")) {
                     empty++;
                     break;
                 }
                 if (Helper.isNotEmptyOrNull(material.getExtraItem())) {
                     for (Material extra : material.getExtraItem()) {
-                        if (extra.getQty() == 0 && extra.getUom() != null) {
+                        if (extra.getQty() == 0 && material.getUom().equals("-")) {
                             empty++;
                             break;
                         }

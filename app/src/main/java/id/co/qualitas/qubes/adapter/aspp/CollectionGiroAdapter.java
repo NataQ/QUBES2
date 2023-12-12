@@ -283,6 +283,8 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
             EditText editText = alertDialog.findViewById(R.id.edit_text);
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
+            Button btnSearch = alertDialog.findViewById(R.id.btnSearch);
+            btnSearch.setVisibility(View.GONE);
 
             SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankASPPList, true, (header, adapterPosition) -> {
                 detail.setIdBankASPP(header.getId());
