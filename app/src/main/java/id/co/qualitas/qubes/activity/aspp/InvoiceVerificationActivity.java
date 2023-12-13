@@ -199,44 +199,6 @@ public class InvoiceVerificationActivity extends BaseActivity {
 //        setDataDummy();
     }
 
-    private void setDataDummy() {
-        String jsonFileString = NetworkHelper.getJsonFromAssets(this, "invoice.json");
-        Gson gson = new Gson();
-        Type resultType = new TypeToken<WSMessage>() {
-        }.getType();
-        WSMessage resultWsMessage = gson.fromJson(jsonFileString, resultType);
-        mList = new ArrayList<>();
-        Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
-        if (paramArray != null) {
-            Collections.addAll(mList, paramArray);
-            database.deleteInvoiceHeader();
-            database.deleteInvoiceDetail();
-        }
-
-        for (Invoice param : mList) {
-            List<Material> listMat = new ArrayList<>();
-            Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-            if (matArray != null) {
-                Collections.addAll(listMat, matArray);
-            }
-            param.setMaterialList(listMat);
-
-            int idHeader = database.addInvoiceHeader(param, user.getUsername());
-            Map header = new HashMap();
-            header.put("idHeader", String.valueOf(idHeader));
-            header.put("username", user.getUsername());
-            header.put("no_invoice", param.getNo_invoice());
-            for (Material mat : listMat) {
-                database.addInvoiceDetail(mat, header);
-            }
-        }
-        getData();
-        progressCircle.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-        setTotal();
-        mAdapter.setData(mList);
-    }
-
     private void getData() {
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotVerif();

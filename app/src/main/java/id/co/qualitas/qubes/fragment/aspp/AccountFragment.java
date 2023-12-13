@@ -919,7 +919,7 @@ public class AccountFragment extends BaseFragment {
                     param.setRegis_id(user.getRegis_id());
                     param.setApk_version(BuildConfig.VERSION_NAME);
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    messageResponse = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
                 }
             } catch (Exception ex) {

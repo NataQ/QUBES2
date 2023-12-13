@@ -361,8 +361,8 @@ public class Constants {
     public static final String TRUE = "true";
     public static final String FALSE = "false";
 
-    public static final String ORDER_CANVAS_TYPE = "C";
-    public static final String ORDER_TAKING_TYPE = "T";
+    public static final String ORDER_CANVAS_TYPE = "co";
+    public static final String ORDER_TAKING_TYPE = "to";
     public static final String TYPE_1 = "type1";
     public static final String TYPE_2 = "type2";
 

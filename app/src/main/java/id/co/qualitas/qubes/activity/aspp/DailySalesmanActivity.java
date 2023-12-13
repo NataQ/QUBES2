@@ -771,33 +771,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     fakturList.addAll(database.getOutstandingFaktur(outletHeader.getId()));
                 }
 
-                switch (outletHeader.getStatus()) {
-                    case Constants.CHECK_IN_VISIT:
-                        txtStatus.setText("Pause");
-                        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
-                        btnCheckOut.setVisibility(View.VISIBLE);
-                        llKTP.setEnabled(true);
-                        llNPWP.setEnabled(true);
-                        llOutlet.setEnabled(true);
-                        break;
-                    case Constants.PAUSE_VISIT:
-                        visitSales.setResumeTime(null);
-                        txtStatus.setText("Resume");
-                        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
-                        btnCheckOut.setVisibility(View.VISIBLE);
-                        llKTP.setEnabled(false);
-                        llNPWP.setEnabled(false);
-                        llOutlet.setEnabled(false);
-                        break;
-                    case Constants.CHECK_OUT_VISIT:
-                        llPause.setVisibility(View.GONE);
-                        llTimer.setVisibility(View.GONE);
-                        btnCheckOut.setVisibility(View.GONE);
-                        llKTP.setEnabled(false);
-                        llNPWP.setEnabled(false);
-                        llOutlet.setEnabled(false);
-                        break;
-                }
+                setLayoutFromStatus();//first
                 setView();
             } else {
                 setToast("Gagal mengambil data");
@@ -806,6 +780,36 @@ public class DailySalesmanActivity extends BaseActivity {
         } else {
             setToast("Gagal mengambil data");
             onBackPressed();
+        }
+    }
+
+    private void setLayoutFromStatus() {
+        switch (outletHeader.getStatus()) {
+            case Constants.CHECK_IN_VISIT:
+                txtStatus.setText("Pause");
+                imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
+                btnCheckOut.setVisibility(View.VISIBLE);
+                llKTP.setEnabled(true);
+                llNPWP.setEnabled(true);
+                llOutlet.setEnabled(true);
+                break;
+            case Constants.PAUSE_VISIT:
+                visitSales.setResumeTime(null);
+                txtStatus.setText("Resume");
+                imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
+                btnCheckOut.setVisibility(View.VISIBLE);
+                llKTP.setEnabled(false);
+                llNPWP.setEnabled(false);
+                llOutlet.setEnabled(false);
+                break;
+            case Constants.CHECK_OUT_VISIT:
+                llPause.setVisibility(View.GONE);
+                llTimer.setVisibility(View.GONE);
+                btnCheckOut.setVisibility(View.GONE);
+                llKTP.setEnabled(false);
+                llNPWP.setEnabled(false);
+                llOutlet.setEnabled(false);
+                break;
         }
     }
 
@@ -996,8 +1000,10 @@ public class DailySalesmanActivity extends BaseActivity {
                 database.updateStatusOutletVisit(outletHeader, user.getUsername());
             }
             SessionManagerQubes.setOutletHeader(outletHeader);
-            txtStatus.setText("Resume");
-            imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
+//            txtStatus.setText("Resume");
+//            imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
+            onResume();
+//            setLayoutFromStatus();//abis pause
         }else{
             setToast("Pause Failed");
         }
@@ -1021,9 +1027,10 @@ public class DailySalesmanActivity extends BaseActivity {
         database.updateVisit(visitSales, user.getUsername(), false);
         SessionManagerQubes.setOutletHeader(outletHeader);
 
-        txtStatus.setText("Pause");
-        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
+//        txtStatus.setText("Pause");
+//        imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_pause_visit));
         onResume();
+//        setLayoutFromStatus();//abis resume
     }
 
     private static void formatTime() {

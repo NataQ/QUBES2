@@ -250,7 +250,19 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnEndVisit.setOnClickListener(v -> {
-            if (user.getRute_inap() == 1 && !startVisit.isEndDay()) {
+            boolean pass = false;
+            if(!startVisit.isStartDay()){
+                pass = true;
+            } else{
+                pass = false;
+            }
+
+            if(!startVisit.isEndDay()){
+                pass = true;
+            } else{
+                pass = false;
+            }
+            if (user.getRute_inap() == 1 && pass) {
                 setToast("Silahkan end day terlebih dahulu sebelum end visit");
             } else {
                 if (checkPermission()) {
@@ -263,11 +275,12 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnEndDay.setOnClickListener(v -> {
-            startVisit.setEndDay(true);
-            SessionManagerQubes.setStartDay(startVisit);
-            progress.show();
-            PARAM = 6;
-            new RequestUrl().execute();//rute inap
+            if (checkPermission()) {
+                endTodayVisit();//end visit
+            } else {
+                setToast(getString(R.string.pleaseEnablePermission));
+                requestPermission();
+            }
         });
 
         btnAddVisit.setOnClickListener(v -> {
@@ -1478,8 +1491,18 @@ public class VisitActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 } else {
-                    btnStartDay.setVisibility(View.VISIBLE);
-                    btnEndDay.setVisibility(View.GONE);
+                    if (startVisit.getEnd_time() == null) {
+                        new RequestUrlSync().execute();
+                    } else {
+                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
+                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                        startActivity(intent);
+                    }
+//                    gimana bedain end day dan end visit?
+//                    if (user.getType_sales().equals("TO")) {
+//                    }
+                    //validateButton();
                 }
             }
         }
@@ -1727,6 +1750,8 @@ public class VisitActivity extends BaseActivity {
                     if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
                         workRequest = new PeriodicWorkRequest.Builder(NotiWorker.class, 15, TimeUnit.MINUTES).build();
                         workManager.enqueueUniquePeriodicWork(TAG, ExistingPeriodicWorkPolicy.KEEP, (PeriodicWorkRequest) workRequest);
+                        startVisit.setStartDay(true);
+                        SessionManagerQubes.setStartDay(startVisit);
                     }
                 }
 
@@ -1812,7 +1837,15 @@ public class VisitActivity extends BaseActivity {
 //                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
 //                        startActivity(intent);
 //                    } else {
-                    openDialogEndVisit();//after save daily salesman
+                    if (user.getRute_inap() == 1) {
+                        startVisit.setEndDay(true);
+                        SessionManagerQubes.setStartDay(startVisit);
+                        progress.show();
+                        PARAM = 6;
+                        new RequestUrl().execute();//rute inap
+                    } else {
+                        openDialogEndVisit();//after save daily salesman
+                    }
 //                    }
                 } else {
                     setToast("Gagal menyimpan data");
@@ -2289,7 +2322,7 @@ public class VisitActivity extends BaseActivity {
             progressDialog.dismiss();
 
             if (user.getRute_inap() == 1) {
-
+                validateButton();
             }
         }
     }
@@ -2329,19 +2362,27 @@ public class VisitActivity extends BaseActivity {
                     if (!startVisit.isStartDay() && !startVisit.isEndDay()) {
                         btnStartDay.setVisibility(View.VISIBLE);
                         btnEndDay.setVisibility(View.GONE);
+                        btnAddVisit.setVisibility(View.GONE);
+                        btnAddNoo.setVisibility(View.GONE);
                     } else if (startVisit.isStartDay() && !startVisit.isEndDay()) {
                         btnStartDay.setVisibility(View.GONE);
                         btnEndDay.setVisibility(View.VISIBLE);
+                        btnAddVisit.setVisibility(View.VISIBLE);
+                        btnAddNoo.setVisibility(View.VISIBLE);
                     } else if (startVisit.isStartDay() && startVisit.isEndDay()) {
                         btnStartDay.setVisibility(View.GONE);
                         btnEndDay.setVisibility(View.GONE);
+                        btnAddVisit.setVisibility(View.GONE);
+                        btnAddNoo.setVisibility(View.GONE);
                     }
+                    btnStartVisit.setVisibility(View.GONE);
+                    btnEndVisit.setVisibility(View.VISIBLE);
+                } else {
+                    btnStartVisit.setVisibility(View.GONE);
+                    btnEndVisit.setVisibility(View.VISIBLE);
+                    btnAddVisit.setVisibility(View.VISIBLE);
+                    btnAddNoo.setVisibility(View.VISIBLE);
                 }
-
-                btnStartVisit.setVisibility(View.GONE);
-                btnEndVisit.setVisibility(View.VISIBLE);
-                btnAddVisit.setVisibility(View.VISIBLE);
-                btnAddNoo.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 btnStartVisit.setVisibility(View.GONE);
@@ -2401,7 +2442,16 @@ public class VisitActivity extends BaseActivity {
                                 currentLocation.put("address", result.getAddressLine(0));
                                 if (endVisit) {
                                     if (database.getCountNotVisit() == 0) {
-                                        openDialogEndVisit();//get location
+                                        if (user.getRute_inap() == 1) {
+                                            startVisit.setEndDay(false);
+                                            startVisit.setStartDay(false);
+                                            SessionManagerQubes.setStartDay(startVisit);
+                                            progress.show();
+                                            PARAM = 6;
+                                            new RequestUrl().execute();//rute inap
+                                        } else {
+                                            openDialogEndVisit();//get location
+                                        }
                                     } else {
                                         openDialogReasonNotVisit();//end visit
                                     }

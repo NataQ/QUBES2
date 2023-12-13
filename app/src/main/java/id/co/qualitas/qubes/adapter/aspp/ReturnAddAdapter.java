@@ -57,9 +57,9 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
     private LayoutInflater mInflater;
     private ReturnAddActivity mContext;
     private OnAdapterListener onAdapterListener;
-    private ArrayAdapter<String> uomAdapter;//conditionAdapter;
+    private ArrayAdapter<String> uomAdapter, conditionAdapter;
     private ArrayAdapter<String> reasonAdapter;
-    private SpinnerAllDropDownAdapter conditionAdapter;
+    //    private SpinnerAllDropDownAdapter conditionAdapter;
     private Reason reasonDetail;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
@@ -193,7 +193,8 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
             listSpinner.add("-");
         }
 
-        List<DropDown> conditionList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
+//        List<DropDown> conditionList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
+        List<String> conditionList = new Database(mContext).getDropDownString(Constants.DROP_DOWN_CONDITION_RETURN);
 //        List<String> conditionList = new LinkedList<>();
 //        conditionList.add("Good");
 //        conditionList.add("Bad");
@@ -272,30 +273,30 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         holder.autoCompleteUom.setAdapter(uomAdapter);
         holder.autoCompleteUom.setText(detail.getUom(), false);
 
-        String result = getDetailDropDown(conditionList,detail.getCondition());
-
-        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList);
-        holder.autoCompleteCondition.setAdapter(conditionAdapter);
+        String result = getDetailDropDownString(detail.getCondition());
+//        conditionAdapter = new SpinnerAllDropDownAdapter(mContext, conditionList);
+//        holder.autoCompleteCondition.setAdapter(conditionAdapter);
         holder.autoCompleteCondition.setText(result, false);
 
-//        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
-//            @Override
-//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                TextView text = view.findViewById(R.id.text1);
-//                return view;
-//            }
-//        };
-//        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        conditionAdapter.addAll(conditionList);
-//        holder.autoCompleteCondition.setAdapter(conditionAdapter);
+        conditionAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                return view;
+            }
+        };
+        conditionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        conditionAdapter.addAll(conditionList);
+        holder.autoCompleteCondition.setAdapter(conditionAdapter);
 
         holder.autoCompleteCondition.setOnItemClickListener((adapterView, view, i, l) -> {
-            String id = conditionList.get(i).getId();
-            String selected = conditionList.get(i).getValue();
+            DropDown det = getDetailDropDown(i);
+            String id = det.getId();
+            String selected = det.getValue();
             detail.setCondition(id);
             detail.setCondition_pos(i);
-            holder.autoCompleteCondition.setText(selected);
+//            holder.autoCompleteCondition.setText(selected);
         });
 
         reasonAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
@@ -380,7 +381,7 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
                     try {
                         mFilteredList.remove(holder.getAbsoluteAdapterPosition());
                         notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         Toast.makeText(mContext, "Failed remove item", Toast.LENGTH_SHORT).show();
                     }
                     alertDialog.dismiss();
@@ -419,11 +420,24 @@ public class ReturnAddAdapter extends RecyclerView.Adapter<ReturnAddAdapter.Hold
         });
     }
 
-    private String getDetailDropDown(List<DropDown> mList, String req) {
+    private String getDetailDropDownString(String req) {
+        List<DropDown> mList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
         String result = null;
-        for(DropDown dropDown : mList){
-            if(dropDown.getId().equals(req)){
+        for (DropDown dropDown : mList) {
+            if (dropDown.getId().equals(req)) {
                 result = dropDown.getValue();
+                break;
+            }
+        }
+        return result;
+    }
+
+    private DropDown getDetailDropDown(int pos) {
+        List<DropDown> mList = new Database(mContext).getDropDown(Constants.DROP_DOWN_CONDITION_RETURN);
+        DropDown result = new DropDown();
+        for (int i = 0; i < mList.size(); i++) {
+            if (i == pos) {
+                result = mList.get(i);
                 break;
             }
         }

@@ -519,7 +519,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + ")"
+            + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + "," + KEY_ID_INVOICE_HEADER_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_NOO = "CREATE TABLE " + TABLE_NOO + "("
@@ -3204,7 +3204,7 @@ public class Database extends SQLiteOpenHelper {
     public List<StockRequest> getAllStockRequestHeader() {
         List<StockRequest> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_REQUEST_DATE + " desc";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -3235,10 +3235,10 @@ public class Database extends SQLiteOpenHelper {
     public StockRequest getLastStockRequest() {
         StockRequest paramModel = new StockRequest();
         // Select All Query
-        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1  and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
 
         if (cursor.moveToFirst()) {
             paramModel = new StockRequest();
@@ -3411,10 +3411,10 @@ public class Database extends SQLiteOpenHelper {
 //                "(select count(*) as total from stockrequestheader) b \n" +
 //                "where a.isUnloading = 0";
 
-        String selectQuery = "select count(*) as total from stockrequestheader where (status = " + Constants.STATUS_APPROVE + " or status = " + Constants.STATUS_PENDING + ") and isUnloading = 0";
+        String selectQuery = "select count(*) as total from stockrequestheader where (status = ? or status = ?) and isUnloading = 0";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_PENDING, Constants.STATUS_APPROVE});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -3458,7 +3458,7 @@ public class Database extends SQLiteOpenHelper {
     public StockRequest getAllStockMaterial() {
         // Select All Query
         StockRequest result = new StockRequest();
-        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
         String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
                 "left join " + TABLE_MASTER_UOM + " b on a." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = a." + KEY_UOM + "\n" +
@@ -3539,7 +3539,7 @@ public class Database extends SQLiteOpenHelper {
     public Material getStockMaterial(Map req) {
         // Select All Query
         Material result = null;
-        String selectQuery = "SELECT max(" + KEY_REQUEST_DATE + "), * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
 //        String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ? ";
         String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
@@ -6110,6 +6110,42 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<String> getDropDownString(String type) {
+        List<String> arrayList = new ArrayList<>();
+        String selectQuery = "WITH RECURSIVE split(" + KEY_KEY_PARAMETER + ", " + KEY_VALUE + ", rest) AS (\n" +
+                "   SELECT " + KEY_KEY_PARAMETER + ",'', " + KEY_VALUE + "||';' FROM " + TABLE_MASTER_PARAMETER + " where " + KEY_KEY_PARAMETER + " = ?\n" +
+                "   UNION ALL SELECT\n" +
+                "   substr(rest, 0, instr(rest, ':')) " + KEY_KEY_PARAMETER + ",\n" +
+                "   substr(rest, 0, instr(rest, ';')) value,\n" +
+                "   substr(rest, instr(rest, ';')+1)\n" +
+                "   FROM split WHERE rest!=''\n" +
+                ")\n" +
+                "SELECT " + KEY_KEY_PARAMETER + ", " + KEY_VALUE + "\n" +
+                "FROM split\n" +
+                "WHERE " + KEY_VALUE + "!='';";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{type});
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+//                    DropDown result = new DropDown();
+//                    result.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEY_PARAMETER)));
+                    String value = cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALUE));
+                    String[] separated = value.split(":");
+//                    result.setValue(separated[1].trim());
+                    arrayList.add(separated[1].trim());
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());
+            arrayList = null;
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<DropDown> getDropDown(String type) {
         List<DropDown> arrayList = new ArrayList<>();
         String selectQuery = "WITH RECURSIVE split(" + KEY_KEY_PARAMETER + ", " + KEY_VALUE + ", rest) AS (\n" +
@@ -6652,7 +6688,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        if (req.getOrder_type().equals("CO")) {
+        if (req.getOrder_type().equals(Constants.ORDER_CANVAS_TYPE)) {
             values.put(KEY_STATUS, "Approve");
         } else {
             values.put(KEY_STATUS, "Pending");
