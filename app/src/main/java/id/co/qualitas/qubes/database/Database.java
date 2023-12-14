@@ -5122,10 +5122,10 @@ public class Database extends SQLiteOpenHelper {
         String countQuery;
         Cursor cursor;
         if (allRoute) {
-            countQuery = "SELECT * FROM " + TABLE_CUSTOMER;
+            countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER ;
             cursor = db.rawQuery(countQuery, null);
         } else {// today route
-            countQuery = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
+            countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
             cursor = db.rawQuery(countQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
         }
 

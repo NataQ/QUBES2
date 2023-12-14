@@ -170,7 +170,8 @@ public class OrderAddActivity extends BaseActivity {
                                 dialogConfirm();
                             }
                         } else {
-                            askForPermissions(permissionsList);
+                            dialogConfirm();
+//                            askForPermissions(permissionsList);
                         }
                     } else {
                         dialogConfirm();
@@ -760,22 +761,27 @@ public class OrderAddActivity extends BaseActivity {
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
                         startActivity(intent);
                     } else {
-                        if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                        if (user.getType_sales().equals("CO")) {
+                            if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                                }
+                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                                }
+                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                            } else {
+                                intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
+                                startActivity(intent);
                             }
-                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                            }
-                        } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-                        } else {
-                            intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
+                        }else{
+                            Intent intent = new Intent(OrderAddActivity.this, OrderActivity.class);
                             startActivity(intent);
                         }
                     }
@@ -835,17 +841,19 @@ public class OrderAddActivity extends BaseActivity {
             if (user.getType_sales().equals("CO")) {
                 txtDialog.setText("Anda yakin sudah selesai order?");
             } else {
-                String text = null;
+                String text = "";
                 if (overLK) text = text + "Order ini melebihi limit customer.";
                 if (doubleBon)
-                    text = text + "\nOrder ini memiliki double bon.\nAnda yakin ingin menyimpan order ini?";
+                    text = text + "\nOrder ini memiliki double bon.";
+                text = text + "\nAnda yakin ingin menyimpan order ini?";
                 txtDialog.setText(text);
             }
         } else {
             String text = null;
             if (overLK) text = text + "Order ini melebihi limit customer.";
             if (doubleBon)
-                text = text + "\nOrder ini memiliki double bon.\nAnda yakin ingin menyimpan order ini?";
+                text = text + "\nOrder ini memiliki double bon.";
+            text = text + "\nAnda yakin ingin menyimpan order ini?";
             txtDialog.setText(text);
         }
 

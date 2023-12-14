@@ -6,11 +6,20 @@ public class Bank implements Serializable {
     private String id;
     private String name;
     private String id_depo;
+    private String id_region;
     private String category;
     private String no_rek;
     private int isSync;
 
     public Bank() {
+    }
+
+    public String getId_region() {
+        return id_region;
+    }
+
+    public void setId_region(String id_region) {
+        this.id_region = id_region;
     }
 
     public String getId() {

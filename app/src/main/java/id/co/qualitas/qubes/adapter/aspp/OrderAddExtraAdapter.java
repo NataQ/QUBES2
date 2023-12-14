@@ -40,6 +40,7 @@ import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdapter.Holder> implements Filterable {
     private List<Material> mList;
@@ -204,16 +205,18 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
             if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail.getUom())) {
-                Map req = new HashMap();
-                req.put("id_material", productId);
-                req.put("uom", detail.getUom());
-                stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
-                itemOrder = new Database(mContext).getQtySmallUom(detail);
-                if (itemOrder.getQty() > stockItem.getQty()) {
-                    String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
-                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                    holder.edtQty.clearFocus();
-                    holder.edtQty.setText("0");
+                if (!SessionManagerQubes.getUserProfile().getType_sales().equals("TO")) {
+                    Map req = new HashMap();
+                    req.put("id_material", productId);
+                    req.put("uom", detail.getUom());
+                    stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
+                    itemOrder = new Database(mContext).getQtySmallUom(detail);
+                    if (itemOrder.getQty() > stockItem.getQty()) {
+                        String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
+                        Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                        holder.edtQty.clearFocus();
+                        holder.edtQty.setText("0");
+                    }
                 }
             }
         });
@@ -236,21 +239,25 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                     if (!s.toString().equals("") && !s.toString().equals("-")) {
                         double qty = Double.parseDouble(s.toString().replace(",", ""));
                         if (!Helper.isNullOrEmpty(detail.getUom())) {
-                            Map req = new HashMap();
-                            req.put("id_material", productId);
-                            req.put("uom", detail.getUom());
-                            stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
-                            Material mat = new Material();
-                            mat.setQty(qty);
-                            mat.setId(productId);
-                            mat.setUom(detail.getUom());
-                            itemOrder = new Database(mContext).getQtySmallUom(mat);
-                            if (itemOrder.getQty() > stockItem.getQty()) {
-                                String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
-                                Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                holder.edtQty.clearFocus();
-                                holder.edtQty.setText("0");
-                            } else {
+                            if (SessionManagerQubes.getUserProfile().getType_sales().equals("CO")) {
+                                Map req = new HashMap();
+                                req.put("id_material", productId);
+                                req.put("uom", detail.getUom());
+                                stockItem = headerAdapter.getAllStockExtra(detail, holder.getAbsoluteAdapterPosition());
+                                Material mat = new Material();
+                                mat.setQty(qty);
+                                mat.setId(productId);
+                                mat.setUom(detail.getUom());
+                                itemOrder = new Database(mContext).getQtySmallUom(mat);
+                                if (itemOrder.getQty() > stockItem.getQty()) {
+                                    String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
+                                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                    holder.edtQty.clearFocus();
+                                    holder.edtQty.setText("0");
+                                } else {
+                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                                }
+                            }else{
                                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                             }
                         } else {

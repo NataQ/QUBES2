@@ -599,7 +599,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (PARAM == 7) {
                     if (saveDataSuccess) {
                         saveDataSuccess = false;
-                        PARAM = 8;
+                        PARAM = 10;//8
                         new RequestUrl().execute();//4
                     } else {
                         progress.dismiss();
@@ -619,12 +619,17 @@ public class LoginActivity extends AppCompatActivity {
                         setToast("Gagal mengambil data daerah tingkat");
                     }
                 } else if (PARAM == 9) {
+                    progress.dismiss();
                     if (saveDataSuccess) {
-                        saveDataSuccess = false;
-                        PARAM = 10;
-                        new RequestUrl().execute();//4
+//                        saveDataSuccess = false;
+//                        PARAM = 10;
+//                        new RequestUrl().execute();//10
+                        SessionManagerQubes.setUserProfile(userResponse);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     } else {
-                        progress.dismiss();
+//                        progress.dismiss();
                         setToast("Gagal menyimpan data daerah tingkat");
                     }
                 } else if (PARAM == 10) {
@@ -685,13 +690,16 @@ public class LoginActivity extends AppCompatActivity {
                         setToast("Gagal mengambil data customer");
                     }
                 } else {
-                    progress.dismiss();
                     if (saveDataSuccess) {
-                        SessionManagerQubes.setUserProfile(userResponse);
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+//                        SessionManagerQubes.setUserProfile(userResponse);
+//                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
+                        saveDataSuccess = false;
+                        PARAM = 8;
+                        new RequestUrl().execute();//8
                     } else {
+                        progress.dismiss();
                         setToast("Gagal menyimpan data customer");
                     }
                 }

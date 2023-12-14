@@ -302,7 +302,7 @@ public class SummaryFragment extends BaseFragment {
                     filter.put("username", user.getUsername());
                     filter.put("fromString", dateStartString != null ? Helper.changeDateFormat(Constants.DATE_TYPE_1, Constants.DATE_FORMAT_3, dateStartString) : Helper.todayDateAddDate(Constants.DATE_FORMAT_3, -7));
                     filter.put("toString", dateEndString != null ? Helper.changeDateFormat(Constants.DATE_TYPE_1, Constants.DATE_FORMAT_3, dateEndString) : Helper.todayDateAddDate(Constants.DATE_FORMAT_3, 0));
-                    filter.put("status", selectedStatus != null ? (selectedStatus.equals("All") ? null : selectedStatus) : null);
+                    filter.put("status", setStatus());
                     String URL_ = Constants.API_GET_SUMMARY_HEADER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, filter);
@@ -370,5 +370,29 @@ public class SummaryFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    private String setStatus() {
+        String status = null;
+        if(selectedStatus != null){
+            switch (selectedStatus){
+                case "All":
+                    status = null;
+                    break;
+                case "Approve":
+                    status = "A";
+                    break;
+                case "Reject":
+                    status = "R";
+                    break;
+                case "Pending":
+                    status = "P";
+                    break;
+                case "Sync Success":
+                    status = "S";
+                    break;
+            }
+        }
+        return status;
     }
 }

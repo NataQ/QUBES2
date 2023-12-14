@@ -140,7 +140,8 @@ public class DashboardFragment extends BaseFragment {
 
         int today = database.getCountRouteCustomer(true);
         int nonRoute = database.getCountNonRoute();
-        txtAsset.setText(format.format(today + nonRoute));//all
+//        txtAsset.setText(format.format(today + nonRoute));//all
+        txtAsset.setText(format.format(database.getCountRouteCustomer(true)));//all
         txtAssetRoute.setText(format.format(database.getCountRouteCustomer(false)));//route
         txtAssetNonRute.setText(format.format(user.getMax_visit()));//global parameter add non route
 
