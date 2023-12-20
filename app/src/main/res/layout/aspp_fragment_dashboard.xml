@@ -295,7 +295,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Non Route"
+                                    android:text="Max Non Route"
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
@@ -729,7 +729,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Total Invoice Amount"
+                                    android:text="Jumlah Faktur"
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
@@ -743,7 +743,7 @@
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
-                                    android:id="@+id/txtTotalInvoiceAmount"
+                                    android:id="@+id/txtJumlahFaktur"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -768,7 +768,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Total Payment Amount"
+                                    android:text="Total Nominal Inv"
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
@@ -782,7 +782,7 @@
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
-                                    android:id="@+id/txtPaymentAmount"
+                                    android:id="@+id/txtTotalNominalInv"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -807,7 +807,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
                                     android:gravity="center"
-                                    android:text="Outstanding Amount"
+                                    android:text="Total Pembayaran"
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
@@ -821,7 +821,46 @@
                                     android:textColor="@color/black_aspp" />
 
                                 <TextView
-                                    android:id="@+id/txtOutstandingAmount"
+                                    android:id="@+id/txtTotalPembayaran"
+                                    style="@style/TextView_Small"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="0"
+                                    android:textColor="@color/orange_aspp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Sisa Piutang"
+                                    android:textColor="@color/black_aspp" />
+
+                                <TextView
+                                    style="@style/TextView_Small"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:gravity="center"
+                                    android:text=":"
+                                    android:textColor="@color/black_aspp" />
+
+                                <TextView
+                                    android:id="@+id/txtSisaPiutang"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"

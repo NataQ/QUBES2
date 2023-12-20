@@ -28,7 +28,6 @@
         android:id="@+id/layoutChangeIP"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:background="@drawable/selector_menu_setting"
         android:clickable="true"
         android:orientation="horizontal"
@@ -41,7 +40,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="32dp"
             android:gravity="center_vertical"
-            android:text="Change Address IP"
+            android:text="SSID"
             android:textColor="@color/gray8_aspp" />
 
     </LinearLayout>
@@ -58,6 +57,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/selector_menu_setting"
         android:clickable="true"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:padding="8dp">
 

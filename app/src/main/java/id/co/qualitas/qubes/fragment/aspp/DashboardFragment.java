@@ -38,10 +38,10 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class DashboardFragment extends BaseFragment {
     TextView txtName, txtDriver, txtTodayDate, txtRoute, txtJabatanArea, txtCoverageArea;
-    TextView txtAsset, txtAssetRoute, txtAssetNonRute;
+    TextView txtAsset, txtAssetRoute, txtAssetNonRute, txtJumlahFaktur;
     TextView txtECS, txtAT;
     TextView txtCallRute, txtCallNonRute, txtTotalCall, txtNonVisit;
-    TextView txtTotalInvoiceAmount, txtPaymentAmount, txtOutstandingAmount;
+    TextView txtTotalNominalInv, txtTotalPembayaran, txtSisaPiutang;
     private WSMessage logResult;
 
     @Override
@@ -104,15 +104,16 @@ public class DashboardFragment extends BaseFragment {
         txtAsset = rootView.findViewById(R.id.txtAsset);
         txtAssetRoute = rootView.findViewById(R.id.txtAssetRoute);
         txtAssetNonRute = rootView.findViewById(R.id.txtAssetNonRute);
+        txtJumlahFaktur = rootView.findViewById(R.id.txtJumlahFaktur);
         txtECS = rootView.findViewById(R.id.txtECS);
         txtAT = rootView.findViewById(R.id.txtAT);
         txtCallRute = rootView.findViewById(R.id.txtCallRute);
         txtCallNonRute = rootView.findViewById(R.id.txtCallNonRute);
         txtTotalCall = rootView.findViewById(R.id.txtTotalCall);
         txtNonVisit = rootView.findViewById(R.id.txtNonVisit);
-        txtTotalInvoiceAmount = rootView.findViewById(R.id.txtTotalInvoiceAmount);
-        txtPaymentAmount = rootView.findViewById(R.id.txtPaymentAmount);
-        txtOutstandingAmount = rootView.findViewById(R.id.txtOutstandingAmount);
+        txtTotalNominalInv = rootView.findViewById(R.id.txtTotalNominalInv);
+        txtTotalPembayaran = rootView.findViewById(R.id.txtTotalPembayaran);
+        txtSisaPiutang = rootView.findViewById(R.id.txtSisaPiutang);
     }
 
     @Override
@@ -148,9 +149,10 @@ public class DashboardFragment extends BaseFragment {
         txtECS.setText(format.format(database.getECS()));
         txtAT.setText(format.format(user.getAt()));
 
-        txtTotalInvoiceAmount.setText(format.format(database.getTotalInvoiceAmount()));
-        txtPaymentAmount.setText(format.format(database.getTotalPaymentAmount()));
-        txtOutstandingAmount.setText(format.format(database.getTotalOutstandingAmount()));
+        txtJumlahFaktur.setText(format.format(database.getJumlahFaktur()));
+        txtTotalNominalInv.setText(format.format(database.getTotalInvoiceAmount()));
+        txtTotalPembayaran.setText(format.format(database.getTotalPaymentAmount()));
+        txtSisaPiutang.setText(format.format(database.getTotalOutstandingAmount()));
 
         txtCallRute.setText(format.format(database.getCallRoute(1)));
         txtCallNonRute.setText(format.format(database.getCallRoute(2)));

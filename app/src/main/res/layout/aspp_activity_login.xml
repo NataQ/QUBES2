@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/space_transparent"
                     android:hint="Masukkan username"
-                    android:text="welmax"
+                    android:text=""
                     android:inputType="textPersonName"
                     android:textColor="@color/black_aspp" />
 
@@ -103,7 +103,7 @@
                     android:layout_weight="1"
                     android:background="@color/space_transparent"
                     android:hint="Masukkan password"
-                    android:text="123456"
+                    android:text=""
                     android:inputType="textPassword"
                     android:textColor="@color/black_aspp" />
 

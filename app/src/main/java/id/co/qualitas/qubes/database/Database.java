@@ -3611,7 +3611,7 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public double getLKCustomer(Customer cust) {
+    public double getLKCustomerDailySalesman(Customer cust) {
         // Select All Query
         double result = 0;
         String lkQuery = "";
@@ -3624,7 +3624,41 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT a." + KEY_CREDIT_LIMIT + " - b.value + c.value as " + KEY_CREDIT_LIMIT + " " +
                 "from " +
                 lkQuery +
-                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'CO') b , " +
+//                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'CO') b , " +
+                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ) b , " +
+                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
+                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
+                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c ";
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+        return result;
+    }
+
+    public double getLKCustomer(Customer cust) {
+        // Select All Query
+        double result = 0;
+        String lkQuery = "";
+        if (cust.isNoo()) {
+            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_NOO + " WHERE " + KEY_ID_NOO_DB + " = ?) a  , ";
+        } else {
+            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ?) a  , ";
+        }
+
+        String selectQuery = "SELECT (a." + KEY_CREDIT_LIMIT + " - b.value + c.value) as " + KEY_CREDIT_LIMIT + " " +
+                "from " +
+                lkQuery +
+                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'co') b , " +
                 "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
                 "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
                 "WHERE a." + KEY_CUSTOMER_ID + " = ?) c ";
@@ -4331,6 +4365,20 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return result;
+    }
+
+    public int getJumlahFaktur() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER;
+
+        cursor = db.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
     }
 
     public double getTotalInvoiceAmount() {

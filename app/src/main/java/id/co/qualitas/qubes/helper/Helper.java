@@ -23,6 +23,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Base64InputStream;
 import android.util.Base64OutputStream;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -212,6 +213,12 @@ public class Helper extends BaseFragment {
         return true;
     }
 
+    public static int getWitdh(Context context) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        return width;
+    }
     public static Calendar todayDate() {
         Calendar c = Calendar.getInstance();
         return c;

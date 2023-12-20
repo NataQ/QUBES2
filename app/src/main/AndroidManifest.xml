@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="com.example.googlemaps.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -51,19 +50,18 @@
     </queries>
 
     <application
-        android:name="id.co.qualitas.qubes.application.App"
+        android:name=".application.App"
         android:allowBackup="true"
-        android:requestLegacyExternalStorage="true"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_ilustrasi"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.QUBES"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -75,10 +73,9 @@
              project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
              "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
         -->
-        <!--        <meta-data-->
-        <!--            android:name="com.google.android.geo.API_KEY"-->
-        <!--            android:value="AIzaSyAcK4aZFBqUv6OUuDubAG9dX0b8hDkD10M" />-->
-
+        <!-- <meta-data -->
+        <!-- android:name="com.google.android.geo.API_KEY" -->
+        <!-- android:value="AIzaSyAcK4aZFBqUv6OUuDubAG9dX0b8hDkD10M" /> -->
         <meta-data
             android:name="disable_hardware_filtering"
             android:value="true" />
@@ -90,6 +87,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -99,7 +97,6 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".activity.aspp.UnloadingActivity"
             android:exported="true"
@@ -239,12 +236,6 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".activity.PDFTest"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
-        <activity
             android:name=".activity.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -273,20 +264,17 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <!-- <activity -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- <activity -->
         <!-- android:name=".activity.LoginPenggantiActivity" -->
         <!-- android:exported="true" -->
         <!-- android:label="@string/app_name" -->
         <!-- android:screenOrientation="portrait" -->
         <!-- android:windowSoftInputMode="stateHidden|adjustPan" /> -->
-
         <activity
             android:name=".activity.aspp.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".printer.ConnectorActivity"
             android:exported="true"
@@ -309,34 +297,26 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-        </provider>
-
-        <!--        <meta-data-->
-        <!--            android:name="com.google.android.maps.v2.API_KEY"-->
-        <!--            android:value="AIzaSyAcK4aZFBqUv6OUuDubAG9dX0b8hDkD10M" />-->
-
+        </provider> <!-- <meta-data -->
+        <!-- android:name="com.google.android.maps.v2.API_KEY" -->
+        <!-- android:value="AIzaSyAcK4aZFBqUv6OUuDubAG9dX0b8hDkD10M" /> -->
         <service
             android:name=".services.LocationUpdatesService"
             android:enabled="true"
             android:exported="true"
-            android:foregroundServiceType="location" />
-
-<!--        <service-->
-<!--            android:name=".services.BackgroundLocationService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true"-->
-<!--            android:foregroundServiceType="location" />-->
-
+            android:foregroundServiceType="location" /> <!-- <service -->
+        <!-- android:name=".services.BackgroundLocationService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true" -->
+        <!-- android:foregroundServiceType="location" /> -->
         <service
             android:name=".services.LocationForegroundService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location" />
-
         <service
             android:name=".helper.FetchAddressIntentService"
             android:exported="false" />
-
         <service
             android:name=".services.FCMService"
             android:exported="false">
@@ -344,22 +324,23 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more. -->
+        <!--
+ Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_qubes_new" />
-        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
-             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <!--
+ Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more.
+        -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

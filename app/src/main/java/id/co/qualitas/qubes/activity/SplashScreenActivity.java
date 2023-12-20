@@ -402,14 +402,17 @@ public class SplashScreenActivity extends AppCompatActivity {
                     SessionManagerQubes.setUrl(ipAddress);
                 }
             } else {
-//                SessionManagerQubes.setUrl("http://139.255.33.84:8282");
-                SessionManagerQubes.setUrl("http://192.168.1.9:8282");
+                SessionManagerQubes.setUrl("http://139.255.33.84:8282");
+//                SessionManagerQubes.setUrl("http://192.168.1.9:8282");
                 Constants.URL = SessionManagerQubes.getUrl();
             }
 
             if (SessionManagerQubes.getUserProfile() == null) {
                 intent = new Intent(getApplicationContext(), LoginActivity.class);
             } else {
+//                user = SessionManagerQubes.getUserProfile();
+//                user.setType_sales("CO");
+//                SessionManagerQubes.setUserProfile(user);
                 intent = new Intent(getApplicationContext(), MainActivity.class);
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

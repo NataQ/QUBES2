@@ -3,6 +3,8 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -72,6 +74,7 @@ import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.printer.ConnectorActivity;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
+import id.co.qualitas.qubes.utils.Utils;
 
 //https://github.com/DantSu/ESCPOS-ThermalPrinter-Android
 //https://stackoverflow.com/questions/48496035/how-to-connect-to-a-bluetooth-printer
@@ -79,6 +82,8 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class LoginActivity extends AppCompatActivity {
     private Button login;
+    protected ClipboardManager myClipboard;
+    protected ClipData myClip;
     private TextView txtSettings, txtVersion;
     private String registerID;
     boolean showPassword = false;
@@ -117,7 +122,8 @@ public class LoginActivity extends AppCompatActivity {
         txtSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogSetting();
+//                showDialogSetting();
+                openDialogSetting();
             }
         });
 
@@ -153,6 +159,62 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void openDialogSetting() {
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout((6 * Helper.getWitdh(getApplicationContext())) / 7, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setContentView(R.layout.dialog_setting);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+        TextView txtSsid = dialog.findViewById(R.id.txtSsid);
+        TextView txtCopy = dialog.findViewById(R.id.txtCopy);
+        LinearLayout layoutSsid = dialog.findViewById(R.id.layoutSsid);
+
+        String ssid = "";
+        try {
+            ssid = Helper.getImei(getApplicationContext());
+        } catch (Exception e) {
+            ssid = "";
+            e.printStackTrace();
+        }
+        if (ssid.equals("")) {
+            layoutSsid.setVisibility(View.GONE);
+        } else {
+            txtSsid.setText("SSID : " + ssid);
+        }
+
+        String finalSsid = ssid;
+
+        txtCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                myClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                myClip = ClipData.newPlainText("SSID", finalSsid);
+                myClipboard.setPrimaryClip(myClip);
+                setToast("SSID Copied");
+                txtCopy.setText("Copied");
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSave.setOnClickListener(v -> {
+//            if (!edtTxtIpAddress.getText().toString().isEmpty()) {
+//                SessionManager.setUrl(edtTxtIpAddress.getText().toString());
+//                Utils.showToast("IP Address changed");
+                dialog.dismiss();
+//            } else {
+//                Utils.showToast("Please fill ip address");
+//            }
+        });
+        dialog.show();
     }
 
     private void showDialogSetting() {
