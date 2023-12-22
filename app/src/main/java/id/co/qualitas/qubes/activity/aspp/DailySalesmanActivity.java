@@ -754,7 +754,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 txtSisaKreditLimit.setText(format.format(database.getLKCustomer(outletHeader)));
                 txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
                 txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
-                txtOutlet.setText(Helper.isEmpty(outletHeader.getNama(), ""));
+                String idOutlet = Helper.isEmpty(outletHeader.getId(), "");
+                String nama = Helper.isEmpty(outletHeader.getNama(), "");
+                txtOutlet.setText(idOutlet + " - " + nama);
                 txtOrder.setText(getOrderType(outletHeader, user));
 
                 String idTypeCust = Helper.isEmpty(outletHeader.getType_customer(), "");
@@ -981,7 +983,7 @@ public class DailySalesmanActivity extends BaseActivity {
         visitSales.setResumeTime(null);
         visitSales.setTimer(String.valueOf(SystemClock.elapsedRealtime() - timerValue.getBase()));
         boolean result = database.updateVisit(visitSales, user.getUsername(), false);
-        if(result) {
+        if (result) {
             setToast("Pause Success");
             timerValue.stop();
             if (visitSales.getPhotoPauseReason() != null) {
@@ -1004,7 +1006,7 @@ public class DailySalesmanActivity extends BaseActivity {
 //            imgPause.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.aspp_ic_play_visit));
             onResume();
 //            setLayoutFromStatus();//abis pause
-        }else{
+        } else {
             setToast("Pause Failed");
         }
     }

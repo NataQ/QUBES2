@@ -471,7 +471,7 @@ public class UnloadingPdfUtils {
 
         autoEnter(table, new PdfPCell(), 1);
 
-        cell = new PdfPCell(new Phrase("Jenis Barang", calibriRegular));
+        cell = new PdfPCell(new Phrase("Nama Barang", calibriRegular));
         cell.setUseAscender(true);
         cell.setRowspan(2);
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);

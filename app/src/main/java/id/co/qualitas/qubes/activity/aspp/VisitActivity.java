@@ -1511,6 +1511,19 @@ public class VisitActivity extends BaseActivity {
     private void getFirstDataOffline() {
         rlInap.setVisibility(View.GONE);
         rlDaily.setVisibility(View.GONE);
+
+//        if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE_STATUS")) {
+//            btnApprove.setVisibility(View.VISIBLE);
+//        } else {
+//            btnApprove.setVisibility(View.VISIBLE);
+//        }
+//
+//        if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE")) {
+//            btnSave.setVisibility(View.VISIBLE);
+//        } else {
+//            btnSave.setVisibility(View.VISIBLE);
+//        }
+
         startVisit = SessionManagerQubes.getStartDay();
         getData();
         setAdapterVisit();

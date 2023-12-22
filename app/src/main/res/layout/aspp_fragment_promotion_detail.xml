@@ -37,7 +37,7 @@
                         android:layout_marginEnd="8dp"
                         android:src="@drawable/ic_back_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtTitle"
                     style="@style/TextView_Headline"
                     android:layout_width="match_parent"
@@ -71,7 +71,7 @@
                         android:src="@drawable/ic_clock"
                         app:tint="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                         android:text="Periode :"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtPeriode"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -88,7 +88,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtNoPromo"
                     style="@style/TextView_Small"
                     android:layout_width="match_parent"
@@ -97,7 +97,7 @@
                     android:textColor="@color/black_aspp"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

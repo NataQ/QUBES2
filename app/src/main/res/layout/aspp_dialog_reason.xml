@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtTitle"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:text="Reason"
             android:textStyle="bold" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edit_text"
             style="@style/TextView_Small"
             android:layout_width="match_parent"

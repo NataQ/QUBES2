@@ -36,7 +36,7 @@
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_back_aspp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtStore"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -101,7 +101,7 @@
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtAddress"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -110,7 +110,7 @@
                         android:text="address"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtRoute"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -159,7 +159,7 @@
                             android:orientation="horizontal"
                             android:padding="8dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtSelect"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -203,7 +203,7 @@
                                 android:layout_height="@dimen/icon_point"
                                 android:src="@drawable/ic_starting_point" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/edtStartPoint"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -243,7 +243,7 @@
                                 android:layout_height="@dimen/icon_point"
                                 android:src="@drawable/ic_end_point" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/edtEndPoint"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"

@@ -13,7 +13,7 @@
         android:background="@color/blue_aspp"
         android:padding="12dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_back_aspp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtOutlet"
                             style="@style/TextView_Tab"
                             android:layout_width="match_parent"
@@ -121,7 +121,7 @@
                                 android:src="@drawable/ic_customer_orange"
                                 app:tint="@color/blue_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTypeOutlet"
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                                 android:src="@drawable/ic_pause_visit"
                                 app:tint="@color/gray14_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtStatus"
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
@@ -235,14 +235,14 @@
 
                             </LinearLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:layout_weight="1"
                                 android:gravity="center_vertical"
-                                android:text="@string/storeCheck"
+                                android:text="Check Stock"
                                 android:textAllCaps="false"
                                 android:textColor="@color/gray8_aspp" />
 
@@ -281,7 +281,7 @@
 
                             </LinearLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -333,7 +333,7 @@
 
                             </LinearLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtOrder"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -379,14 +379,14 @@
 
                             </LinearLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="5dp"
                                 android:layout_weight="1"
                                 android:gravity="center_vertical"
-                                android:text="@string/returns"
+                                android:text="Retur"
                                 android:textColor="@color/gray8_aspp" />
 
                         </LinearLayout>
@@ -395,7 +395,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Tab"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -423,7 +423,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -431,7 +431,7 @@
                                 android:text="Nama Pemilik"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtNamaPemilik"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -450,7 +450,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -458,7 +458,7 @@
                                 android:text="No. Telp"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtPhone"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -477,7 +477,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -485,7 +485,7 @@
                                 android:text="Sisa Kredit Limit"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtSisaKreditLimit"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -504,7 +504,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -512,7 +512,7 @@
                                 android:text="Total Tagihan"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTotalTagihan"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -531,7 +531,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -539,7 +539,7 @@
                                 android:text="KTP"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtKTP"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -558,7 +558,7 @@
                             android:orientation="horizontal"
                             android:padding="3dp">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -566,7 +566,7 @@
                                 android:text="NPWP"
                                 android:textColor="@color/gray8_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtNPWP"
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
@@ -580,211 +580,7 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/TextView_Tab"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="Attachment"
-                            android:textColor="@color/black_aspp"
-                            android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:id="@+id/llKTP"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/bg_add_image_alert"
-                                    android:minHeight="100dp"
-                                    android:orientation="vertical"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgDeleteKTP"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentEnd="true"
-                                        android:src="@drawable/ic_delete_photo"
-                                        android:visibility="gone" />
-
-                                    <ImageView
-                                        android:id="@+id/imgAddKTP"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_margin="5dp"
-                                        android:background="@drawable/ic_add_photo"
-                                        android:backgroundTint="@color/blue_aspp" />
-
-                                    <ImageView
-                                        android:id="@+id/imgKTP"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="80dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_gravity="center"
-                                        android:layout_marginStart="5dp"
-                                        android:layout_marginTop="5dp"
-                                        android:layout_marginEnd="5dp"
-                                        android:layout_marginBottom="5dp" />
-                                </RelativeLayout>
-
-                                <TextView
-                                    style="@style/TextView_Small"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="8dp"
-                                    android:text="Foto KTP"
-                                    android:textColor="@color/black_aspp" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:id="@+id/llNPWP"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/bg_add_image"
-                                    android:minHeight="100dp"
-                                    android:orientation="vertical"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgDeleteNPWP"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentEnd="true"
-                                        android:src="@drawable/ic_delete_photo"
-                                        android:visibility="gone" />
-
-                                    <ImageView
-                                        android:id="@+id/imgAddNPWP"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_marginStart="5dp"
-                                        android:layout_marginTop="5dp"
-                                        android:layout_marginEnd="5dp"
-                                        android:layout_marginBottom="5dp"
-                                        android:background="@drawable/ic_add_photo"
-                                        android:backgroundTint="@color/blue_aspp" />
-
-                                    <ImageView
-                                        android:id="@+id/imgNPWP"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="80dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_gravity="center"
-                                        android:layout_margin="5dp" />
-                                </RelativeLayout>
-
-                                <TextView
-                                    style="@style/TextView_Small"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="8dp"
-                                    android:text="Foto NPWP"
-                                    android:textColor="@color/black_aspp" />
-
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="5dp"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <RelativeLayout
-                                    android:id="@+id/llOutlet"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/bg_add_image_alert"
-                                    android:minHeight="100dp"
-                                    android:orientation="vertical"
-                                    android:padding="5dp">
-
-                                    <ImageView
-                                        android:id="@+id/imgDeleteOutlet"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_alignParentEnd="true"
-                                        android:src="@drawable/ic_delete_photo"
-                                        android:visibility="gone" />
-
-                                    <ImageView
-                                        android:id="@+id/imgAddOutlet"
-                                        android:layout_width="30dp"
-                                        android:layout_height="30dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_margin="5dp"
-                                        android:background="@drawable/ic_add_photo"
-                                        android:backgroundTint="@color/blue_aspp" />
-
-                                    <ImageView
-                                        android:id="@+id/imgOutlet"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="80dp"
-                                        android:layout_centerInParent="true"
-                                        android:layout_gravity="center"
-                                        android:layout_margin="5dp" />
-                                </RelativeLayout>
-
-                                <TextView
-                                    style="@style/TextView_Small"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:layout_marginTop="8dp"
-                                    android:text="Foto Outlet"
-                                    android:textColor="@color/black_aspp" />
-
-                            </LinearLayout>
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
                 </LinearLayout>
-
-                <TextView
-                    style="@style/TextView_Tab"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Promo"
-                    android:textColor="@color/black_aspp"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPromo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -800,7 +596,7 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -811,7 +607,7 @@
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -850,6 +646,399 @@
                             android:layout_weight="1" />
 
                     </LinearLayout>
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/TextView_Tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Promo"
+                    android:textColor="@color/black_aspp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPromo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Update Location"
+                        android:textColor="@color/black_aspp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llKTP"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image_alert"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteKTP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddKTP"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgKTP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto KTP"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llNPWP"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteNPWP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddNPWP"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgNPWP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto NPWP"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llOutlet"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image_alert"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteOutlet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddOutlet"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgOutlet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto Outlet"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Tab"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Attachment"
+                        android:textColor="@color/black_aspp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llKTP"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image_alert"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteKTP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddKTP"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgKTP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto KTP"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llNPWP"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteNPWP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddNPWP"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginTop="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgNPWP"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto NPWP"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RelativeLayout
+                                android:id="@+id/llOutlet"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_add_image_alert"
+                                android:minHeight="100dp"
+                                android:orientation="vertical"
+                                android:padding="5dp">
+
+                                <ImageView
+                                    android:id="@+id/imgDeleteOutlet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_delete_photo"
+                                    android:visibility="gone" />
+
+                                <ImageView
+                                    android:id="@+id/imgAddOutlet"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_margin="5dp"
+                                    android:background="@drawable/ic_add_photo"
+                                    android:backgroundTint="@color/blue_aspp" />
+
+                                <ImageView
+                                    android:id="@+id/imgOutlet"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="80dp"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="5dp" />
+                            </RelativeLayout>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="8dp"
+                                android:text="Foto Outlet"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

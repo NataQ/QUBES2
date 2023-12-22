@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtTitle"
             style="@style/TextView_Title"
             android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:layout_marginTop="12dp"
             android:orientation="horizontal">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:textAllCaps="false"
                 android:textColor="@color/black_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtAddress"
                 style="@style/TextView_Small"
                 android:layout_width="0dp"

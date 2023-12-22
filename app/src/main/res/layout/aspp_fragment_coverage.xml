@@ -35,7 +35,7 @@
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_back_aspp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                    style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

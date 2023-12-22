@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,8 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,6 +49,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.rpc.Help;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,9 +87,12 @@ public class CreateNooActivity extends BaseActivity {
     private Button btnSave;
     private TextView txtKodePos, txtKelurahan, txtKecamatan, txtKotaKabupaten, txtProvinsi;
     private TextView txtTypeToko, txtPriceListType, txtCreditLimit, txtGPSLocation;
-    private EditText edtPhone, edtNamaToko, edtAddress, edtNoNpwp, edtNamaNpwp, edtRoute;
-    private EditText edtAlamatNpwp, edtNamaPemilik, edtNIK, edtLokasi, edtJenisUsaha, edtLamaUsaha;
-    private Spinner spnSuku, spnStatusToko, spnStatusNpwp, spnUdf5;
+    private EditText edtPhone, edtNamaToko, edtAddress, edtNamaNpwp, edtRoute;
+    private EditText edtNoNpwp1, edtNoNpwp2, edtNoNpwp3, edtNoNpwp4;
+    private EditText edtNik1, edtNik2, edtNik3, edtNik4;
+    private EditText edtAlamatNpwp, edtNamaPemilik, edtLokasi, edtJenisUsaha, edtLamaUsaha;
+    private Spinner spnSuku, spnStatusToko, spnStatusNpwp, spnUdf5, spnKelasOutlet, spnDay;
+    private CheckBox cb1, cb2, cb3, cb4;
     private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageType imageType;
     private int typeImage = 0;
@@ -101,7 +108,7 @@ public class CreateNooActivity extends BaseActivity {
     private Customer customerNoo;
     //    private ArrayAdapter<String> sukuAdapter, statusNpwpAdapter, statusTokoAdapter;
     private ArrayAdapter<String> udf5Adapter;
-    private SpinnerAllDropDownAdapter sukuAdapter, statusNpwpAdapter, statusTokoAdapter;
+    private SpinnerAllDropDownAdapter sukuAdapter, statusNpwpAdapter, statusTokoAdapter, dayAdapter, kelasOutletAdapter;
     private String selectedImage;
     //location
     private FusedLocationProviderClient mFusedLocationClient;
@@ -110,7 +117,7 @@ public class CreateNooActivity extends BaseActivity {
     private LocationRequestCallback<String, Location> addressCallback;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private List<DropDown> statusToko, statusNPWP, suku;
+    private List<DropDown> statusToko, statusNPWP, suku, day, kelasOutlet;
     int offset;
     LinearLayout loadingDataBottom;
     RecyclerViewMaxHeight rv;
@@ -151,6 +158,7 @@ public class CreateNooActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
+            saveDataNoo();//save
             if (validateData() == 0) {
                 progress.show();
                 new RequestUrl().execute();
@@ -161,7 +169,7 @@ public class CreateNooActivity extends BaseActivity {
             typeImage = 1;
             imageType.setPosImage(typeImage);
             imageType.setIdName(user.getUsername());
-            saveDataNoo();
+            saveDataNoo();//ktp
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -171,7 +179,7 @@ public class CreateNooActivity extends BaseActivity {
             typeImage = 2;
             imageType.setPosImage(typeImage);
             imageType.setIdName(user.getUsername());
-            saveDataNoo();
+            saveDataNoo();//npwp
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -181,7 +189,7 @@ public class CreateNooActivity extends BaseActivity {
             typeImage = 3;
             imageType.setPosImage(typeImage);
             imageType.setIdName(user.getUsername());
-            saveDataNoo();
+            saveDataNoo();//outlet
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
             openDialogPhoto();
@@ -238,6 +246,82 @@ public class CreateNooActivity extends BaseActivity {
 //                setToast("Lokasi tidak di temukan");
 //            }
         });
+
+        InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
+            for (int i = start; i < end; i++) {
+                if (!Character.isDigit(source.charAt(i))) {
+                    return "";
+                }
+            }
+            return null;
+        };
+        edtNoNpwp1.setFilters(new InputFilter[]{inputFilter});
+        edtNoNpwp2.setFilters(new InputFilter[]{inputFilter});
+        edtNoNpwp3.setFilters(new InputFilter[]{inputFilter});
+        edtNoNpwp4.setFilters(new InputFilter[]{new InputFilter.LengthFilter(4)});
+
+        setEditTextListener(edtNoNpwp1, edtNoNpwp2);
+        setEditTextListener(edtNoNpwp2, edtNoNpwp3);
+        setEditTextListener(edtNoNpwp3, edtNoNpwp4);
+        setEditTextListener(edtNoNpwp4, null);
+
+        edtNik1.setFilters(new InputFilter[]{inputFilter});
+        edtNik2.setFilters(new InputFilter[]{inputFilter});
+        edtNik3.setFilters(new InputFilter[]{inputFilter});
+        edtNik4.setFilters(new InputFilter[]{new InputFilter.LengthFilter(4)});
+
+        setEditTextListener(edtNik1, edtNik2);
+        setEditTextListener(edtNik2, edtNik3);
+        setEditTextListener(edtNik3, edtNik4);
+        setEditTextListener(edtNik4, null);
+
+        cb1.setOnCheckedChangeListener(new checkWeek());
+        cb2.setOnCheckedChangeListener(new checkWeek());
+        cb3.setOnCheckedChangeListener(new checkWeek());
+        cb4.setOnCheckedChangeListener(new checkWeek());
+    }
+
+    class checkWeek implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
+            customerNoo.setW1(cb1.isChecked());
+            customerNoo.setW2(cb2.isChecked());
+            customerNoo.setW3(cb3.isChecked());
+            customerNoo.setW4(cb4.isChecked());
+        }
+    }
+
+    private void setEditTextListener(EditText editText, final EditText nextEditText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No action needed
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // No action needed
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 4) {
+                    // Max length reached, move focus to the next EditText
+                    if (nextEditText != null) {
+                        nextEditText.requestFocus();
+                    }
+                } else if (s.length() == 0) {
+                    // Content deleted, move focus to the previous EditText
+                    View focusableView = editText.focusSearch(View.FOCUS_LEFT);
+                    if (focusableView != null) {
+                        focusableView.requestFocus();
+                    }
+                }
+            }
+        });
     }
 
     private void saveDataNoo() {
@@ -253,9 +337,20 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(edtPhone)) {
             customerNoo.setNo_tlp(edtPhone.getText().toString().trim());
         }
-        if (!Helper.isEmptyEditText(edtNoNpwp)) {
-            customerNoo.setNo_npwp(edtNoNpwp.getText().toString().trim());
+        if (!Helper.isEmptyEditText(edtNoNpwp1)) {
+            customerNoo.setNo_npwp1(edtNoNpwp1.getText().toString().trim());
         }
+        if (!Helper.isEmptyEditText(edtNoNpwp2)) {
+            customerNoo.setNo_npwp2(edtNoNpwp2.getText().toString().trim());
+        }
+        if (!Helper.isEmptyEditText(edtNoNpwp3)) {
+            customerNoo.setNo_npwp3(edtNoNpwp3.getText().toString().trim());
+        }
+        if (!Helper.isEmptyEditText(edtNoNpwp4)) {
+            customerNoo.setNo_npwp4(edtNoNpwp4.getText().toString().trim());
+        }
+        String npwp = customerNoo.getNo_npwp1() + customerNoo.getNo_npwp2() + customerNoo.getNo_npwp3() + customerNoo.getNo_npwp4();
+        customerNoo.setNo_npwp(npwp);
         if (!Helper.isEmptyEditText(edtNamaNpwp)) {
             customerNoo.setNpwp_name(edtNamaNpwp.getText().toString().trim());
         }
@@ -266,9 +361,20 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(edtNamaPemilik)) {
             customerNoo.setNama_pemilik(edtNamaPemilik.getText().toString().trim());
         }
-        if (!Helper.isEmptyEditText(edtNIK)) {
-            customerNoo.setNik(edtNIK.getText().toString().trim());
+        if (!Helper.isEmptyEditText(edtNik1)) {
+            customerNoo.setNik1(edtNik1.getText().toString().trim());
         }
+        if (!Helper.isEmptyEditText(edtNik2)) {
+            customerNoo.setNik2(edtNik2.getText().toString().trim());
+        }
+        if (!Helper.isEmptyEditText(edtNik3)) {
+            customerNoo.setNik3(edtNik3.getText().toString().trim());
+        }
+        if (!Helper.isEmptyEditText(edtNik4)) {
+            customerNoo.setNik4(edtNik4.getText().toString().trim());
+        }
+        String nik = customerNoo.getNik1() + customerNoo.getNik2() + customerNoo.getNik3() + customerNoo.getNik4();
+        customerNoo.setNik(nik);
         if (!Helper.isEmptyEditText(edtLokasi)) {
             customerNoo.setLocation(edtLokasi.getText().toString().trim());
         }
@@ -284,6 +390,22 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(txtCreditLimit)) {
             customerNoo.setLimit_kredit(Double.parseDouble(txtCreditLimit.getText().toString().trim().replace(".", "")));
         }
+
+        String week1 = "", week2 = "", week3 = "", week4 = "";
+        String day = customerNoo.getDay();
+        if (customerNoo.isW1()) {
+            week1 = "P1" + day;
+        }
+        if (customerNoo.isW2()) {
+            week2 = "P2" + day;
+        }
+        if (customerNoo.isW3()) {
+            week3 = "P3" + day;
+        }
+        if (customerNoo.isW4()) {
+            week4 = "P4" + day;
+        }
+        customerNoo.setRute(week1 + (!Helper.isNullOrEmpty(week2) ? "-" + week2 : "") + (!Helper.isNullOrEmpty(week3) ? "-" + week3 : "") + (!Helper.isNullOrEmpty(week4) ? "-" + week4 : ""));
         customerNoo.setSisaCreditLimit(0);
         customerNoo.setTotalTagihan(0);
         customerNoo.setIsSync(0);
@@ -331,9 +453,9 @@ public class CreateNooActivity extends BaseActivity {
             error++;
             edtNamaPemilik.setError(getString(R.string.emptyField));
         }
-        if (Helper.isEmptyEditText(edtNIK)) {
+        if (Helper.isEmptyEditText(edtNik1) || Helper.isEmptyEditText(edtNik2) || Helper.isEmptyEditText(edtNik3) || Helper.isEmptyEditText(edtNik4)) {
             error++;
-            edtNIK.setError(getString(R.string.emptyField));
+            setToast("NIK tidak boleh Kosong");
         }
         if (txtTypeToko.getText().toString().equals("")) {
             error++;
@@ -346,6 +468,11 @@ public class CreateNooActivity extends BaseActivity {
         if (txtGPSLocation.getText().toString().equals("")) {
             error++;
             txtGPSLocation.setError(getString(R.string.emptyField));
+        }
+
+        if (Helper.isNullOrEmpty(customerNoo.getRute())) {
+            error++;
+            setToast("Harus Pilih Rute");
         }
 
         if (imageType != null) {
@@ -445,20 +572,8 @@ public class CreateNooActivity extends BaseActivity {
         statusToko = database.getDropDown(Constants.DROP_DOWN_STATUS_TOKO);
         statusNPWP = database.getDropDown(Constants.DROP_DOWN_STATUS_NPWP);
         suku = database.getDropDown(Constants.DROP_DOWN_SUKU);
-
-//        List<String> suku = new ArrayList<>();
-//        suku.add("Indonesia");
-//        suku.add("Tiong Hua");
-//
-//        List<String> statusToko = new ArrayList<>();
-//        statusToko.add("--");
-//        statusToko.add("Pribadi");
-//        statusToko.add("Sewa");
-//
-//        List<String> statusNPWP = new ArrayList<>();
-//        statusNPWP.add("--");
-//        statusNPWP.add("PKP");
-//        statusNPWP.add("Non PKP");
+        day = database.getDropDown(Constants.DROP_DOWN_DAY);
+        kelasOutlet = database.getDropDown(Constants.DROP_DOWN_OUTLET_CLASS);
 
         List<String> udf5 = new ArrayList<>();
         udf5.add("GT");
@@ -473,41 +588,11 @@ public class CreateNooActivity extends BaseActivity {
         statusNpwpAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), statusNPWP);
         spnStatusNpwp.setAdapter(statusNpwpAdapter);
 
-//        sukuAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-//            @Override
-//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                TextView text = view.findViewById(R.id.text1);
-//                return view;
-//            }
-//        };
-//        sukuAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        sukuAdapter.addAll(suku);
-//        spnSuku.setAdapter(sukuAdapter);
-//
-//        statusTokoAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-//            @Override
-//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                TextView text = view.findViewById(R.id.text1);
-//                return view;
-//            }
-//        };
-//        statusTokoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        statusTokoAdapter.addAll(statusToko);
-//        spnStatusToko.setAdapter(statusTokoAdapter);
-//
-//        statusNpwpAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
-//            @Override
-//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-//                View view = super.getView(position, convertView, parent);
-//                TextView text = view.findViewById(R.id.text1);
-//                return view;
-//            }
-//        };
-//        statusNpwpAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        statusNpwpAdapter.addAll(statusNPWP);
-//        spnStatusNpwp.setAdapter(statusNpwpAdapter);
+        dayAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), day);
+        spnDay.setAdapter(dayAdapter);
+
+        kelasOutletAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), kelasOutlet);
+        spnKelasOutlet.setAdapter(kelasOutletAdapter);
 
         udf5Adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item) {
             @Override
@@ -521,9 +606,44 @@ public class CreateNooActivity extends BaseActivity {
         udf5Adapter.addAll(udf5);
         spnUdf5.setAdapter(udf5Adapter);
 
-//        setSpinnerData(suku, spnSuku);
-//        setSpinnerData(statusToko, spnStatusToko);
-//        setSpinnerData(statusNPWP, spnStatusNpwp);
+        spnDay.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                DropDown clickedItem = (DropDown) adapterView.getItemAtPosition(i);
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
+                }
+                String id = clickedItem.getId();
+                String text = clickedItem.getValue();
+                customerNoo.setDay(id);
+                customerNoo.setDay_pos(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spnKelasOutlet.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                DropDown clickedItem = (DropDown) adapterView.getItemAtPosition(i);
+                if (customerNoo == null) {
+                    customerNoo = new Customer();
+                }
+                String id = clickedItem.getId();
+                String text = clickedItem.getValue();
+                customerNoo.setKelas_outlet(id);
+                customerNoo.setKelas_outlet_pos(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         spnSuku.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -1089,7 +1209,7 @@ public class CreateNooActivity extends BaseActivity {
         daerahTingkatList = new ArrayList<>();
         if (!Helper.isEmptyEditText(editText)) {
             daerahTingkat.setKode_pos(Integer.parseInt(editText.getText().toString().trim()));
-        }else{
+        } else {
             daerahTingkat.setKode_pos(null);
         }
         daerahTingkatList = database.getAllKodePos(daerahTingkat, offset);
@@ -1348,7 +1468,13 @@ public class CreateNooActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        cb1 = findViewById(R.id.cb1);
+        cb2 = findViewById(R.id.cb2);
+        cb3 = findViewById(R.id.cb3);
+        cb4 = findViewById(R.id.cb4);
         txtGPSLocation = findViewById(R.id.txtGPSLocation);
+        spnDay = findViewById(R.id.spnDay);
+        spnKelasOutlet = findViewById(R.id.spnKelasOutlet);
         spnUdf5 = findViewById(R.id.spnUdf5);
         txtKodePos = findViewById(R.id.txtKodePos);
         txtKelurahan = findViewById(R.id.txtKelurahan);
@@ -1358,11 +1484,17 @@ public class CreateNooActivity extends BaseActivity {
         edtPhone = findViewById(R.id.edtPhone);
         edtNamaToko = findViewById(R.id.edtNamaToko);
         edtAddress = findViewById(R.id.edtAddress);
-        edtNoNpwp = findViewById(R.id.edtNoNpwp);
+        edtNoNpwp1 = findViewById(R.id.edtNoNpwp1);
+        edtNoNpwp2 = findViewById(R.id.edtNoNpwp2);
+        edtNoNpwp3 = findViewById(R.id.edtNoNpwp3);
+        edtNoNpwp4 = findViewById(R.id.edtNoNpwp4);
         edtNamaNpwp = findViewById(R.id.edtNamaNpwp);
         edtNamaPemilik = findViewById(R.id.edtNamaPemilik);
         edtAlamatNpwp = findViewById(R.id.edtAlamatNpwp);
-        edtNIK = findViewById(R.id.edtNIK);
+        edtNik1 = findViewById(R.id.edtNik1);
+        edtNik2 = findViewById(R.id.edtNik2);
+        edtNik3 = findViewById(R.id.edtNik3);
+        edtNik4 = findViewById(R.id.edtNik4);
         edtLokasi = findViewById(R.id.edtLokasi);
         edtJenisUsaha = findViewById(R.id.edtJenisUsaha);
         edtLamaUsaha = findViewById(R.id.edtLamaUsaha);
@@ -1467,11 +1599,17 @@ public class CreateNooActivity extends BaseActivity {
         edtPhone.setText(Helper.isEmpty(customerNoo.getNo_tlp(), ""));
         edtNamaToko.setText(Helper.isEmpty(customerNoo.getNama(), ""));
         edtAddress.setText(Helper.isEmpty(customerNoo.getAddress(), ""));
-        edtNoNpwp.setText(Helper.isEmpty(customerNoo.getNo_npwp(), ""));
+        edtNoNpwp1.setText(Helper.isEmpty(customerNoo.getNo_npwp1(), ""));
+        edtNoNpwp2.setText(Helper.isEmpty(customerNoo.getNo_npwp2(), ""));
+        edtNoNpwp3.setText(Helper.isEmpty(customerNoo.getNo_npwp3(), ""));
+        edtNoNpwp4.setText(Helper.isEmpty(customerNoo.getNo_npwp4(), ""));
         edtNamaNpwp.setText(Helper.isEmpty(customerNoo.getNpwp_name(), ""));
         edtNamaPemilik.setText(Helper.isEmpty(customerNoo.getNama_pemilik(), ""));
         edtAlamatNpwp.setText(Helper.isEmpty(customerNoo.getNpwp_address(), ""));
-        edtNIK.setText(Helper.isEmpty(customerNoo.getNik(), ""));
+        edtNik1.setText(Helper.isEmpty(customerNoo.getNik1(), ""));
+        edtNik2.setText(Helper.isEmpty(customerNoo.getNik2(), ""));
+        edtNik3.setText(Helper.isEmpty(customerNoo.getNik3(), ""));
+        edtNik4.setText(Helper.isEmpty(customerNoo.getNik4(), ""));
         edtLokasi.setText(Helper.isEmpty(customerNoo.getLocation(), ""));
         edtJenisUsaha.setText(Helper.isEmpty(customerNoo.getJenis_usaha(), ""));
         edtLamaUsaha.setText(Helper.isEmpty(customerNoo.getLama_usaha(), ""));
@@ -1486,6 +1624,8 @@ public class CreateNooActivity extends BaseActivity {
         int spinnerPositionUdf5 = udf5Adapter.getPosition(customerNoo.getUdf_5_desc());
 
         spnSuku.setSelection(customerNoo.getSuku_pos());
+        spnDay.setSelection(customerNoo.getDay_pos());
+        spnKelasOutlet.setSelection(customerNoo.getKelas_outlet_pos());
         spnStatusToko.setSelection(customerNoo.getStatus_toko_pos());
         spnStatusNpwp.setSelection(customerNoo.getStatus_npwp_pos());
         spnUdf5.setSelection(spinnerPositionUdf5);
@@ -1647,7 +1787,6 @@ public class CreateNooActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             try {
                 boolean result = false;
-                saveDataNoo();
                 customerNoo.setId(Constants.ID_NOO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 customerNoo.setOrder_type(user.getType_sales());
                 customerNoo.setRoute_order(getDepo());

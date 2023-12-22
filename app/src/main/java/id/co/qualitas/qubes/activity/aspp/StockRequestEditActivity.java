@@ -506,6 +506,8 @@ public class StockRequestEditActivity extends BaseActivity {
                     String message = "Update Stock Request : " + logResult.getMessage();
                     database.updateStatusRequestStock(headerRequest);
                     logResult.setMessage(message);
+                    setToast(logResult.getMessage());
+                    onBackPressed();
                 } else {
                     setToast(logResult.getMessage());
                 }

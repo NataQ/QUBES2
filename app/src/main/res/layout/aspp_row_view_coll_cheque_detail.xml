@@ -31,7 +31,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                     android:textColor="@color/gray8_aspp"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtNoCheque"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -90,14 +90,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Tanggal Cheque" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtTglCheque"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -117,14 +117,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Tanggal Cair" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtTglCair"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -152,14 +152,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Bank Name" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtBankName"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -177,14 +177,14 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Bank Cust." />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtBankCust"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -210,14 +210,14 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Total Payment" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtPayment"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -235,14 +235,14 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
                         android:text="Left" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtLeft"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -273,7 +273,7 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -292,7 +292,7 @@
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -303,7 +303,7 @@
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

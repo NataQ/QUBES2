@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="25dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Title"
             android:id="@+id/txtReason"
             android:layout_width="match_parent"
@@ -74,7 +74,7 @@
                     android:layout_height="@dimen/icon_add_inside_btn"
                     android:src="@drawable/selector_gallery" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                     android:layout_height="@dimen/icon_add_inside_btn"
                     android:src="@drawable/selector_camera" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_upload" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

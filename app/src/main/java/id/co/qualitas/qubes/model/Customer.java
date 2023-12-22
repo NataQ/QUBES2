@@ -23,6 +23,10 @@ public class Customer {
     private String idProvinsi;
     private String provinsi;
     private String no_npwp;
+    private String no_npwp1;
+    private String no_npwp2;
+    private String no_npwp3;
+    private String no_npwp4;
     private String npwp_name;
     private String npwp_address;
     private String status_npwp;
@@ -30,12 +34,21 @@ public class Customer {
     private String nama_pemilik;
     private String alamat_pemilik;
     private String nik;
+    private String nik1;
+    private String nik2;
+    private String nik3;
+    private String nik4;
     private String status_toko;
     private int status_toko_pos;
     private String location;
     private String jenis_usaha;
     private String lama_usaha;
     private String suku;
+    private int day_pos;
+    private String day;
+    private String week;
+    private int kelas_outlet_pos;
+    private String kelas_outlet;
     private int suku_pos;
     private String type_customer;
     private String name_type_customer;
@@ -61,6 +74,10 @@ public class Customer {
     private int posReason;
     private String order_type;
     private String route_order;
+    private boolean w1;
+    private boolean w2;
+    private boolean w3;
+    private boolean w4;
 //    private Uri photoKTPUri;
 //    private Uri photoNPWPUri;
 //    private Uri photoOutletUri;
@@ -75,6 +92,142 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public boolean isW1() {
+        return w1;
+    }
+
+    public void setW1(boolean w1) {
+        this.w1 = w1;
+    }
+
+    public boolean isW2() {
+        return w2;
+    }
+
+    public void setW2(boolean w2) {
+        this.w2 = w2;
+    }
+
+    public boolean isW3() {
+        return w3;
+    }
+
+    public void setW3(boolean w3) {
+        this.w3 = w3;
+    }
+
+    public boolean isW4() {
+        return w4;
+    }
+
+    public void setW4(boolean w4) {
+        this.w4 = w4;
+    }
+
+    public String getNo_npwp1() {
+        return no_npwp1;
+    }
+
+    public void setNo_npwp1(String no_npwp1) {
+        this.no_npwp1 = no_npwp1;
+    }
+
+    public String getNo_npwp2() {
+        return no_npwp2;
+    }
+
+    public void setNo_npwp2(String no_npwp2) {
+        this.no_npwp2 = no_npwp2;
+    }
+
+    public String getNo_npwp3() {
+        return no_npwp3;
+    }
+
+    public void setNo_npwp3(String no_npwp3) {
+        this.no_npwp3 = no_npwp3;
+    }
+
+    public String getNo_npwp4() {
+        return no_npwp4;
+    }
+
+    public void setNo_npwp4(String no_npwp4) {
+        this.no_npwp4 = no_npwp4;
+    }
+
+    public String getNik1() {
+        return nik1;
+    }
+
+    public void setNik1(String nik1) {
+        this.nik1 = nik1;
+    }
+
+    public String getNik2() {
+        return nik2;
+    }
+
+    public void setNik2(String nik2) {
+        this.nik2 = nik2;
+    }
+
+    public String getNik3() {
+        return nik3;
+    }
+
+    public void setNik3(String nik3) {
+        this.nik3 = nik3;
+    }
+
+    public String getNik4() {
+        return nik4;
+    }
+
+    public void setNik4(String nik4) {
+        this.nik4 = nik4;
+    }
+
+    public int getDay_pos() {
+        return day_pos;
+    }
+
+    public void setDay_pos(int day_pos) {
+        this.day_pos = day_pos;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
+    }
+
+    public int getKelas_outlet_pos() {
+        return kelas_outlet_pos;
+    }
+
+    public void setKelas_outlet_pos(int kelas_outlet_pos) {
+        this.kelas_outlet_pos = kelas_outlet_pos;
+    }
+
+    public String getKelas_outlet() {
+        return kelas_outlet;
+    }
+
+    public void setKelas_outlet(String kelas_outlet) {
+        this.kelas_outlet = kelas_outlet;
     }
 
     public String getOrder_type() {

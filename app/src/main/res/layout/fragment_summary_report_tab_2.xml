@@ -107,7 +107,7 @@
                     app:tint="@color/new_blue"
                     android:src="@drawable/ic_filter"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/filter"
@@ -143,12 +143,12 @@
             android:visibility="gone"
             android:orientation="vertical">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/noDataTarget"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtTryAgain"
@@ -172,7 +172,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceSalesMonthly"
                         android:layout_width="match_parent"
@@ -189,7 +189,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceCallMonthly"
                         android:layout_width="match_parent"
@@ -206,7 +206,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceECMonthly"
                         android:layout_width="match_parent"
@@ -223,7 +223,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceEAMonthly"
                         android:layout_width="match_parent"
@@ -246,7 +246,7 @@
                         android:gravity="start"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/totalRetur"
@@ -254,7 +254,7 @@
                             android:textColor="@color/darkGray"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTotalReturn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -287,7 +287,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -296,7 +296,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -322,7 +322,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -339,7 +339,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetSales"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -356,7 +356,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualSales"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -373,7 +373,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceSales"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -394,7 +394,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -411,7 +411,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetCall"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -428,7 +428,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualCall"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -445,7 +445,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceCall"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -466,7 +466,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -483,7 +483,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetEc"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -500,7 +500,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualEc"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -517,7 +517,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceEc"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -538,7 +538,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -555,7 +555,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetEA"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -572,7 +572,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualEA"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -589,7 +589,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceEA"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -639,12 +639,12 @@
             android:visibility="gone"
             android:orientation="vertical">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/noDataTarget"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtTryAgain2"
@@ -668,7 +668,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceSalesDaily"
                         android:layout_width="match_parent"
@@ -685,7 +685,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceCallDaily"
                         android:layout_width="match_parent"
@@ -702,7 +702,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceECDaily"
                         android:layout_width="match_parent"
@@ -719,7 +719,7 @@
                         android:layout_height="300dp"
                         android:layout_marginBottom="10dp"/>
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                        style="@style/TextView_Title"
                         android:id="@+id/txtBalanceEADaily"
                         android:layout_width="match_parent"
@@ -742,7 +742,7 @@
                         android:gravity="start"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/totalRetur"
@@ -750,7 +750,7 @@
                             android:textColor="@color/darkGray"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTotalReturn2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -774,7 +774,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -783,7 +783,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -792,7 +792,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/superSmallFont" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -818,7 +818,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -835,7 +835,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetSales2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -852,7 +852,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualSales2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -869,7 +869,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceSales2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -890,7 +890,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -907,7 +907,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetCall2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -924,7 +924,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualCall2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -941,7 +941,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceCall2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -962,7 +962,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -979,7 +979,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetEc2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -996,7 +996,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualEc2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -1013,7 +1013,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceEc2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -1034,7 +1034,7 @@
                             android:background="@drawable/bg_table_summary"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
@@ -1051,7 +1051,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtTargetEA2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -1068,7 +1068,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtActualEA2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -1085,7 +1085,7 @@
                                 android:layout_height="match_parent"
                                 android:background="@color/new_blue2"/>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/txtBalanceEA2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

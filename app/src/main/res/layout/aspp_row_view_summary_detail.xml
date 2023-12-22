@@ -15,7 +15,7 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtNo"
             style="@style/TextView_Small"
             android:layout_width="0dp"
@@ -42,14 +42,14 @@
                     android:layout_weight="6"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Product"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtProduct"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -66,14 +66,14 @@
                     android:layout_weight="2"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="QTY"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtQty"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -88,14 +88,14 @@
                     android:layout_weight="2"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="UOM"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtUom"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -113,7 +113,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                     android:text="Price"
                     android:textColor="@color/gray8_aspp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtPrice"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -155,7 +155,7 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
                         android:text="Total Discount"
                         android:textColor="@color/gray8_aspp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/txtTotalDiscount"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -204,7 +204,7 @@
                 <!--                        android:gravity="center"-->
                 <!--                        android:orientation="horizontal">-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
                 <!--                            android:layout_height="wrap_content"-->
@@ -212,7 +212,7 @@
                 <!--                            android:text="Discount Qty"-->
                 <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            android:id="@+id/txtDiscountQty"-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
@@ -238,7 +238,7 @@
                 <!--                        android:gravity="center"-->
                 <!--                        android:orientation="horizontal">-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
                 <!--                            android:layout_height="wrap_content"-->
@@ -246,7 +246,7 @@
                 <!--                            android:text="Discount Value"-->
                 <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            android:id="@+id/txtDiscountValue"-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
@@ -272,7 +272,7 @@
                 <!--                        android:gravity="center"-->
                 <!--                        android:orientation="horizontal">-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
                 <!--                            android:layout_height="wrap_content"-->
@@ -280,7 +280,7 @@
                 <!--                            android:text="Discount Kelipatan"-->
                 <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                <!--                        <TextView-->
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
                 <!--                            android:id="@+id/txtDiscountKelipatan"-->
                 <!--                            style="@style/TextView_Small"-->
                 <!--                            android:layout_width="0dp"-->
@@ -307,7 +307,7 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -316,7 +316,7 @@
                     android:textColor="@color/gray8_aspp"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtTotal"
                     style="@style/TextView_Title"
                     android:layout_width="0dp"

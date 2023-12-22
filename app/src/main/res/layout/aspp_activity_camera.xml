@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/toolbar_title"
                     style="@style/TextView_Title"
                     android:layout_width="wrap_content"

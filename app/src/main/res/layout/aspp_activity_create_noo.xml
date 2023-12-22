@@ -12,7 +12,7 @@
         android:background="@color/blue_aspp"
         android:padding="12dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_back_aspp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                                     android:layout_marginBottom="5dp" />
                             </RelativeLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
                                     android:layout_margin="5dp" />
                             </RelativeLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -259,7 +259,7 @@
                                     android:layout_margin="5dp" />
                             </RelativeLayout>
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -286,12 +286,13 @@
                             android:text="Nama Toko"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtNamaToko"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
+                            android:visibility="gone"
                             android:inputType="text"
                             android:background="@drawable/editbox_alert"
                             android:padding="5dp"
@@ -305,7 +306,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -313,7 +314,7 @@
                             android:text="Alamat"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtAddress"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -334,7 +335,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -342,7 +343,7 @@
                             android:text="GPS Location"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtGPSLocation"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -361,7 +362,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -369,7 +370,7 @@
                             android:text="Kode Pos"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtKodePos"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -389,7 +390,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -397,7 +398,7 @@
                             android:text="Desa Kelurahan"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtKelurahan"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -417,7 +418,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -425,7 +426,7 @@
                             android:text="Kecamatan"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtKecamatan"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -445,7 +446,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -453,7 +454,7 @@
                             android:text="Kota Kabupaten"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtKotaKabupaten"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -473,7 +474,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -481,7 +482,7 @@
                             android:text="Provinsi"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtProvinsi"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -501,7 +502,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -509,7 +510,7 @@
                             android:text="Handphone / TLP"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtPhone"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -528,7 +529,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -536,16 +537,78 @@
                             android:text="No. NPWP"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
-                            android:id="@+id/edtNoNpwp"
-                            style="@style/TextView_Small"
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:inputType="number"
-                            android:background="@drawable/editbox"
+                            android:gravity="center_vertical"
                             android:padding="5dp"
-                            android:textColor="@color/black_aspp" />
+                            android:background="@drawable/editbox"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNoNpwp1"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:maxLength="4"
+                                android:inputType="number"
+                                android:background="@null"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNoNpwp2"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:maxLength="4"
+                                android:inputType="number"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNoNpwp3"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:maxLength="4"
+                                android:background="@null"
+                                android:inputType="number"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNoNpwp4"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:maxLength="4"
+                                android:background="@null"
+                                android:inputType="number"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+<!--                        <androidx.appcompat.widget.AppCompatEditText-->
+<!--                            android:id="@+id/edtNoNpwp"-->
+<!--                            style="@style/TextView_Small"-->
+<!--                            android:layout_width="0dp"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_weight=".6"-->
+<!--                            android:inputType="number"-->
+<!--                            android:background="@drawable/editbox"-->
+<!--                            android:padding="5dp"-->
+<!--                            android:textColor="@color/black_aspp" />-->
 
                     </LinearLayout>
 
@@ -555,7 +618,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -563,7 +626,7 @@
                             android:text="Nama NPWP"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtNamaNpwp"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -582,14 +645,14 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Alamat NPWP"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtAlamatNpwp"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -611,7 +674,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -619,7 +682,7 @@
                             android:text="Status NPWP"
                             android:textColor="@color/gray8_aspp" />
 
-                        <Spinner
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spnStatusNpwp"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -647,7 +710,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -662,7 +725,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -670,7 +733,7 @@
                             android:text="Nama Pemilik"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtNamaPemilik"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -689,7 +752,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -697,16 +760,67 @@
                             android:text="NIK"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
-                            android:id="@+id/edtNIK"
-                            style="@style/TextView_Small"
+                        <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:inputType="number"
-                            android:background="@drawable/editbox_alert"
+                            android:gravity="center_vertical"
                             android:padding="5dp"
-                            android:textColor="@color/black_aspp" />
+                            android:background="@drawable/editbox"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNik1"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:inputType="number"
+                                android:maxLength="4"
+                                android:background="@null"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNik2"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:maxLength="4"
+                                android:inputType="number"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNik3"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:maxLength="4"
+                                android:background="@null"
+                                android:inputType="number"
+                                android:layout_marginEnd="5dp"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/edtNik4"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@null"
+                                android:maxLength="4"
+                                android:inputType="number"
+                                android:padding="5dp"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -717,7 +831,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -725,7 +839,7 @@
                             android:text="Status Toko"
                             android:textColor="@color/gray8_aspp" />
 
-                        <Spinner
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spnStatusToko"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -745,7 +859,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -753,7 +867,7 @@
                             android:text="Lokasi"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtLokasi"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -772,7 +886,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -780,7 +894,7 @@
                             android:text="Jenis Usaha"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtJenisUsaha"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -799,7 +913,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -807,7 +921,7 @@
                             android:text="Lama Usaha"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtLamaUsaha"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -827,7 +941,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -835,7 +949,7 @@
                             android:text="Suku"
                             android:textColor="@color/gray8_aspp" />
 
-                        <Spinner
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spnSuku"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -855,7 +969,35 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Kelas Outlet"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/spnKelasOutlet"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_alert"
+                            android:completionThreshold="1"
+                            android:hint="Search..."
+                            android:padding="5dp"
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -863,7 +1005,7 @@
                             android:text="Type Toko Outlet"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTypeToko"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -883,7 +1025,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -891,7 +1033,7 @@
                             android:text="Price List Type"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtPriceListType"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -911,7 +1053,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -919,7 +1061,7 @@
                             android:text="Kelompok Sales"
                             android:textColor="@color/gray8_aspp" />
 
-                        <Spinner
+                        <androidx.appcompat.widget.AppCompatSpinner
                             android:id="@+id/spnUdf5"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -939,7 +1081,7 @@
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -947,7 +1089,7 @@
                             android:text="Credit Limit"
                             android:textColor="@color/gray8_aspp" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtCreditLimit"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -962,10 +1104,11 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:orientation="horizontal"
                         android:padding="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -973,7 +1116,7 @@
                             android:text="Route"
                             android:textColor="@color/gray8_aspp" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtRoute"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -984,6 +1127,100 @@
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Week" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="5dp"
+                            android:textColor="@color/darkGray">
+
+                            <androidx.appcompat.widget.AppCompatCheckBox
+                                android:id="@+id/cb1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="5dp"
+                                android:checked="false"
+                                android:gravity="center_vertical"
+                                android:textColor="@color/black_aspp"
+                                android:text="W1" />
+
+                            <androidx.appcompat.widget.AppCompatCheckBox
+                                android:id="@+id/cb2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="5dp"
+                                android:checked="false"
+                                android:gravity="center_vertical"
+                                android:textColor="@color/black_aspp"
+                                android:text="W2" />
+
+                            <androidx.appcompat.widget.AppCompatCheckBox
+                                android:id="@+id/cb3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:layout_marginEnd="5dp"
+                                android:checked="false"
+                                android:gravity="center_vertical"
+                                android:textColor="@color/black_aspp"
+                                android:text="W3" />
+
+                            <androidx.appcompat.widget.AppCompatCheckBox
+                                android:id="@+id/cb4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="30dp"
+                                android:checked="false"
+                                android:gravity="center_vertical"
+                                android:textColor="@color/black_aspp"
+                                android:text="W4" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Day"
+                            android:textColor="@color/gray8_aspp" />
+
+                        <androidx.appcompat.widget.AppCompatSpinner
+                            android:id="@+id/spnDay"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:background="@drawable/bg_spinner_2"
+                            android:completionThreshold="1"
+                            android:hint="Search.."
+                            android:padding="5dp"
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

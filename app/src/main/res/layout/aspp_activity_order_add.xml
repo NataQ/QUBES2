@@ -13,7 +13,7 @@
         android:background="@color/blue_aspp"
         android:padding="12dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_back_aspp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                     android:text="Tgl Kirim"
                     android:textColor="@color/gray8_aspp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtTglKirim"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
                     android:text="Tgl Order"
                     android:textColor="@color/gray8_aspp" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtDate"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -153,7 +153,7 @@
                 android:layout_marginTop="3dp"
                 android:orientation="horizontal">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
                     android:textColor="@color/red2_aspp"
                     android:textStyle="bold" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtOmzet"
                     style="@style/TextView_Title"
                     android:layout_width="0dp"
@@ -221,14 +221,14 @@
                 android:contentDescription="@string/refresh"
                 android:src="@drawable/refresh_grey_192x192" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/tap_to_refresh" />
         </LinearLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtNoData"
             style="@style/TextView_Small"
             android:layout_width="match_parent"

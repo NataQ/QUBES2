@@ -27,7 +27,7 @@
         android:minHeight="?attr/actionBarSize"
         app:titleTextColor="@color/white">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/toolbar_title"
             style="@style/TextView_Title"
             android:layout_width="wrap_content"

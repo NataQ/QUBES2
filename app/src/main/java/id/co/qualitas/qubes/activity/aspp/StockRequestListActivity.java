@@ -132,9 +132,9 @@ public class StockRequestListActivity extends BaseActivity {
         getData();
         setAdapter();
 
-        if (mList == null || mList.isEmpty()) {
+//        if (mList == null || mList.isEmpty()) {
             requestData();
-        }
+//        }
     }
 
     private void requestData() {

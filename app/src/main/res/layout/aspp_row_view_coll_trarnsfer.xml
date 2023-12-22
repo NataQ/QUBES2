@@ -171,7 +171,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
@@ -179,7 +179,7 @@
                                 android:visibility="gone"
                                 android:textColor="@color/black_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
 <!--                                android:textColor="@color/black_aspp"-->
 <!--                                android:textStyle="bold" />-->
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Headline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 android:textColor="@color/gray8_aspp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edtFrom"
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
@@ -69,7 +69,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:textColor="@color/gray8_aspp"
                 android:textStyle="bold" />
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edtTo"
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
@@ -100,7 +100,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 android:textColor="@color/gray8_aspp"
                 android:textStyle="bold" />
 
-            <Spinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spinnerStatus"
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"

@@ -101,6 +101,8 @@ public class Constants {
     public static final String PROMOTION_TYPE = "promotion_type";
     public static final String SUMMARY_TYPE = "summary_type";
     public static final String DROP_DOWN_STATUS_NPWP = "STATUS_NPWP";
+    public static final String DROP_DOWN_DAY = "DAY";
+    public static final String DROP_DOWN_OUTLET_CLASS = "OUTLET_CLASS";
     public static final String DROP_DOWN_STATUS_TOKO = "STATUS_TOKO";
     public static final String DROP_DOWN_CONDITION_RETURN = "CONDITION_RETURN";
     public static final String DROP_DOWN_SUKU = "SUKU";

@@ -16,7 +16,7 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtTitle"
             style="@style/TextView_Title"
             android:layout_width="match_parent"

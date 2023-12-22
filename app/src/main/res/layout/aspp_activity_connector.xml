@@ -13,7 +13,7 @@
         android:background="@color/blue_aspp"
         android:padding="12dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/ic_back_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

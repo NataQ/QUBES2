@@ -12,7 +12,7 @@
         android:background="@color/blue_aspp"
         android:padding="12dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Qubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:layout_marginEnd="12dp"
                 android:background="@drawable/ic_back_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                 android:text="Tanggal"
                 android:textColor="@color/darkGray" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtDate"
                 style="@style/TextView_Small"
                 android:layout_width="0dp"
@@ -129,7 +129,7 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -180,7 +180,7 @@
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -191,7 +191,7 @@
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
                             android:contentDescription="@string/refresh"
                             android:src="@drawable/ic_no_data" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -238,7 +238,7 @@
                             android:text="No Data"
                             android:visibility="visible" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

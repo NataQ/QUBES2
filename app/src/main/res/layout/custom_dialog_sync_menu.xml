@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                                 android:src="@drawable/ic_sync_aspp"
                                 app:tint="@color/orange_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -178,7 +178,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -259,7 +259,7 @@
                                 android:src="@drawable/ic_sync_aspp"
                                 app:tint="@color/orange_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -284,7 +284,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -316,7 +316,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -341,7 +341,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -378,7 +378,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -407,7 +407,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -440,7 +440,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -470,7 +470,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -504,7 +504,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_sync_aspp" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -543,7 +543,7 @@
                 android:visibility="gone"
                 app:tint="@color/orange_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

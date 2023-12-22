@@ -23,7 +23,7 @@
             android:contentDescription="@string/refresh"
             android:src="@drawable/ic_no_data" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
             android:text="No Data"
             android:visibility="visible" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

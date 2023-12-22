@@ -50,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
     // static variable
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Database name
     private static final String DATABASE_NAME = "Qubes";
@@ -224,6 +224,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_SISA_KREDIT_LIMIT = "sisaKreditLimit";
     private static final String KEY_UDF_5 = "udf5";
     private static final String KEY_UDF_5_DESC = "udf5Desc";
+    private static final String KEY_KELAS_OUTLET = "kelasOutlet";
     private static final String KEY_TOTAL_TAGIHAN = "totalTagihan";
 
     // column table Customer promotion
@@ -364,7 +365,7 @@ public class Database extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static String CREATE_TABLE_STOCK_REQUEST_HEADER = "CREATE TABLE " + TABLE_STOCK_REQUEST_HEADER + "("
+    public static String CREATE_TABLE_STOCK_REQUEST_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_STOCK_REQUEST_HEADER + "("
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_REQUEST_DATE + " TEXT,"
@@ -385,7 +386,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_BE + ", " + KEY_REQUEST_DATE + "," + KEY_ID_SALESMAN + ")"
             + ")";
 
-    public static String CREATE_TABLE_STOCK_REQUEST_DETAIL = "CREATE TABLE " + TABLE_STOCK_REQUEST_DETAIL + "("
+    public static String CREATE_TABLE_STOCK_REQUEST_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_STOCK_REQUEST_DETAIL + "("
             + KEY_ID_STOCK_REQUEST_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -407,7 +408,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER + "("
+    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER + "("
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
@@ -419,6 +420,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TYPE_PRICE + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
             + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_NAME_PEMILIK + " TEXT,"
             + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL,"
@@ -443,7 +445,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
+    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT ,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -464,7 +466,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
-    public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
+    public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
             + KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -480,7 +482,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE " + TABLE_INVOICE_HEADER + "("
+    public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_INVOICE_HEADER + "("
             + KEY_ID_INVOICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_DATE + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
@@ -502,7 +504,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_INVOICE_NO + "," + KEY_DATE + ")"
             + ")";
 
-    public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE " + TABLE_INVOICE_DETAIL + "("
+    public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_INVOICE_DETAIL + "("
             + KEY_ID_INVOICE_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_INVOICE_HEADER_DB + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
@@ -522,7 +524,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + "," + KEY_ID_INVOICE_HEADER_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_NOO = "CREATE TABLE " + TABLE_NOO + "("
+    public static String CREATE_TABLE_NOO = "CREATE TABLE IF NOT EXISTS " + TABLE_NOO + "("
             + KEY_ID_NOO_DB + " TEXT PRIMARY KEY,"
             + KEY_NAME_NOO + " TEXT,"
             + KEY_ADDRESS_NOO + " TEXT,"
@@ -534,6 +536,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_KODE_POS + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
             + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_ID_DESA_KELURAHAN + " TEXT,"
             + KEY_NAME_DESA_KELURAHAN + " TEXT,"
             + KEY_ID_KECAMATAN + " TEXT,"
@@ -576,7 +579,7 @@ public class Database extends SQLiteOpenHelper {
 //            + " UNIQUE (" + KEY_ID_NOO_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_CUSTOMER = "CREATE TABLE " + TABLE_CUSTOMER + "("
+    public static String CREATE_TABLE_CUSTOMER = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER + "("
             + KEY_ID_CUSTOMER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
@@ -589,6 +592,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TYPE_PRICE + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
             + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_NAME_PEMILIK + " TEXT,"
             + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL,"
@@ -616,7 +620,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_CUSTOMER_PROMOTION = "CREATE TABLE " + TABLE_CUSTOMER_PROMOTION + "("
+    public static String CREATE_TABLE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_PROMOTION + "("
             + KEY_ID_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ID_PROMOTION + " TEXT,"
@@ -636,7 +640,7 @@ public class Database extends SQLiteOpenHelper {
 //            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
             + ")";
 
-    public static String CREATE_TABLE_CUSTOMER_DCT = "CREATE TABLE " + TABLE_CUSTOMER_DCT + "("
+    public static String CREATE_TABLE_CUSTOMER_DCT = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_DCT + "("
             + KEY_ID_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " TEXT,"
@@ -651,7 +655,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE " + TABLE_VISIT_SALESMAN + "("
+    public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE IF NOT EXISTS " + TABLE_VISIT_SALESMAN + "("
             + KEY_ID_VISIT_SALESMAN_DB + " TEXT PRIMARY KEY ,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ID_VISIT + " TEXT,"
@@ -692,7 +696,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
 
-    public static String CREATE_TABLE_STORE_CHECK = "CREATE TABLE " + TABLE_STORE_CHECK + "("
+    public static String CREATE_TABLE_STORE_CHECK = "CREATE TABLE IF NOT EXISTS " + TABLE_STORE_CHECK + "("
             + KEY_ID_STORE_CHECK_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MOBILE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -713,7 +717,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_ORDER_HEADER = "CREATE TABLE " + TABLE_ORDER_HEADER + "("
+    public static String CREATE_TABLE_ORDER_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_HEADER + "("
             + KEY_ID_ORDER_HEADER_DB + " TEXT PRIMARY KEY,"
             + KEY_ID_ORDER_BACK_END + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -736,7 +740,7 @@ public class Database extends SQLiteOpenHelper {
 //            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
-    public static String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE " + TABLE_ORDER_DETAIL + "("
+    public static String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL + "("
             + KEY_ID_ORDER_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_ORDER_HEADER_DB + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -762,7 +766,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_ORDER_DETAIL_EXTRA = "CREATE TABLE " + TABLE_ORDER_DETAIL_EXTRA + "("
+    public static String CREATE_TABLE_ORDER_DETAIL_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL_EXTRA + "("
             + KEY_ID_ORDER_DETAIL_EXTRA_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_ORDER_HEADER_DB + " TEXT,"
             + KEY_ID_ORDER_DETAIL_DB + " TEXT,"
@@ -786,7 +790,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE " + TABLE_ORDER_DETAIL_DISCOUNT + "("
+    public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL_DISCOUNT + "("
             + KEY_ID_ORDER_DETAIL_DISCOUNT_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_ORDER_DETAIL_DB + " TEXT,"
             + KEY_ID_ORDER_HEADER_DB + " TEXT,"
@@ -804,7 +808,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_DISCOUNT_ID + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_RETURN = "CREATE TABLE " + TABLE_RETURN + "("
+    public static String CREATE_TABLE_RETURN = "CREATE TABLE IF NOT EXISTS " + TABLE_RETURN + "("
             + KEY_ID_RETURN_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MOBILE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -832,7 +836,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE " + TABLE_COLLECTION_HEADER + "("
+    public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_HEADER + "("
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT PRIMARY KEY,"
             + KEY_DATE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -848,7 +852,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
-    public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE " + TABLE_COLLECTION_DETAIL + "("
+    public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_DETAIL + "("
             + KEY_ID_COLLECTION_DETAIL_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
@@ -871,7 +875,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE " + TABLE_COLLECTION_ITEM + "("
+    public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_ITEM + "("
             + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_DETAIL_DB + " TEXT,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
@@ -891,7 +895,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE " + TABLE_MASTER_REASON + "("
+    public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_REASON + "("
             + KEY_ID_REASON_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_REASON_BE + " TEXT,"
             + KEY_NAME_REASON + " TEXT,"
@@ -905,7 +909,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_REASON_BE + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_PROMOTION = "CREATE TABLE " + TABLE_MASTER_PROMOTION + "("
+    public static String CREATE_TABLE_MASTER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PROMOTION + "("
             + KEY_ID_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_PROMOTION + " TEXT,"
             + KEY_NAME_PROMOTION + " TEXT,"
@@ -921,7 +925,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_PROMOTION + ")"
             + ")";
 
-    public static String CREATE_TABLE_LOG = "CREATE TABLE " + TABLE_LOG + "("
+    public static String CREATE_TABLE_LOG = "CREATE TABLE IF NOT EXISTS " + TABLE_LOG + "("
             + KEY_ID_LOG_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_DESC_LOG + " TEXT,"
             + KEY_DATE_LOG + " TEXT,"
@@ -930,7 +934,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT "
             + ")";
 
-    public static String CREATE_TABLE_MASTER_BANK = "CREATE TABLE " + TABLE_MASTER_BANK + "("
+    public static String CREATE_TABLE_MASTER_BANK = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_BANK + "("
             + KEY_ID_BANK_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_BANK_BE + " TEXT,"
             + KEY_NAME_BANK + " TEXT,"
@@ -942,7 +946,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_BANK_BE + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_MATERIAL = "CREATE TABLE " + TABLE_MASTER_MATERIAL + "("
+    public static String CREATE_TABLE_MASTER_MATERIAL = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MATERIAL + "("
             + KEY_MATERIAL_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
@@ -956,7 +960,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_UOM = "CREATE TABLE " + TABLE_MASTER_UOM + "("
+    public static String CREATE_TABLE_MASTER_UOM = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_UOM + "("
             + KEY_UOM_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_UOM + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -968,7 +972,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_UOM + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE " + TABLE_MASTER_DAERAH_TINGKAT + "("
+    public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_DAERAH_TINGKAT + "("
             + KEY_DAERAH_TINGKAT_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_KODE_POS + " TEXT,"
             + KEY_ID_DESA_KELURAHAN + " TEXT,"
@@ -984,7 +988,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_KODE_POS + ", " + KEY_ID_DESA_KELURAHAN + "," + KEY_ID_KECAMATAN + "," + KEY_ID_KOTA_KABUPATEN + "," + KEY_ID_PROVINSI + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE " + TABLE_MASTER_PRICE_CODE + "("
+    public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE_CODE + "("
             + KEY_ID_PRICE_CODE_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_PRODUCT_ID + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
@@ -995,7 +999,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_HEADER + "("
+    public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER + "("
             + KEY_ID_SALES_PRICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_TOP + " TEXT,"
             + KEY_PRICE_LIST_CODE + " TEXT,"
@@ -1006,7 +1010,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_PRICE_LIST_CODE + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_SALES_PRICE_DETAIL = "CREATE TABLE " + TABLE_MASTER_SALES_PRICE_DETAIL + "("
+    public static String CREATE_TABLE_MASTER_SALES_PRICE_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL + "("
             + KEY_ID_SALES_PRICE_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_PRICE_LIST_CODE + " TEXT,"
@@ -1018,7 +1022,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_MATERIAL_ID + ", " + KEY_PRICE_LIST_CODE + ")"
             + ")";
 
-    public static String CREATE_TABLE_PARAMETER = "CREATE TABLE " + TABLE_MASTER_PARAMETER + "("
+    public static String CREATE_TABLE_PARAMETER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PARAMETER + "("
             + KEY_ID_PARAMETER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_KEY_PARAMETER + " TEXT,"
             + KEY_VALUE + " TEXT,"
@@ -1028,7 +1032,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_KEY_PARAMETER + ")"
             + ")";
 
-    public static String CREATE_TABLE_CUSTOMER_TYPE = "CREATE TABLE " + TABLE_MASTER_CUSTOMER_TYPE + "("
+    public static String CREATE_TABLE_CUSTOMER_TYPE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_CUSTOMER_TYPE + "("
             + KEY_ID_CUSTOMER_TYPE + " TEXT PRIMARY KEY,"
             + KEY_ID_TYPE_PRICE + " TEXT,"
             + KEY_NAME_TYPE_PRICE + " TEXT,"
@@ -1037,7 +1041,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE " + TABLE_MASTER_LIMIT_BON + "("
+    public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_LIMIT_BON + "("
             + KEY_ID_MINIMAL_ORDER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
@@ -1047,7 +1051,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_CUSTOMER_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_PHOTO = "CREATE TABLE " + TABLE_PHOTO + "("
+    public static String CREATE_TABLE_PHOTO = "CREATE TABLE IF NOT EXISTS " + TABLE_PHOTO + "("
             + KEY_ID_PHOTO_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_PHOTO + " TEXT,"
             + KEY_TYPE_PHOTO + " TEXT,"
@@ -1107,6 +1111,9 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK_REQUEST_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICE_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICE_DETAIL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_PROMOTION);
@@ -1121,21 +1128,19 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_ITEM);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_REASON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_BANK);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PROMOTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MATERIAL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_UOM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_DAERAH_TINGKAT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PROMOTION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE_CODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_LIMIT_BON);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PARAMETER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOG);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHOTO);
         onCreate(db);
     }
@@ -1305,6 +1310,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_KODE_POS, param.getKode_pos());
         values.put(KEY_UDF_5, param.getUdf_5());
         values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ID_DESA_KELURAHAN, param.getIdKelurahan());
         values.put(KEY_NAME_DESA_KELURAHAN, param.getKelurahan());
         values.put(KEY_ID_KECAMATAN, param.getIdKecamatan());
@@ -1362,6 +1368,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_PRICE, param.getType_price());
         values.put(KEY_UDF_5, param.getUdf_5());
         values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ROUTE, param.getRute());
         values.put(KEY_KODE_POS, param.getKode_pos());
         values.put(KEY_NAME_KOTA_KABUPATEN, param.getKota());
@@ -1400,6 +1407,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_PRICE, param.getType_price());
         values.put(KEY_UDF_5, param.getUdf_5());
         values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ROUTE, param.getRute());
         values.put(KEY_KODE_POS, param.getKode_pos());
         values.put(KEY_NAME_KOTA_KABUPATEN, param.getKota());
@@ -3835,6 +3843,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -3902,6 +3911,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -4044,6 +4054,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -4104,6 +4115,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -4428,6 +4440,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -4482,6 +4495,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                 paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
@@ -6164,6 +6178,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                     paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
                     paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                    paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                     paramModel.setIdKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
                     paramModel.setKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
                     paramModel.setIdKecamatan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_KECAMATAN)));
@@ -7015,6 +7030,9 @@ public class Database extends SQLiteOpenHelper {
         deleteStockRequestDetail();
         deleteInvoiceHeader();
         deleteInvoiceDetail();
+        deleteMasterNonRouteCustomer();
+        deleteMasterNonRouteCustomerPromotion();
+        deleteMasterNonRouteCustomerDct();
         deleteNoo();
         deleteCustomer();
         deleteCustomerPromotion();
@@ -7023,26 +7041,24 @@ public class Database extends SQLiteOpenHelper {
         deleteStoreCheck();
         deleteOrderHeader();
         deleteOrderDetail();
+        deleteOrderDetailDiscount();
         deleteOrderDetailExtra();
         deleteReturn();
         deleteCollectionHeader();
         deleteCollectionDetail();
         deleteCollectionItem();
         deleteMasterReason();
-        deleteMasterPromotion();
-        deleteMasterLog();
         deleteMasterBank();
-        deleteMasterNonRouteCustomer();
-        deleteMasterNonRouteCustomerPromotion();
-        deleteMasterNonRouteCustomerDct();
         deleteMasterMaterial();
         deleteMasterUom();
         deleteMasterDaerahTingkat();
+        deleteMasterPromotion();
         deleteMasterPriceCode();
         deleteMasterSalesPriceHeader();
         deleteMasterSalesPriceDetail();
         deleteMasterMinimalOrder();
         deleteMasterParameter();
+        deleteMasterLog();
         deleteMasterCustomerType();
         deletePhoto();
     }
@@ -7123,6 +7139,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteOrderDetailExtra() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_ORDER_DETAIL_EXTRA);
+    }
+
+    public void deleteOrderDetailDiscount() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_ORDER_DETAIL_DISCOUNT);
     }
 
     public void deleteReturn() {

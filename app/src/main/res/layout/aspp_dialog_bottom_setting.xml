@@ -5,7 +5,7 @@
     android:background="@drawable/bg_top_corner_dialog"
     android:orientation="vertical">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/subMenuTitle"
         style="@style/TextView_Tab"
         android:layout_width="wrap_content"
@@ -33,7 +33,7 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="32dp"
@@ -61,7 +61,7 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="32dp"

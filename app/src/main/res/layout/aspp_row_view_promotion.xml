@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtTitle"
             style="@style/TextView_Title"
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:textColor="@color/orange_aspp"
             android:textStyle="bold" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtNoPromo"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:textColor="@color/black_aspp"
             android:textStyle="bold" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 android:src="@drawable/ic_clock"
                 card_view:tint="@color/gray8_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/TextView_Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:text="Periode :"
                 android:textColor="@color/gray8_aspp" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtPeriode"
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"

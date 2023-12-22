@@ -48,7 +48,7 @@
             android:layout_marginEnd="8dp"
             android:src="@drawable/ic_back_aspp" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/TextView_Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,14 +78,14 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
                     android:text="Order No." />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtOrderNo"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -105,14 +105,14 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
                     android:text="Invoice No." />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtInvNo"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -131,14 +131,14 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
                     android:text="Date" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtDate"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -157,14 +157,14 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".4"
                     android:text="Amount" />
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtAmount"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
@@ -208,7 +208,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtCash"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -232,7 +232,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTransfer"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -257,7 +257,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtGiro"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -282,7 +282,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtCheq"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -307,7 +307,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtLain"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -332,7 +332,7 @@
                         android:paddingEnd="8dp"
                         android:paddingBottom="5dp">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtKredit"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -381,14 +381,14 @@
                                 android:gravity="center"
                                 android:orientation="horizontal">
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight=".4"
                                     android:text="Total Payment" />
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/txtPaymentCash"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
@@ -406,14 +406,14 @@
                                 android:gravity="center"
                                 android:orientation="horizontal">
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight=".4"
                                     android:text="Left" />
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/txtLeftCash"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
@@ -430,7 +430,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -439,7 +439,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -449,7 +449,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -460,7 +460,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -562,14 +562,14 @@
                                 android:gravity="center"
                                 android:orientation="horizontal">
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight=".4"
                                     android:text="Total Payment" />
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/txtPaymentLain"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
@@ -587,14 +587,14 @@
                                 android:gravity="center"
                                 android:orientation="horizontal">
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight=".4"
                                     android:text="Left" />
 
-                                <TextView
+                                <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/txtLeftLain"
                                     style="@style/TextView_Small"
                                     android:layout_width="0dp"
@@ -611,7 +611,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -620,7 +620,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -630,7 +630,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -641,7 +641,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -690,7 +690,7 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -699,7 +699,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -709,7 +709,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -720,7 +720,7 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
