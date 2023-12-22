@@ -7,11 +7,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -34,31 +34,30 @@ import java.util.Map;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
+import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestEditAdapter;
 import id.co.qualitas.qubes.adapter.aspp.StockRequestAddAdapter;
+import id.co.qualitas.qubes.adapter.aspp.StockRequestEditAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
-import id.co.qualitas.qubes.listener.OnLoadMoreListener;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 
-public class StockRequestAddActivity extends BaseActivity {
-    private StockRequestAddAdapter mAdapter;
+public class StockRequestEditActivity extends BaseActivity {
+    private StockRequestEditAdapter mAdapter;
     private List<Material> mList;
     private List<Material> listSpinner, listFilteredSpinner;
     private CardView cvUnCheckAll, cvCheckedAll;
     boolean checkedAll = false;
-    private SpinnerProductStockRequestAdapter spinnerAdapter;
-    private Button btnAdd;
-    private TextView txtDate;
-    Date fromDate;
-    String fromDateString, paramFromDate;
-    Calendar todayDate;
+    private SpinnerProductStockRequestEditAdapter spinnerAdapter;
+    private Button btnAdd, btnApprove;
     private StockRequest headerRequest;
     private boolean saveDataSuccess = false;
+    private TextView txtDate;
     private WSMessage logResult;
     int offset;
     LinearLayout loadingDataBottom;
@@ -71,18 +70,16 @@ public class StockRequestAddActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aspp_activity_stock_request_add);
+        setContentView(R.layout.aspp_activity_stock_request_edit);
 
         initialize();
-        initData();
-
-        mAdapter = new StockRequestAddAdapter(this, mList, header -> {
-
-        });
-        recyclerView.setAdapter(mAdapter);
 
         btnAdd.setOnClickListener(y -> {
             addProduct();
+        });
+
+        btnApprove.setOnClickListener(y -> {
+            openDialogConfirm();
         });
 
         imgBack.setOnClickListener(v -> {
@@ -94,21 +91,12 @@ public class StockRequestAddActivity extends BaseActivity {
         });
 
         imgLogOut.setOnClickListener(v -> {
-            logOut(StockRequestAddActivity.this);
+            logOut(StockRequestEditActivity.this);
         });
-
-        setDate();
     }
 
     private void validateData() {
         int param = 0, paramMat = 0;
-
-        if (Helper.isEmpty(txtDate)) {
-            param++;
-            txtDate.setError(getString(R.string.emptyField));
-        } else {
-            txtDate.setError(null);
-        }
 
         if (mList.isEmpty() || mList == null) {
             param++;
@@ -134,68 +122,53 @@ public class StockRequestAddActivity extends BaseActivity {
         }
     }
 
+    public void openDialogConfirm() {
+        LayoutInflater inflater = LayoutInflater.from(StockRequestEditActivity.this);
+        final Dialog dialog = new Dialog(StockRequestEditActivity.this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+
+        txtTitle.setText("Approve");
+        txtDialog.setText("Are you sure want to approve?");
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                progress.show();
+                PARAM = 3;
+                new RequestUrl().execute();//1
+            }
+        });
+
+        dialog.show();
+    }
+
     private void prepareData() {
-        headerRequest = new StockRequest();
-        String date = Helper.changeDateFormat(Constants.DATE_FORMAT_5, Constants.DATE_FORMAT_3, txtDate.getText().toString().trim());
-        headerRequest.setReq_date(date);
-        headerRequest.setId_mobile(Constants.ID_RS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
-        headerRequest.setId_salesman(user.getUsername());
-        headerRequest.setStatus(Constants.STATUS_DRAFT);
-        headerRequest.setEnabled(1);
-        headerRequest.setIsSync(0);
         headerRequest.setMaterialList(mList);
     }
 
     private void saveDataToDatabase() {
-        int idHeader = database.addStockRequestHeader(headerRequest, user.getUsername());
+        database.deleteRequestStockDetail(headerRequest.getIdHeader());
 
         for (Material param : mList) {
-            database.addStockRequestDetail(param, String.valueOf(idHeader), user.getUsername());
+            database.addStockRequestDetail(param, headerRequest.getIdHeader(), user.getUsername());
         }
-    }
-
-    private void setDate() {
-        fromDate = Helper.getTodayDate();
-        paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(fromDate);
-        txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
-        txtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hideKeyboard();
-                openDateDialog();
-            }
-        });
-    }
-
-    private void openDateDialog() {
-        todayDate = Calendar.getInstance();
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fromDate);
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int date = calendar.get(Calendar.DATE);
-
-        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month);
-                calendar.set(Calendar.DATE, dayOfMonth);
-
-                fromDate = calendar.getTime();
-                fromDateString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(calendar.getTime());
-                paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                txtDate.setText(fromDateString);
-                txtDate.setError(null);
-            }
-        };
-        DatePickerDialog dialog = new DatePickerDialog(StockRequestAddActivity.this, dateSetListener, year, month, date);
-        dialog.getDatePicker().setMinDate(Helper.getTodayDate().getTime());
-        dialog.show();
-    }
-
-    private void initData() {
-        mList = new ArrayList<>();
     }
 
     private void addNew(List<Material> addedList) {
@@ -218,7 +191,7 @@ public class StockRequestAddActivity extends BaseActivity {
     private void addProduct() {
         searchMat = null;
         offset = 0;
-        Dialog dialog = new Dialog(StockRequestAddActivity.this);
+        Dialog dialog = new Dialog(StockRequestEditActivity.this);
 
         dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -241,7 +214,7 @@ public class StockRequestAddActivity extends BaseActivity {
 
         listSpinner = new ArrayList<>();
         listSpinner = initDataMaterial(searchMat);
-        spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        spinnerAdapter = new SpinnerProductStockRequestEditAdapter(StockRequestEditActivity.this, listSpinner, (nameItem, adapterPosition) -> {
         });
         rv.setAdapter(spinnerAdapter);
 
@@ -268,7 +241,7 @@ public class StockRequestAddActivity extends BaseActivity {
                 searchMat = editText.getText().toString().trim();
                 offset = 0;
                 listSpinner = initDataMaterial(searchMat);
-                spinnerAdapter = new SpinnerProductStockRequestAdapter(StockRequestAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+                spinnerAdapter = new SpinnerProductStockRequestEditAdapter(StockRequestEditActivity.this, listSpinner, (nameItem, adapterPosition) -> {
                 });
                 rv.setAdapter(spinnerAdapter);
             }
@@ -347,13 +320,15 @@ public class StockRequestAddActivity extends BaseActivity {
 
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
+        userRoleList = user.getRoleList();
 
         llNoData = findViewById(R.id.llNoData);
         imgLogOut = findViewById(R.id.imgLogOut);
         btnSave = findViewById(R.id.btnSave);
         imgBack = findViewById(R.id.imgBack);
-        txtDate = findViewById(R.id.txtDate);
+        btnApprove = findViewById(R.id.btnApprove);
         btnAdd = findViewById(R.id.btnAdd);
+        txtDate = findViewById(R.id.txtDate);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -381,6 +356,36 @@ public class StockRequestAddActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        headerRequest = SessionManagerQubes.getStockRequestHeader();
+        if (headerRequest == null) {
+            onBackPressed();
+            setToast(getString(R.string.failedGetData));
+        } else {
+            String date = "";
+            if (headerRequest.getReq_date() != null) {
+                date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, headerRequest.getReq_date());
+            }
+            txtDate.setText(date);
+            mList = new ArrayList<>();
+            mList.addAll(database.getAllStockRequestDetail(headerRequest.getIdHeader()));
+
+            mAdapter = new StockRequestEditAdapter(this, mList, header -> {
+
+            });
+            recyclerView.setAdapter(mAdapter);
+
+            if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE_STATUS")) {
+                btnApprove.setVisibility(View.VISIBLE);
+            } else {
+                btnApprove.setVisibility(View.VISIBLE);
+            }
+
+            if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE")) {
+                btnSave.setVisibility(View.VISIBLE);
+            } else {
+                btnSave.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     public void setCheckedAll() {
@@ -432,20 +437,28 @@ public class StockRequestAddActivity extends BaseActivity {
             try {
                 if (PARAM == 1) {
                     prepareData();
-                    String URL_ = Constants.API_STOCK_REQUEST_INSERT;
+                    String URL_ = Constants.API_STOCK_REQUEST_UPDATE;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     Map request = new HashMap();
                     request.put("header", headerRequest);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                     return null;
-                } else {
+                } else if (PARAM == 2) {
                     saveDataToDatabase();
                     saveDataSuccess = true;
+                    return null;
+                } else {
+                    String URL_ = Constants.API_STOCK_REQUEST_UPDATE_STATUS;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    Map request = new HashMap();
+                    headerRequest.setStatus(Constants.STATUS_PENDING);
+                    request.put("header", headerRequest);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                     return null;
                 }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
-                    Log.e("stockRequestAdd", ex.getMessage());
+                    Log.e("stockRequestUpdate", ex.getMessage());
                 }
                 if (PARAM == 2) {
                     saveDataSuccess = false;
@@ -453,7 +466,7 @@ public class StockRequestAddActivity extends BaseActivity {
                     logResult = new WSMessage();
                     logResult.setIdMessage(0);
                     logResult.setResult(null);
-                    logResult.setMessage("Add Stock Request error: " + ex.getMessage());
+                    logResult.setMessage("Update Stock Request error: " + ex.getMessage());
                 }
                 return null;
             }
@@ -468,7 +481,7 @@ public class StockRequestAddActivity extends BaseActivity {
         protected void onPostExecute(WSMessage e) {
             if (PARAM == 1) {
                 if (logResult.getIdMessage() == 1) {
-                    String message = "Add Stock Request : " + logResult.getMessage();
+                    String message = "Update Stock Request : " + logResult.getMessage();
                     logResult.setMessage(message);
                 }
                 database.addLog(logResult);
@@ -479,14 +492,24 @@ public class StockRequestAddActivity extends BaseActivity {
                     progress.dismiss();
                     setToast(logResult.getMessage());
                 }
-            } else {
+            } else if (PARAM == 2) {
                 progress.dismiss();
                 if (saveDataSuccess) {
-                    setToast("Stock Request Success");
+                    setToast("Update Stock Request Success");
                     onBackPressed();
                 } else {
                     setToast("Save to database failed");
                 }
+            } else {
+                progress.dismiss();
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Update Stock Request : " + logResult.getMessage();
+                    database.updateStatusRequestStock(headerRequest);
+                    logResult.setMessage(message);
+                } else {
+                    setToast(logResult.getMessage());
+                }
+                database.addLog(logResult);
             }
         }
     }

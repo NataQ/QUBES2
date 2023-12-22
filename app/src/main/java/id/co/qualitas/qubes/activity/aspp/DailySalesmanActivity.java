@@ -1266,7 +1266,7 @@ public class DailySalesmanActivity extends BaseActivity {
         ImageView photo = dialog.findViewById(R.id.photo);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
-        layoutGallery.setVisibility(View.VISIBLE);
+
         btnSave.setVisibility(View.GONE);
 
         switch (typeImage) {

@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -111,6 +113,7 @@ import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.Return;
+import id.co.qualitas.qubes.model.Role;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
 import id.co.qualitas.qubes.model.VisitOrderHeader;
@@ -151,6 +154,7 @@ public class BaseActivity extends AppCompatActivity {
     protected ArrayList<User> attendances = new ArrayList<>();
     private Date curDate = new Date();
     protected User user;
+    protected List<Role> userRoleList;
     private OfflineLoginData offlineData;
     protected String idEmployee = Constants.EMPTY_STRING;
     private View dialogview;
@@ -217,12 +221,21 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         database = new Database(getApplicationContext());
+        setLocale(this, "en");
         Helper.trustSSL();
         initProgress();
         initBase();
         setFormatSeparator();
     }
 
+    public static void setLocale(Activity activity, String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        Resources resources = activity.getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+    }
     public void setFormatSeparator() {
         otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
         otherSymbols.setDecimalSeparator(',');
@@ -325,7 +338,7 @@ public class BaseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                if (database.getCountOfflineData() == 0) {
+                if (database.getCountOfflineDataCheckOut() == 0) {
                     progress.show();
                     new requestLogOut().execute();
                 } else {
@@ -1856,5 +1869,11 @@ public class BaseActivity extends AppCompatActivity {
         }// end of SD card checking
 
         return directory;
+    }
+
+    public List<Role> getRoleUser() {
+        List<Role> roleList = new ArrayList<>();
+        roleList.addAll(user.getRoleList());
+        return roleList;
     }
 }

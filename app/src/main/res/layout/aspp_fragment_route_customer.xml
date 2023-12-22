@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:padding="8dp"
-                    android:text="@string/coverage"
+                    android:text="Titik Toko"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_small" />

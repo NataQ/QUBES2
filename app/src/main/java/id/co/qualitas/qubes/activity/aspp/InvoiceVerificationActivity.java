@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -61,7 +62,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
         initialize();
 
         btnSubmit.setOnClickListener(v -> {
-            openDialogSignature();
+            dialogConfirmation();
         });
 
         imgBack.setOnClickListener(v -> {
@@ -153,6 +154,41 @@ public class InvoiceVerificationActivity extends BaseActivity {
 //                setToast("Gagal menyimpan ttd");
 //            }
         });
+        dialog.show();
+    }
+
+    public void dialogConfirmation() {
+        LayoutInflater inflater = LayoutInflater.from(InvoiceVerificationActivity.this);
+        final Dialog dialog = new Dialog(InvoiceVerificationActivity.this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+
+        txtTitle.setText("Verification");
+        txtDialog.setText("Are you sure?");
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                openDialogSignature();
+            }
+        });
+
         dialog.show();
     }
 

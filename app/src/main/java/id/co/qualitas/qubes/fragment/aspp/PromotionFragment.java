@@ -83,7 +83,10 @@ public class PromotionFragment extends BaseFragment {
     }
 
     private void setAdapter() {
-        mAdapter = new PromotionAdapter(this, mList);
+        mAdapter = new PromotionAdapter(this, mList, header -> {
+            Helper.setItemParam(Constants.DETAIL_PROMOTION, header);
+            ((MainActivity) getActivity()).changePage(6);
+        });
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -190,21 +193,32 @@ public class PromotionFragment extends BaseFragment {
                             progressCircle.setVisibility(View.GONE);
                             getData();
                             mAdapter.setData(mList);
+
+                            if (Helper.isEmptyOrNull(mList)) {
+                                recyclerView.setVisibility(View.GONE);
+                                llNoData.setVisibility(View.VISIBLE);
+                            } else {
+                                recyclerView.setVisibility(View.VISIBLE);
+                                llNoData.setVisibility(View.GONE);
+                            }
                         }
+                    } else {
+                        progressCircle.setVisibility(View.GONE);
                     }
                     database.addLog(logResult);
                 } else {
                     progressCircle.setVisibility(View.GONE);
                     setToast(getString(R.string.serverError));
+
+                    if (Helper.isEmptyOrNull(mList)) {
+                        recyclerView.setVisibility(View.GONE);
+                        llNoData.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        llNoData.setVisibility(View.GONE);
+                    }
                 }
 
-                if (Helper.isEmptyOrNull(mList)) {
-                    recyclerView.setVisibility(View.GONE);
-                    llNoData.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    llNoData.setVisibility(View.GONE);
-                }
             } else {
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);

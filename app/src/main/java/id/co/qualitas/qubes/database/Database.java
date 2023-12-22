@@ -3742,7 +3742,7 @@ public class Database extends SQLiteOpenHelper {
     public List<Invoice> getAllInvoiceHeaderNotVerif() {
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 0 order by " + KEY_INVOICE_NO;
+        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 0 order by " + KEY_CUSTOMER_NAME +" , " + KEY_INVOICE_NO;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -4861,6 +4861,53 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public int getCountOfflineDataCheckOut() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQueryCustomer, countQueryNoo, countQueryStoreCheck, countQueryOrder, countQueryReturn, countQueryCollection, countQueryVisit, countQueryPhoto;
+        Cursor cursor;
+        int count = 0;
+        countQueryNoo = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryStoreCheck = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryOrder = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryReturn = "SELECT * FROM " + TABLE_RETURN + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryCollection = "SELECT * FROM " + TABLE_COLLECTION_HEADER + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryVisit = "SELECT * FROM " + TABLE_VISIT_SALESMAN + " WHERE " + KEY_IS_SYNC + " = 0 ";
+        countQueryPhoto = "SELECT * FROM " + TABLE_PHOTO + " WHERE " + KEY_IS_SYNC + " = 0 ";
+
+//        cursor = db.rawQuery(countQueryCustomer, null);
+//        count = cursor.getCount();
+
+//        List<Customer> custList = getAllCustomerCheckOut();
+//        for (Customer cust : custList) {
+            cursor = db.rawQuery(countQueryNoo, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryStoreCheck, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryOrder, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryReturn, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryCollection, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryVisit, null);
+            count = count + cursor.getCount();
+
+            cursor = db.rawQuery(countQueryPhoto, null);
+            count = count + cursor.getCount();
+
+            cursor.close();
+//        }
+
+
+        // return count
+        return count;
     }
 
     public int getCountOfflineData() {
@@ -6935,6 +6982,17 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
+    public void updateStatusRequestStock(StockRequest param) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus());
+        values.put(KEY_UPDATED_BY, param.getId_salesman());
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_STOCK_REQUEST_HEADER, values, KEY_ID_STOCK_REQUEST_HEADER_DB + " = ?", new String[]{param.getIdHeader()});
+        //db.close();
+    }
     public void updateInvoiceVerification(Invoice param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -7108,6 +7166,12 @@ public class Database extends SQLiteOpenHelper {
     public void deleteMasterNonRouteCustomerPromotionById(String idHeader) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+        //db.close();
+    }
+
+    public void deleteRequestStockDetail(String idHeader) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = " + idHeader);
         //db.close();
     }
 

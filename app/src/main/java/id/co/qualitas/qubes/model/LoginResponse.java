@@ -23,6 +23,7 @@ public class LoginResponse implements Serializable {
 
     Object userDetail;
     List<Object> depoRegion;
+    List<Object> role;
 
     //master data
     List<Object> listReason;
@@ -33,6 +34,14 @@ public class LoginResponse implements Serializable {
     List<Object> listCustomer;
     float radius;
     int max_visit;
+
+    public List<Object> getRole() {
+        return role;
+    }
+
+    public void setRole(List<Object> role) {
+        this.role = role;
+    }
 
     public int getMax_visit() {
         return max_visit;

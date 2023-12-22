@@ -504,6 +504,7 @@ public class UnloadingActivity extends BaseActivity {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_STOCK_REQUEST_UNLOADING;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    header.setMaterialList(mList);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
                     return null;
                 } else if (PARAM == 2) {

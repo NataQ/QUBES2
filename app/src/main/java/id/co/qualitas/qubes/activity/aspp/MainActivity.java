@@ -36,6 +36,7 @@ import id.co.qualitas.qubes.fragment.aspp.HomeFragment;
 import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
 import id.co.qualitas.qubes.fragment.aspp.ActivityFragment;
 import id.co.qualitas.qubes.fragment.aspp.CoverageFragment;
+import id.co.qualitas.qubes.fragment.aspp.PromotionDetailFragment;
 import id.co.qualitas.qubes.fragment.aspp.RouteCustomerFragment;
 import id.co.qualitas.qubes.fragment.aspp.SummaryFragment;
 import id.co.qualitas.qubes.helper.Helper;
@@ -64,6 +65,7 @@ public class MainActivity extends BaseActivity {
     AccountFragment accountFragment = new AccountFragment();
     CoverageFragment coverageFragment = new CoverageFragment();
     DirectionFragment directionFragment = new DirectionFragment();
+    PromotionDetailFragment promotionDetailFragment = new PromotionDetailFragment();
 
     FragmentManager fm = getSupportFragmentManager();
     Fragment active = activityFragment;
@@ -268,6 +270,12 @@ public class MainActivity extends BaseActivity {
                     bottomNavigationView.setSelectedItemId(R.id.navigation_account);
                     Helper.setItemParam(Constants.CURRENTPAGE, "5");
                     setContent(accountFragment);
+                }
+                break;
+            case 6:
+                if (!currentpage.equals("6")) {
+                    Helper.setItemParam(Constants.CURRENTPAGE, "6");
+                    setContent(promotionDetailFragment);
                 }
                 break;
             case 23:

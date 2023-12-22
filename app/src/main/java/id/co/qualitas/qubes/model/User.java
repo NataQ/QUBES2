@@ -68,9 +68,27 @@ public class User implements Serializable {
     private String position_name;
     private String token;
     private String type_sales;
+    private String group_id;
     private float radius;
     private int max_visit;
     private List<DepoRegion> depoRegionList;
+    private List<Role> roleList;
+
+    public List<Role> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Role> roleList) {
+        this.roleList = roleList;
+    }
+
+    public String getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(String group_id) {
+        this.group_id = group_id;
+    }
 
     public String getApk_version() {
         return apk_version;

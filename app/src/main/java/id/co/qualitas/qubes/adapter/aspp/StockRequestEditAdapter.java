@@ -23,22 +23,23 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.StockRequestAddActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestEditActivity;
+import id.co.qualitas.qubes.activity.aspp.StockRequestEditActivity;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 
-public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAddAdapter.Holder> implements Filterable {
+public class StockRequestEditAdapter extends RecyclerView.Adapter<StockRequestEditAdapter.Holder> implements Filterable {
     private List<Material> mList;
     private List<Material> mFilteredList;
     private LayoutInflater mInflater;
-    private StockRequestAddActivity mContext;
+    private StockRequestEditActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
     private ArrayAdapter<String> spinnerAdapter;
 
-    public StockRequestAddAdapter(StockRequestAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public StockRequestEditAdapter(StockRequestEditActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -136,7 +137,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(productId + " - " + productName);
-        holder.edtQty.setText(detail.getQty() != 0 ? Helper.setDotCurrencyAmount(detail.getQty()) : null);
+        holder.edtQty.setText(detail.getQty() != 0 ?Helper.setDotCurrencyAmount(detail.getQty()) :null);
         spinnerAdapter = new ArrayAdapter<String>(mContext, R.layout.spinner_item) {
             @Override
             public View getDropDownView(int position, View convertView, ViewGroup parent) {

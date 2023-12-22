@@ -97,6 +97,7 @@ import id.co.qualitas.qubes.activity.aspp.CameraActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.Role;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.utils.Utils;
 
@@ -1054,5 +1055,13 @@ public class Helper extends BaseFragment {
 
     public static String getDbPath(Context context, String YourDbName) {
         return context.getDatabasePath(YourDbName).getAbsolutePath();
+    }
+
+    public static boolean findRole(List<Role> roleList, String param) {
+        Role result = roleList.stream()
+                .filter(role -> param.equals(role.getAuthority()))
+                .findAny()
+                .orElse(null);
+        return result != null;
     }
 }

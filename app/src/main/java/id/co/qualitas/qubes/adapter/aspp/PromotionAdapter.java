@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.colormoon.readmoretextview.ReadMoreTextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,20 +21,17 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.PromotionFragment;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Promotion;
 
 public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Holder> implements Filterable {
     private List<Promotion> promotionList;
     private List<Promotion> promotionFilteredList;
     private LayoutInflater mInflater;
-    //    private OnClickListener onClickListener;
     private PromotionFragment mContext;
+    private OnAdapterListener onAdapterListener;
 
-//    public void setOnClickListener(OnClickListener onClickListener) {
-//        this.onClickListener = onClickListener;
-//    }
-
-    public PromotionAdapter(PromotionFragment mContext, List<Promotion> promotionList) {
+    public PromotionAdapter(PromotionFragment mContext, List<Promotion> promotionList, OnAdapterListener onAdapterListener) {
         if (promotionList != null) {
             this.promotionList = promotionList;
             this.promotionFilteredList = promotionList;
@@ -42,6 +41,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
         }
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext.getContext());
+        this.onAdapterListener = onAdapterListener;
     }
 
     public void setData(List<Promotion> mDataSet) {
@@ -85,26 +85,30 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtPeriode, txtTitle, txtDesc;
+        TextView txtPeriode, txtTitle, txtDesc, txtNoPromo;
+        OnAdapterListener onAdapterListener;
+//        ReadMoreTextView txtDesc;
 
-        public Holder(View itemView) {
+        public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
             txtTitle = itemView.findViewById(R.id.txtTitle);
+            txtNoPromo = itemView.findViewById(R.id.txtNoPromo);
             txtDesc = itemView.findViewById(R.id.txtDesc);
             txtPeriode = itemView.findViewById(R.id.txtPeriode);
+            this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-//            onClickListener.onClick(getAdapterPosition());
+            onAdapterListener.onAdapterClick(promotionFilteredList.get(getAdapterPosition()));
         }
     }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.aspp_row_view_promotion, parent, false);
-        return new Holder(itemView);
+        return new Holder(itemView, onAdapterListener);
     }
 
     @Override
@@ -115,15 +119,22 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
             validFrom = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getValid_from());
         }
 
-        if (!Helper.isNullOrEmpty(detail.getValid_from())) {
-            validTo = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getValid_from());
+        if (!Helper.isNullOrEmpty(detail.getValid_to())) {
+            validTo = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getValid_to());
         }
         String noPromo = Helper.isEmpty(detail.getNo_promo(), "");
         String namaPromo = Helper.isEmpty(detail.getNama_promo(), "");
+        String descPromo = Helper.isEmpty(detail.getKeterangan(), "");
 
-        holder.txtTitle.setText(noPromo);
-        holder.txtDesc.setText(namaPromo);
+        holder.txtTitle.setText(namaPromo);
+        holder.txtDesc.setText(descPromo);
+        holder.txtNoPromo.setText(noPromo);
+//        holder.txtDesc.setCollapsedText("Read More");
+//        holder.txtDesc.setExpandedText("Read Less");
+//        holder.txtDesc.setCollapsedTextColor(R.color.blue6_aspp);
+//        holder.txtDesc.setExpandedTextColor(R.color.blue6_aspp);
         holder.txtPeriode.setText(validFrom + " - " + validTo);
+
     }
 
     @Override
@@ -131,7 +142,7 @@ public class PromotionAdapter extends RecyclerView.Adapter<PromotionAdapter.Hold
         return promotionFilteredList.size();
     }
 
-    public interface OnClickListener {
-        void onClick(int pos);
+    public interface OnAdapterListener {
+        void onAdapterClick(Promotion data);
     }
 }

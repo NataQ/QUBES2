@@ -10,6 +10,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Bitmap;
@@ -37,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
@@ -86,6 +89,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import id.co.qualitas.qubes.R;
+import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.AddNewOutletListAdapter;
@@ -100,6 +104,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.CheckInOutRequest;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.GPSModel;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.MaterialResponse;
@@ -109,6 +114,7 @@ import id.co.qualitas.qubes.model.OrderPlanHeader;
 import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.PromotionFilter;
 import id.co.qualitas.qubes.model.Return;
+import id.co.qualitas.qubes.model.Role;
 import id.co.qualitas.qubes.model.SummaryRequest;
 import id.co.qualitas.qubes.model.TargetSummaryRequest;
 import id.co.qualitas.qubes.model.ToPrice;
@@ -292,11 +298,21 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         database = new Database(getContext());
+        setLocale(getActivity(), "en");
         initFragment();
         Helper.trustSSL();
         initProgress();
         setFormatSeparator();
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    public static void setLocale(Activity activity, String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+        Resources resources = activity.getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 
     public void initFragment() {
@@ -3308,5 +3324,83 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         }// end of SD card checking
 
         return directory;
+    }
+
+    public List<Role> getRoleUser() {
+        List<Role> roleList = new ArrayList<>();
+        roleList.addAll(user.getRoleList());
+        return roleList;
+    }
+
+    public void logOut(Activity activity) {
+        LayoutInflater inflater = LayoutInflater.from(activity);
+        final Dialog dialog = new Dialog(activity);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_logout, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                if (database.getCountOfflineDataCheckOut() == 0) {
+                    progress.show();
+                    new requestLogOut().execute();
+                } else {
+                    setToast("Pastikan semua data offline sudah di sync");
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    private class requestLogOut extends AsyncTask<Void, Void, WSMessage> {
+
+        @Override
+        protected WSMessage doInBackground(Void... voids) {
+            try {
+                String URL_ = Constants.API_LOG_OUT;
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+            } catch (Exception ex) {
+                if (ex.getMessage() != null) {
+                    Log.e("logOut", ex.getMessage());
+                }
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(WSMessage wsMessage) {
+            progress.dismiss();
+            if (wsMessage != null) {
+                if (wsMessage.getIdMessage() == 1) {
+                    clearAllSession();
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    setToast(wsMessage.getMessage());
+                }
+            } else {
+                setToast(getString(R.string.failedGetData));
+            }
+        }
     }
 }

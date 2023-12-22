@@ -129,6 +129,12 @@ public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestLi
 
         if (!Helper.isEmpty(detail.getStatus())) {
             switch (detail.getStatus()) {
+                case Constants.STATUS_DRAFT:
+                    holder.txtStatus.setText("Draft");
+                    holder.llStatus.setVisibility(View.VISIBLE);
+                    holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext, R.color.gray12_aspp));
+                    holder.txtStatus.setTextColor(ContextCompat.getColor(mContext, R.color.black1_aspp));
+                    break;
                 case Constants.STATUS_PENDING:
                     holder.txtStatus.setText("Pending");
                     holder.llStatus.setVisibility(View.VISIBLE);
@@ -147,10 +153,10 @@ public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestLi
                     holder.llStatus.setBackgroundTintList(ContextCompat.getColorStateList(mContext.getApplicationContext(), R.color.green2_aspp));
                     holder.txtStatus.setTextColor(ContextCompat.getColor(mContext.getApplicationContext(), R.color.green_aspp));
                     if (detail.getIs_verif() == 1) {
-                        holder.txtStatus.setText("Verification");
+                        holder.txtStatus.setText("Verified");
                     }
                     if (detail.getIs_unloading() == 1) {
-                        holder.txtStatus.setText("Unloading");
+                        holder.txtStatus.setText("Unloaded");
                     }
                     break;
                 default:

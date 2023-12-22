@@ -66,6 +66,7 @@ import id.co.qualitas.qubes.model.Parameter;
 import id.co.qualitas.qubes.model.PriceCode;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
+import id.co.qualitas.qubes.model.Role;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.StartVisit;
@@ -209,7 +210,7 @@ public class LoginActivity extends AppCompatActivity {
 //            if (!edtTxtIpAddress.getText().toString().isEmpty()) {
 //                SessionManager.setUrl(edtTxtIpAddress.getText().toString());
 //                Utils.showToast("IP Address changed");
-                dialog.dismiss();
+            dialog.dismiss();
 //            } else {
 //                Utils.showToast("Please fill ip address");
 //            }
@@ -327,6 +328,12 @@ public class LoginActivity extends AppCompatActivity {
                         DepoRegion[] paramArray = Helper.ObjectToGSON(response.getDepoRegion(), DepoRegion[].class);
                         Collections.addAll(arrayList, paramArray);
                         userResponse.setDepoRegionList(arrayList);
+
+                        List<Role> arrayRoleList = new ArrayList<>();
+                        Role[] param1Array = Helper.ObjectToGSON(response.getRole(), Role[].class);
+                        Collections.addAll(arrayRoleList, param1Array);
+                        userResponse.setRoleList(arrayRoleList);
+
                         SessionManagerQubes.setUserProfile(userResponse);
                         SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
                         saveDataSuccess = true;

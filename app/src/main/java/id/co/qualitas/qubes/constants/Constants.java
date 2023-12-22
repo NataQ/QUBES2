@@ -120,6 +120,7 @@ public class Constants {
     public static final String CURRENT_VERSION = "1.32";
     public static final String INFO_KIKI = "info kiki";
     public static final String CURRENTPAGE = "current page";
+    public static final String DETAIL_PROMOTION = "detailPromotion";
     public static final String FROM_SALES_ORDER = "from sales order";
     public static final String RECEIVER = PACKAGE_NAME + ".RECEIVER";
     public static final String RESULT_DATA_KEY = PACKAGE_NAME + ".RESULT_DATA_KEY";
@@ -127,7 +128,7 @@ public class Constants {
     public static final int SUCCESS_RESULT = 0;
     public static final int FAILURE_RESULT = 1;
 
-    public static String URL = "http://192.168.1.14:8282";
+    public static String URL = "http://192.168.1.13:8282";
     //    public static String IP = "192.168.1.13:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
@@ -521,6 +522,8 @@ public class Constants {
     public static final String API_MASTER_DATA_GET = "getMasterData";
     public static final String API_STOCK_REQUEST_LIST = "getListStockRequest";
     public static final String API_STOCK_REQUEST_INSERT = "addStockRequest";
+    public static final String API_STOCK_REQUEST_UPDATE = "updateRequestStock";
+    public static final String API_STOCK_REQUEST_UPDATE_STATUS = "updateStatusRequestStock";
     public static final String API_STOCK_REQUEST_VERIFICATION = "updateVerificationStockRequest";
     public static final String API_STOCK_REQUEST_UNLOADING = "updateUnloading";
     public static final String API_INVOICE_LIST = "getListInvoice";

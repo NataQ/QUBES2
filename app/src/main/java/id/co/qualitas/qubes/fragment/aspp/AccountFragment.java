@@ -99,7 +99,7 @@ import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class AccountFragment extends BaseFragment {
-    private CardView llUploadDB, llSync, llLog, llChangePassword, llUpdateRegisterID;
+    private CardView llUploadDB, llSync, llLog, llChangePassword, llUpdateRegisterID, llLogOut;
     private LogAdapter mAdapter;
     private boolean saveDataSuccess = false, setDataSyncSuccess = false;
     private WSMessage messageResponse, logResult;
@@ -137,6 +137,10 @@ public class AccountFragment extends BaseFragment {
                     ((MainActivity) getActivity()).backPress();
                 }
             }
+        });
+
+        llLogOut.setOnClickListener(v -> {
+            logOut(getActivity());
         });
 
         llUpdateRegisterID.setOnClickListener(v -> {
@@ -409,6 +413,7 @@ public class AccountFragment extends BaseFragment {
 
     private void initialize() {
         database = new Database(getContext());
+        llLogOut = rootView.findViewById(R.id.llLogOut);
         llUpdateRegisterID = rootView.findViewById(R.id.llUpdateRegisterID);
         llUploadDB = rootView.findViewById(R.id.llUploadDB);
         llSync = rootView.findViewById(R.id.llSync);

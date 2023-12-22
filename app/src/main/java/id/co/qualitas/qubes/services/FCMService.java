@@ -205,7 +205,7 @@ public class FCMService extends FirebaseMessagingService {
             Bitmap bitmap = getBitmapfromUrl(String.valueOf(response.getImageUrl()));
             notificationBuilder.setStyle(new NotificationCompat.BigPictureStyle()
                     .bigPicture(bitmap)
-                    .bigLargeIcon(null)
+//                    .bigLargeIcon(null)
             ).setLargeIcon(bitmap);
         }
 

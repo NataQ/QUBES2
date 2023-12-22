@@ -60,6 +60,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.Role;
 import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -159,7 +160,7 @@ public class RouteCustomerFragment extends BaseFragment {
             @Override
             public void onRefresh() {
 //                if (SessionManagerQubes.getStartDay() == 0 || SessionManagerQubes.getStartDay() == 2) {
-                    getFirstDataOffline();
+                getFirstDataOffline();
 //                } else {
 //                    setToast("Sudah start visit");
 //                }
@@ -230,6 +231,7 @@ public class RouteCustomerFragment extends BaseFragment {
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(rootView.getContext()));
         recyclerView.setHasFixedSize(true);
+
     }
 
     private void filterData(boolean all) {
@@ -442,7 +444,7 @@ public class RouteCustomerFragment extends BaseFragment {
 
     private void getData() {
         mList = new ArrayList<>();
-        mList = database.getRouteCustomer(mLastLocation, false, 0 , null);
+        mList = database.getRouteCustomer(mLastLocation, false, 0, null);
     }
 
 }

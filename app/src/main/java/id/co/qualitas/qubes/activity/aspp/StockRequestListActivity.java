@@ -47,12 +47,12 @@ public class StockRequestListActivity extends BaseActivity {
         initialize();
 
         btnAdd.setOnClickListener(v -> {
-            if (database.checkUnloadingRequest() == 0) {
-                intent = new Intent(this, StockRequestAddActivity.class);
-                startActivity(intent);
-            } else {
-                setToast("Silahkan melakukan Unloading terlebih dahulu");
-            }
+//            if (database.checkUnloadingRequest() == 0) {
+            intent = new Intent(this, StockRequestAddActivity.class);
+            startActivity(intent);
+//            } else {
+//                setToast("Silahkan melakukan Unloading terlebih dahulu");
+//            }
         });
 
         imgLogOut.setOnClickListener(v -> {
@@ -79,7 +79,11 @@ public class StockRequestListActivity extends BaseActivity {
     private void setAdapter() {
         mAdapter = new StockRequestListAdapter(this, mList, header -> {
             SessionManagerQubes.setStockRequestHeader(header);
-            intent = new Intent(this, StockRequestDetailActivity.class);
+            if (header.getStatus().equals(Constants.STATUS_DRAFT)) {
+                intent = new Intent(this, StockRequestEditActivity.class);
+            } else {
+                intent = new Intent(this, StockRequestDetailActivity.class);
+            }
             startActivity(intent);
         });
 
@@ -107,6 +111,15 @@ public class StockRequestListActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
+
+        userRoleList = new ArrayList<>();
+        userRoleList.addAll(getRoleUser());
+
+        if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_CREATE")) {
+            btnAdd.setVisibility(View.VISIBLE);
+        } else {
+            btnAdd.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

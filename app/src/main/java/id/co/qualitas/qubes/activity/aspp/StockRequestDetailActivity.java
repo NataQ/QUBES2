@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -74,11 +75,10 @@ public class StockRequestDetailActivity extends BaseActivity {
                 setToast(getString(R.string.pleaseEnablePermission));
                 requestPermission();
             }
-
         });
 
         btnUnloading.setOnClickListener(v -> {
-            Helper.setItemParam(Constants.FROM_STOCK_REQUEST,1);
+            Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 1);
             Intent intent = new Intent(getApplicationContext(), UnloadingActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
@@ -157,6 +157,7 @@ public class StockRequestDetailActivity extends BaseActivity {
                 dialog.dismiss();
 
                 progress.show();
+                PARAM = 1;
                 new RequestUrl().execute();
             } else {
                 setToast("Harus tanda tangan");
@@ -164,6 +165,7 @@ public class StockRequestDetailActivity extends BaseActivity {
         });
         dialog.show();
     }
+
 
     private void initData() {
         header = SessionManagerQubes.getStockRequestHeader();
@@ -190,15 +192,9 @@ public class StockRequestDetailActivity extends BaseActivity {
 
             if (header.getStatus() != null) {
                 switch (header.getStatus()) {
-//                    case Constants.STATUS_PENDING:
-//                    case Constants.STATUS_REJECTED:
-//                    case Constants.STATUS_UNLOADING:
-//                        btnUnloading.setVisibility(View.GONE);
-//                        btnVerification.setVisibility(View.GONE);
-//                        break;
                     case Constants.STATUS_APPROVE:
-                        btnVerification.setVisibility(View.VISIBLE);
-                        btnUnloading.setVisibility(View.GONE);
+//                        btnVerification.setVisibility(View.VISIBLE);
+//                        btnUnloading.setVisibility(View.GONE);
                         if (header.getIs_verif() == 1) {
                             if (header.getIs_unloading() == 1) {
                                 btnUnloading.setVisibility(View.GONE);
@@ -212,10 +208,6 @@ public class StockRequestDetailActivity extends BaseActivity {
                             btnVerification.setVisibility(View.VISIBLE);
                         }
                         break;
-//                    case Constants.STATUS_VERIFICATION:
-//                        btnUnloading.setVisibility(View.VISIBLE);
-//                        btnVerification.setVisibility(View.GONE);
-//                        break;
                     default:
                         btnUnloading.setVisibility(View.GONE);
                         btnVerification.setVisibility(View.GONE);
@@ -349,10 +341,17 @@ public class StockRequestDetailActivity extends BaseActivity {
         @Override
         protected WSMessage doInBackground(Void... voids) {
             try {
-                String URL_ = Constants.API_STOCK_REQUEST_VERIFICATION;
-                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
-                return null;
+                if (PARAM == 1) {
+                    String URL_ = Constants.API_STOCK_REQUEST_VERIFICATION;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                    return null;
+                } else {
+                    String URL_ = Constants.API_STOCK_REQUEST_UPDATE;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, header);
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
                     Log.e("verification", ex.getMessage());
@@ -380,7 +379,7 @@ public class StockRequestDetailActivity extends BaseActivity {
                     database.updateStockRequestVerification(header, user.getUsername());
                     setToast("Verifikasi sukses");
                     onBackPressed();
-                }else{
+                } else {
                     setToast(logResult.getMessage());
                 }
                 database.addLog(logResult);

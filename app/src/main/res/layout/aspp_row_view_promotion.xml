@@ -20,17 +20,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Title"
-            android:textStyle="bold"
-            android:textColor="@color/orange_aspp" />
+            android:textColor="@color/orange_aspp"
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txtDesc"
+            android:id="@+id/txtNoPromo"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:text="Title"
+            android:textColor="@color/black_aspp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry."
             android:textColor="@color/black_aspp" />
+
+        <!--        <com.colormoon.readmoretextview.ReadMoreTextView-->
+        <!--            android:id="@+id/txtDesc"-->
+        <!--            style="@style/TextView_Small"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center"-->
+        <!--            android:layout_marginTop="5dp"-->
+        <!--            card_view:trimLines="2"-->
+        <!--            card_view:showTrimExpandedText="true"-->
+        <!--            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry."-->
+        <!--            android:textColor="@color/black_aspp" />-->
 
         <LinearLayout
             android:layout_width="match_parent"

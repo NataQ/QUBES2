@@ -61,7 +61,8 @@ public class RouteCustomerAdapter extends RecyclerView.Adapter<RouteCustomerAdap
                     for (Customer row : dataList) {
 
                         /*filter by name*/
-                        if (row.getNama().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getId().toLowerCase().contains(charString.toLowerCase()) ||
+                                row.getNama().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }

@@ -376,7 +376,7 @@ public class CreateNooActivity extends BaseActivity {
         ImageView photo = dialog.findViewById(R.id.photo);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         Button btnSave = dialog.findViewById(R.id.btnSave);
-        layoutGallery.setVisibility(View.VISIBLE);
+
         btnSave.setVisibility(View.GONE);
 
         switch (typeImage) {
@@ -462,7 +462,7 @@ public class CreateNooActivity extends BaseActivity {
 
         List<String> udf5 = new ArrayList<>();
         udf5.add("GT");
-        udf5.add("OP");
+        udf5.add("On Premise");
 
         sukuAdapter = new SpinnerAllDropDownAdapter(getApplicationContext(), suku);
         spnSuku.setAdapter(sukuAdapter);
