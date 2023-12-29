@@ -53,6 +53,18 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
+import org.osmdroid.views.overlay.compass.CompassOverlay;
+import org.osmdroid.views.overlay.compass.InternalCompassOrientationProvider;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -91,6 +103,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
+    private LinearLayout llLokasiToko, llLokasiGudang, llLokasiTagihan;
     private RelativeLayout llKTP, llNPWP, llOutlet;
     private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
     private ImageView imgDeleteKTP, imgDeleteNPWP, imgDeleteOutlet;
@@ -132,6 +145,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Map currentLocation;
+    private int updateLocation = 0;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -157,22 +171,28 @@ public class DailySalesmanActivity extends BaseActivity {
         initialize();
 
         btnCheckOut.setOnClickListener(v -> {
+//            if (validateStoreCheck() > 0) {
             int validateOut = validateCheckOut();
             switch (validateOut) {
                 case 0:
-                    checkLocationPermission();
+                    updateLocation = 0;
+                    checkLocationPermission();//0
                     break;
                 case 1:
                     openDialogReasonCheckOut();
                     //reason not order
+                    break;
+                case 2:
+                    setToast("Silahkan check stock toko!");
                     break;
 //                case 2:
 //                    openDialogReasonCheckOut(Constants.REASON_TYPE_NOT_PAY, "Reason Not Pay");
 //                    //reason not pay
 //                    break;
             }
-
-
+//            } else {
+//                setToast("Silahkan check stock toko!");
+//            }
         });
 
         llPause.setOnClickListener(v -> {
@@ -236,6 +256,33 @@ public class DailySalesmanActivity extends BaseActivity {
             }
         });
 
+        llLokasiToko.setOnClickListener(v -> {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                updateLocation = 1;
+                checkLocationPermission();//1
+            } else {
+                setToast("Tidak bisa mengubah lokasi yang sudah selesai");
+            }
+        });
+
+        llLokasiGudang.setOnClickListener(v -> {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                updateLocation = 2;
+                checkLocationPermission();//2
+            } else {
+                setToast("Tidak bisa mengubah lokasi yang sudah selesai");
+            }
+        });
+
+        llLokasiTagihan.setOnClickListener(v -> {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                updateLocation = 3;
+                checkLocationPermission();//3
+            } else {
+                setToast("Tidak bisa mengubah lokasi yang sudah selesai");
+            }
+        });
+
         llKTP.setOnClickListener(view -> {
             typeImage = 8;
             imageType.setPosImage(typeImage);
@@ -276,11 +323,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
             Map req = new HashMap();
             req.put("photo", null);
+            req.put("photoName", "ktp_" + outletHeader.getId());
             req.put("typePhoto", "ktp");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);
+            database.addPhoto(req);//d
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -304,11 +352,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
             Map req = new HashMap();
             req.put("photo", null);
+            req.put("photoName", "npwp_" + outletHeader.getId());
             req.put("typePhoto", "npwp");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);
+            database.addPhoto(req);//d
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -332,11 +381,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
             Map req = new HashMap();
             req.put("photo", null);
+            req.put("photoName", "outlet_" + outletHeader.getId());
             req.put("typePhoto", "outlet");
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);
+            database.addPhoto(req);//d
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
 //            } else {
@@ -353,6 +403,7 @@ public class DailySalesmanActivity extends BaseActivity {
         });
     }
 
+
     private boolean checkOutletStatus() {
         int statusCheckIn = 0;
         int statusCheckInVisit = database.getCountCheckInVisit();
@@ -362,25 +413,41 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private int validateCheckOut() {
-        int payment = 0, invoice = 0, orderOutlet = 0, result = 0;
+        int payment = 0, invoice = 0, orderOutlet = 0, result = 0, storeCheck = 0;
         Map req = new HashMap();
         req.put("id", outletHeader.getId());
         req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
 
         orderOutlet = database.getCountOrderCustomer(req);
-//        invoice = database.getCountInvoiceCustomer(req);
+        payment = database.getCountCollectionCustomer(req);
+        storeCheck = database.getCountStoreCheck(req);
 //        if (invoice > 0) {
 //            payment = database.getCountPaymentCustomer(req);
 //        }
 
+
         if (orderOutlet == 0) {
             result = 1;// no order
+        } else {
+            if (storeCheck == 0) {
+                result = 2;
+            }
         }
 //        else {
 //            if (invoice > 0 && payment == 0) {
 //                result = 2;//ada invoice tapi belum d bayar
 //            }
 //        }
+        return result;
+    }
+
+    private int validateStoreCheck() {
+        int result = 0;
+        Map req = new HashMap();
+        req.put("id", outletHeader.getId());
+        req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+
+        result = database.getCountStoreCheck(req);
         return result;
     }
 
@@ -455,7 +522,8 @@ public class DailySalesmanActivity extends BaseActivity {
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
                 openDialogPhotoReason(2);
             } else {
-                checkLocationPermission();
+                updateLocation = 0;
+                checkLocationPermission();//0
             }
         });
 
@@ -508,11 +576,12 @@ public class DailySalesmanActivity extends BaseActivity {
             if (visitSales.getPhotoNotBuyReason() != null) {
                 req = new HashMap();
                 req.put("photo", visitSales.getPhotoNotBuyReason());
+                req.put("photoName", "reason_" + typePhoto + "_" + visitSales.getIdHeader());
                 req.put("typePhoto", typePhoto);
                 req.put("idDB", visitSales.getIdHeader());
                 req.put("customerID", visitSales.getCustomerId());
                 req.put("username", user.getUsername());
-                database.addPhoto(req);
+                database.addPhoto(req);//d
             }
             outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
             if (outletHeader.isNoo()) {
@@ -699,7 +768,8 @@ public class DailySalesmanActivity extends BaseActivity {
                     } else {
                         visitSales.setDescNotBuyReason(descReason[0]);
                         visitSales.setPhotoNotBuyReason(imageType.getPhotoReason());
-                        checkLocationPermission();
+                        updateLocation = 0;
+                        checkLocationPermission();//0
                     }
                     dialog.dismiss();
                 } else {
@@ -818,6 +888,9 @@ public class DailySalesmanActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llLokasiToko = findViewById(R.id.llLokasiToko);
+        llLokasiGudang = findViewById(R.id.llLokasiGudang);
+        llLokasiTagihan = findViewById(R.id.llLokasiTagihan);
         rvDCTOutlet = findViewById(R.id.rvDCTOutlet);
         rvDCTOutlet.setLayoutManager(new LinearLayoutManager(this));
         rvDCTOutlet.setHasFixedSize(true);
@@ -888,33 +961,36 @@ public class DailySalesmanActivity extends BaseActivity {
                     outletHeader.setPhotoKtp(uri.getPath());
                     req = new HashMap();
                     req.put("photo", uri.getPath());
+                    req.put("photoName", "ktp_" + outletHeader.getId());
                     req.put("typePhoto", "ktp");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);
+                    database.addPhoto(req);//d
                     break;
                 case 9:
                     imageType.setPhotoNPWP(uri.getPath());
                     outletHeader.setPhotoNpwp(uri.getPath());
                     req = new HashMap();
                     req.put("photo", uri.getPath());
+                    req.put("photoName", "npwp_" + outletHeader.getId());
                     req.put("typePhoto", "npwp");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);
+                    database.addPhoto(req);//d
                     break;
                 case 10:
                     imageType.setPhotoOutlet(uri.getPath());
                     outletHeader.setPhotoOutlet(uri.getPath());
                     req = new HashMap();
                     req.put("photo", uri.getPath());
+                    req.put("photoName", "outlet_" + outletHeader.getId());
                     req.put("typePhoto", "outlet");
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);
+                    database.addPhoto(req);//d
                     break;
                 case 11:
                     imageType.setPhotoReason(uri.getPath());
@@ -989,11 +1065,12 @@ public class DailySalesmanActivity extends BaseActivity {
             if (visitSales.getPhotoPauseReason() != null) {
                 Map req = new HashMap();
                 req.put("photo", visitSales.getPhotoPauseReason());
+                req.put("photoName", "reason_pause_" + visitSales.getIdHeader());
                 req.put("typePhoto", "pause");
                 req.put("idDB", visitSales.getIdHeader());
                 req.put("customerID", visitSales.getCustomerId());
                 req.put("username", user.getUsername());
-                database.addPhoto(req);
+                database.addPhoto(req);//d
             }
             outletHeader.setStatus(Constants.PAUSE_VISIT);
             if (outletHeader.isNoo()) {
@@ -1399,11 +1476,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
                         req = new HashMap();
                         req.put("photo", uriImagePath.getPath());
+                        req.put("photoName", "ktp_" + outletHeader.getId());
                         req.put("typePhoto", "ktp");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                         break;
                     case 9:
                         imageType.setPhotoNPWP(uriImagePath.getPath());
@@ -1415,11 +1493,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
                         req = new HashMap();
                         req.put("photo", uriImagePath.getPath());
+                        req.put("photoName", "npwp_" + outletHeader.getId());
                         req.put("typePhoto", "npwp");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                         break;
                     case 10:
                         imageType.setPhotoOutlet(uriImagePath.getPath());
@@ -1431,11 +1510,12 @@ public class DailySalesmanActivity extends BaseActivity {
 
                         req = new HashMap();
                         req.put("photo", uriImagePath.getPath());
+                        req.put("photoName", "outlet_" + outletHeader.getId());
                         req.put("typePhoto", "outlet");
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                         break;
                 }
                 SessionManagerQubes.setOutletHeader(outletHeader);
@@ -1468,6 +1548,7 @@ public class DailySalesmanActivity extends BaseActivity {
         }
     }
 
+
     private void getLocationGPS() {
         getAddressWithPermission((result, location) -> {
             Utils.backgroundTask(progress,
@@ -1481,7 +1562,11 @@ public class DailySalesmanActivity extends BaseActivity {
                                 currentLocation.put("longitude", location.getLongitude());
                                 currentLocation.put("address", result.getAddressLine(0));
 
-                                checkOutCustomer();
+                                if (updateLocation == 0) {
+                                    checkOutCustomer();
+                                } else {
+                                    openDialogMap();
+                                }
                             } else {
                                 setToast("Lokasi tidak di temukan");
                             }
@@ -1493,6 +1578,132 @@ public class DailySalesmanActivity extends BaseActivity {
                         }
                     });
         });
+    }
+
+    private void openDialogMap() {
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_map_update_location);
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtAddress = dialog.findViewById(R.id.txtAddress);
+        Button btnUpdate = dialog.findViewById(R.id.btnUpdate);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        MapView mapView = dialog.findViewById(R.id.mapView);
+        ImageView btCenterMap = dialog.findViewById(R.id.btCenterMap);
+        String lokasi = "";
+        switch (updateLocation) {
+            case 1:
+                txtTitle.setText("Update Lokasi Toko");
+                lokasi = "Lokasi Toko";
+                break;
+            case 2:
+                txtTitle.setText("Update Lokasi Gudang");
+                lokasi = "Lokasi Gudang";
+                break;
+            case 3:
+                txtTitle.setText("Update Lokasi Tagihan");
+                lokasi = "Lokasi Tagihan";
+                break;
+        }
+
+        if (currentLocation != null) {
+            txtAddress.setText(currentLocation.get("address") != null
+                    ? currentLocation.get("address").toString()
+                    : "Lokasi tidak di temukan");
+        } else {
+            txtAddress.setText("Lokasi tidak di temukan");
+        }
+
+        String finalLokasi = lokasi;
+        btnUpdate.setOnClickListener(v -> {
+            if (currentLocation != null) {
+                dialog.dismiss();
+                database.updateLokasiVisitSalesman(currentLocation, visitSales, updateLocation);
+                setToast("Sukses mengubah lokasi " + finalLokasi);
+            } else {
+                setToast("Can't get your location.. Please try again..");
+            }
+        });
+
+        btnNo.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        IMapController mapController = mapView.getController();
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        mapView.setMultiTouchControls(true);
+        mapController.setZoom(Constants.ZOOM_LEVEL_LOCATION);
+
+        //icon compass
+        CompassOverlay mCompassOverlay = new CompassOverlay(DailySalesmanActivity.this, new InternalCompassOrientationProvider(DailySalesmanActivity.this), mapView);
+        mCompassOverlay.enableCompass();
+        mapView.getOverlays().add(mCompassOverlay);
+
+        final List<Customer>[] custList = new List[]{new ArrayList<>()};
+        if (currentLocation != null) {
+            GeoPoint myPosition = new GeoPoint((Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude"));
+            custList[0].add(new Customer("", "You", "", false, (Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude")));
+            mapView.getController().animateTo(myPosition);
+        }
+        final ArrayList<OverlayItem>[] items = new ArrayList[]{Helper.setOverLayItems(custList[0], DailySalesmanActivity.this)};
+        final ItemizedOverlayWithFocus<OverlayItem>[][] mOverlay = new ItemizedOverlayWithFocus[][]{new ItemizedOverlayWithFocus[]{new ItemizedOverlayWithFocus<OverlayItem>(items[0], new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                //do something
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                return false;
+            }
+        }, DailySalesmanActivity.this)}};
+        mOverlay[0][0].setFocusItemsOnTap(true);
+        mOverlay[0][0].setOnFocusChangeListener(new ItemizedOverlay.OnFocusChangeListener() {
+            @Override
+            public void onFocusChanged(ItemizedOverlay<?> overlay, OverlayItem newFocus) {
+                mOverlay[0][0].unSetFocusedItem();
+                mOverlay[0][0].setFocusedItem(newFocus);
+            }
+        });
+
+        mapView.getOverlays().add(mOverlay[0][0]);
+        mapController.setCenter(Helper.computeCentroid(custList[0]));
+
+        btCenterMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentLocation != null) {
+                    GeoPoint myPosition = new GeoPoint((Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude"));
+                    mapView.getController().animateTo(myPosition);
+
+                    custList[0].clear();
+                    custList[0].add(new Customer("", "You", "", false, (Double) currentLocation.get("latitude"), (Double) currentLocation.get("longitude")));
+
+                    items[0] = Helper.setOverLayItems(custList[0], DailySalesmanActivity.this);
+                    mOverlay[0] = new ItemizedOverlayWithFocus[]{new ItemizedOverlayWithFocus<OverlayItem>(items[0], new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                        @Override
+                        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                            //do something
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onItemLongPress(final int index, final OverlayItem item) {
+                            return false;
+                        }
+                    }, DailySalesmanActivity.this)};
+                    mapView.getOverlays().add(mOverlay[0][0]);
+                    mapView.invalidate();
+                } else {
+                    setToast("Can't get your location.. Please try again..");
+                }
+            }
+        });
+
+        dialog.show();
     }
 
     public void getAddressWithPermission(LocationRequestCallback<String, Location> callbackOnResult) {

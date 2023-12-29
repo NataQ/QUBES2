@@ -48,16 +48,32 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/text"
-            style="@style/TextView_Small"
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="text" />
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text"
+                style="@style/TextView_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="text" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/textStock"
+                style="@style/TextView_Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:visibility="gone"
+                android:text="text" />
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="2dp"

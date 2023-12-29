@@ -122,7 +122,8 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView txtLeft, txtTglGiro, txtPrice, txtTglCair, spnBankASPP, spnBankCust;
-        EditText edtPayment, edtNoGiro;
+        TextView edtPayment;
+        EditText edtNoGiro;
         CardView card_view;
         RecyclerView recyclerView;
         ImageView imgView;
@@ -375,36 +376,96 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             }
         });
 
-        holder.edtPayment.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        holder.edtPayment.setOnClickListener(view -> {
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            final Dialog dialog = new Dialog(mContext);
+            View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_total, null);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(dialogView);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+            TextView txtTypePayment = dialog.findViewById(R.id.txtTypePayment);
+            EditText edtTotalPayment = dialog.findViewById(R.id.edtTotalPayment);
+            Button btnCancel = dialog.findViewById(R.id.btnCancel);
+            Button btnSave = dialog.findViewById(R.id.btnSave);
 
-            }
+            txtTypePayment.setText("Giro");
+            edtTotalPayment.setText(totalPayment != 0 ? Helper.setDotCurrencyAmount(totalPayment) : null);
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            edtTotalPayment.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(holder.edtPayment, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    double qty = Double.parseDouble(s.toString().replace(",", ""));
-                    if (qty < 0) {
-                        Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                        holder.edtPayment.setText(s.toString().substring(0, s.toString().length() - 1));
-                    } else {
-                        totalPayment = qty;
-                        detail.setTotalPayment(totalPayment);
-                    }
-                } else {
-                    totalPayment = 0;
-                    detail.setTotalPayment(0);
                 }
-                setLeft(holder.getAbsoluteAdapterPosition());
-            }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    Helper.setDotCurrency(edtTotalPayment, this, s);
+                }
+            });
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            });
+
+            btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
+                    holder.edtPayment.setText(Helper.setDotCurrencyAmount(qty));
+                    totalPayment = qty;
+                    detail.setTotalPayment(totalPayment);
+                    for (Material mat : materialList){
+                        mat.setAmountPaid(0);
+                    }
+                    mAdapter.notifyDataSetChanged();
+                    mContext.updateKurangBayarDelete();
+                    setLeft(holder.getAbsoluteAdapterPosition());
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
         });
+
+//        holder.edtPayment.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Helper.setDotCurrency(holder.edtPayment, this, s);
+//                if (!s.toString().equals("") && !s.toString().equals("-")) {
+//                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+//                    if (qty < 0) {
+//                        Toast.makeText(mContext, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+//                        holder.edtPayment.setText(s.toString().substring(0, s.toString().length() - 1));
+//                    } else {
+//                        totalPayment = qty;
+//                        detail.setTotalPayment(totalPayment);
+//                    }
+//                } else {
+//                    totalPayment = 0;
+//                    detail.setTotalPayment(0);
+//                }
+//                setLeft(holder.getAbsoluteAdapterPosition());
+//            }
+//        });
 
         holder.llDelete.setOnClickListener(v -> {
             final Dialog dialog = new Dialog(mContext);

@@ -197,6 +197,9 @@ public class OrderAddActivity extends BaseActivity {
         fromDate = Helper.getTodayDate();
         paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(fromDate);
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
+        if(user.getType_sales().equals("CO")) {
+            txtTglKirim.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
+        }
         txtTglKirim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -584,7 +587,11 @@ public class OrderAddActivity extends BaseActivity {
             req.put("price_list_code", null);
             req.put("material_group_id", null);
         }
-        listMat.addAll(database.getAllMasterMaterialByCustomer(req));
+        if(user.getType_sales().equals("CO")){
+            listMat.addAll(database.getAllMasterMaterialCanvasByCustomer(req));
+        }else {
+            listMat.addAll(database.getAllMasterMaterialByCustomer(req));
+        }
         for (Material param : listMat) {
             int exist = 0;
             for (Material param1 : mList) {

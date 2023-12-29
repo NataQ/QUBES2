@@ -67,7 +67,7 @@
 
             </RelativeLayout>
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/edit_text"
                 style="@style/TextView_Small"
                 android:layout_width="match_parent"

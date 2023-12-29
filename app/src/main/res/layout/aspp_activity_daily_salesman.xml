@@ -661,7 +661,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvPromo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -674,7 +674,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Update Location"
+                        android:text="Attachment"
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
@@ -863,7 +863,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Attachment"
+                        android:text="Update Location"
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
@@ -873,168 +873,93 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/llLokasiToko"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_margin="5dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:background="@drawable/bg_add_image"
+                            android:minHeight="60dp"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="15dp">
 
-                            <RelativeLayout
-                                android:id="@+id/llKTP"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_add_image_alert"
-                                android:minHeight="100dp"
-                                android:orientation="vertical"
-                                android:padding="5dp">
-
-                                <ImageView
-                                    android:id="@+id/imgDeleteKTP"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:src="@drawable/ic_delete_photo"
-                                    android:visibility="gone" />
-
-                                <ImageView
-                                    android:id="@+id/imgAddKTP"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_margin="5dp"
-                                    android:background="@drawable/ic_add_photo"
-                                    android:backgroundTint="@color/blue_aspp" />
-
-                                <ImageView
-                                    android:id="@+id/imgKTP"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="80dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_gravity="center"
-                                    android:layout_marginStart="5dp"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_marginEnd="5dp"
-                                    android:layout_marginBottom="5dp" />
-                            </RelativeLayout>
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ic_customer_orange"
+                                android:backgroundTint="@color/blue_aspp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textAlignment="center"
                                 android:layout_gravity="center"
-                                android:layout_marginTop="8dp"
-                                android:text="Foto KTP"
+                                android:layout_marginTop="10dp"
+                                android:text="Update Lokasi Toko"
                                 android:textColor="@color/black_aspp" />
-
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llLokasiGudang"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:gravity="center"
+                            android:background="@drawable/bg_add_image"
+                            android:minHeight="60dp"
+                            android:orientation="vertical"
+                            android:padding="15dp">
 
-                            <RelativeLayout
-                                android:id="@+id/llNPWP"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_add_image"
-                                android:minHeight="100dp"
-                                android:orientation="vertical"
-                                android:padding="5dp">
-
-                                <ImageView
-                                    android:id="@+id/imgDeleteNPWP"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:src="@drawable/ic_delete_photo"
-                                    android:visibility="gone" />
-
-                                <ImageView
-                                    android:id="@+id/imgAddNPWP"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_marginStart="5dp"
-                                    android:layout_marginTop="5dp"
-                                    android:layout_marginEnd="5dp"
-                                    android:layout_marginBottom="5dp"
-                                    android:background="@drawable/ic_add_photo"
-                                    android:backgroundTint="@color/blue_aspp" />
-
-                                <ImageView
-                                    android:id="@+id/imgNPWP"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="80dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_gravity="center"
-                                    android:layout_margin="5dp" />
-                            </RelativeLayout>
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ic_warehouse"
+                                android:backgroundTint="@color/blue_aspp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textAlignment="center"
                                 android:layout_gravity="center"
-                                android:layout_marginTop="8dp"
-                                android:text="Foto NPWP"
+                                android:layout_marginTop="10dp"
+                                android:text="Update Lokasi Gudang"
                                 android:textColor="@color/black_aspp" />
-
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/llLokasiTagihan"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_margin="5dp"
                             android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:gravity="center"
+                            android:background="@drawable/bg_add_image"
+                            android:minHeight="60dp"
+                            android:orientation="vertical"
+                            android:padding="15dp">
 
-                            <RelativeLayout
-                                android:id="@+id/llOutlet"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_add_image_alert"
-                                android:minHeight="100dp"
-                                android:orientation="vertical"
-                                android:padding="5dp">
-
-                                <ImageView
-                                    android:id="@+id/imgDeleteOutlet"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:src="@drawable/ic_delete_photo"
-                                    android:visibility="gone" />
-
-                                <ImageView
-                                    android:id="@+id/imgAddOutlet"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_margin="5dp"
-                                    android:background="@drawable/ic_add_photo"
-                                    android:backgroundTint="@color/blue_aspp" />
-
-                                <ImageView
-                                    android:id="@+id/imgOutlet"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="80dp"
-                                    android:layout_centerInParent="true"
-                                    android:layout_gravity="center"
-                                    android:layout_margin="5dp" />
-                            </RelativeLayout>
+                            <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/ic_lokasi_tagihan"
+                                android:backgroundTint="@color/blue_aspp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:textAlignment="center"
                                 android:layout_gravity="center"
-                                android:layout_marginTop="8dp"
-                                android:text="Foto Outlet"
+                                android:layout_marginTop="10dp"
+                                android:text="Update Lokasi Tagihan"
                                 android:textColor="@color/black_aspp" />
-
                         </LinearLayout>
 
                     </LinearLayout>

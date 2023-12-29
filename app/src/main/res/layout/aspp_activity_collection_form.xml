@@ -385,7 +385,7 @@
                             android:layout_weight=".4"
                             android:text="Total Payment" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/edtPaymentCash"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -698,7 +698,7 @@
                             android:layout_weight=".4"
                             android:text="Total Payment" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/edtPaymentLain"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"

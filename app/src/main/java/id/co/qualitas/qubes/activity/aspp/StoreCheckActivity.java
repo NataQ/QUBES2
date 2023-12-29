@@ -109,7 +109,8 @@ public class StoreCheckActivity extends BaseActivity {
 
         if (Helper.isNotEmptyOrNull(mList)) {
             for (Material mat : mList) {
-                if (mat.getQty() == 0 || mat.getUom().equals("-")) {
+//                if (mat.getQty() == 0 || mat.getUom().equals("-")) {
+                if (mat.getUom().equals("-")) {
                     param++;
                     break;
                 }

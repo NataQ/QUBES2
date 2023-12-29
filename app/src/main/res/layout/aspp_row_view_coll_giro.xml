@@ -39,7 +39,7 @@
                     android:orientation="horizontal"
                     android:visibility="visible">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                         android:textColor="@color/gray8_aspp"
                         android:textStyle="bold" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtNoGiro"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
@@ -100,14 +100,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Tanggal Giro" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTglGiro"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -129,14 +129,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Tanggal Cair" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTglCair"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -165,14 +165,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Bank Name" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/spnBankASPP"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -194,14 +194,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Bank Cust." />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/spnBankCust"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -231,14 +231,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Total Payment" />
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/edtPayment"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
@@ -260,14 +260,14 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
                             android:text="Left" />
 
-                        <TextView
+                        <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtLeft"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"

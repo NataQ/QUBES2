@@ -11,6 +11,7 @@ public class CollectionHeader implements Serializable, Cloneable {
     public String customerId;
     public String invoiceNo;
     public String invoiceDate;
+    public String typePayment;
     public double invoiceTotal;
     public double totalPaid;
     public String status;
@@ -21,6 +22,23 @@ public class CollectionHeader implements Serializable, Cloneable {
     public List<CollectionDetail> chequeList;
     public List<CollectionDetail> lainList;
     private int isSync;
+    private boolean deleted;
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getTypePayment() {
+        return typePayment;
+    }
+
+    public void setTypePayment(String typePayment) {
+        this.typePayment = typePayment;
+    }
 
     public String getDate() {
         return date;

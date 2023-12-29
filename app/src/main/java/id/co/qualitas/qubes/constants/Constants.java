@@ -2,6 +2,7 @@ package id.co.qualitas.qubes.constants;
 
 public class Constants {
     public static final double ZOOM_LEVEL = 10.0;
+    public static final double ZOOM_LEVEL_LOCATION = 20.0;
     public static final String FCM = "fcm";
     public static final String IMAGE_TYPE = "image_type";
     public static final String NO_CONNECTION = "no connection";
@@ -131,7 +132,7 @@ public class Constants {
     public static final int FAILURE_RESULT = 1;
 
     public static String URL = "http://192.168.1.13:8282";
-    //    public static String IP = "192.168.1.13:8282";
+    //    public static String IP = "192.168.1.18:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 
@@ -531,11 +532,11 @@ public class Constants {
     public static final String API_INVOICE_LIST = "getListInvoice";
     public static final String API_INVOICE_VERIFICATION = "updateVerificationInvoice";
     public static final String API_GET_TODAY_CUSTOMER = "getTodayCustomer";
-    public static final String API_GET_START_DAY = "startDay";
+//    public static final String API_GET_START_DAY = "startDay";
     public static final String API_GET_START_VISIT = "getStartVisit";
     public static final String API_GET_START_DAY_MULTI_PART = "startDayMultiPart";
     public static final String API_GET_END_DAY_MULTI_PART = "endDayMultiPart";
-    public static final String API_GET_END_DAY = "endDay";
+//    public static final String API_GET_END_DAY = "endDay";
     public static final String API_GET_DISCOUNT_ORDER = "getDiscount";
     public static final String API_SAVE_COLLECTION = "saveCollection";
     public static final String API_GET_TARGET_DASHBOARD = "getTargetDashboard";
@@ -559,7 +560,7 @@ public class Constants {
     public static final String API_SYNC_ORDER = "syncOrder";
     public static final String API_SYNC_COLLECTION = "syncCollection";
     public static final String API_SYNC_RETURN = "syncReturn";
-    public static final String API_SYNC_PHOTO = "syncPhoto";
+//    public static final String API_SYNC_PHOTO = "syncPhoto";
     public static final String API_SYNC_ONE_PHOTO = "syncOnePhoto";
     public static final String API_GET_IMAGE = "getImage";
     public static final String API_SEND_DATABASE_LOCAL = "sendDatabaseLocal";

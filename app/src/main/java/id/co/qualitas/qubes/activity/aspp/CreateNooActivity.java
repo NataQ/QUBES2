@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -94,6 +96,7 @@ public class CreateNooActivity extends BaseActivity {
     private Spinner spnSuku, spnStatusToko, spnStatusNpwp, spnUdf5, spnKelasOutlet, spnDay;
     private CheckBox cb1, cb2, cb3, cb4;
     private RelativeLayout llKTP, llNPWP, llOutlet;
+    private LinearLayout llNoNpwp;
     private ImageType imageType;
     private int typeImage = 0;
     public static final int GALLERY_PERM_CODE = 101;
@@ -247,6 +250,12 @@ public class CreateNooActivity extends BaseActivity {
 //            }
         });
 
+//        llNoNpwp.setOnClickListener( v-> {
+//            edtNoNpwp1.requestFocus();
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.showSoftInput(edtNoNpwp1, InputMethodManager.SHOW_IMPLICIT);
+//        });
+
         InputFilter inputFilter = (source, start, end, dest, dstart, dend) -> {
             for (int i = start; i < end; i++) {
                 if (!Character.isDigit(source.charAt(i))) {
@@ -296,6 +305,8 @@ public class CreateNooActivity extends BaseActivity {
 
     private void setEditTextListener(EditText editText, final EditText nextEditText) {
         editText.addTextChangedListener(new TextWatcher() {
+            private int position;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // No action needed
@@ -304,6 +315,7 @@ public class CreateNooActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // No action needed
+                position = start;
             }
 
             @Override
@@ -319,6 +331,8 @@ public class CreateNooActivity extends BaseActivity {
                     if (focusableView != null) {
                         focusableView.requestFocus();
                     }
+                } else if (s.length() > 4) {
+                    editText.setText(s.delete(position, position + 1));
                 }
             }
         });
@@ -349,7 +363,7 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(edtNoNpwp4)) {
             customerNoo.setNo_npwp4(edtNoNpwp4.getText().toString().trim());
         }
-        String npwp = customerNoo.getNo_npwp1() + customerNoo.getNo_npwp2() + customerNoo.getNo_npwp3() + customerNoo.getNo_npwp4();
+        String npwp = Helper.isEmpty(customerNoo.getNo_npwp1(), "") + Helper.isEmpty(customerNoo.getNo_npwp2(), "") + Helper.isEmpty(customerNoo.getNo_npwp3(), "") + Helper.isEmpty(customerNoo.getNo_npwp4(), "");
         customerNoo.setNo_npwp(npwp);
         if (!Helper.isEmptyEditText(edtNamaNpwp)) {
             customerNoo.setNpwp_name(edtNamaNpwp.getText().toString().trim());
@@ -373,7 +387,7 @@ public class CreateNooActivity extends BaseActivity {
         if (!Helper.isEmptyEditText(edtNik4)) {
             customerNoo.setNik4(edtNik4.getText().toString().trim());
         }
-        String nik = customerNoo.getNik1() + customerNoo.getNik2() + customerNoo.getNik3() + customerNoo.getNik4();
+        String nik = Helper.isEmpty(customerNoo.getNik1(), "") + Helper.isEmpty(customerNoo.getNik2(), "") + Helper.isEmpty(customerNoo.getNik3(), "") + Helper.isEmpty(customerNoo.getNik4(), "");
         customerNoo.setNik(nik);
         if (!Helper.isEmptyEditText(edtLokasi)) {
             customerNoo.setLocation(edtLokasi.getText().toString().trim());
@@ -392,7 +406,7 @@ public class CreateNooActivity extends BaseActivity {
         }
 
         String week1 = "", week2 = "", week3 = "", week4 = "";
-        String day = customerNoo.getDay();
+        String day = "H" + customerNoo.getDay();
         if (customerNoo.isW1()) {
             week1 = "P1" + day;
         }
@@ -1468,6 +1482,7 @@ public class CreateNooActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        llNoNpwp = findViewById(R.id.llNoNpwp);
         cb1 = findViewById(R.id.cb1);
         cb2 = findViewById(R.id.cb2);
         cb3 = findViewById(R.id.cb3);
@@ -1629,6 +1644,11 @@ public class CreateNooActivity extends BaseActivity {
         spnStatusToko.setSelection(customerNoo.getStatus_toko_pos());
         spnStatusNpwp.setSelection(customerNoo.getStatus_npwp_pos());
         spnUdf5.setSelection(spinnerPositionUdf5);
+
+        cb1.setChecked(customerNoo.isW1());
+        cb2.setChecked(customerNoo.isW2());
+        cb3.setChecked(customerNoo.isW3());
+        cb4.setChecked(customerNoo.isW4());
     }
 
     //foto
@@ -1800,31 +1820,34 @@ public class CreateNooActivity extends BaseActivity {
                     if (customerNoo.getPhotoKtp() != null) {
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoKtp());
+                        req.put("photoName", "ktp_" + customerNoo.getId());
                         req.put("typePhoto", "ktp");
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                     }
 
                     if (customerNoo.getPhotoNpwp() != null) {
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoNpwp());
+                        req.put("photoName", "npwp_" + customerNoo.getId());
                         req.put("typePhoto", "npwp");
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                     }
 
                     if (customerNoo.getPhotoOutlet() != null) {
                         req = new HashMap();
                         req.put("photo", customerNoo.getPhotoOutlet());
+                        req.put("photoName", "outlet_" + customerNoo.getId());
                         req.put("typePhoto", "outlet");
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                     }
                 }
                 return result;

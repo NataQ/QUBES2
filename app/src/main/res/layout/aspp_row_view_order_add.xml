@@ -19,29 +19,6 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/llAddExtraItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/ic_extra_item" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add Extra Item"
-                    android:textColor="@color/blue_aspp" />
-
-            </LinearLayout>
-
-            <LinearLayout
                 android:id="@+id/llDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -286,10 +263,34 @@
                     android:layout_marginBottom="10dp"
                     android:background="@color/gray9_aspp" />
 
+                <LinearLayout
+                    android:id="@+id/llAddExtraItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/ic_extra_item" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add Extra Item"
+                        android:textColor="@color/blue_aspp" />
+
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvExtra"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     tools:listitem="@layout/aspp_row_view_order_add_extra" />
             </LinearLayout>
         </LinearLayout>

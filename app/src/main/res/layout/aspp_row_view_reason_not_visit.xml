@@ -7,7 +7,7 @@
     android:paddingTop="5dp"
     android:paddingBottom="5dp">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/txtNo"
         style="@style/TextView_Small"
         android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtOutlet"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
@@ -33,7 +33,7 @@
             android:textColor="@color/black_aspp"
             android:textStyle="bold" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtAddress"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
@@ -42,12 +42,11 @@
             android:text="address"
             android:textColor="@color/gray8_aspp" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/spnReason"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginTop="5dp"
             android:background="@drawable/bg_spinner_alert"
             android:completionThreshold="1"
@@ -55,7 +54,7 @@
             android:padding="5dp"
             android:textColor="@color/black_aspp" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edtTxtOther"
             style="@style/TextView_Small"
             android:layout_width="match_parent"

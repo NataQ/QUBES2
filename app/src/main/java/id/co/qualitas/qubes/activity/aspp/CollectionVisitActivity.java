@@ -49,7 +49,7 @@ public class CollectionVisitActivity extends BaseActivity {
     private RecyclerView recyclerViewInvoice, recyclerViewHistory;
     private TextView txtDateHistory, txtTotalInvoice, txtTotalAmountInvoice;
     private TextView txtDateInvoice, txtTotalPaidHistory;
-    private double totalInvoice = 0;
+    private double totalInvoice = 0, totalInvoiceAmount = 0;
     private double totalPaid = 0, totalPaidHistory = 0;
 
     private SwipeRefreshLayout swipeLayoutHistory, swipeLayoutInvoice;
@@ -89,7 +89,7 @@ public class CollectionVisitActivity extends BaseActivity {
         swipeLayoutInvoice.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new RequestUrl().execute();
+                refreshData();
                 swipeLayoutInvoice.setRefreshing(false);
             }
         });
@@ -109,7 +109,7 @@ public class CollectionVisitActivity extends BaseActivity {
         swipeLayoutHistory.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new RequestUrl().execute();
+                refreshData();
                 swipeLayoutHistory.setRefreshing(false);
             }
         });
@@ -138,7 +138,7 @@ public class CollectionVisitActivity extends BaseActivity {
     }
 
     private void setAdapterHistory() {
-        mAdapterHistory = new CollectionVisitHistoryAdapter(this, mListHistory, header -> {
+        mAdapterHistory = new CollectionVisitHistoryAdapter(this, outletHeader, mListHistory, header -> {
             SessionManagerQubes.setCollectionHistoryHeader(header);
             SessionManagerQubes.setCollectionSource(2);
             Intent intent = new Intent(this, CollectionDetailActivity.class);
@@ -155,18 +155,20 @@ public class CollectionVisitActivity extends BaseActivity {
         totalPaid = 0;
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
+            totalInvoiceAmount = totalInvoiceAmount + inv.getAmount();
             totalPaid = totalPaid + inv.getTotal_paid();
         }
 
         txtDateInvoice.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
         txtTotalAmountInvoice.setText("Rp. " + format.format(totalPaid));
-        txtTotalInvoice.setText(format.format(totalInvoice));
+        txtTotalInvoice.setText("Rp. " + format.format(totalInvoiceAmount));
+//        txtTotalInvoice.setText(format.format(totalInvoice));
 
         mListHistory = new ArrayList<>();
         mListHistory.addAll(database.getAllInvoiceHistoryCustomer(SessionManagerQubes.getOutletHeader().getId()));
         totalPaidHistory = 0;
         for (CollectionHeader inv : mListHistory) {
-            totalPaidHistory = totalPaidHistory + inv.getTotalPaid();
+            if (!inv.isDeleted()) totalPaidHistory = totalPaidHistory + inv.getTotalPaid();
         }
 
         txtDateHistory.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
@@ -229,8 +231,18 @@ public class CollectionVisitActivity extends BaseActivity {
             recyclerViewHistory.setVisibility(View.GONE);
             llNoDataHistory.setVisibility(View.GONE);
             llNoDataInvoice.setVisibility(View.GONE);
-            new RequestUrl().execute();//1
+            new RequestUrl().execute();//on resume
         }
+    }
+
+    public void refreshData() {
+        progressCircleInvoice.setVisibility(View.VISIBLE);
+        progressCircleHistory.setVisibility(View.VISIBLE);
+        recyclerViewInvoice.setVisibility(View.GONE);
+        recyclerViewHistory.setVisibility(View.GONE);
+        llNoDataHistory.setVisibility(View.GONE);
+        llNoDataInvoice.setVisibility(View.GONE);
+        new RequestUrl().execute();//refresh
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
@@ -260,7 +272,7 @@ public class CollectionVisitActivity extends BaseActivity {
             progressCircleInvoice.setVisibility(View.GONE);
             progressCircleHistory.setVisibility(View.GONE);
             mAdapter.setData(mList);
-            mAdapterHistory.setData(mListHistory);
+            mAdapterHistory.setData(mListHistory, outletHeader);
 
             if (Helper.isEmptyOrNull(mList)) {
                 recyclerViewInvoice.setVisibility(View.GONE);

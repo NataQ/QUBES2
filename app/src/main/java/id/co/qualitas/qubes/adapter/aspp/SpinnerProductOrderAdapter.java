@@ -80,7 +80,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout llHeader;
         RelativeLayout checkBox;
-        TextView text;
+        TextView text, textStock;
         CardView cvUncheck, cvCheck;
         OnAdapterListener onAdapterListener;
 
@@ -88,9 +88,11 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkBox);
             cvUncheck = itemView.findViewById(R.id.cvUncheck);
+            textStock = itemView.findViewById(R.id.textStock);
             text = itemView.findViewById(R.id.text);
             llHeader = itemView.findViewById(R.id.llHeader);
             cvCheck = itemView.findViewById(R.id.cvCheck);
+            textStock.setVisibility(View.VISIBLE);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -111,6 +113,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
     public void onBindViewHolder(Holder holder, int position) {
         Material detail = mFilteredList.get(position);
         holder.text.setText(detail.getId() + " - " + detail.getNama() + " (" + detail.getId_material_group() + " - " + detail.getMaterial_group_name() + ")");
+        holder.textStock.setText("Stock : " );
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);

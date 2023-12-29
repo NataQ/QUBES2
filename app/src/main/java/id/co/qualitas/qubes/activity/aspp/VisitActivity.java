@@ -246,24 +246,24 @@ public class VisitActivity extends BaseActivity {
         btnStartDay.setOnClickListener(v -> {
             startVisit.setStartDay(true);
             SessionManagerQubes.setStartDay(startVisit);
-            validateButton();
+            validateButton();//start day
         });
 
         btnEndVisit.setOnClickListener(v -> {
             boolean pass = false;
-            if(!startVisit.isStartDay()){
+            if (!startVisit.isStartDay()) {
                 pass = true;
-            } else{
+            } else {
                 pass = false;
             }
 
-            if(!startVisit.isEndDay()){
+            if (!startVisit.isEndDay()) {
                 pass = true;
-            } else{
+            } else {
                 pass = false;
             }
             if (user.getRute_inap() == 1 && pass) {
-                setToast("Silahkan end day terlebih dahulu sebelum end visit");
+                setToast("Silahkan finish terlebih dahulu sebelum end visit");
             } else {
                 if (checkPermission()) {
                     endTodayVisit();//end visit
@@ -876,7 +876,7 @@ public class VisitActivity extends BaseActivity {
                     for (VisitSalesman cust : listCust) {
                         cust.setPhotoNotVisitReason(imageType.getPhotoReason());
                     }
-//                    mAdapter.setData(listCust);
+                    mAdapter.setData(listCust);
                 }
             } else {
                 mAdapter.setData(listCust);
@@ -1049,11 +1049,12 @@ public class VisitActivity extends BaseActivity {
         if (vs.getPhotoNotVisitReason() != null) {
             Map req = new HashMap();
             req.put("photo", vs.getPhotoNotVisitReason());
+            req.put("photoName", "reason_not_visit_" + vs.getIdHeader());
             req.put("typePhoto", "not_visit");
             req.put("idDB", vs.getIdHeader());
             req.put("customerID", vs.getCustomerId());
             req.put("username", user.getUsername());
-            database.addPhoto(req);
+            database.addPhoto(req);//d
         }
 
         Customer cus = new Customer();
@@ -1533,7 +1534,7 @@ public class VisitActivity extends BaseActivity {
             requestData();//getFirstDataOffline
         }
 
-        validateButton();
+        validateButton();//getFirstDataOffline
     }
 
     private void requestData() {
@@ -1812,7 +1813,7 @@ public class VisitActivity extends BaseActivity {
             } else if (PARAM == 4) {
                 progress.dismiss();
                 if (logResult.getIdMessage() == 1) {
-                    String message = "End Visit : " + logResult.getMessage();
+                    String message = "End of Day : " + logResult.getMessage();
                     logResult.setMessage(message);
                     database.addLog(logResult);
 
@@ -1855,7 +1856,7 @@ public class VisitActivity extends BaseActivity {
                         SessionManagerQubes.setStartDay(startVisit);
                         progress.show();
                         PARAM = 6;
-                        new RequestUrl().execute();//rute inap
+                        new RequestUrl().execute();//rute inap, 6
                     } else {
                         openDialogEndVisit();//after save daily salesman
                     }
@@ -2322,21 +2323,24 @@ public class VisitActivity extends BaseActivity {
                 }
                 if (listResult.size() == offlineData.size()) {//ganti sizeData
                     if (error == 0) {
+                        if (user.getRute_inap() == 1) {
+                            startVisit.setEndDay(false);
+                            startVisit.setStartDay(false);
+                            SessionManagerQubes.setStartDay(startVisit);
+                            validateButton();//send all data
+                        }
                         setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
                     } else {
                         setToast("Gagal mengirim data : " + String.valueOf(error));
                     }
                 } else {
+
                     setToast("Gagal mengirim data : " + String.valueOf(error));
                 }
             } else {
                 setToast("Gagal mengirim data");
             }
             progressDialog.dismiss();
-
-            if (user.getRute_inap() == 1) {
-                validateButton();
-            }
         }
     }
 
@@ -2456,12 +2460,12 @@ public class VisitActivity extends BaseActivity {
                                 if (endVisit) {
                                     if (database.getCountNotVisit() == 0) {
                                         if (user.getRute_inap() == 1) {
-                                            startVisit.setEndDay(false);
-                                            startVisit.setStartDay(false);
-                                            SessionManagerQubes.setStartDay(startVisit);
+//                                            startVisit.setEndDay(false);
+//                                            startVisit.setStartDay(false);
+//                                            SessionManagerQubes.setStartDay(startVisit);
                                             progress.show();
                                             PARAM = 6;
-                                            new RequestUrl().execute();//rute inap
+                                            new RequestUrl().execute();//rute inap, 6
                                         } else {
                                             openDialogEndVisit();//get location
                                         }

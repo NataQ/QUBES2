@@ -16,6 +16,7 @@ public class Material implements Cloneable {
     private double qtySisa;
     private double amount;
     private double amountPaid;
+    private double totalAmountPaid;
     private double nett;
     private String desc;
     private String batch;
@@ -93,6 +94,14 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getTotalAmountPaid() {
+        return totalAmountPaid;
+    }
+
+    public void setTotalAmountPaid(double totalAmountPaid) {
+        this.totalAmountPaid = totalAmountPaid;
     }
 
     public int getCondition_pos() {

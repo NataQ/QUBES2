@@ -242,7 +242,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            tools:listitem="@layout/aspp_row_view_order_add"/>
+            tools:listitem="@layout/aspp_row_view_order_add" />
 
     </RelativeLayout>
 </LinearLayout>

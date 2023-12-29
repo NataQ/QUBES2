@@ -1388,6 +1388,7 @@ public class AccountFragment extends BaseFragment {
                             }
                             requestData = new HashMap();
                             requestData.put("typePhoto", data.get("typePhoto"));
+                            requestData.put("photoName", data.get("photoName"));
                             requestData.put("id", user.getUsername());
                             requestData.put("customerId", data.get("customerId"));
                             requestData.put("idDB", data.get("idDB"));

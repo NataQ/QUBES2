@@ -64,7 +64,7 @@ public class CollectionFormActivity extends BaseActivity {
     double totalPaymentCash, totalPaymentLain, leftCash, leftLain;
     private Button btnSubmit, btnAddTransfer, btnAddGiro, btnAddCheque;
     private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain, recyclerViewKredit;
-    private EditText edtPaymentCash, edtPaymentLain;
+    private TextView edtPaymentCash, edtPaymentLain;
     private TextView txtLeftCash, txtLeftLain;
     private TextView txtInvNo, txtDate, txtAmount, txtOrderNo;
     private LinearLayout llOrder, llInvoice;
@@ -108,6 +108,7 @@ public class CollectionFormActivity extends BaseActivity {
     private boolean saveCollection = false, saveOrder = false;
     private Order orderHeader;
     private int isSync = 0;
+    private double totalTagihan;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,15 +118,24 @@ public class CollectionFormActivity extends BaseActivity {
         initialize();
 
         btnSubmit.setOnClickListener(v -> {
-            if (validate()) {
-                if (colLFrom == 1) {
-                    PARAM = 1;
-                } else {
-                    PARAM = 2;
-                    isSync = 0;
-                }
-                progress.show();
-                new RequestUrl().execute();//save
+            int res = validate();
+            switch (res) {
+                case 1:
+                    if (colLFrom == 1) {
+                        PARAM = 1;
+                    } else {
+                        PARAM = 2;
+                        isSync = 0;
+                    }
+                    progress.show();
+                    new RequestUrl().execute();//save
+                    break;
+                case 2:
+                    setToast("Tidak boleh melebihi total tagihan");
+                    break;
+                case 0:
+                    setToast("Pastikan semua field sudah terisi");
+                    break;
             }
         });
 
@@ -317,7 +327,7 @@ public class CollectionFormActivity extends BaseActivity {
         return request;
     }
 
-    private boolean validate() {
+    private int validate() {
         int emptyText = 0, mat = 0;
         totalAmountPaid = 0;
         cashList = new ArrayList<>();
@@ -325,6 +335,7 @@ public class CollectionFormActivity extends BaseActivity {
         giroList = new ArrayList<>();
         chequeList = new ArrayList<>();
         lainList = new ArrayList<>();
+        double totalPayment = 0;
 
         for (Material material : mListCash) {
 //            if(material.isChecked() && material.getAmountPaid() != 0){
@@ -337,6 +348,7 @@ public class CollectionFormActivity extends BaseActivity {
 
         for (CollectionDetail collection : mListTransfer) {
             tfList = new ArrayList<>();
+            totalPayment = totalPayment + collection.getTotalPayment();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -355,9 +367,9 @@ public class CollectionFormActivity extends BaseActivity {
             collection.setCheckedMaterialList(tfList);
         }
 
-
         for (CollectionDetail collection : mListGiro) {
             giroList = new ArrayList<>();
+            totalPayment = totalPayment + collection.getTotalPayment();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -390,6 +402,7 @@ public class CollectionFormActivity extends BaseActivity {
 
         for (CollectionDetail collection : mListCheque) {
             chequeList = new ArrayList<>();
+            totalPayment = totalPayment + collection.getTotalPayment();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -429,10 +442,14 @@ public class CollectionFormActivity extends BaseActivity {
             }
         }
 
-        if (mat > 0 && emptyText == 0) {
-            return true;
+        totalPayment = totalPayment + totalPaymentLain + totalPaymentCash;
+
+        if (totalPayment > totalTagihan) {
+            return 2;
+        } else if (mat > 0 && emptyText == 0) {
+            return 1;
         } else {
-            return false;
+            return 0;
         }
     }
 
@@ -446,7 +463,61 @@ public class CollectionFormActivity extends BaseActivity {
             setSelectView(1);
         });
 
-        edtPaymentCash.addTextChangedListener(new TextWatcher() {
+        edtPaymentCash.setOnClickListener(v -> {
+            openDialogTotalAmount(1);
+        });
+
+//        edtPaymentCash.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Helper.setDotCurrency(edtPaymentCash, this, s);
+//                if (!s.toString().equals("") && !s.toString().equals("-")) {
+//                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+//                    if (qty < 0) {
+//                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        totalPaymentCash = qty;
+//                    }
+//                } else {
+//                    totalPaymentCash = 0;
+//                }
+//                setLeftCash();
+//            }
+//        });
+    }
+
+    private void openDialogTotalAmount(int typePayment) {
+        LayoutInflater inflater = LayoutInflater.from(CollectionFormActivity.this);
+        final Dialog dialog = new Dialog(CollectionFormActivity.this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_total, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTypePayment = dialog.findViewById(R.id.txtTypePayment);
+        EditText edtTotalPayment = dialog.findViewById(R.id.edtTotalPayment);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+
+        if(typePayment == 1){
+            txtTypePayment.setText("Cash");
+            edtTotalPayment.setText(totalPaymentCash != 0 ? Helper.setDotCurrencyAmount(totalPaymentCash) : null);
+        }else{
+            txtTypePayment.setText("Lain-Lain");
+            edtTotalPayment.setText(totalPaymentLain != 0 ? Helper.setDotCurrencyAmount(totalPaymentLain) : null);
+        }
+
+        edtTotalPayment.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -459,20 +530,48 @@ public class CollectionFormActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(edtPaymentCash, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    double qty = Double.parseDouble(s.toString().replace(",", ""));
-                    if (qty < 0) {
-                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                    } else {
-                        totalPaymentCash = qty;
-                    }
-                } else {
-                    totalPaymentCash = 0;
-                }
-                setLeftCash();
+                Helper.setDotCurrency(edtTotalPayment, this, s);
             }
         });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
+                if (typePayment == 1) {
+                    edtPaymentCash.setText(Helper.setDotCurrencyAmount(qty));
+                    totalPaymentCash = qty;
+                    if (colLFrom == 3) {
+                        mListCash = database.getAllDetailOrder(orderHeader.getIdHeader());
+                    } else {
+                        mListCash = database.getAllInvoiceDetail(header);
+                    }
+                    mAdapterCash.setData(mListCash);
+                    setLeftCash();
+                } else {
+                    edtPaymentLain.setText(Helper.setDotCurrencyAmount(qty));
+                    totalPaymentLain = qty;
+                    if (colLFrom == 3) {
+                        mListLain = database.getAllDetailOrder(orderHeader.getIdHeader());
+                    } else {
+                        mListLain = database.getAllInvoiceDetail(header);
+                    }
+                    mAdapterLain.setData(mListLain);
+                    setLeftLain();
+                }
+                updateKurangBayarDelete();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 
     private void setKreditView() {
@@ -710,33 +809,37 @@ public class CollectionFormActivity extends BaseActivity {
             setSelectView(5);
         });
 
-        edtPaymentLain.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(edtPaymentLain, this, s);
-                if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    double qty = Double.parseDouble(s.toString().replace(",", ""));
-                    if (qty < 0) {
-                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
-                    } else {
-                        totalPaymentLain = qty;
-                    }
-                } else {
-                    totalPaymentLain = 0;
-                }
-                setLeftLain();
-            }
+        edtPaymentLain.setOnClickListener(view -> {
+            openDialogTotalAmount(2);
         });
+
+//        edtPaymentLain.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Helper.setDotCurrency(edtPaymentLain, this, s);
+//                if (!s.toString().equals("") && !s.toString().equals("-")) {
+//                    double qty = Double.parseDouble(s.toString().replace(",", ""));
+//                    if (qty < 0) {
+//                        Toast.makeText(CollectionFormActivity.this, "Tidak boleh kurang dari 0", Toast.LENGTH_SHORT).show();
+//                    } else {
+//                        totalPaymentLain = qty;
+//                    }
+//                } else {
+//                    totalPaymentLain = 0;
+//                }
+//                setLeftLain();
+//            }
+//        });
     }
 
     private void initData() {
@@ -763,7 +866,7 @@ public class CollectionFormActivity extends BaseActivity {
 
             double paid = 0;
             if (Helper.isNotEmptyOrNull(mListMaster)) {
-                paid = orderHeader.getOmzet() - mListMaster.get(0).getAmountPaid();
+                paid = orderHeader.getOmzet() - mListMaster.get(0).getTotalAmountPaid();
             } else {
                 paid = orderHeader.getOmzet();
             }
@@ -776,6 +879,7 @@ public class CollectionFormActivity extends BaseActivity {
 
             txtOrderNo.setText(Helper.isEmpty(orderHeader.getIdHeader(), "-"));
             txtAmount.setText("Rp." + format.format(paid));
+            totalTagihan = paid;
             if (!Helper.isNullOrEmpty(orderHeader.getOrder_date())) {
                 String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, orderHeader.getOrder_date());
                 txtDate.setText(requestDate);
@@ -800,13 +904,22 @@ public class CollectionFormActivity extends BaseActivity {
                 buttonKredit.setVisibility(View.GONE);
 
                 header = SessionManagerQubes.getCollectionHeader();
-                mListMaster = database.getAllInvoiceDetail(header.getIdHeader());
-                mListCash = database.getAllInvoiceDetail(header.getIdHeader());
-                mListLain = database.getAllInvoiceDetail(header.getIdHeader());
-                mListKredit = database.getAllInvoiceDetail(header.getIdHeader());
+                mListMaster = database.getAllInvoiceDetail(header);
+                mListCash = database.getAllInvoiceDetail(header);
+                mListLain = database.getAllInvoiceDetail(header);
+                mListKredit = database.getAllInvoiceDetail(header);
+
+                double paid = 0;
+                if (Helper.isNotEmptyOrNull(mListMaster)) {
+                    paid = header.getAmount() - mListMaster.get(0).getTotalAmountPaid();
+                } else {
+                    paid = header.getAmount();
+                }
 
                 txtInvNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
-                txtAmount.setText("Rp." + format.format(header.getNett()));
+//                txtAmount.setText("Rp." + format.format(header.getNett()));
+                txtAmount.setText("Rp." + format.format(paid));
+                totalTagihan = paid;
                 if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
                     String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
                     txtDate.setText(requestDate);

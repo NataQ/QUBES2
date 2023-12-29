@@ -198,12 +198,13 @@ public class ReturnAddActivity extends BaseActivity {
                     if (material.getPhotoReason() != null) {
                         req = new HashMap();
                         req.put("photo", material.getPhotoReason());
+                        req.put("photoName", "return_" + material.getId());
                         req.put("idMaterial", material.getId());
                         req.put("typePhoto", "return");
                         req.put("idDB", header.get("id_header").toString());
                         req.put("customerID", SessionManagerQubes.getOutletHeader().getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);
+                        database.addPhoto(req);//d
                     }
                 }
                 return true;

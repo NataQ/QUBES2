@@ -141,79 +141,79 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtAddress.setText(Helper.isEmpty(detail.getAddress(), ""));
         holder.txtOutlet.setText(Helper.isEmpty(detail.getCustomerId(), "") + " - " + Helper.isEmpty(detail.getCustomerName(), ""));
-//        holder.edtTxtOther.setText(Helper.isEmpty(detail.getDescCheckOutReason(), ""));
-//
-//        List<Reason> reasonList = new ArrayList<>();
-//        reasonList.addAll(new Database(mContext).getAllReason(Constants.REASON_TYPE_NOT_VISIT));
-//        Utils.loadImageFit(mContext, detail.getPhotoCheckOutReason(), holder.img);
-//
-//        if (detail.getPhotoCheckOutReason() != null) {
-//            holder.imgAdd.setVisibility(View.GONE);
-//            holder.imgDelete.setVisibility(View.VISIBLE);
-//            holder.img.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.imgAdd.setVisibility(View.VISIBLE);
-//            holder.imgDelete.setVisibility(View.GONE);
-//            holder.img.setVisibility(View.GONE);
-//        }
-//
-//        holder.imgDelete.setOnClickListener(v -> {
-//            detail.setPhotoCheckOutReason(null);
-//            notifyItemChanged(holder.getAbsoluteAdapterPosition());
-//        });
-//
-//        FilteredSpinnerAllReasonAdapter spinnerAdapter = new FilteredSpinnerAllReasonAdapter(mContext, reasonList);
-//        holder.spnReason.setAdapter(spinnerAdapter);
-//        holder.spnReason.setSelection(detail.getPosReason());
-//
-//        holder.spnReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                Reason temp = reasonList.get(i);
-//                detail.setIdCheckOutReason(String.valueOf(temp.getId()));
-//                detail.setNameCheckOutReason(temp.getDescription());
-//
-//                if (temp.getIs_photo() == 1) {
-//                    holder.llPhoto.setVisibility(View.VISIBLE);
-//                } else {
-//                    holder.llPhoto.setVisibility(View.GONE);
-//                }
-//
-//                if (temp.getIs_freetext() == 1) {
-//                    holder.edtTxtOther.setVisibility(View.VISIBLE);
-//                } else {
-//                    holder.edtTxtOther.setVisibility(View.GONE);
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//            }
-//        });
-//
-//        holder.edtTxtOther.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if (!s.toString().equals("")) {
-//                    detail.setDescCheckOutReason(s.toString());
-//                }
-//            }
-//        });
-//
-//        holder.llPhoto.setOnClickListener(v -> {
-//            SessionManagerQubes.setVisitSalesmanReason(mList);
-//            mContext.openCamera(String.valueOf(holder.getAbsoluteAdapterPosition()));
-//        });
+        holder.edtTxtOther.setText(Helper.isEmpty(detail.getDescNotVisitReason(), ""));
+
+        List<Reason> reasonList = new ArrayList<>();
+        reasonList.addAll(new Database(mContext).getAllReason(Constants.REASON_TYPE_NOT_VISIT));
+        Utils.loadImageFit(mContext, detail.getPhotoNotVisitReason(), holder.img);
+
+        if (detail.getPhotoNotVisitReason() != null) {
+            holder.imgAdd.setVisibility(View.GONE);
+            holder.imgDelete.setVisibility(View.VISIBLE);
+            holder.img.setVisibility(View.VISIBLE);
+        } else {
+            holder.imgAdd.setVisibility(View.VISIBLE);
+            holder.imgDelete.setVisibility(View.GONE);
+            holder.img.setVisibility(View.GONE);
+        }
+
+        holder.imgDelete.setOnClickListener(v -> {
+            detail.setPhotoNotVisitReason(null);
+            notifyItemChanged(holder.getAbsoluteAdapterPosition());
+        });
+
+        FilteredSpinnerAllReasonAdapter spinnerAdapter = new FilteredSpinnerAllReasonAdapter(mContext, reasonList);
+        holder.spnReason.setAdapter(spinnerAdapter);
+        holder.spnReason.setSelection(detail.getPosReason());
+
+        holder.spnReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Reason temp = reasonList.get(i);
+                detail.setIdNotVisitReason(String.valueOf(temp.getId()));
+                detail.setNameNotVisitReason(temp.getDescription());
+
+                if (temp.getIs_photo() == 1) {
+                    holder.llPhoto.setVisibility(View.VISIBLE);
+                } else {
+                    holder.llPhoto.setVisibility(View.GONE);
+                }
+
+                if (temp.getIs_freetext() == 1) {
+                    holder.edtTxtOther.setVisibility(View.VISIBLE);
+                } else {
+                    holder.edtTxtOther.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        holder.edtTxtOther.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    detail.setDescNotVisitReason(s.toString());
+                }
+            }
+        });
+
+        holder.llPhoto.setOnClickListener(v -> {
+            SessionManagerQubes.setVisitSalesmanReason(mList);
+            mContext.openCamera(String.valueOf(holder.getAbsoluteAdapterPosition()));
+        });
     }
 
     @Override

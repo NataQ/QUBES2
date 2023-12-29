@@ -19,6 +19,12 @@ public class VisitSalesman {
     private double longCheckIn;
     private double latCheckOut;
     private double longCheckOut;
+    private double latLokasiToko;
+    private double longLokasiToko;
+    private double longLokasiGudang;
+    private double latLokasiGudang;
+    private double latLokasiTagihan;
+    private double longLokasiTagihan;
     private boolean inside;
     private boolean insideCheckOut;
     private String idPauseReason;
@@ -38,6 +44,54 @@ public class VisitSalesman {
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public double getLatLokasiToko() {
+        return latLokasiToko;
+    }
+
+    public void setLatLokasiToko(double latLokasiToko) {
+        this.latLokasiToko = latLokasiToko;
+    }
+
+    public double getLongLokasiToko() {
+        return longLokasiToko;
+    }
+
+    public void setLongLokasiToko(double longLokasiToko) {
+        this.longLokasiToko = longLokasiToko;
+    }
+
+    public double getLongLokasiGudang() {
+        return longLokasiGudang;
+    }
+
+    public void setLongLokasiGudang(double longLokasiGudang) {
+        this.longLokasiGudang = longLokasiGudang;
+    }
+
+    public double getLatLokasiGudang() {
+        return latLokasiGudang;
+    }
+
+    public void setLatLokasiGudang(double latLokasiGudang) {
+        this.latLokasiGudang = latLokasiGudang;
+    }
+
+    public double getLatLokasiTagihan() {
+        return latLokasiTagihan;
+    }
+
+    public void setLatLokasiTagihan(double latLokasiTagihan) {
+        this.latLokasiTagihan = latLokasiTagihan;
+    }
+
+    public double getLongLokasiTagihan() {
+        return longLokasiTagihan;
+    }
+
+    public void setLongLokasiTagihan(double longLokasiTagihan) {
+        this.longLokasiTagihan = longLokasiTagihan;
+    }
 
     public double getTotalOrder() {
         return totalOrder;
