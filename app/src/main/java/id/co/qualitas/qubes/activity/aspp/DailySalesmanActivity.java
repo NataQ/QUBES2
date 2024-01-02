@@ -175,8 +175,9 @@ public class DailySalesmanActivity extends BaseActivity {
             int validateOut = validateCheckOut();
             switch (validateOut) {
                 case 0:
-                    updateLocation = 0;
-                    checkLocationPermission();//0
+                    openDialogPhotoCheckOut();//button check out
+//                    updateLocation = 0;
+//                    checkLocationPermission();//0
                     break;
                 case 1:
                     openDialogReasonCheckOut();
@@ -328,7 +329,7 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);//d
+            database.addPhoto(req);//ktp
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -357,7 +358,7 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);//d
+            database.addPhoto(req);//npwp
 
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
@@ -386,7 +387,7 @@ public class DailySalesmanActivity extends BaseActivity {
             req.put("customerID", outletHeader.getId());
             req.put("username", user.getUsername());
             req.put("idDB", visitSales.getIdHeader());
-            database.addPhoto(req);//d
+            database.addPhoto(req);//outlet
 //            if (outletHeader.isNoo()) {
 //                database.updatePhotoNoo(outletHeader, user.getUsername());
 //            } else {
@@ -513,7 +514,7 @@ public class DailySalesmanActivity extends BaseActivity {
             visitSales.setIdNotBuyReason(String.valueOf(reason.getId()));
             visitSales.setNameNotBuyReason(reason.getDescription());
             if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
-                typeImage = 12;
+                typeImage = 12;//not buy
                 imageType.setPosImage(typeImage);
                 imageType.setVisitSalesman(visitSales);
                 imageType.setReason(reason);
@@ -522,8 +523,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
                 openDialogPhotoReason(2);
             } else {
-                updateLocation = 0;
-                checkLocationPermission();//0
+                openDialogPhotoCheckOut();//dialog reason check out
+//                updateLocation = 0;
+//                checkLocationPermission();//0
             }
         });
 
@@ -581,8 +583,20 @@ public class DailySalesmanActivity extends BaseActivity {
                 req.put("idDB", visitSales.getIdHeader());
                 req.put("customerID", visitSales.getCustomerId());
                 req.put("username", user.getUsername());
-                database.addPhoto(req);//d
+                database.addPhoto(req);//reason not buy
             }
+
+            if (visitSales.getPhotoCheckOut() != null) {
+                req = new HashMap();
+                req.put("photo", visitSales.getPhotoCheckOut());
+                req.put("photoName", "check_out_" + visitSales.getIdHeader());
+                req.put("typePhoto", "check_out");
+                req.put("idDB", visitSales.getIdHeader());
+                req.put("customerID", visitSales.getCustomerId());
+                req.put("username", user.getUsername());
+                database.addPhoto(req);//check out
+            }
+
             outletHeader.setStatus(Constants.CHECK_OUT_VISIT);
             if (outletHeader.isNoo()) {
                 database.updateStatusOutletNoo(outletHeader, user.getUsername());
@@ -591,9 +605,9 @@ public class DailySalesmanActivity extends BaseActivity {
             }
             SessionManagerQubes.setOutletHeader(outletHeader);
             onBackPressed();
-            setToast("Check Out Success");
+            setToast("Sukses Check Out");
         } else {
-            setToast("Check Out Failed");
+            setToast("Gagal Check Out");
         }
     }
 
@@ -618,7 +632,7 @@ public class DailySalesmanActivity extends BaseActivity {
             visitSales.setIdPauseReason(String.valueOf(reason.getId()));
             visitSales.setNamePauseReason(reason.getDescription());
             if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
-                typeImage = 11;
+                typeImage = 11;//pause
                 imageType.setPosImage(typeImage);
                 imageType.setVisitSalesman(visitSales);
                 imageType.setReason(reason);
@@ -735,7 +749,7 @@ public class DailySalesmanActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                askPermissionCamera();
+                askPermissionCamera();//photo reason
             }
         });
 
@@ -768,8 +782,9 @@ public class DailySalesmanActivity extends BaseActivity {
                     } else {
                         visitSales.setDescNotBuyReason(descReason[0]);
                         visitSales.setPhotoNotBuyReason(imageType.getPhotoReason());
-                        updateLocation = 0;
-                        checkLocationPermission();//0
+                        openDialogPhotoCheckOut();//dialog photo reason
+                        //                updateLocation = 0;
+//                checkLocationPermission();//0
                     }
                     dialog.dismiss();
                 } else {
@@ -777,6 +792,76 @@ public class DailySalesmanActivity extends BaseActivity {
                 }
             } else {
                 setToast("Silahkan coba lagi");
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void openDialogPhotoCheckOut() {
+        Dialog dialog = new Dialog(this);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.aspp_dialog_attach_photo_check_out);
+
+        LinearLayout layoutCamera = dialog.findViewById(R.id.layoutCamera);
+        LinearLayout layoutUpload = dialog.findViewById(R.id.layoutUpload);
+        ImageView imgDelete = dialog.findViewById(R.id.imgDelete);
+        ImageView photo = dialog.findViewById(R.id.photo);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        Button btnSave = dialog.findViewById(R.id.btnSave);
+
+        if (imageType.getPhotoCheckOut() != null) {
+            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoCheckOut(), photo);
+            photo.setVisibility(View.VISIBLE);
+            imgDelete.setVisibility(View.VISIBLE);
+            layoutUpload.setVisibility(View.GONE);
+        } else {
+            photo.setVisibility(View.GONE);
+            imgDelete.setVisibility(View.GONE);
+            layoutUpload.setVisibility(View.VISIBLE);
+        }
+
+        imgDelete.setOnClickListener(view -> {
+            if (imageType == null) {
+                imageType = new ImageType();
+            }
+            imageType.setPhotoCheckOut(null);
+            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+            Utils.loadImageFit(DailySalesmanActivity.this, null, photo);
+            layoutUpload.setVisibility(View.VISIBLE);
+            imgDelete.setVisibility(View.GONE);
+            photo.setVisibility(View.GONE);
+        });
+
+        layoutCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                typeImage = 16;//check out
+                imageType.setPosImage(typeImage);
+                imageType.setVisitSalesman(visitSales);
+                imageType.setIdName(user.getUsername());
+                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                askPermissionCamera();//photo check out
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        btnSave.setOnClickListener(v -> {
+            if(imageType.getPhotoCheckOut() != null) {
+                visitSales.setPhotoCheckOut(imageType.getPhotoCheckOut());
+                dialog.dismiss();
+                updateLocation = 0;
+                checkLocationPermission();//0, check out photo
+            }else{
+                setToast("Silahkan foto untuk check out");
             }
         });
 
@@ -966,7 +1051,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);//d
+                    database.addPhoto(req);//ktp
                     break;
                 case 9:
                     imageType.setPhotoNPWP(uri.getPath());
@@ -978,7 +1063,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);//d
+                    database.addPhoto(req);//npwp
                     break;
                 case 10:
                     imageType.setPhotoOutlet(uri.getPath());
@@ -990,7 +1075,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     req.put("customerID", outletHeader.getId());
                     req.put("username", user.getUsername());
                     req.put("idDB", visitSales.getIdHeader());
-                    database.addPhoto(req);//d
+                    database.addPhoto(req);//outlet
                     break;
                 case 11:
                     imageType.setPhotoReason(uri.getPath());
@@ -999,6 +1084,10 @@ public class DailySalesmanActivity extends BaseActivity {
                 case 12:
                     imageType.setPhotoReason(uri.getPath());
                     openDialogPhotoReason(2);
+                    break;
+                case 16:
+                    imageType.setPhotoCheckOut(uri.getPath());
+                    openDialogPhotoCheckOut();//onresume
                     break;
             }
 //            if (outletHeader.isNoo()) {
@@ -1070,7 +1159,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 req.put("idDB", visitSales.getIdHeader());
                 req.put("customerID", visitSales.getCustomerId());
                 req.put("username", user.getUsername());
-                database.addPhoto(req);//d
+                database.addPhoto(req);//reason pause
             }
             outletHeader.setStatus(Constants.PAUSE_VISIT);
             if (outletHeader.isNoo()) {
@@ -1393,7 +1482,7 @@ public class DailySalesmanActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
-                askPermissionCamera();
+                askPermissionCamera();//photo ktp,etc
             }
         });
 
@@ -1481,7 +1570,7 @@ public class DailySalesmanActivity extends BaseActivity {
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//ktp
                         break;
                     case 9:
                         imageType.setPhotoNPWP(uriImagePath.getPath());
@@ -1498,7 +1587,7 @@ public class DailySalesmanActivity extends BaseActivity {
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//npwp
                         break;
                     case 10:
                         imageType.setPhotoOutlet(uriImagePath.getPath());
@@ -1515,7 +1604,7 @@ public class DailySalesmanActivity extends BaseActivity {
                         req.put("customerID", outletHeader.getId());
                         req.put("username", user.getUsername());
                         req.put("idDB", visitSales.getIdHeader());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//outlet
                         break;
                 }
                 SessionManagerQubes.setOutletHeader(outletHeader);
@@ -1561,20 +1650,27 @@ public class DailySalesmanActivity extends BaseActivity {
                                 currentLocation.put("latitude", location.getLatitude());
                                 currentLocation.put("longitude", location.getLongitude());
                                 currentLocation.put("address", result.getAddressLine(0));
-
-                                if (updateLocation == 0) {
-                                    checkOutCustomer();
-                                } else {
-                                    openDialogMap();
-                                }
                             } else {
+                                currentLocation = null;
                                 setToast("Lokasi tidak di temukan");
+                            }
+
+                            if (updateLocation == 0) {
+                                checkOutCustomer();//on finish
+                            } else {
+                                openDialogMap();//on finish
                             }
                         }
 
                         @Override
                         public void onFailed() {
+                            currentLocation = null;
                             setToast("Lokasi tidak di temukan");
+                            if (updateLocation == 0) {
+                                checkOutCustomer();//on failed
+                            } else {
+                                openDialogMap();//on failed
+                            }
                         }
                     });
         });

@@ -11,6 +11,7 @@ public class ImageType {
     private String photoSelesaiString;
     private String photoKmAwal;
     private String photoReason;
+    private String photoCheckOut;
     private int posImage;
     private int posMaterial;
     private String kmAwal;
@@ -19,6 +20,14 @@ public class ImageType {
     private int type;
     private VisitSalesman visitSalesman;
     private Reason reason;
+
+    public String getPhotoCheckOut() {
+        return photoCheckOut;
+    }
+
+    public void setPhotoCheckOut(String photoCheckOut) {
+        this.photoCheckOut = photoCheckOut;
+    }
 
     public String getIdName() {
         return idName;

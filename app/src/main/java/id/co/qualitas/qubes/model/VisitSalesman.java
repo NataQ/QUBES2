@@ -31,6 +31,7 @@ public class VisitSalesman {
     private String namePauseReason;
     private String descPauseReason;
     private String photoPauseReason;
+    private String photoCheckOut;
     private String idNotVisitReason;
     private String nameNotVisitReason;
     private String descNotVisitReason;
@@ -44,6 +45,14 @@ public class VisitSalesman {
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public String getPhotoCheckOut() {
+        return photoCheckOut;
+    }
+
+    public void setPhotoCheckOut(String photoCheckOut) {
+        this.photoCheckOut = photoCheckOut;
+    }
 
     public double getLatLokasiToko() {
         return latLokasiToko;

@@ -22,31 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Reason"
+            android:text="Check Out"
             android:textAllCaps="true"
             android:textColor="@color/black_aspp"
             android:textStyle="bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/llReasonDesc"
-            style="@style/TextInputLayoutMaterial"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Reason Description"
-            app:hintAnimationEnabled="true">
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edtDescReason"
-                style="@style/TextView_Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="40dp"
-                android:inputType="text"
-                android:padding="0dp"
-                android:textColor="@color/black_aspp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:id="@+id/layoutPhoto"

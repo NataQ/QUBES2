@@ -244,9 +244,17 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartDay.setOnClickListener(v -> {
-            startVisit.setStartDay(true);
-            SessionManagerQubes.setStartDay(startVisit);
-            validateButton();//start day
+            if (startVisit != null) {
+                if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+
+                } else {
+                    startVisit.setStartDay(true);
+                    SessionManagerQubes.setStartDay(startVisit);
+                    validateButton();//start day
+                }
+            } else {
+                setToast("Gagal mengambil data visit");
+            }
         });
 
         btnEndVisit.setOnClickListener(v -> {
@@ -1054,7 +1062,7 @@ public class VisitActivity extends BaseActivity {
             req.put("idDB", vs.getIdHeader());
             req.put("customerID", vs.getCustomerId());
             req.put("username", user.getUsername());
-            database.addPhoto(req);//d
+            database.addPhoto(req);//not visit
         }
 
         Customer cus = new Customer();

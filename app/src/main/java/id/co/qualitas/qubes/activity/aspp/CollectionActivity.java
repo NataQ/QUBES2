@@ -21,6 +21,7 @@ import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
@@ -30,6 +31,7 @@ public class CollectionActivity extends BaseActivity {
     private TextView txtDate, txtTotalInvoice, txtTotalPaid;
     private double totalInvoice = 0;
     private double totalPaid = 0.0;
+    private StartVisit visitSales;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +63,21 @@ public class CollectionActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new CollectionAdapter(this, mList, header -> {
-            if (header.getAmount() == header.getTotal_paid()) {
-                setToast("Invoice sudah lunas");
+            if (visitSales != null) {
+                if (visitSales.getEnd_time() == null) {
+                    if (header.getAmount() == header.getTotal_paid()) {
+                        setToast("Invoice sudah lunas");
+                    } else {
+                        SessionManagerQubes.setCollectionHeader(header);
+                        SessionManagerQubes.setCollectionSource(1);
+                        Intent intent = new Intent(this, CollectionFormActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    setToast("Sudah selesai kunjungan. Tidak bisa melakukan pembayaran.");
+                }
             } else {
-                SessionManagerQubes.setCollectionHeader(header);
-                SessionManagerQubes.setCollectionSource(1);
-                Intent intent = new Intent(this, CollectionFormActivity.class);
-                startActivity(intent);
+                setToast("Silahkan melakukan start visit sebelum melakukan pembayaran");
             }
         });
 
@@ -112,6 +122,7 @@ public class CollectionActivity extends BaseActivity {
         totalInvoice = 0;
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotPaid();
+        visitSales = SessionManagerQubes.getStartDay();
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;

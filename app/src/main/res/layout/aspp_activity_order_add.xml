@@ -26,11 +26,11 @@
             android:id="@+id/imgLogOut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_log_out" />
+            android:src="@drawable/ic_log_out"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -67,8 +67,8 @@
             android:textAllCaps="false"
             android:textColor="@color/blue_aspp"
             android:textSize="@dimen/text_small"
-            app:cornerRadius="5dp"
             app:backgroundTint="@color/white"
+            app:cornerRadius="5dp"
             app:strokeColor="@color/blue_aspp" />
 
         <com.google.android.material.button.MaterialButton
@@ -112,6 +112,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtTglKirim"
+                    style="@style/TextView_Title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
@@ -143,7 +144,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
                     android:gravity="end"
-                    android:text="0"
+                    android:text=""
                     android:textColor="@color/black_aspp" />
             </LinearLayout>
 
@@ -180,13 +181,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="5dp"
             android:text="Add"
             android:textAllCaps="false"
             android:textColor="@color/blue_aspp"
             android:textSize="@dimen/text_small"
-            android:layout_marginEnd="5dp"
-            app:cornerRadius="5dp"
             app:backgroundTint="@color/white"
+            app:cornerRadius="5dp"
             app:icon="@drawable/ic_add_aspp"
             app:iconSize="@dimen/icon_add_inside_btn"
             app:iconTint="@color/blue_aspp" />

@@ -204,7 +204,7 @@ public class ReturnAddActivity extends BaseActivity {
                         req.put("idDB", header.get("id_header").toString());
                         req.put("customerID", SessionManagerQubes.getOutletHeader().getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//return
                     }
                 }
                 return true;

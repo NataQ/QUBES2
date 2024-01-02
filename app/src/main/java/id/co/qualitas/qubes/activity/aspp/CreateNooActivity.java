@@ -1825,7 +1825,7 @@ public class CreateNooActivity extends BaseActivity {
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//ktp
                     }
 
                     if (customerNoo.getPhotoNpwp() != null) {
@@ -1836,7 +1836,7 @@ public class CreateNooActivity extends BaseActivity {
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//npwp
                     }
 
                     if (customerNoo.getPhotoOutlet() != null) {
@@ -1847,7 +1847,7 @@ public class CreateNooActivity extends BaseActivity {
                         req.put("idDB", customerNoo.getId());
                         req.put("customerID", customerNoo.getId());
                         req.put("username", user.getUsername());
-                        database.addPhoto(req);//d
+                        database.addPhoto(req);//outlet
                     }
                 }
                 return result;

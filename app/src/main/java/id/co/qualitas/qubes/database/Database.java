@@ -263,6 +263,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_LONG_LOKASI_TAGIHAN = "longLokasiTagihan";
     private static final String KEY_INSIDE = "inside";
     private static final String KEY_INSIDE_CHECK_OUT = "insideCheckOut";
+    private static final String KEY_PHOTO_CHECK_OUT = "photoCheckOut";
     private static final String KEY_ID_PAUSE_REASON = "idPauseReason";
     private static final String KEY_NAME_PAUSE_REASON = "namePauseReason";
     private static final String KEY_DESC_PAUSE_REASON = "descPauseReason";
@@ -686,6 +687,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_LONG_LOKASI_TAGIHAN + " REAL,"
             + KEY_INSIDE + " INTEGER DEFAULT 0,"
             + KEY_INSIDE_CHECK_OUT + " INTEGER DEFAULT 0,"
+            + KEY_PHOTO_CHECK_OUT + " TEXT,"
             + KEY_ID_PAUSE_REASON + " TEXT,"
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
@@ -5024,7 +5026,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQueryVisit, countQueryNoo;
         Cursor cursorVisit, cursorNoo;
-        countQueryVisit = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = 0";
+        countQueryVisit = "SELECT * FROM " + TABLE_CUSTOMER + " WHERE " + KEY_STATUS + " = 0 and " + KEY_IS_ROUTE + " = 1";
         countQueryNoo = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_STATUS + " = 0";
 
         cursorVisit = db.rawQuery(countQueryVisit, null);
@@ -6213,22 +6215,16 @@ public class Database extends SQLiteOpenHelper {
                 result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
                 result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
-
                 result.setPhotoPauseReason(getPhoto(result.getCustomerId(), "pause", result.getIdHeader()));
-
-//                result.setPhotoPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_PAUSE_REASON)));
                 result.setTimer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DURATION)));
                 result.setIdNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_VISIT_REASON)));
                 result.setNameNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_VISIT_REASON)));
                 result.setDescNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_VISIT_REASON)));
-
                 result.setPhotoNotVisitReason(getPhoto(result.getCustomerId(), "not_visit", result.getIdHeader()));
-
-//                result.setPhotoNotVisitReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_VISIT_REASON)));
+                result.setPhotoCheckOut(getPhoto(result.getCustomerId(), "check_out", result.getIdHeader()));
                 result.setIdNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOT_BUY_REASON)));
                 result.setNameNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOT_BUY_REASON)));
                 result.setDescNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_NOT_BUY_REASON)));
-//                result.setPhotoNotBuyReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NOT_BUY_REASON)));
                 result.setPhotoNotBuyReason(getPhoto(result.getCustomerId(), "not_buy", result.getIdHeader()));
             }
         }
@@ -6841,6 +6837,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_LAT_CHECK_OUT, param.getLatCheckOut());
                     values.put(KEY_LONG_CHECK_OUT, param.getLongCheckOut());
                     values.put(KEY_INSIDE_CHECK_OUT, param.isInsideCheckOut());
+                    values.put(KEY_PHOTO_CHECK_OUT, param.getPhotoCheckOut());
 
                     if (notBuy) {
                         values.put(KEY_ID_NOT_BUY_REASON, param.getIdNotBuyReason());
