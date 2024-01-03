@@ -29,6 +29,7 @@ import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.DropDown;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.LogModel;
 import id.co.qualitas.qubes.model.Material;
@@ -89,8 +90,15 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_MASTER_SALES_PRICE_DETAIL = "MasterSalesPriceDetail";
     private static final String TABLE_MASTER_PARAMETER = "MasterParameter";
     private static final String TABLE_MASTER_CUSTOMER_TYPE = "MasterCustomerType";
+    private static final String TABLE_MASTER_MAX_BON_LIMIT = "MasterMaxBonLimit";
     private static final String TABLE_LOG = "Log";
     private static final String TABLE_PHOTO = "Photo";
+
+    private static final String KEY_ID_MASTER_MAX_BON_LIMIT = "idMasterMaxBonLimit";
+    private static final String KEY_ID_GROUP_MAX_BON = "idGroupMaxBon";
+    private static final String KEY_NAME_GROUP_MAX_BON = "nameGroupMaxBon";
+    private static final String KEY_LIMITS = "limits";
+
     private static final String KEY_ID_CUSTOMER_TYPE = "idCustomerType";
     private static final String KEY_ID_TYPE_PRICE = "idTypePrice";
     private static final String KEY_NAME_TYPE_PRICE = "nameTypePrice";
@@ -1065,6 +1073,16 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
             + ")";
 
+    public static String CREATE_TABLE_MAX_BON_LIMIT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MAX_BON_LIMIT + "("
+            + KEY_ID_GROUP_MAX_BON + " TEXT PRIMARY KEY,"
+            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
+            + KEY_LIMITS + " TEXT,"
+            + KEY_MATERIAL_GROUP_ID + " TEXT,"
+            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
+            + ")";
+
     public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_LIMIT_BON + "("
             + KEY_ID_MINIMAL_ORDER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_ID + " TEXT,"
@@ -1126,6 +1144,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_PARAMETER);
         db.execSQL(CREATE_TABLE_LOG);
         db.execSQL(CREATE_TABLE_CUSTOMER_TYPE);
+        db.execSQL(CREATE_TABLE_MAX_BON_LIMIT);
         db.execSQL(CREATE_TABLE_PHOTO);
     }
 
@@ -1166,6 +1185,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PARAMETER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOG);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MAX_BON_LIMIT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHOTO);
         onCreate(db);
     }
@@ -2997,6 +3017,28 @@ public class Database extends SQLiteOpenHelper {
         int id = -1;
         try {
             id = (int) db.insert(TABLE_MASTER_CUSTOMER_TYPE, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addMasterMaxBonLimits(GroupMaxBon param, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
+        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
+        values.put(KEY_LIMITS, param.getLimits());
+        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+        values.put(KEY_MATERIAL_GROUP_NAME, param.getName_material_group());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_MAX_BON_LIMIT, null, values);//return id yg ud d create
         } catch (Exception e) {
             id = -1;
         }
@@ -7322,6 +7364,7 @@ public class Database extends SQLiteOpenHelper {
         deleteMasterParameter();
         deleteMasterLog();
         deleteMasterCustomerType();
+        deleteMasterMaxBonLimits();
         deletePhoto();
     }
 
@@ -7571,6 +7614,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteMasterCustomerType() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_CUSTOMER_TYPE);
+    }
+
+    public void deleteMasterMaxBonLimits() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MAX_BON_LIMIT);
     }
 
     public void deletePhoto() {

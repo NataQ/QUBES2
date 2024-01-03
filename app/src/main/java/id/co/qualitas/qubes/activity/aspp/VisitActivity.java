@@ -236,21 +236,29 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            if (swipeRefresh) {
-                startDayVisit();//start visit
+            if (startVisit != null) {
+                if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                    setToast("Anda sudah melakukan kunjungan hari ini");
+                } else {
+                    startNewVisit();
+//                    startVisit.setStartDay(true);
+//                    SessionManagerQubes.setStartDay(startVisit);
+//                    validateButton();//start day
+                }
             } else {
-                setToast("Silahkan refresh data customer");
+                setToast("Gagal mengambil data visit");
             }
         });
 
         btnStartDay.setOnClickListener(v -> {
             if (startVisit != null) {
                 if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
-
+                    setToast("Anda sudah melakukan kunjungan hari ini");
                 } else {
-                    startVisit.setStartDay(true);
-                    SessionManagerQubes.setStartDay(startVisit);
-                    validateButton();//start day
+                    startNewVisit();
+//                    startVisit.setStartDay(true);
+//                    SessionManagerQubes.setStartDay(startVisit);
+//                    validateButton();//start day
                 }
             } else {
                 setToast("Gagal mengambil data visit");
@@ -271,7 +279,7 @@ public class VisitActivity extends BaseActivity {
                 pass = false;
             }
             if (user.getRute_inap() == 1 && pass) {
-                setToast("Silahkan finish terlebih dahulu sebelum end visit");
+                setToast("Silahkan Finish terlebih dahulu sebelum End of Day");
             } else {
                 if (checkPermission()) {
                     endTodayVisit();//end visit
@@ -360,6 +368,14 @@ public class VisitActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private void startNewVisit() {
+        if (swipeRefresh) {
+            startDayVisit();//start visit
+        } else {
+            setToast("Silahkan refresh data customer");
+        }
     }
 
     private void startDayVisit() {

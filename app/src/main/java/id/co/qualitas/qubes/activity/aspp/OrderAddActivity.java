@@ -197,7 +197,7 @@ public class OrderAddActivity extends BaseActivity {
         fromDate = Helper.getTodayDate();
         paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(fromDate);
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
-        if(user.getType_sales().equals("CO")) {
+        if (user.getType_sales().equals("CO")) {
             txtTglKirim.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
         }
         txtTglKirim.setOnClickListener(new View.OnClickListener() {
@@ -295,7 +295,7 @@ public class OrderAddActivity extends BaseActivity {
         int empty = 0;
         if (Helper.isNotEmptyOrNull(mList)) {
             for (Material material : mList) {
-                if (material.getQty() == 0 &&  material.getUom().equals("-")) {
+                if (material.getQty() == 0 && material.getUom().equals("-")) {
                     empty++;
                     break;
                 }
@@ -576,10 +576,11 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listSpinner = new ArrayList<>(), listFinalStock = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
         req.put("udf_5", outletHeader.getUdf_5());
+        req.put("is_stock_request_header", stockHeader.getIdHeader());
         if (Helper.isNotEmptyOrNull(mList)) {
             req.put("price_list_code", mList.get(0).getPriceListCode());
             req.put("material_group_id", mList.get(0).getId_material_group());
@@ -587,9 +588,9 @@ public class OrderAddActivity extends BaseActivity {
             req.put("price_list_code", null);
             req.put("material_group_id", null);
         }
-        if(user.getType_sales().equals("CO")){
+        if (user.getType_sales().equals("CO")) {
             listMat.addAll(database.getAllMasterMaterialCanvasByCustomer(req));
-        }else {
+        } else {
             listMat.addAll(database.getAllMasterMaterialByCustomer(req));
         }
         for (Material param : listMat) {
@@ -604,7 +605,25 @@ public class OrderAddActivity extends BaseActivity {
             }
         }
 
-        return listSpinner;
+        if (user.getType_sales().equals("CO")) {
+            listFinalStock = new ArrayList<>();
+            for (Material materialMaster : listSpinner) {
+                for (Material materialStock : stockHeader.getMaterialList()) {
+                    if (materialMaster.getId().equals(materialStock.getId())) {
+                        if (materialStock.getQty() != 0) {
+                            materialMaster.setQtyStock(materialStock.getQty());
+                            materialMaster.setUomStock(materialStock.getUom());
+                            listFinalStock.add(materialMaster);
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            listFinalStock.addAll(listSpinner);
+        }
+
+        return listFinalStock;
     }
 
     @Override
@@ -787,7 +806,7 @@ public class OrderAddActivity extends BaseActivity {
                                 intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
                                 startActivity(intent);
                             }
-                        }else{
+                        } else {
                             Intent intent = new Intent(OrderAddActivity.this, OrderActivity.class);
                             startActivity(intent);
                         }

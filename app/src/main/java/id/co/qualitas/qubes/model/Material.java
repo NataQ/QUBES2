@@ -60,6 +60,10 @@ public class Material implements Cloneable {
     private int max_bon;
     private int idStockRequestHeaderDB;
     private int idStockRequestHeaderBE;
+    private double qtyStock;
+    private String uomStock;
+    private String id_group_max_bon;
+
     public Material() {
     }
 
@@ -94,6 +98,30 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getId_group_max_bon() {
+        return id_group_max_bon;
+    }
+
+    public void setId_group_max_bon(String id_group_max_bon) {
+        this.id_group_max_bon = id_group_max_bon;
+    }
+
+    public double getQtyStock() {
+        return qtyStock;
+    }
+
+    public void setQtyStock(double qtyStock) {
+        this.qtyStock = qtyStock;
+    }
+
+    public String getUomStock() {
+        return uomStock;
+    }
+
+    public void setUomStock(String uomStock) {
+        this.uomStock = uomStock;
     }
 
     public double getTotalAmountPaid() {

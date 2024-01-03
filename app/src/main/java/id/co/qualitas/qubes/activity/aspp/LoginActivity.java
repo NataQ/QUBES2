@@ -60,6 +60,7 @@ import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.DepoRegion;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.LoginResponse;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Parameter;
@@ -467,6 +468,14 @@ public class LoginActivity extends AppCompatActivity {
                     database.deleteMasterMinimalOrder();
                     for (Material param : minOrderList) {
                         database.addLimitBon(param, userId);
+                    }
+
+                    List<GroupMaxBon> groupMaxBonList = new ArrayList<>();
+                    GroupMaxBon[] paramArray12 = Helper.ObjectToGSON(response.get("listMaxBonLimit"), GroupMaxBon[].class);
+                    Collections.addAll(groupMaxBonList, paramArray12);
+                    database.deleteMasterMaxBonLimits();
+                    for (GroupMaxBon param : groupMaxBonList) {
+                        database.addMasterMaxBonLimits(param, userId);
                     }
 
                     saveDataSuccess = true;

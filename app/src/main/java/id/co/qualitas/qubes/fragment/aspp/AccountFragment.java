@@ -64,6 +64,7 @@ import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.FreeGoods;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.JenisJualandTop;
 import id.co.qualitas.qubes.model.LastLog;
 import id.co.qualitas.qubes.model.LogModel;
@@ -558,6 +559,14 @@ public class AccountFragment extends BaseFragment {
                     database.deleteMasterMinimalOrder();
                     for (Material param : minOrderList) {
                         database.addLimitBon(param, user.getUserLogin());
+                    }
+
+                    List<GroupMaxBon> groupMaxBonList = new ArrayList<>();
+                    GroupMaxBon[] paramArray12 = Helper.ObjectToGSON(response.get("listMaxBonLimit"), GroupMaxBon[].class);
+                    Collections.addAll(groupMaxBonList, paramArray12);
+                    database.deleteMasterMaxBonLimits();
+                    for (GroupMaxBon param : groupMaxBonList) {
+                        database.addMasterMaxBonLimits(param, user.getUserLogin());
                     }
 
                     saveDataSuccess = true;

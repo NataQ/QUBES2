@@ -79,7 +79,7 @@
                         android:hint="Product"
                         app:hintAnimationEnabled="true">
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtProduct"
                             style="@style/TextView_Small"
                             android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                         android:padding="3dp"
                         app:hintAnimationEnabled="true">
 
-                        <EditText
+                        <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/edtQty"
                             style="@style/TextView_Small"
                             android:layout_width="match_parent"
