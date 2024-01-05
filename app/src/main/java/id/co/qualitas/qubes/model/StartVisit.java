@@ -8,6 +8,7 @@ public class StartVisit implements Serializable {
     private int id;
     private String id_salesman;
     private String date;
+    private String rute_inap_date;
     private String start_time;
     private String end_time;
     private String km_awal;
@@ -17,6 +18,23 @@ public class StartVisit implements Serializable {
     private String photo_complete;
     private boolean endDay;
     private boolean startDay;
+    private int status_visit;
+
+    public int getStatus_visit() {
+        return status_visit;
+    }
+
+    public void setStatus_visit(int status_visit) {
+        this.status_visit = status_visit;
+    }
+
+    public String getRute_inap_date() {
+        return rute_inap_date;
+    }
+
+    public void setRute_inap_date(String rute_inap_date) {
+        this.rute_inap_date = rute_inap_date;
+    }
 
     public boolean isStartDay() {
         return startDay;

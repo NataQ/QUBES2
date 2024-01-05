@@ -3274,6 +3274,60 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public StockRequest getStockRequestByDate(String date) {
+        StockRequest paramModel = new StockRequest();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_REQUEST_DATE + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{date});
+
+        if (cursor.moveToFirst()) {
+            paramModel = new StockRequest();
+            paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+            paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+            paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+            paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
+            paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+            paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+            paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+            paramModel.setIs_unloading(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_UNLOADING)));
+            paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+            paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+
+            String selectQueryDetail = "SELECT * FROM " + TABLE_STOCK_REQUEST_DETAIL + " WHERE " + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? ";
+            cursor = db.rawQuery(selectQueryDetail, new String[]{paramModel.getIdHeader()});
+            List<Material> arrayList = new ArrayList<>();
+            if (cursor.moveToFirst()) {
+                do {
+                    Material param = new Material();
+                    param.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_DETAIL_DB)));
+                    param.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    param.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    param.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    param.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+
+//                    Map req = new HashMap();
+//                    req.put("idStockRequestHeaderDB", paramModel.getIdHeader());
+//                    req.put("idStockRequestHeaderBE", paramModel.getId());
+//                    req.put("idMaterial", param.getId());
+//                    req.put("qty", param.getQty());
+//                    req.put("uom", param.getQty());
+//                    Material stockSisa = getStockSisa(req);
+                    param.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY_SISA)));
+                    param.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM_SISA)));
+                    param.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                    arrayList.add(param);
+                } while (cursor.moveToNext());
+            }
+            paramModel.setMaterialList(arrayList);
+        }
+
+        cursor.close();
+        return paramModel;
+    }
+
     public StockRequest getLastStockRequest() {
         StockRequest paramModel = new StockRequest();
         // Select All Query
