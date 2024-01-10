@@ -24,6 +24,7 @@ import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.Target;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
+import id.co.qualitas.qubes.printer.AbstractConnector;
 
 @SuppressLint("CommitPrefEdits")
 public abstract class SessionManagerQubes {
@@ -43,6 +44,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_COLLECTION_HEADER = "pref_collection_header";
     private static final String PREF_ROUTE_CUSTOMER_HEADER = "pref_route_customer_header";
     private static final String PREF_COLLECTION = "PREF_COLLECTION";
+    private static final String PREF_PRINT = "PREF_PRINT";
     private static final String PREF_COLLECTION_HISTORY = "PREF_COLLECTION_HISTORY";
     private static final String KEY_VISIT_SALESMAN_REASON = "key_visit_salesman_reason";
     private static final String KEY_TARGET = "key_target";
@@ -62,6 +64,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_IMEI = "key_imei";
     private static final String KEY_RETURN = "key_return";
     private static final String KEY_ALREADY_PRINT = "key_already_print";
+    private static final String KEY_PRINT = "key_print";
     private static SharedPreferences visitSalesmanReasonPrefs;
     private static SharedPreferences orderPrefs;
     private static SharedPreferences customerNooPrefs;
@@ -78,6 +81,7 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences collectionHistoryPrefs;
     private static SharedPreferences routeCustomerHeaderPrefs;
     private static SharedPreferences targetPrefs;
+    private static SharedPreferences printerPrefs;
 
     public static void init(Context context) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -96,6 +100,15 @@ public abstract class SessionManagerQubes {
         orderPrefs = context.getSharedPreferences(PREF_ORDER, Context.MODE_PRIVATE);
         visitSalesmanReasonPrefs = context.getSharedPreferences(PREF_VISIT_SALESMAN_REASON, Context.MODE_PRIVATE);
         alreadyPrintPrefs = context.getSharedPreferences(PREF_ALREADY_PRINT, Context.MODE_PRIVATE);
+        printerPrefs = context.getSharedPreferences(PREF_PRINT, Context.MODE_PRIVATE);
+    }
+
+    public static void setPrinter(AbstractConnector param) {
+        if (param != null) {
+            synchronized (sync) {
+                printerPrefs.edit().putString(KEY_PRINT, gson.toJson(param)).apply();
+            }
+        }
     }
 
     public static void setStartDay(StartVisit param) {
@@ -237,7 +250,7 @@ public abstract class SessionManagerQubes {
     }
 
     public static List<Material> getReturn() {
-        return  new LinkedList<>(Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class)));
+        return new LinkedList<>(Arrays.asList(gson.fromJson(returnPrefs.getString(KEY_RETURN, null), Material[].class)));
     }
 
     public static Invoice getCollectionHeader() {
@@ -292,6 +305,10 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
     }
 
+    public static AbstractConnector getPrinter() {
+        return gson.fromJson(printerPrefs.getString(KEY_PRINT, null), AbstractConnector.class);
+    }
+
     public static String getImei() {
         return loginPrefs.getString(KEY_IMEI, null);
     }
@@ -302,7 +319,7 @@ public abstract class SessionManagerQubes {
 
     //------------------------------------------------------------------------------
 
-    public static void clearAllSession(){
+    public static void clearAllSession() {
         clearCollectionHistorySession();
         clearReturnSession();
         clearAlreadyPrintSession();
@@ -311,6 +328,7 @@ public abstract class SessionManagerQubes {
         clearOrderSession();
         clearOutletHeaderSession();
         clearStartDaySession();
+        clearPrinterSession();
         clearLoginSession();
         clearStockRequestHeaderSession();
         clearCollectionHeaderSession();
@@ -326,6 +344,7 @@ public abstract class SessionManagerQubes {
     public static void clearVisitSalesmanReasonSession() {
         visitSalesmanReasonPrefs.edit().clear().apply();
     }
+
     public static void clearReturnSession() {
         returnPrefs.edit().clear().apply();
     }
@@ -356,6 +375,10 @@ public abstract class SessionManagerQubes {
 
     public static void clearStartDaySession() {
         startDayPrefs.edit().clear().apply();
+    }
+
+    public static void clearPrinterSession() {
+        printerPrefs.edit().clear().apply();
     }
 
     public static void clearLoginSession() {

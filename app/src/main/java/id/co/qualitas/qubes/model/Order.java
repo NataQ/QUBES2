@@ -23,9 +23,18 @@ public class Order {
     private boolean statusPaid;
     private double omzet;
     private int isSync;
+    private boolean deleted;
 
     public Order() {
 
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public boolean isDiscount() {

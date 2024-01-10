@@ -17,9 +17,18 @@ public class ImageType {
     private String kmAwal;
     private String kmAkhir;
     private String posReason;
+    private String reasonClick;
     private int type;
     private VisitSalesman visitSalesman;
     private Reason reason;
+
+    public String getReasonClick() {
+        return reasonClick;
+    }
+
+    public void setReasonClick(String reasonClick) {
+        this.reasonClick = reasonClick;
+    }
 
     public String getPhotoCheckOut() {
         return photoCheckOut;

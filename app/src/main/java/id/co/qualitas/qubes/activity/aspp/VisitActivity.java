@@ -96,6 +96,7 @@ import id.co.qualitas.qubes.adapter.aspp.ReasonNotVisitAdapter;
 import id.co.qualitas.qubes.adapter.aspp.VisitListAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
+import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
@@ -220,7 +221,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         imgLogOut.setOnClickListener(v -> {
-            SessionManagerQubes.clearStartDaySession();
+            SessionManagerQubes.clearStartDaySession();//log out
             logOut(VisitActivity.this);
         });
     }
@@ -275,7 +276,7 @@ public class VisitActivity extends BaseActivity {
                     setToast("Silahkan Finish terlebih dahulu sebelum End of Day");
                 } else {
                     PARAM = 7;
-                    new RequestUrl().execute();
+                    new RequestUrl().execute();//7
                     progressDialog.show();
                 }
             } else {
@@ -299,25 +300,40 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddVisit.setOnClickListener(v -> {
-//            if (database.getCountOfflineData() == 0) {
-            if (startVisit != null) {
-                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                    openDialogAdd();
-                } else {
-                    setToast("Please start visit first");
-                }
-            } else {
-                setToast("Please start visit first");
-            }
-//            } else {
-//                setToast("Pastikan semua data offline sudah di sync");
-//            }
-
-//            if (SessionManagerQubes.getStartDay() == 1) {
-//                openDialogAdd();
+//            if (startVisit != null) {
+//                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
+//                    openDialogAdd();
+//                } else {
+//                    setToast("Please start visit first");
+//                }
 //            } else {
 //                setToast("Please start visit first");
 //            }
+
+            if (startVisit != null) {
+                if (startVisit.getDate() != null) {
+                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                openDialogAdd();
+                                break;
+                            case 2:
+                            case 3:
+                                setToast("Kunjungan hari ini sudah selesai.");
+                                break;
+                        }
+                    } else {
+                        setToast("Silahkan Start Visit/Next Day");
+                    }
+                } else {
+                    setToast("Silahkan Start Visit");
+                }
+            } else {
+                setToast("Silahkan Start Visit");
+            }
         });
 
         swipeLayoutVisit.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -326,18 +342,32 @@ public class VisitActivity extends BaseActivity {
                 swipeRefresh = true;
                 if (database.getCountOfflineData() == 0) {
                     if (startVisit != null) {
-                        if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
-                            requestData();//swipe visit
-                        } else {
-                            if (user.getRute_inap() == 1) {
-                                if (startVisit.isStartDay()) {
-                                    setToast("Sudah start day");
-                                } else {
+                        if (startVisit.getDate() != null) {
+                            switch (startVisit.getStatus_visit()) {
+                                case 0:
                                     requestData();//swipe visit
-                                }
-                            } else {
-                                setToast("Sudah start visit");
+                                    break;
+                                case 1:
+                                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                                        setToast("Kunjungan sudah di mulai");
+                                    } else {
+                                        requestData();//swipe visit
+                                    }
+                                    break;
+                                case 2:
+                                case 3:
+                                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                                        setToast("Kunjungan hari ini sudah selesai.");
+                                    } else {
+                                        requestData();//swipe visit
+                                    }
+                                    break;
+
                             }
+                        } else {
+                            SessionManagerQubes.setOutletHeader(outletClicked);
+                            Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                            startActivity(intent);
                         }
                     } else {
                         requestData();//swipe visit
@@ -448,32 +478,81 @@ public class VisitActivity extends BaseActivity {
             outletClicked = header;
             fromNoo = false;
             if (startVisit != null) {
-                if (startVisit.getStart_time() != null) { validasi kalau uda finish ak boleh click lagi
-                    if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
-                        SessionManagerQubes.setOutletHeader(outletClicked);
-                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                        startActivity(intent);
-                    } else {
-                        endVisit = false;
-                        if (checkOutletStatus()) {
-                            if (header.isRoute()) {
-                                moveCheckInDaily(header);
-                            } else {
-                                if (checkNonRouteCheckIn()) {
-                                    moveCheckInDaily(header);
+                if (startVisit.getDate() != null) {
+                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                if (header.getStatus() == 0) {
+                                    endVisit = false;
+                                    if (checkOutletStatus()) {
+                                        if (header.isRoute()) {
+                                            moveCheckInDaily(header);
+                                        } else {
+                                            if (checkNonRouteCheckIn()) {
+                                                moveCheckInDaily(header);
+                                            } else {
+                                                setToast("Anda sudah mencapai max visit non route");
+                                            }
+                                        }
+                                    } else {
+                                        setToast("Selesaikan customer yang sedang check in");
+                                    }
                                 } else {
-                                    setToast("Anda sudah mencapai max visit non route");
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
                                 }
-                            }
-                        } else {
-                            setToast("Selesaikan customer yang sedang check in");
+                                break;
+                            case 2:
+                            case 3:
+                                SessionManagerQubes.setOutletHeader(outletClicked);
+                                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                startActivity(intent);
+                                break;
+
+                        }
+                    } else {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                if (header.getStatus() == 0) {
+                                    endVisit = false;
+                                    if (checkOutletStatus()) {
+                                        if (header.isRoute()) {
+                                            moveCheckInDaily(header);
+                                        } else {
+                                            if (checkNonRouteCheckIn()) {
+                                                moveCheckInDaily(header);
+                                            } else {
+                                                setToast("Anda sudah mencapai max visit non route");
+                                            }
+                                        }
+                                    } else {
+                                        setToast("Selesaikan customer yang sedang check in");
+                                    }
+                                } else {
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
+                                }
+                                break;
+                            case 2:
+                            case 3:
+                                setToast("Silahkan Start Visit/Next Day");
+                                break;
+
                         }
                     }
                 } else {
-                    setToast("Please start visit first");
+                    setToast("Silahkan Start Visit");
                 }
             } else {
-                setToast("Please start visit first");
+                setToast("Silahkan Start Visit");
             }
         });
 
@@ -728,26 +807,45 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnAddNoo.setOnClickListener(v -> {
-//            if (database.getCountOfflineData() == 0) {
             if (startVisit != null) {
-                if (startVisit.getStart_time() != null && startVisit.getEnd_time() == null) {
-                    SessionManagerQubes.clearCustomerNooSession();
-                    Helper.removeItemParam(Constants.IMAGE_TYPE);
-                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-                    startActivity(intent);
+                if (startVisit.getDate() != null) {
+                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                SessionManagerQubes.clearCustomerNooSession();
+                                Helper.removeItemParam(Constants.IMAGE_TYPE);
+                                Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+                                startActivity(intent);
+                                break;
+                            case 2:
+                            case 3:
+                                setToast("Kunjungan hari ini sudah selesai.");
+                                break;
+                        }
+                    } else {
+                        setToast("Silahkan Start Visit/Next Day");
+                    }
                 } else {
-                    setToast("Please start visit first");
+                    setToast("Silahkan Start Visit");
                 }
             } else {
-                setToast("Please start visit first");
+                setToast("Silahkan Start Visit");
             }
+
+//            if (startVisit != null) {
+//                if (startVisit.getStatus_visit() == 1) {
+//                    SessionManagerQubes.clearCustomerNooSession();
+//                    Helper.removeItemParam(Constants.IMAGE_TYPE);
+//                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
+//                    startActivity(intent);
+//                } else {
+//                    setToast("Silahkan Start Visit");
+//                }
 //            } else {
-//                setToast("Pastikan semua data offline sudah di sync");
-//            }
-//            if (SessionManagerQubes.getStartDay() == 1) {
-//
-//            } else {
-//                setToast("Please start visit first");
+//                setToast("Silahkan Start Visit");
 //            }
         });
 
@@ -757,21 +855,35 @@ public class VisitActivity extends BaseActivity {
                 swipeRefresh = true;
                 if (database.getCountOfflineData() == 0) {
                     if (startVisit != null) {
-                        if (startVisit.getStart_time() == null || startVisit.getEnd_time() != null) {
-                            requestData();//swipe noo
-                        } else {
-                            if (user.getRute_inap() == 1) {
-                                if (startVisit.isStartDay()) {
-                                    setToast("Sudah start day");
-                                } else {
-                                    requestData();//swipe noo rute inap
-                                }
-                            } else {
-                                setToast("Sudah start visit");
+                        if (startVisit.getDate() != null) {
+                            switch (startVisit.getStatus_visit()) {
+                                case 0:
+                                    requestData();//swipe noo
+                                    break;
+                                case 1:
+                                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                                        setToast("Kunjungan sudah di mulai");
+                                    } else {
+                                        requestData();//swipe noo
+                                    }
+                                    break;
+                                case 2:
+                                case 3:
+                                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                                        setToast("Kunjungan hari ini sudah selesai.");
+                                    } else {
+                                        requestData();//swipe noo
+                                    }
+                                    break;
+
                             }
+                        } else {
+                            SessionManagerQubes.setOutletHeader(outletClicked);
+                            Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                            startActivity(intent);
                         }
                     } else {
-                        requestData();//swipe noo
+                        requestData();//swipe visit
                     }
                 } else {
                     setToast("Pastikan semua data offline sudah di sync");
@@ -806,33 +918,111 @@ public class VisitActivity extends BaseActivity {
             outletClicked = header;
             fromNoo = true;
             if (startVisit != null) {
-                if (startVisit.getStart_time() != null) {
-                    if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
-                        SessionManagerQubes.setOutletHeader(outletClicked);
-                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                        startActivity(intent);
-                    } else {
-                        endVisit = false;
-                        if (checkOutletStatus()) {
-                            if (header.isRoute()) {
-                                moveCheckInDaily(header);
-                            } else {
-                                if (checkNonRouteCheckIn()) {
-                                    moveCheckInDaily(header);
+                if (startVisit.getDate() != null) {
+                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                if (header.getStatus() == 0) {
+                                    endVisit = false;
+                                    if (checkOutletStatus()) {
+                                        if (header.isRoute()) {
+                                            moveCheckInDaily(header);
+                                        } else {
+                                            if (checkNonRouteCheckIn()) {
+                                                moveCheckInDaily(header);
+                                            } else {
+                                                setToast("Anda sudah mencapai max visit non route");
+                                            }
+                                        }
+                                    } else {
+                                        setToast("Selesaikan customer yang sedang check in");
+                                    }
                                 } else {
-                                    setToast("Anda sudah mencapai max visit non route");
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
                                 }
-                            }
-                        } else {
-                            setToast("Selesaikan customer yang sedang check in");
+                                break;
+                            case 2:
+                            case 3:
+                                SessionManagerQubes.setOutletHeader(outletClicked);
+                                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                startActivity(intent);
+                                break;
+
+                        }
+                    } else {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                if (header.getStatus() == 0) {
+                                    endVisit = false;
+                                    if (checkOutletStatus()) {
+                                        if (header.isRoute()) {
+                                            moveCheckInDaily(header);
+                                        } else {
+                                            if (checkNonRouteCheckIn()) {
+                                                moveCheckInDaily(header);
+                                            } else {
+                                                setToast("Anda sudah mencapai max visit non route");
+                                            }
+                                        }
+                                    } else {
+                                        setToast("Selesaikan customer yang sedang check in");
+                                    }
+                                } else {
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
+                                }
+                                break;
+                            case 2:
+                            case 3:
+                                setToast("Silahkan Start Visit/Next Day");
+                                break;
+
                         }
                     }
                 } else {
-                    setToast("Please start visit first");
+                    setToast("Silahkan Start Visit");
                 }
             } else {
-                setToast("Please start visit first");
+                setToast("Silahkan Start Visit");
             }
+
+//            if (startVisit != null) {
+//                if (startVisit.getStart_time() != null) {
+//                    if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.PAUSE_VISIT) {
+//                        SessionManagerQubes.setOutletHeader(outletClicked);
+//                        Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+//                        startActivity(intent);
+//                    } else {
+//                        endVisit = false;
+//                        if (checkOutletStatus()) {
+//                            if (header.isRoute()) {
+//                                moveCheckInDaily(header);
+//                            } else {
+//                                if (checkNonRouteCheckIn()) {
+//                                    moveCheckInDaily(header);
+//                                } else {
+//                                    setToast("Anda sudah mencapai max visit non route");
+//                                }
+//                            }
+//                        } else {
+//                            setToast("Selesaikan customer yang sedang check in");
+//                        }
+//                    }
+//                } else {
+//                    setToast("Silahkan Start Visit");
+//                }
+//            } else {
+//                setToast("Silahkan Start Visit");
+//            }
         });
 
         recyclerViewNoo.setAdapter(mAdapterNoo);
@@ -885,6 +1075,9 @@ public class VisitActivity extends BaseActivity {
         if (Helper.isNotEmptyOrNull(SessionManagerQubes.getVisitSalesmanReason())) {
             listCust.addAll(SessionManagerQubes.getVisitSalesmanReason());
             if (imageType != null) {
+                if (imageType.getReasonClick() != null) {
+                    spnReasonAll.setSelection(Integer.parseInt(imageType.getReasonClick()));
+                }
                 if (!Helper.isNullOrEmpty(imageType.getPosReason())) {
                     int posR = Integer.parseInt(imageType.getPosReason());
                     try {
@@ -896,9 +1089,9 @@ public class VisitActivity extends BaseActivity {
                 } else {
                     llPhoto.setVisibility(View.VISIBLE);
                     Utils.loadImageFit(getApplicationContext(), imageType.getPhotoReason(), img);
-                    for (VisitSalesman cust : listCust) {
-                        cust.setPhotoNotVisitReason(imageType.getPhotoReason());
-                    }
+//                    for (VisitSalesman cust : listCust) {
+//                        cust.setPhotoNotVisitReason(imageType.getPhotoReason());
+//                    }
                     mAdapter.setData(listCust);
                 }
             } else {
@@ -911,9 +1104,10 @@ public class VisitActivity extends BaseActivity {
 
         imgDelete.setOnClickListener(v -> {
             llPhoto.setVisibility(View.GONE);
-            for (VisitSalesman cust : listCust) {
-                cust.setPhotoNotVisitReason(null);
-            }
+            imageType.setPhotoReason(null);
+//            for (VisitSalesman cust : listCust) {
+//                cust.setPhotoNotVisitReason(null);
+//            }
         });
 
         spnReasonAll.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -924,14 +1118,23 @@ public class VisitActivity extends BaseActivity {
 
                 if (reasonChoose[0].getIs_photo() == 1) {
                     layoutCamera.setVisibility(View.VISIBLE);
+                    if (imageType != null && imageType.getPhotoReason() != null) {
+                        llPhoto.setVisibility(View.VISIBLE);
+                    } else {
+                        llPhoto.setVisibility(View.GONE);
+                    }
                 } else {
                     layoutCamera.setVisibility(View.GONE);
+                    llPhoto.setVisibility(View.GONE);
+                    imageType.setPhotoReason(null);
+                    Utils.loadImageFit(getApplicationContext(), null, img);
                 }
 
                 if (reasonChoose[0].getIs_freetext() == 1) {
                     edtTxtOther.setVisibility(View.VISIBLE);
                 } else {
                     edtTxtOther.setVisibility(View.GONE);
+                    edtTxtOther.setText(null);
                 }
             }
 
@@ -941,38 +1144,45 @@ public class VisitActivity extends BaseActivity {
             }
         });
 
-        edtTxtOther.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    descReason[0] = s.toString();
-
-                }
-            }
-        });
+//        edtTxtOther.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if (!s.toString().equals("")) {
+//                    descReason[0] = s.toString();
+//
+//                }
+//            }
+//        });
 
         btnApply.setOnClickListener(v -> {
             for (VisitSalesman vs : listCust) {
-                vs.setDescNotVisitReason(descReason[0]);
+                if (reasonChoose[0].getIs_photo() == 1) {
+                    vs.setPhotoNotVisitReason(imageType.getPhotoReason());
+                }
+                if (reasonChoose[0].getIs_freetext() == 1) {
+                    vs.setDescNotVisitReason(edtTxtOther.getText().toString().trim());
+                }
+
                 vs.setIdNotVisitReason(String.valueOf(reasonChoose[0].getId()));
                 vs.setNameNotVisitReason(reasonChoose[0].getDescription());
                 vs.setPosReason(posReason[0]);
+
             }
             mAdapter.notifyDataSetChanged();
         });
 
         layoutCamera.setOnClickListener(v -> {
             SessionManagerQubes.setVisitSalesmanReason(listCust);
-            openCamera(null);
+            openCamera(null, String.valueOf(posReason[0]));
         });
 
         btnSave.setOnClickListener(v -> {
@@ -1242,20 +1452,56 @@ public class VisitActivity extends BaseActivity {
         dialog.show();
     }
 
-    public void askPermissionCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
-//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        ) {
-            ActivityCompat.requestPermissions(this, new String[]{
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-            }, CAMERA_PERM_CODE);
+//    public void askPermissionCamera() {
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
+////                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+////                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//        ) {
+//            ActivityCompat.requestPermissions(this, new String[]{
+//                    Manifest.permission.CAMERA,
+//                    Manifest.permission.READ_MEDIA_IMAGES,
+////                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+////                    Manifest.permission.READ_EXTERNAL_STORAGE
+//            }, CAMERA_PERM_CODE);
+//        } else {
+//            Helper.takePhoto(VisitActivity.this);
+//        }
+//    }
+
+    private void askPermissionCamera() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_MEDIA_IMAGES)) {
+                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES},
+                                    Constants.REQUEST_CAMERA_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES}, Constants.REQUEST_CAMERA_CODE);
+                }
+            } else {
+                Helper.takePhoto(VisitActivity.this);
+            }
         } else {
-            Helper.takePhoto(VisitActivity.this);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    Constants.REQUEST_CAMERA_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
+                }
+            } else {
+                Helper.takePhoto(VisitActivity.this);
+            }
         }
     }
 
@@ -1462,10 +1708,11 @@ public class VisitActivity extends BaseActivity {
         }
     }
 
-    public void openCamera(String pos) {
+    public void openCamera(String pos, String reasonClick) {
         ImageType imageType = new ImageType();
         imageType.setPosImage(13);
         imageType.setPosReason(pos);
+        imageType.setReasonClick(reasonClick);
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
         askPermissionCamera();
     }
@@ -1566,9 +1813,9 @@ public class VisitActivity extends BaseActivity {
 
         if (mList == null || mList.isEmpty()) {
             requestData();//getFirstDataOffline
+        } else {
+            validateButton();//getFirstDataOffline
         }
-
-        validateButton();//getFirstDataOffline
     }
 
     private void requestData() {
@@ -1605,6 +1852,15 @@ public class VisitActivity extends BaseActivity {
                         database.deleteVisitSalesman();
                         database.deletePhoto();
                         database.deleteNoo();
+                        database.deleteReturn();
+                        database.deleteStoreCheck();
+                        database.deleteCollectionHeader();
+                        database.deleteCollectionDetail();
+                        database.deleteCollectionItem();
+                        database.deleteOrderHeader();
+                        database.deleteOrderDetail();
+                        database.deleteOrderDetailExtra();
+                        database.deleteOrderDetailDiscount();
                         SessionManagerQubes.clearStartDaySession();//remove start visit
                         for (Customer customer : custList) {
                             int idHeader = database.addCustomer(customer, user.getUsername());
@@ -1903,15 +2159,15 @@ public class VisitActivity extends BaseActivity {
 //                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
 //                        startActivity(intent);
 //                    } else {
-                    if (user.getRute_inap() == 1) {
-                        startVisit.setEndDay(true);
-                        SessionManagerQubes.setStartDay(startVisit);
-                        progress.show();
-                        PARAM = 6;
-                        new RequestUrl().execute();//rute inap, 6
-                    } else {
-                        openDialogEndVisit();//after save daily salesman
-                    }
+//                    if (user.getRute_inap() == 1) {
+//                        startVisit.setEndDay(true);
+//                        SessionManagerQubes.setStartDay(startVisit);
+//                        progress.show();
+//                        PARAM = 6;
+//                        new RequestUrl().execute();//rute inap, 6
+//                    } else {
+                    openDialogEndVisit();//reason non visit
+//                    }
 //                    }
                 } else {
                     setToast("Gagal menyimpan data");
@@ -1920,7 +2176,7 @@ public class VisitActivity extends BaseActivity {
                 progress.show();
                 new AsyncTaskGeneratePDF().execute();
             } else if (PARAM == 7) {
-                validateButton();
+                validateButton();//7
                 if (user.getType_sales().equals("CO")) {
                     SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
                     Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
@@ -1938,7 +2194,7 @@ public class VisitActivity extends BaseActivity {
             //noo
             nooList = new ArrayList<>();
             nooList = database.getAllNoo();
-            if (nooList == null) {
+            if (nooList != null) {
                 logResult = new WSMessage();
                 logResult.setIdMessage(0);
                 logResult.setResult(null);
@@ -1954,7 +2210,7 @@ public class VisitActivity extends BaseActivity {
             //visit
             visitSalesmanList = new ArrayList<>();
             visitSalesmanList = database.getAllVisitSalesman();
-            if (visitSalesmanList == null) {
+            if (visitSalesmanList != null) {
                 logResult = new WSMessage();
                 logResult.setIdMessage(0);
                 logResult.setResult(null);
@@ -2203,138 +2459,188 @@ public class VisitActivity extends BaseActivity {
                 for (int i = 0; i < offlineData.size(); i++) {
                     switch (i) {
                         case 0:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_CUSTOMER_NOO);
-                            req = new HashMap();
-                            req.put("listData", offlineData.get(i).getNooList());
-                            if (progressDialog != null) {
-                                progressDialog.setMessage("Mengirim data noo offline...");
-                            }
-                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                            if (logResult.getIdMessage() == 1) {
+                            counter++;
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getNooList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_CUSTOMER_NOO);
+                                req = new HashMap();
+                                req.put("listData", offlineData.get(i).getNooList());
+                                if (progressDialog != null) {
+                                    progressDialog.setMessage("Mengirim data noo offline...");
+                                }
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Noo success");
+                                    for (Customer data : offlineData.get(i).getNooList()) {
+                                        database.updateSyncNoo(data);
+                                    }
+                                }
+                                database.addLog(logResult);
+                                listWSMsg.add(logResult);
+                            } else {
                                 logResult = new WSMessage();
                                 logResult.setIdMessage(1);
-                                logResult.setMessage("Sync Noo success");
-                                for (Customer data : offlineData.get(i).getNooList()) {
-                                    database.updateSyncNoo(data);
-                                }
+                                logResult.setMessage("Tidak ada data noo");
+                                listWSMsg.add(logResult);
                             }
-                            database.addLog(logResult);
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 1:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_VISIT);
                             counter++;
-                            req = new HashMap();
-                            req.put("listData", offlineData.get(i).getVisitSalesmanList());
-                            logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
-                            if (logResult.getIdMessage() == 1) {
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getVisitSalesmanList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_VISIT);
+                                req = new HashMap();
+                                req.put("listData", offlineData.get(i).getVisitSalesmanList());
+                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);
+                                if (logResult.getIdMessage() == 1) {
+                                    logResult = new WSMessage();
+                                    logResult.setIdMessage(1);
+                                    logResult.setMessage("Sync Visit Salesman success");
+                                    for (VisitSalesman data : offlineData.get(i).getVisitSalesmanList()) {
+                                        database.updateSyncVisitSalesman(data);
+                                    }
+                                }
+                                database.addLog(logResult);
+                                listWSMsg.add(logResult);
+                            } else {
                                 logResult = new WSMessage();
                                 logResult.setIdMessage(1);
-                                logResult.setMessage("Sync Visit Salesman success");
-                                for (VisitSalesman data : offlineData.get(i).getVisitSalesmanList()) {
-                                    database.updateSyncVisitSalesman(data);
-                                }
+                                logResult.setMessage("Tidak ada data visit salesman");
+                                listWSMsg.add(logResult);
                             }
-                            database.addLog(logResult);
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 2:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_STORE_CHECK);
                             counter++;
-                            for (Map data : offlineData.get(i).getStoreCheckList()) {
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
-                                    database.updateSyncStoreCheck(data);
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getStoreCheckList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_STORE_CHECK);
+                                for (Map data : offlineData.get(i).getStoreCheckList()) {
+                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                    if (logResult.getIdMessage() == 1) {
+                                        logResult = new WSMessage();
+                                        logResult.setIdMessage(1);
+                                        logResult.setMessage("Sync Store Check " + data.get("id_mobile").toString() + " success");
+                                        database.updateSyncStoreCheck(data);
+                                    }
+                                    database.addLog(logResult);
+                                    listWSMsg.add(logResult);
                                 }
-                                database.addLog(logResult);
+                            } else {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Tidak ada data store check");
+                                listWSMsg.add(logResult);
                             }
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 3:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_COLLECTION);
                             counter++;
-                            for (CollectionHeader data : offlineData.get(i).getCollectionList()) {
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
-                                    database.updateSyncCollectionHeader(data);
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getCollectionList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_COLLECTION);
+                                for (CollectionHeader data : offlineData.get(i).getCollectionList()) {
+                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                    if (logResult.getIdMessage() == 1) {
+                                        logResult = new WSMessage();
+                                        logResult.setIdMessage(1);
+                                        logResult.setMessage("Sync Collection " + data.getIdHeader() + " success");
+                                        database.updateSyncCollectionHeader(data);
+                                    }
+                                    database.addLog(logResult);
+                                    listWSMsg.add(logResult);
                                 }
-                                database.addLog(logResult);
+                            } else {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Tidak ada data collection");
+                                listWSMsg.add(logResult);
                             }
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 4:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ORDER);
                             counter++;
-                            for (Order data : offlineData.get(i).getOrderList()) {
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
-                                    database.updateSyncOrderHeader(data);
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getOrderList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ORDER);
+                                for (Order data : offlineData.get(i).getOrderList()) {
+                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                    if (logResult.getIdMessage() == 1) {
+                                        logResult = new WSMessage();
+                                        logResult.setIdMessage(1);
+                                        logResult.setMessage("Sync Order " + data.getIdHeader() + " success");
+                                        database.updateSyncOrderHeader(data);
+                                    }
+                                    database.addLog(logResult);
+                                    listWSMsg.add(logResult);
                                 }
-                                database.addLog(logResult);
+                            } else {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Tidak ada data order");
+                                listWSMsg.add(logResult);
                             }
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 5:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
                             counter++;
-                            for (Map data : offlineData.get(i).getReturnList()) {
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                                    database.updateSyncReturn(data);
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getReturnList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
+                                for (Map data : offlineData.get(i).getReturnList()) {
+                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+                                    if (logResult.getIdMessage() == 1) {
+                                        logResult = new WSMessage();
+                                        logResult.setIdMessage(1);
+                                        logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+                                        database.updateSyncReturn(data);
+                                    }
+                                    database.addLog(logResult);
+                                    listWSMsg.add(logResult);
                                 }
-                                database.addLog(logResult);
+                            } else {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Tidak ada data return");
+                                listWSMsg.add(logResult);
                             }
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 6:
                             counter++;
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ONE_PHOTO);
-                            MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-                            Map requestData = new HashMap();
-                            for (Map data : offlineData.get(i).getPhotoList()) {
-                                map = new LinkedMultiValueMap<String, Object>();
-                                if (data.get("photo") != null) {
-                                    map.add("photo", new FileSystemResource(data.get("photo").toString()));
-                                } else {
-                                    map.add("photo", "");
-                                }
-                                requestData = new HashMap();
-                                requestData.put("typePhoto", data.get("typePhoto"));
-                                requestData.put("id", user.getUsername());
-                                requestData.put("customerId", data.get("customerId"));
-                                requestData.put("idDB", data.get("idDB"));
-                                String json = new Gson().toJson(requestData);
-                                map.add("data", json);
+                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getPhotoList())) {
+                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_ONE_PHOTO);
+                                MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                                Map requestData = new HashMap();
+                                for (Map data : offlineData.get(i).getPhotoList()) {
+                                    map = new LinkedMultiValueMap<String, Object>();
+                                    if (data.get("photo") != null) {
+                                        map.add("photo", new FileSystemResource(data.get("photo").toString()));
+                                    } else {
+                                        map.add("photo", "");
+                                    }
+                                    requestData = new HashMap();
+                                    requestData.put("typePhoto", data.get("typePhoto"));
+                                    requestData.put("id", user.getUsername());
+                                    requestData.put("customerId", data.get("customerId"));
+                                    requestData.put("idDB", data.get("idDB"));
+                                    String json = new Gson().toJson(requestData);
+                                    map.add("data", json);
 
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
-                                    database.updateSyncPhoto(data);
+                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                                    if (logResult.getIdMessage() == 1) {
+                                        logResult = new WSMessage();
+                                        logResult.setIdMessage(1);
+                                        logResult.setMessage("Sync Photo " + data.get("customerId").toString() + " success");
+                                        database.updateSyncPhoto(data);
+                                    }
+                                    database.addLog(logResult);
+                                    listWSMsg.add(logResult);
                                 }
-                                database.addLog(logResult);
+                            } else {
+                                logResult = new WSMessage();
+                                logResult.setIdMessage(1);
+                                logResult.setMessage("Tidak ada data foto");
+                                listWSMsg.add(logResult);
                             }
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                     }
                 }
@@ -2392,7 +2698,6 @@ public class VisitActivity extends BaseActivity {
                         setToast("Gagal mengirim data : " + String.valueOf(error));
                     }
                 } else {
-
                     setToast("Gagal mengirim data : " + String.valueOf(error));
                 }
             } else {
@@ -2413,11 +2718,11 @@ public class VisitActivity extends BaseActivity {
 
         int status = 0;
         if (startVisit != null) {
-            if (startVisit.getDate() != null) {
-                if (!startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {//2024-01-05T14:19:03.000+00:00
-                    startVisit.setStatus_visit(0);
-                }
-            }
+//            if (startVisit.getDate() != null) {
+//                if (!startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {//2024-01-05T14:19:03.000+00:00
+//                    startVisit.setStatus_visit(0);
+//                }
+//            }
             status = startVisit.getStatus_visit();
         } else {
             status = 0;
@@ -2479,7 +2784,7 @@ public class VisitActivity extends BaseActivity {
                 btnStartDay.setVisibility(View.VISIBLE);
                 btnEndVisit.setVisibility(View.VISIBLE);
                 btnEndDay.setVisibility(View.GONE);
-                btnAddVisit.setVisibility(View.VISIBLE);
+                btnAddVisit.setVisibility(View.GONE);
                 btnAddNoo.setVisibility(View.GONE);
                 workManager.cancelAllWork();
                 break;

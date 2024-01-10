@@ -83,6 +83,7 @@ import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
@@ -223,7 +224,7 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
-            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+            if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
                 if (!Helper.isEmpty(user.getType_sales())) {
                     if (user.getType_sales().equals("CO")) {
                         if (Helper.isEmptyOrNull(fakturList)) {
@@ -238,7 +239,7 @@ public class DailySalesmanActivity extends BaseActivity {
                     moveOrder();
                 }
             } else {
-                moveOrder();
+                setToast("Customer ini tidak memiliki KTP atau NPWP");
             }
         });
 
@@ -855,12 +856,12 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         btnSave.setOnClickListener(v -> {
-            if(imageType.getPhotoCheckOut() != null) {
+            if (imageType.getPhotoCheckOut() != null) {
                 visitSales.setPhotoCheckOut(imageType.getPhotoCheckOut());
                 dialog.dismiss();
                 updateLocation = 0;
                 checkLocationPermission();//0, check out photo
-            }else{
+            } else {
                 setToast("Silahkan foto untuk check out");
             }
         });
@@ -1510,17 +1511,39 @@ public class DailySalesmanActivity extends BaseActivity {
         }
     }
 
-    public void askPermissionCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED
-//                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-//                || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-        ) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-            }, CAMERA_PERM_CODE);
+    private void askPermissionCamera() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_MEDIA_IMAGES)) {
+                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES},
+                                    Constants.REQUEST_CAMERA_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_MEDIA_IMAGES}, Constants.REQUEST_CAMERA_CODE);
+                }
+            } else {
+                Helper.takePhoto(DailySalesmanActivity.this);
+            }
         } else {
-            Helper.takePhoto(DailySalesmanActivity.this);
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                    Constants.REQUEST_CAMERA_CODE,
+                                    R.string.camera_and_storage_permission_not_granted)
+                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
+                }
+            } else {
+                Helper.takePhoto(DailySalesmanActivity.this);
+            }
         }
     }
 

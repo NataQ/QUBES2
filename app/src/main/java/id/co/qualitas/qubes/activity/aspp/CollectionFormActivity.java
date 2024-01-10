@@ -127,11 +127,15 @@ public class CollectionFormActivity extends BaseActivity {
                         PARAM = 2;
                         isSync = 0;
                     }
+//                    setToast("OK");
                     progress.show();
                     new RequestUrl().execute();//save
                     break;
                 case 2:
                     setToast("Tidak boleh melebihi total tagihan");
+                    break;
+                case 3:
+                    setToast("Pembayaran tidak boleh ada sisa");
                     break;
                 case 0:
                     setToast("Pastikan semua field sudah terisi");
@@ -336,6 +340,7 @@ public class CollectionFormActivity extends BaseActivity {
         chequeList = new ArrayList<>();
         lainList = new ArrayList<>();
         double totalPayment = 0;
+        double leftPayment = 0;
 
         for (Material material : mListCash) {
 //            if(material.isChecked() && material.getAmountPaid() != 0){
@@ -349,6 +354,7 @@ public class CollectionFormActivity extends BaseActivity {
         for (CollectionDetail collection : mListTransfer) {
             tfList = new ArrayList<>();
             totalPayment = totalPayment + collection.getTotalPayment();
+            leftPayment = leftPayment + collection.getLeft();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -370,6 +376,7 @@ public class CollectionFormActivity extends BaseActivity {
         for (CollectionDetail collection : mListGiro) {
             giroList = new ArrayList<>();
             totalPayment = totalPayment + collection.getTotalPayment();
+            leftPayment = leftPayment + collection.getLeft();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -403,6 +410,7 @@ public class CollectionFormActivity extends BaseActivity {
         for (CollectionDetail collection : mListCheque) {
             chequeList = new ArrayList<>();
             totalPayment = totalPayment + collection.getTotalPayment();
+            leftPayment = leftPayment + collection.getLeft();
             for (Material material : collection.getMaterialList()) {
 //                if (material.isChecked() && material.getAmountPaid() != 0) {
                 if (material.getAmountPaid() != 0) {
@@ -443,9 +451,12 @@ public class CollectionFormActivity extends BaseActivity {
         }
 
         totalPayment = totalPayment + totalPaymentLain + totalPaymentCash;
+        leftPayment  = leftPayment + leftCash + leftLain;
 
         if (totalPayment > totalTagihan) {
             return 2;
+        }else if(leftPayment != 0){
+            return 3;
         } else if (mat > 0 && emptyText == 0) {
             return 1;
         } else {

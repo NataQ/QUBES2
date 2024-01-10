@@ -12,6 +12,7 @@
     card_view:cardElevation="2dp">
 
     <LinearLayout
+        android:id="@+id/llHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_bg_route"
@@ -20,166 +21,187 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_weight="1"
+                android:orientation="vertical"
                 android:padding="5dp">
 
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="ID Mobile"
-                    android:textColor="@color/gray8_aspp" />
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon"
-                    android:textColor="@color/gray8_aspp" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".3"
+                        android:text="ID Mobile"
+                        android:textColor="@color/gray8_aspp" />
 
-                <TextView
-                    android:id="@+id/txtIdMobile"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/colon"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtIdMobile"
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7"
+                        android:text="1"
+                        android:textColor="@color/black_aspp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text="1"
-                    android:textColor="@color/black_aspp" />
+                    android:visibility="gone"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".3"
+                        android:text="Order No."
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/colon"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtOrderNo"
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7"
+                        android:text="1"
+                        android:textColor="@color/black_aspp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".3"
+                        android:text="Omzet"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/colon"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtOmzet"
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7"
+                        android:text="1000000"
+                        android:textColor="@color/black_aspp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".3"
+                        android:text="Payment"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/colon"
+                        android:textColor="@color/gray8_aspp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtPayment"
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7"
+                        android:text=""
+                        android:textColor="@color/black_aspp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/llStatus"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:layout_gravity="center"
+                android:background="@drawable/bg_status"
+                android:backgroundTint="@color/green2_aspp"
+                android:gravity="center"
+                android:minWidth="100dp">
 
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="Order No."
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txtStatus"
                     style="@style/TextView_Small"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon"
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
-                    android:id="@+id/txtOrderNo"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text="1"
-                    android:textColor="@color/black_aspp" />
+                    android:padding="5dp"
+                    android:text="Approve"
+                    android:textAlignment="center"
+                    android:textColor="@color/green_aspp" />
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="Omzet"
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon"
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
-                    android:id="@+id/txtOmzet"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text="1000000"
-                    android:textColor="@color/black_aspp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="Payment"
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon"
-                    android:textColor="@color/gray8_aspp" />
-
-                <TextView
-                    android:id="@+id/txtPayment"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text=""
-                    android:textColor="@color/black_aspp" />
-
-            </LinearLayout>
-
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llStatus"
+            android:id="@+id/llDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_status"
-            android:backgroundTint="@color/green2_aspp"
-            android:gravity="center"
-            android:minWidth="100dp">
+            android:background="@color/red_aspp"
+            android:padding="5dp">
 
-            <TextView
-                android:id="@+id/txtStatus"
-                style="@style/TextView_Small"
+            <ImageView
+                android:id="@+id/imgDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
-                android:text="Approve"
-                android:textAlignment="center"
-                android:textColor="@color/green_aspp" />
-
+                android:src="@drawable/ic_delete_aspp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

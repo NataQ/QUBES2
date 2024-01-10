@@ -31,7 +31,7 @@ public class CollectionActivity extends BaseActivity {
     private TextView txtDate, txtTotalInvoice, txtTotalPaid;
     private double totalInvoice = 0;
     private double totalPaid = 0.0;
-    private StartVisit visitSales;
+    private StartVisit startVisit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,21 +63,53 @@ public class CollectionActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new CollectionAdapter(this, mList, header -> {
-            if (visitSales != null) {
-                if (visitSales.getEnd_time() == null) {
-                    if (header.getAmount() == header.getTotal_paid()) {
-                        setToast("Invoice sudah lunas");
+//            if (startVisit != null) {
+//                if (startVisit.getEnd_time() == null) {
+//                    if (header.getAmount() == header.getTotal_paid()) {
+//                        setToast("Invoice sudah lunas");
+//                    } else {
+//                        SessionManagerQubes.setCollectionHeader(header);
+//                        SessionManagerQubes.setCollectionSource(1);
+//                        Intent intent = new Intent(this, CollectionFormActivity.class);
+//                        startActivity(intent);
+//                    }
+//                } else {
+//                    setToast("Sudah selesai kunjungan. Tidak bisa melakukan pembayaran.");
+//                }
+//            } else {
+//                setToast("Silahkan melakukan start visit sebelum melakukan pembayaran");
+//            }
+
+            if (startVisit != null) {
+                if (startVisit.getDate() != null) {
+                    if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                        switch (startVisit.getStatus_visit()) {
+                            case 0:
+                                setToast("Silahkan Start Visit");
+                                break;
+                            case 1:
+                                if (header.getAmount() == header.getTotal_paid()) {
+                                    setToast("Invoice sudah lunas");
+                                } else {
+                                    SessionManagerQubes.setCollectionHeader(header);
+                                    SessionManagerQubes.setCollectionSource(1);
+                                    Intent intent = new Intent(this, CollectionFormActivity.class);
+                                    startActivity(intent);
+                                }
+                                break;
+                            case 2:
+                            case 3:
+                                setToast("Kunjungan hari ini sudah selesai.");
+                                break;
+                        }
                     } else {
-                        SessionManagerQubes.setCollectionHeader(header);
-                        SessionManagerQubes.setCollectionSource(1);
-                        Intent intent = new Intent(this, CollectionFormActivity.class);
-                        startActivity(intent);
+                        setToast("Silahkan Start Visit/Next Day");
                     }
                 } else {
-                    setToast("Sudah selesai kunjungan. Tidak bisa melakukan pembayaran.");
+                    setToast("Silahkan Start Visit");
                 }
             } else {
-                setToast("Silahkan melakukan start visit sebelum melakukan pembayaran");
+                setToast("Silahkan Start Visit");
             }
         });
 
@@ -122,7 +154,7 @@ public class CollectionActivity extends BaseActivity {
         totalInvoice = 0;
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotPaid();
-        visitSales = SessionManagerQubes.getStartDay();
+        startVisit = SessionManagerQubes.getStartDay();
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;

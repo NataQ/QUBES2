@@ -171,13 +171,19 @@ public class OrderActivity extends BaseActivity {
     }
 
     private void setAdapter() {
-        mAdapter = new OrderAdapter(this, mList, header -> {
+        mAdapter = new OrderAdapter(this, mList, outletHeader, header -> {
 //            validasi kalau uda ke sync gak bisa save lagi?
-            if (!header.isStatusPaid()) {
-                dialogConfirm(header);
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                if (!header.isStatusPaid()) {
+                    dialogConfirm(header);
+                } else {
+                    SessionManagerQubes.setOrder(header);
+                    Intent intent = new Intent(this, OrderDetailActivity.class);
+                    startActivity(intent);
+                }
             } else {
                 SessionManagerQubes.setOrder(header);
-                Intent intent = new Intent(this, OrderDetailActivity.class);
+                Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -216,7 +222,7 @@ public class OrderActivity extends BaseActivity {
         if (Helper.isEmptyOrNull(mList)) requestData();
     }
 
-    private void requestData() {
+    public void requestData() {
         llNoData.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
@@ -229,7 +235,6 @@ public class OrderActivity extends BaseActivity {
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, Boolean> {
-
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {

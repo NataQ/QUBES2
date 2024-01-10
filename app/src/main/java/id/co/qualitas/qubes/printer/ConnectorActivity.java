@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.se.omapi.Session;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -49,11 +50,9 @@ import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, ConnectorAdapter.OnItemClickListener {
-
     private static final int REQUEST_PRINTER = 0;
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_LOCATION_PERMISSION = 2;
-
     private static final String PREF_HOST_LIST = "hosts";
     private static final String PREF_SEARCH_PATTERN = "search_pattern";
     private static final String TAG = "PrinterDemo";
@@ -138,6 +137,11 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         registerReceiver(mBluetoothReceiver, bluetoothFilter);
 
         initConnector();
+
+        if (SessionManagerQubes.getPrinter() != null) {
+            AbstractConnector lastPrinter = SessionManagerQubes.getPrinter();
+            connectToPrinter(lastPrinter);
+        }
     }
 
     @Override
@@ -199,6 +203,10 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     @Override
     public void onItemClick(View view, final AbstractConnector item) {
+        connectToPrinter(item);
+    }
+
+    private void connectToPrinter(AbstractConnector item) {
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Connecting to device...");
         dialog.setCancelable(false);
@@ -206,13 +214,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         if (adapter != null && adapter.isDiscovering()) {
@@ -227,7 +228,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                         item.connect();
                     } catch (Exception e) {
                         fail("Connection error: " + e.getMessage());
-//                        return;
                         onBackPressed();
                     }
 
@@ -240,7 +240,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                             e1.printStackTrace();
                         }
                         fail("Pinpad error: " + e.getMessage());
-//                        return;
                         onBackPressed();
                     }
 
@@ -248,11 +247,9 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                         @Override
                         public void run() {
                             initPrinter();
+                            SessionManagerQubes.setPrinter(item);
                             printText();
                             onBackPressed();
-//                            Context context = getApplicationContext();
-//                            Intent intent = new Intent(context, PrinterActivity.class);
-//                            startActivityForResult(intent, REQUEST_PRINTER);
                         }
                     });
                 } finally {

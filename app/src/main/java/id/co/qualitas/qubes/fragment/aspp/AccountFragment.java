@@ -698,27 +698,33 @@ public class AccountFragment extends BaseFragment {
                     List<Customer> customerList = database.getAllCustomerCheckOut();
                     if (customerList != null) {
                         if (!customerList.isEmpty()) {
-                            List<Material> mList = new ArrayList<>();
-                            Map header = new HashMap();
+//                            List<Material> mList = new ArrayList<>();
+//                            Map header = new HashMap();
                             for (Customer customer : customerList) {
-                                mList = new ArrayList<>();
-                                mList = database.getAllStoreCheckCheckOut(customer.getId());
-                                if (mList != null) {
-                                    if (!mList.isEmpty()) {
-                                        header = new HashMap();
-                                        header.put("id_mobile", mList.get(0).getIdheader());
-                                        header.put("date", mList.get(0).getDate());
-                                        header.put("id_salesman", user.getUsername());
-                                        header.put("id_customer", mList.get(0).getId_customer());
-                                        header.put("listData", mList);
-                                        storeCheckList.add(header);
-                                        setDataSyncSuccess = true;
-                                    } else {
-                                        setDataSyncSuccess = true;
-                                    }
+//                                mList = new ArrayList<>();
+                                storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                                if (storeCheckList != null) {
+                                    setDataSyncSuccess = true;
                                 } else {
                                     setDataSyncSuccess = false;
                                 }
+//                                mList = database.getAllStoreCheckCheckOut(customer.getId());
+//                                if (mList != null) {
+//                                    if (!mList.isEmpty()) {
+//                                        header = new HashMap();
+//                                        header.put("id_mobile", mList.get(0).getIdheader());
+//                                        header.put("date", mList.get(0).getDate());
+//                                        header.put("id_salesman", user.getUsername());
+//                                        header.put("id_customer", mList.get(0).getId_customer());
+//                                        header.put("listData", mList);
+//                                        storeCheckList.add(header);
+//                                        setDataSyncSuccess = true;
+//                                    } else {
+//                                        setDataSyncSuccess = true;
+//                                    }
+//                                } else {
+//                                    setDataSyncSuccess = false;
+//                                }
                             }
 
                             if (!setDataSyncSuccess) {

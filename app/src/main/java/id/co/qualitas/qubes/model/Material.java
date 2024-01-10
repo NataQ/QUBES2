@@ -14,6 +14,7 @@ public class Material implements Cloneable {
     private double qty;
     private double target;
     private double qtySisa;
+    private double totalQtyOrder;
     private double amount;
     private double amountPaid;
     private double totalAmountPaid;
@@ -98,6 +99,14 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public double getTotalQtyOrder() {
+        return totalQtyOrder;
+    }
+
+    public void setTotalQtyOrder(double totalQtyOrder) {
+        this.totalQtyOrder = totalQtyOrder;
     }
 
     public String getId_group_max_bon() {

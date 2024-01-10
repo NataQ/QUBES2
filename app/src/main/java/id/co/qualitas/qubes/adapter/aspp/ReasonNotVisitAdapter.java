@@ -212,7 +212,7 @@ public class ReasonNotVisitAdapter extends RecyclerView.Adapter<ReasonNotVisitAd
 
         holder.llPhoto.setOnClickListener(v -> {
             SessionManagerQubes.setVisitSalesmanReason(mList);
-            mContext.openCamera(String.valueOf(holder.getAbsoluteAdapterPosition()));
+            mContext.openCamera(String.valueOf(holder.getAbsoluteAdapterPosition()), null);
         });
     }
 

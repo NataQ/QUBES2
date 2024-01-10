@@ -29,6 +29,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Data;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -76,6 +77,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     private List<Material> listSpinner, listFilteredSpinner;
     boolean checkedAll = false;
     private Material minMaxOrder, stockItem, itemOrder;
+    private StockRequest stockHeader;
+    private User user;
 
     public OrderAddAdapter(OrderAddActivity mContext, List<Material> mList, Customer outletHeader, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -181,6 +184,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
         setProgress();
+        stockHeader = new Database((mContext)).getAllStockMaterial();
+        user = SessionManagerQubes.getUserProfile();
         mListExtra = new ArrayList<>();
         mListDiskon = new ArrayList<>();
         if (Helper.isNotEmptyOrNull(detail.getExtraItem())) {
@@ -256,7 +261,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                     stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
                     itemOrder = new Database(mContext).getQtySmallUom(detail);
 
-                    if (detail.getQty() < minMaxOrder.getQtyMin() || detail.getQty() > (minMaxOrder.getQtyMax() == 0 ? detail.getQty() : minMaxOrder.getQtyMax())) {
+                    if (detail.getQty() < minMaxOrder.getQtyMin() || detail.getQty() > (minMaxOrder.getQtyMax() == 0 ? detail.getQty() + 1 : minMaxOrder.getQtyMax())) {
                         String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
@@ -295,133 +300,137 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
         holder.llAddExtraItem.setOnClickListener(v -> {
 //            addExtraItem(holder.getAbsoluteAdapterPosition(), detail);
-            Dialog dialog = new Dialog(mContext);
+            if (detail.getQty() > 0 || !Helper.isNullOrEmpty(detail.getUom())) {
+                Dialog dialog = new Dialog(mContext);
 
-            dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.show();
+                dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+                dialog.show();
 
-            Button btnSearch = dialog.findViewById(R.id.btnSearch);
-            btnSearch.setVisibility(View.GONE);
-            CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
-            CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-            RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
-            EditText editText = dialog.findViewById(R.id.edit_text);
-            RecyclerView rv = dialog.findViewById(R.id.rv);
-            Button btnCancel = dialog.findViewById(R.id.btnCancel);
-            Button btnSave = dialog.findViewById(R.id.btnSave);
+                Button btnSearch = dialog.findViewById(R.id.btnSearch);
+                btnSearch.setVisibility(View.GONE);
+                CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
+                CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
+                RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
+                EditText editText = dialog.findViewById(R.id.edit_text);
+                RecyclerView rv = dialog.findViewById(R.id.rv);
+                Button btnCancel = dialog.findViewById(R.id.btnCancel);
+                Button btnSave = dialog.findViewById(R.id.btnSave);
 
-            if (Helper.isNotEmptyOrNull(mList)) {
-                checkbox.setVisibility(View.VISIBLE);
-            } else {
-                checkbox.setVisibility(View.GONE);
-            }
-
-            List<Material> listSpinnerMat = new ArrayList<>();
-            listSpinnerMat.addAll(initDataMaterial(pos, detail));
-
-            SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, (nameItem, adapterPosition) -> {
-            });
-
-            rv.setLayoutManager(new LinearLayoutManager(mContext));
-            rv.setHasFixedSize(true);
-            rv.setNestedScrollingEnabled(false);
-            rv.setAdapter(spinnerAdapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    spinnerAdapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
-
-            cvCheckedAll.setOnClickListener(v1 -> {
-                if (listFilteredSpinner == null) {
-                    listFilteredSpinner = new ArrayList<>();
-                }
-                checkedAll = false;
-                if (!listFilteredSpinner.isEmpty()) {
-                    for (Material mat : listFilteredSpinner) {
-                        mat.setChecked(checkedAll);
-                    }
+                if (Helper.isNotEmptyOrNull(mList)) {
+                    checkbox.setVisibility(View.VISIBLE);
                 } else {
-                    for (Material mat : listSpinnerMat) {
-                        mat.setChecked(checkedAll);
-                    }
+                    checkbox.setVisibility(View.GONE);
                 }
-                spinnerAdapter.notifyDataSetChanged();
-                cvUnCheckAll.setVisibility(View.VISIBLE);
-                cvCheckedAll.setVisibility(View.GONE);
-            });
 
-            cvUnCheckAll.setOnClickListener(v2 -> {
-                if (listFilteredSpinner == null) {
-                    listFilteredSpinner = new ArrayList<>();
-                }
-                checkedAll = true;
-                if (!listFilteredSpinner.isEmpty()) {
-                    for (Material mat : listFilteredSpinner) {
-                        mat.setChecked(checkedAll);
-                    }
-                } else {
-                    for (Material mat : listSpinnerMat) {
-                        mat.setChecked(checkedAll);
-                    }
-                }
-                spinnerAdapter.notifyDataSetChanged();
-                cvUnCheckAll.setVisibility(View.GONE);
-                cvCheckedAll.setVisibility(View.VISIBLE);
-            });
+                List<Material> listSpinnerMat = new ArrayList<>();
+                listSpinnerMat.addAll(initDataMaterial(pos, detail));
 
-            btnCancel.setOnClickListener(v4 -> {
-                dialog.dismiss();
-            });
-
-            btnSave.setOnClickListener(v5 -> {
-                List<Material> addList = new ArrayList<>();
-                for (Material mat : listSpinnerMat) {
-                    if (mat.isChecked()) {
-                        addList.add(mat);
-                    }
-                }
-                mListExtra = new ArrayList<>();
-                if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
-                    mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
-                }
-                mListExtra.addAll(addList);
-                mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+                SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, (nameItem, adapterPosition) -> {
                 });
-                holder.rvExtra.setAdapter(mAdapter);
-                if (mListExtra.size() == 1) {
-                    mFilteredList.get(pos).setExtraItem(mListExtra);
-                    mAdapter.setData(mListExtra);
-                } else {
-                    new CountDownTimer(1000, 1000) {
-                        public void onTick(long millisUntilFinished) {
-                            progress.show();
-                            int sizeList = mListExtra.size();
-                            mAdapter.notifyItemInserted(sizeList);
-                        }
 
-                        public void onFinish() {
-                            progress.dismiss();
-                            holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
+                rv.setLayoutManager(new LinearLayoutManager(mContext));
+                rv.setHasFixedSize(true);
+                rv.setNestedScrollingEnabled(false);
+                rv.setAdapter(spinnerAdapter);
+
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        spinnerAdapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                cvCheckedAll.setOnClickListener(v1 -> {
+                    if (listFilteredSpinner == null) {
+                        listFilteredSpinner = new ArrayList<>();
+                    }
+                    checkedAll = false;
+                    if (!listFilteredSpinner.isEmpty()) {
+                        for (Material mat : listFilteredSpinner) {
+                            mat.setChecked(checkedAll);
                         }
-                    }.start();
-                }
-                dialog.dismiss();
-            });
+                    } else {
+                        for (Material mat : listSpinnerMat) {
+                            mat.setChecked(checkedAll);
+                        }
+                    }
+                    spinnerAdapter.notifyDataSetChanged();
+                    cvUnCheckAll.setVisibility(View.VISIBLE);
+                    cvCheckedAll.setVisibility(View.GONE);
+                });
+
+                cvUnCheckAll.setOnClickListener(v2 -> {
+                    if (listFilteredSpinner == null) {
+                        listFilteredSpinner = new ArrayList<>();
+                    }
+                    checkedAll = true;
+                    if (!listFilteredSpinner.isEmpty()) {
+                        for (Material mat : listFilteredSpinner) {
+                            mat.setChecked(checkedAll);
+                        }
+                    } else {
+                        for (Material mat : listSpinnerMat) {
+                            mat.setChecked(checkedAll);
+                        }
+                    }
+                    spinnerAdapter.notifyDataSetChanged();
+                    cvUnCheckAll.setVisibility(View.GONE);
+                    cvCheckedAll.setVisibility(View.VISIBLE);
+                });
+
+                btnCancel.setOnClickListener(v4 -> {
+                    dialog.dismiss();
+                });
+
+                btnSave.setOnClickListener(v5 -> {
+                    List<Material> addList = new ArrayList<>();
+                    for (Material mat : listSpinnerMat) {
+                        if (mat.isChecked()) {
+                            addList.add(mat);
+                        }
+                    }
+                    mListExtra = new ArrayList<>();
+                    if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
+                        mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
+                    }
+                    mListExtra.addAll(addList);
+                    mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+                    });
+                    holder.rvExtra.setAdapter(mAdapter);
+                    if (mListExtra.size() == 1) {
+                        mFilteredList.get(pos).setExtraItem(mListExtra);
+                        mAdapter.setData(mListExtra);
+                    } else {
+                        new CountDownTimer(1000, 1000) {
+                            public void onTick(long millisUntilFinished) {
+                                progress.show();
+                                int sizeList = mListExtra.size();
+                                mAdapter.notifyItemInserted(sizeList);
+                            }
+
+                            public void onFinish() {
+                                progress.dismiss();
+                                holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
+                            }
+                        }.start();
+                    }
+                    dialog.dismiss();
+                });
+            } else {
+                Toast.makeText(mContext, "Qty dan Uom tidak boleh kosong", Toast.LENGTH_SHORT).show();
+            }
         });
 
         holder.llDelete.setOnClickListener(v -> {
@@ -639,148 +648,26 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         return stock;
     }
 
-//    private void addExtraItem(int pos, Material detail) {
-//        Dialog dialog = new Dialog(mContext);
-//
-//        dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
-//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        dialog.show();
-//
-//        CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
-//        CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-//        RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
-//        EditText editText = dialog.findViewById(R.id.edit_text);
-//        RecyclerView rv = dialog.findViewById(R.id.rv);
-//        Button btnCancel = dialog.findViewById(R.id.btnCancel);
-//        Button btnSave = dialog.findViewById(R.id.btnSave);
-//
-//        if (Helper.isNotEmptyOrNull(mList)) {
-//            checkbox.setVisibility(View.VISIBLE);
-//        } else {
-//            checkbox.setVisibility(View.GONE);
-//        }
-//
-//        listSpinner = new ArrayList<>();
-//        listSpinner.addAll(initDataMaterial(pos, detail));
-//
-//        SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinner, (nameItem, adapterPosition) -> {
-//        });
-//
-//        rv.setLayoutManager(new LinearLayoutManager(mContext));
-//        rv.setHasFixedSize(true);
-//        rv.setNestedScrollingEnabled(false);
-//        rv.setAdapter(spinnerAdapter);
-//
-//        editText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                spinnerAdapter.getFilter().filter(s);
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-//
-//        cvCheckedAll.setOnClickListener(v -> {
-//            if (listFilteredSpinner == null) {
-//                listFilteredSpinner = new ArrayList<>();
-//            }
-//            checkedAll = false;
-//            if (!listFilteredSpinner.isEmpty()) {
-//                for (Material mat : listFilteredSpinner) {
-//                    mat.setChecked(checkedAll);
-//                }
-//            } else {
-//                for (Material mat : listSpinner) {
-//                    mat.setChecked(checkedAll);
-//                }
-//            }
-//            spinnerAdapter.notifyDataSetChanged();
-//            cvUnCheckAll.setVisibility(View.VISIBLE);
-//            cvCheckedAll.setVisibility(View.GONE);
-//        });
-//
-//        cvUnCheckAll.setOnClickListener(v -> {
-//            if (listFilteredSpinner == null) {
-//                listFilteredSpinner = new ArrayList<>();
-//            }
-//            checkedAll = true;
-//            if (!listFilteredSpinner.isEmpty()) {
-//                for (Material mat : listFilteredSpinner) {
-//                    mat.setChecked(checkedAll);
-//                }
-//            } else {
-//                for (Material mat : listSpinner) {
-//                    mat.setChecked(checkedAll);
-//                }
-//            }
-//            spinnerAdapter.notifyDataSetChanged();
-//            cvUnCheckAll.setVisibility(View.GONE);
-//            cvCheckedAll.setVisibility(View.VISIBLE);
-//        });
-//
-//        btnCancel.setOnClickListener(v -> {
-//            dialog.dismiss();
-//        });
-//
-//        btnSave.setOnClickListener(v -> {
-//            List<Material> addList = new ArrayList<>();
-//            for (Material mat : listSpinner) {
-//                if (mat.isChecked()) {
-//                    addList.add(mat);
-//                }
-//            }
-//            addNewExtra(addList, pos);
-//            dialog.dismiss();
-//        });
-//    }
-
-    //    private void addNewExtra(List<Material> addedList, int pos) {
-//        mListExtra = new ArrayList<>();
-//        if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
-//            mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
-//        }
-//        mListExtra.addAll(addedList);
-//        mAdapter = new OrderAddExtraAdapter(mContext, mListExtra, pos, header -> {
-//        });
-//        dataObjectHolder.rvExtra.setAdapter(mAdapter);
-//        if (mListExtra.size() == 1) {
-//            mFilteredList.get(pos).setExtraItem(mListExtra);
-//            mAdapter.setData(mListExtra);
-//        } else {
-//            new CountDownTimer(1000, 1000) {
-//
-//                public void onTick(long millisUntilFinished) {
-//                    progress.show();
-//                    int sizeList = mListExtra.size();
-//                    mAdapter.notifyItemInserted(sizeList);
-//                }
-//
-//                public void onFinish() {
-//                    progress.dismiss();
-//                    dataObjectHolder.rvExtra.smoothScrollToPosition(dataObjectHolder.rvExtra.getAdapter().getItemCount() - 1);
-//                }
-//            }.start();
-//        }
-//    }
-//
     private List<Material> initDataMaterial(int pos, Material detail) {
         //perlu d tany extra item itu bebas, atau sesuai sama top nya
-        List<Material> listSpinner = new ArrayList<>();
+        List<Material> listSpinner = new ArrayList<>(), listFinalStock = new ArrayList<>();
+        ;
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
         req.put("udf_5", outletHeader.getUdf_5());
-        req.put("price_list_code", detail.getPriceListCode());
-        req.put("material_group_id", detail.getId_material_group());
+        req.put("is_stock_request_header", stockHeader.getIdHeader());
+        if (Helper.isNotEmptyOrNull(mList)) {
+            req.put("price_list_code", mList.get(0).getPriceListCode());
+            req.put("material_group_id", mList.get(0).getId_material_group());
+        } else {
+            req.put("price_list_code", null);
+            req.put("material_group_id", null);
+        }
+//        if (user.getType_sales().equals("CO")) {
+//            listMat.addAll(new Database(mContext).getAllMasterMaterialCanvasByCustomer(req));
+//        } else {
         listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));
+//        }
 
         if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
             for (Material param : listMat) {
@@ -798,7 +685,50 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             listSpinner.addAll(listMat);
         }
 
-        return listSpinner;
+        //itung stock dari order skrg
+        for (Material materialStock : stockHeader.getMaterialList()) {
+            double qtyOrder = 0;
+            for (Material matOrder : mFilteredList) {
+                if (materialStock.getId().equals(matOrder.getId())) {
+                    Material conversionOrder = new Database(mContext).getQtySmallUom(matOrder);
+                    qtyOrder = qtyOrder + conversionOrder.getQty();
+                }
+                if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
+                    for (Material matExtra : matOrder.getExtraItem()) {
+                        if (materialStock.getId().equals(matExtra.getId())) {
+                            Material conversionExtra = new Database(mContext).getQtySmallUom(matExtra);
+                            qtyOrder = qtyOrder + conversionExtra.getQty();
+                        }
+                    }
+                }
+            }
+            Material conversionStock = new Database(mContext).getQtySmallUom(materialStock);
+            double qtyStock = conversionStock.getQty();
+            materialStock.setQty(qtyStock);
+            materialStock.setTotalQtyOrder(qtyOrder);
+            materialStock.setUom(conversionStock.getUom());
+        }
+
+        if (user.getType_sales().equals("CO")) {
+            listFinalStock = new ArrayList<>();
+            for (Material materialMaster : listSpinner) {
+                for (Material materialStock : stockHeader.getMaterialList()) {
+                    if (materialMaster.getId().equals(materialStock.getId())) {
+                        double stock = materialStock.getQty() - materialStock.getTotalQtyOrder();
+                        if (stock != 0) {
+                            materialMaster.setQtyStock(stock);
+                            materialMaster.setUomStock(materialStock.getUom());
+                            listFinalStock.add(materialMaster);
+                            break;
+                        }
+                    }
+                }
+            }
+        } else {
+            listFinalStock.addAll(listSpinner);
+        }
+
+        return listFinalStock;
     }
 
     private void addNew(RecyclerView rvExtra, int pos) {

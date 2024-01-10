@@ -576,7 +576,8 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> listSpinner = new ArrayList<>(), listFinalStock = new ArrayList<>();
+        List<Material> listSpinner = new ArrayList<>(),
+                listFinalStock = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
         req.put("udf_5", outletHeader.getUdf_5());
@@ -599,10 +600,35 @@ public class OrderAddActivity extends BaseActivity {
                 if (param.getId().equals(param1.getId())) {
                     exist++;
                 }
+
             }
             if (exist == 0) {
                 listSpinner.add(param);
             }
+        }
+
+        //itung stock dari order skrg
+        for (Material materialStock : stockHeader.getMaterialList()) {
+            double qtyOrder = 0;
+            for (Material matOrder : mList) {
+                if (materialStock.getId().equals(matOrder.getId())) {
+                    Material conversionOrder = database.getQtySmallUom(matOrder);
+                    qtyOrder = qtyOrder + conversionOrder.getQty();
+                }
+                if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
+                    for (Material matExtra : matOrder.getExtraItem()) {
+                        if (materialStock.getId().equals(matExtra.getId())) {
+                            Material conversionExtra = database.getQtySmallUom(matExtra);
+                            qtyOrder = qtyOrder + conversionExtra.getQty();
+                        }
+                    }
+                }
+            }
+            Material conversionStock = database.getQtySmallUom(materialStock);
+            double qtyStock = conversionStock.getQty();
+            materialStock.setQty(qtyStock);
+            materialStock.setTotalQtyOrder(qtyOrder);
+            materialStock.setUom(conversionStock.getUom());
         }
 
         if (user.getType_sales().equals("CO")) {
@@ -610,8 +636,9 @@ public class OrderAddActivity extends BaseActivity {
             for (Material materialMaster : listSpinner) {
                 for (Material materialStock : stockHeader.getMaterialList()) {
                     if (materialMaster.getId().equals(materialStock.getId())) {
-                        if (materialStock.getQty() != 0) {
-                            materialMaster.setQtyStock(materialStock.getQty());
+                        double stock = materialStock.getQty() - materialStock.getTotalQtyOrder();
+                        if (stock != 0) {
+                            materialMaster.setQtyStock(stock);
                             materialMaster.setUomStock(materialStock.getUom());
                             listFinalStock.add(materialMaster);
                             break;
