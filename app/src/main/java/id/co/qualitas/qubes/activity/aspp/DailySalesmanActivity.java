@@ -1105,6 +1105,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imgDeleteKTP.setVisibility(View.GONE);
             }
         } else {
+            Utils.getImageCust(DailySalesmanActivity.this, imgKTP, outletHeader.getId(), Constants.TYPE_PHOTO_KTP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgAddKTP.setVisibility(View.VISIBLE);
             } else {
@@ -1120,6 +1121,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imgDeleteNPWP.setVisibility(View.GONE);
             }
         } else {
+            Utils.getImageCust(DailySalesmanActivity.this, imgNPWP, outletHeader.getId(), Constants.TYPE_PHOTO_NPWP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgAddNPWP.setVisibility(View.VISIBLE);
             } else {
@@ -1134,6 +1136,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imgDeleteOutlet.setVisibility(View.GONE);
             }
         } else {
+            Utils.getImageCust(DailySalesmanActivity.this, imgOutlet, outletHeader.getId(), Constants.TYPE_PHOTO_OUTLET);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgAddOutlet.setVisibility(View.VISIBLE);
             } else {
@@ -1437,36 +1440,41 @@ public class DailySalesmanActivity extends BaseActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
 
         btnSave.setVisibility(View.GONE);
+        photo.setVisibility(View.VISIBLE);
+        layoutUpload.setVisibility(View.GONE);
 
         switch (typeImage) {
             case 8:
                 if (outletHeader.getPhotoKtp() != null) {
                     Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), photo);
-                    photo.setVisibility(View.VISIBLE);
-                    layoutUpload.setVisibility(View.GONE);
+//                    photo.setVisibility(View.VISIBLE);
+//                    layoutUpload.setVisibility(View.GONE);
                 } else {
-                    photo.setVisibility(View.GONE);
-                    layoutUpload.setVisibility(View.VISIBLE);
+                    Utils.getImageCust(DailySalesmanActivity.this, photo, outletHeader.getId(), Constants.TYPE_PHOTO_KTP);
+//                    photo.setVisibility(View.GONE);
+//                    layoutUpload.setVisibility(View.VISIBLE);
                 }
                 break;
             case 9:
                 if (outletHeader.getPhotoNpwp() != null) {
                     Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), photo);
-                    photo.setVisibility(View.VISIBLE);
-                    layoutUpload.setVisibility(View.GONE);
+//                    photo.setVisibility(View.VISIBLE);
+//                    layoutUpload.setVisibility(View.GONE);
                 } else {
-                    photo.setVisibility(View.GONE);
-                    layoutUpload.setVisibility(View.VISIBLE);
+                    Utils.getImageCust(DailySalesmanActivity.this, photo, outletHeader.getId(), Constants.TYPE_PHOTO_NPWP);
+//                    photo.setVisibility(View.GONE);
+//                    layoutUpload.setVisibility(View.VISIBLE);
                 }
                 break;
             case 10:
                 if (outletHeader.getPhotoOutlet() != null) {
                     Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), photo);
-                    photo.setVisibility(View.VISIBLE);
-                    layoutUpload.setVisibility(View.GONE);
+//                    photo.setVisibility(View.VISIBLE);
+//                    layoutUpload.setVisibility(View.GONE);
                 } else {
-                    photo.setVisibility(View.GONE);
-                    layoutUpload.setVisibility(View.VISIBLE);
+                    Utils.getImageCust(DailySalesmanActivity.this, photo, outletHeader.getId(), Constants.TYPE_PHOTO_OUTLET);
+//                    photo.setVisibility(View.GONE);
+//                    layoutUpload.setVisibility(View.VISIBLE);
                 }
                 break;
         }

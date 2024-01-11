@@ -694,7 +694,7 @@
                                 android:id="@+id/llKTP"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/bg_add_image_alert"
+                                android:background="@drawable/bg_add_image"
                                 android:minHeight="100dp"
                                 android:orientation="vertical"
                                 android:padding="5dp">
@@ -806,7 +806,7 @@
                                 android:id="@+id/llOutlet"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/bg_add_image_alert"
+                                android:background="@drawable/bg_add_image"
                                 android:minHeight="100dp"
                                 android:orientation="vertical"
                                 android:padding="5dp">

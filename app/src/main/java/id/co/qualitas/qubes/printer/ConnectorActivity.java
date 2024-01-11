@@ -247,7 +247,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                         @Override
                         public void run() {
                             initPrinter();
-                            SessionManagerQubes.setPrinter(item);
+                            SessionManagerQubes.setPrinter((BluetoothConnector) item);
                             printText();
                             onBackPressed();
                         }

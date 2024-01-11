@@ -47,6 +47,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.google.gson.Gson;
 import com.yalantis.ucrop.UCrop;
 
@@ -69,6 +71,7 @@ import java.util.concurrent.TimeUnit;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.SplashScreenActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.interfaces.CallbackBackgroundResult;
 import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.model.User;
@@ -644,6 +647,7 @@ public class Utils {
 
         return newDir;
     }
+
     public static Uri cropPhoto(Activity activity, Uri photoUri) {
         try {
             Uri outputUri = Uri.fromFile(createImageFile(activity.getApplicationContext()));
@@ -775,6 +779,24 @@ public class Utils {
         }// end of SD card checking
 
         return directory;
+    }
+
+    public static <T> void getImageCust(Context mContext, ImageView imageView, String idCust, String type) {
+        String token = (String) Helper.getItemParam(Constants.TOKEN);
+        String bearerToken = Constants.BEARER.concat(token);
+        String url = Constants.URL + Constants.API_PREFIX + Constants.API_GET_IMAGE + "?idCust=" + idCust + "&type=" + type;
+
+        GlideUrl glideUrl = new GlideUrl(url,
+                new LazyHeaders.Builder()
+                        .addHeader("Authorization", bearerToken)
+                        .build());
+
+        Glide.with(mContext)
+                .load(glideUrl)
+                .fitCenter()
+                .error(R.drawable.ic_no_picture)
+                .placeholder(R.drawable.ic_placeholder_img)
+                .into(imageView);
     }
 
     public static <T> void loadImageFit(Context mContext, T res, ImageView image) {

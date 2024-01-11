@@ -21,6 +21,9 @@ public class Constants {
     public static final String REASON_TYPE_NOT_BUY = "Not Buy";
     public static final String REASON_TYPE_NOT_PAY = "Not Pay";
     public static final String REASON_TYPE_RETURN = "Return";
+    public static final String TYPE_PHOTO_KTP = "ktp";
+    public static final String TYPE_PHOTO_NPWP = "npwp";
+    public static final String TYPE_PHOTO_OUTLET = "outlet";
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String LOG_EXCEPTION = "log exception";
     public static final int COMPRESS_IMAGE = 80;

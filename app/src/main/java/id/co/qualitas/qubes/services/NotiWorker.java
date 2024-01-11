@@ -297,27 +297,33 @@ public class NotiWorker extends Worker {
         customerList = database.getAllCustomerCheckOut();
         if (customerList != null) {
             if (!customerList.isEmpty()) {
-                List<Material> mList = new ArrayList<>();
-                Map header = new HashMap();
+//                List<Material> mList = new ArrayList<>();
+//                Map header = new HashMap();
                 for (Customer customer : customerList) {
-                    mList = new ArrayList<>();
-                    mList = database.getAllStoreCheckCheckOut(customer.getId());
-                    if (mList != null) {
-                        if (!mList.isEmpty()) {
-                            header = new HashMap();
-                            header.put("id_mobile", mList.get(0).getIdheader());
-                            header.put("date", mList.get(0).getDate());
-                            header.put("id_salesman", user.getUsername());
-                            header.put("id_customer", mList.get(0).getId_customer());
-                            header.put("listData", mList);
-                            storeCheckList.add(header);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
+                    storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                    if (storeCheckList != null) {
+                        setDataSyncSuccess = true;
                     } else {
                         setDataSyncSuccess = false;
                     }
+//                    mList = new ArrayList<>();
+//                    mList = database.getAllStoreCheckCheckOut(customer.getId());
+//                    if (mList != null) {
+//                        if (!mList.isEmpty()) {
+//                            header = new HashMap();
+//                            header.put("id_mobile", mList.get(0).getIdheader());
+//                            header.put("date", mList.get(0).getDate());
+//                            header.put("id_salesman", user.getUsername());
+//                            header.put("id_customer", mList.get(0).getId_customer());
+//                            header.put("listData", mList);
+//                            storeCheckList.add(header);
+//                            setDataSyncSuccess = true;
+//                        } else {
+//                            setDataSyncSuccess = true;
+//                        }
+//                    } else {
+//                        setDataSyncSuccess = false;
+//                    }
                 }
             } else {
                 setDataSyncSuccess = true;
@@ -495,27 +501,33 @@ public class NotiWorker extends Worker {
         if (customerList != null) {
             if (!customerList.isEmpty()) {
                 returnList = new ArrayList<>();
-                List<Material> mList = new ArrayList<>();
-                Map header = new HashMap();
+//                List<Material> mList = new ArrayList<>();
+//                Map header = new HashMap();
                 for (Customer customer : customerList) {
-                    mList = new ArrayList<>();
-                    mList = database.getAllReturnCheckOut(customer.getId());
-                    if (mList != null) {
-                        if (!mList.isEmpty()) {
-                            header = new HashMap();
-                            header.put("id_mobile", mList.get(0).getIdheader());
-                            header.put("date", mList.get(0).getDate());
-                            header.put("id_salesman", user.getUsername());
-                            header.put("id_customer", mList.get(0).getId_customer());
-                            header.put("listData", mList);
-                            returnList.add(header);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
+                    returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                    if (returnList != null) {
+                        setDataSyncSuccess = true;
                     } else {
                         setDataSyncSuccess = false;
                     }
+//                    mList = new ArrayList<>();
+//                    mList = database.getAllReturnCheckOut(customer.getId());
+//                    if (mList != null) {
+//                        if (!mList.isEmpty()) {
+//                            header = new HashMap();
+//                            header.put("id_mobile", mList.get(0).getIdheader());
+//                            header.put("date", mList.get(0).getDate());
+//                            header.put("id_salesman", user.getUsername());
+//                            header.put("id_customer", mList.get(0).getId_customer());
+//                            header.put("listData", mList);
+//                            returnList.add(header);
+//                            setDataSyncSuccess = true;
+//                        } else {
+//                            setDataSyncSuccess = true;
+//                        }
+//                    } else {
+//                        setDataSyncSuccess = false;
+//                    }
                 }
                 if (!setDataSyncSuccess) {
                     logResult = new WSMessage();

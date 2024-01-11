@@ -991,15 +991,15 @@ public class Helper extends BaseFragment {
     }
 
     public static boolean checkRadius(Location currentLocation, Location custLocation) {
-        boolean outside = false;
+        boolean inside = false;
         float radius = database.getRadius(); //in meters
         float distance = custLocation.distanceTo(currentLocation);
-        if (distance < radius) {
-            outside = false;
+        if (distance < radius || distance == radius) {
+            inside = true;
         } else {
-            outside = true;
+            inside = false;
         }
-        return outside;
+        return inside;
     }
 
     public static File exportDB(Context context, String username) {

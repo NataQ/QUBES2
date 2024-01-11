@@ -871,38 +871,43 @@ public class UnloadingActivity extends BaseActivity {
 
         if (customerList != null) {
             if (!customerList.isEmpty()) {
-                Map headerStoreCheck = new HashMap();
+//                Map headerStoreCheck = new HashMap();
                 storeCheckList = new ArrayList<>();
-                List<Material> storeCheck = new ArrayList<>();
+//                List<Material> storeCheck = new ArrayList<>();
                 collectionList = new ArrayList<>();
                 List<CollectionHeader> collection = new ArrayList<>();
                 orderList = new ArrayList<>();
                 List<Order> order = new ArrayList<>();
-                Map headerReturn = new HashMap();
+//                Map headerReturn = new HashMap();
                 returnList = new ArrayList<>();
-                List<Material> returnO = new ArrayList<>();
+//                List<Material> returnO = new ArrayList<>();
                 photoList = new ArrayList<>();
                 List<Map> photos = new ArrayList<>();
 
                 for (Customer customer : customerList) {
-                    //store check
-                    storeCheck = database.getAllStoreCheckCheckOut(customer.getId());
-                    if (storeCheck != null) {
-                        if (!storeCheck.isEmpty()) {
-                            headerStoreCheck = new HashMap();
-                            headerStoreCheck.put("id_mobile", storeCheck.get(0).getIdheader());
-                            headerStoreCheck.put("date", storeCheck.get(0).getDate());
-                            headerStoreCheck.put("id_salesman", user.getUsername());
-                            headerStoreCheck.put("id_customer", storeCheck.get(0).getId_customer());
-                            headerStoreCheck.put("listData", storeCheck);
-                            storeCheckList.add(headerStoreCheck);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
+                    storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                    if (storeCheckList != null) {
+                        setDataSyncSuccess = true;
                     } else {
                         setDataSyncSuccess = false;
                     }
+//                    storeCheck = database.getAllStoreCheckCheckOut(customer.getId());
+//                    if (storeCheck != null) {
+//                        if (!storeCheck.isEmpty()) {
+//                            headerStoreCheck = new HashMap();
+//                            headerStoreCheck.put("id_mobile", storeCheck.get(0).getIdheader());
+//                            headerStoreCheck.put("date", storeCheck.get(0).getDate());
+//                            headerStoreCheck.put("id_salesman", user.getUsername());
+//                            headerStoreCheck.put("id_customer", storeCheck.get(0).getId_customer());
+//                            headerStoreCheck.put("listData", storeCheck);
+//                            storeCheckList.add(headerStoreCheck);
+//                            setDataSyncSuccess = true;
+//                        } else {
+//                            setDataSyncSuccess = true;
+//                        }
+//                    } else {
+//                        setDataSyncSuccess = false;
+//                    }
 
                     //collection
                     collection = database.getAllCollectionHeader(customer.getId());
@@ -931,23 +936,30 @@ public class UnloadingActivity extends BaseActivity {
                     }
 
                     //return
-                    returnO = database.getAllReturnCheckOut(customer.getId());
-                    if (returnO != null) {
-                        if (!returnO.isEmpty()) {
-                            headerReturn = new HashMap();
-                            headerReturn.put("id_mobile", returnO.get(0).getIdheader());
-                            headerReturn.put("date", returnO.get(0).getDate());
-                            headerReturn.put("id_salesman", user.getUsername());
-                            headerReturn.put("id_customer", returnO.get(0).getId_customer());
-                            headerReturn.put("listData", returnO);
-                            returnList.add(headerReturn);
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = true;
-                        }
+                    returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                    if (returnList != null) {
+                        setDataSyncSuccess = true;
                     } else {
                         setDataSyncSuccess = false;
                     }
+
+//                    returnO = database.getAllReturnCheckOut(customer.getId());
+//                    if (returnO != null) {
+//                        if (!returnO.isEmpty()) {
+//                            headerReturn = new HashMap();
+//                            headerReturn.put("id_mobile", returnO.get(0).getIdheader());
+//                            headerReturn.put("date", returnO.get(0).getDate());
+//                            headerReturn.put("id_salesman", user.getUsername());
+//                            headerReturn.put("id_customer", returnO.get(0).getId_customer());
+//                            headerReturn.put("listData", returnO);
+//                            returnList.add(headerReturn);
+//                            setDataSyncSuccess = true;
+//                        } else {
+//                            setDataSyncSuccess = true;
+//                        }
+//                    } else {
+//                        setDataSyncSuccess = false;
+//                    }
 
                     //photo
                     photos = database.getAllPhoto(customer.getId());

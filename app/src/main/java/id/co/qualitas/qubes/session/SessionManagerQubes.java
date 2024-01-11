@@ -25,6 +25,7 @@ import id.co.qualitas.qubes.model.Target;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.printer.AbstractConnector;
+import id.co.qualitas.qubes.printer.BluetoothConnector;
 
 @SuppressLint("CommitPrefEdits")
 public abstract class SessionManagerQubes {
@@ -103,7 +104,7 @@ public abstract class SessionManagerQubes {
         printerPrefs = context.getSharedPreferences(PREF_PRINT, Context.MODE_PRIVATE);
     }
 
-    public static void setPrinter(AbstractConnector param) {
+    public static void setPrinter(BluetoothConnector param) {
         if (param != null) {
             synchronized (sync) {
                 printerPrefs.edit().putString(KEY_PRINT, gson.toJson(param)).apply();
@@ -305,8 +306,8 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
     }
 
-    public static AbstractConnector getPrinter() {
-        return gson.fromJson(printerPrefs.getString(KEY_PRINT, null), AbstractConnector.class);
+    public static BluetoothConnector getPrinter() {
+        return gson.fromJson(printerPrefs.getString(KEY_PRINT, null), BluetoothConnector.class);
     }
 
     public static String getImei() {
