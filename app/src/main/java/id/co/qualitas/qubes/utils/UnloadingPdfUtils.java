@@ -211,6 +211,7 @@ public class UnloadingPdfUtils {
         table.addCell(cell);
 
         String noSJ = Helper.isEmpty(header.getNo_surat_jalan(), "");
+//        String noSJ = String.valueOf(header.getId());
         cell = new PdfPCell(new Phrase("No.SJ : " + noSJ, calibriUnderline));
         cell.setUseAscender(true);
         cell.setColspan(MAX_COLUMN_TABLE);

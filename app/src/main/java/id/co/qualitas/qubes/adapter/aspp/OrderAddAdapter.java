@@ -184,7 +184,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
         setProgress();
-        stockHeader = new Database((mContext)).getAllStockMaterial();
+        stockHeader = new Database((mContext)).getAllStockMaterial(user);
         user = SessionManagerQubes.getUserProfile();
         mListExtra = new ArrayList<>();
         mListDiskon = new ArrayList<>();
@@ -702,9 +702,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                     }
                 }
             }
-            Material conversionStock = new Database(mContext).getQtySmallUom(materialStock);
-            double qtyStock = conversionStock.getQty();
-            materialStock.setQty(qtyStock);
+            Material conversionStock = new Database(mContext).getQtySmallUomSisa(materialStock);
+            double qtyStock = conversionStock.getQtySisa();
+            materialStock.setQtySisa(qtyStock);
             materialStock.setTotalQtyOrder(qtyOrder);
             materialStock.setUom(conversionStock.getUom());
         }
@@ -714,9 +714,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             for (Material materialMaster : listSpinner) {
                 for (Material materialStock : stockHeader.getMaterialList()) {
                     if (materialMaster.getId().equals(materialStock.getId())) {
-                        double stock = materialStock.getQty() - materialStock.getTotalQtyOrder();
+                        double stock = materialStock.getQtySisa() - materialStock.getTotalQtyOrder();
                         if (stock != 0) {
-                            materialMaster.setQtyStock(stock);
+                            materialMaster.setQtySisa(stock);
                             materialMaster.setUomStock(materialStock.getUom());
                             listFinalStock.add(materialMaster);
                             break;

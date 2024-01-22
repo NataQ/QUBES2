@@ -794,8 +794,8 @@ public class Utils {
         Glide.with(mContext)
                 .load(glideUrl)
                 .fitCenter()
-                .error(R.drawable.ic_no_picture)
-                .placeholder(R.drawable.ic_placeholder_img)
+//                .error(R.drawable.ic_no_picture)
+                .placeholder(R.drawable.ic_loading)
                 .into(imageView);
     }
 
@@ -804,7 +804,7 @@ public class Utils {
                 .load(res)
                 .fitCenter()
                 .error(R.drawable.ic_no_picture)
-                .placeholder(R.drawable.ic_placeholder_img)
+                .placeholder(R.drawable.ic_loading)
                 .into(image);
     }
 

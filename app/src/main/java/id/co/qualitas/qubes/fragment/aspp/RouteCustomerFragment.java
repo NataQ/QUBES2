@@ -303,12 +303,13 @@ public class RouteCustomerFragment extends BaseFragment {
                     List<Customer> mListNonRoute = new ArrayList<>();
                     Map result = (Map) resultWsMessage.getResult();
 
-                    if (result.get("visit") != null) {
-                        StartVisit startDay = Helper.ObjectToGSON(result.get("visit"), StartVisit.class);
-                        SessionManagerQubes.setStartDay(startDay);
-                    } else {
-                        SessionManagerQubes.setStartDay(null);
-                    }
+//                    if (result.get("visit") != null) {
+//                        StartVisit startDay = Helper.ObjectToGSON(result.get("visit"), StartVisit.class);
+//                        database.addStartVisit(startDay);
+////                        SessionManagerQubes.setStartDay(startDay);
+//                    } else {
+////                        SessionManagerQubes.setStartDay(null);
+//                    }
 
 //                    if (result.get("visit") != null) {
 //                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");

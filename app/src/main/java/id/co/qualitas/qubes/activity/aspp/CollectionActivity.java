@@ -154,7 +154,8 @@ public class CollectionActivity extends BaseActivity {
         totalInvoice = 0;
         mList = new ArrayList<>();
         mList = database.getAllInvoiceHeaderNotPaid();
-        startVisit = SessionManagerQubes.getStartDay();
+//        startVisit = SessionManagerQubes.getStartDay();
+        startVisit = database.getLastStartVisit();
 
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;

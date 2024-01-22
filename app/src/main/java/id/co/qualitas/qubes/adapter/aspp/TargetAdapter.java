@@ -7,6 +7,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -18,6 +19,7 @@ import java.util.Locale;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.fragment.aspp.TargetFragment;
 import id.co.qualitas.qubes.model.Target;
+import id.co.qualitas.qubes.model.TargetPekan;
 
 public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> implements Filterable {
     private List<Target> mList;
@@ -26,6 +28,7 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
     private TargetFragment mContext;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    private TargetPekanAdapter mAdapter;
 
     public TargetAdapter(TargetFragment mContext, List<Target> mList) {
         if (mList != null) {
@@ -58,7 +61,7 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
                     for (Target row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterial_group_name().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getName_material_group().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -80,19 +83,15 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTgtAt, txtGroupMat, txtAt, txtTotalPercentageAT, txtTotalAT, txtTgtOms, txtOms, txtTotalPercentageOMS, txtTotalOMS;
+        TextView txtProduct;
+        RecyclerView recyclerView;
 
         public Holder(View itemView) {
             super(itemView);
-            txtTotalOMS = itemView.findViewById(R.id.txtTotalOMS);
-            txtTotalPercentageOMS = itemView.findViewById(R.id.txtTotalPercentageOMS);
-            txtOms = itemView.findViewById(R.id.txtOms);
-            txtTgtOms = itemView.findViewById(R.id.txtTgtOms);
-            txtTotalAT = itemView.findViewById(R.id.txtTotalAT);
-            txtTotalPercentageAT = itemView.findViewById(R.id.txtTotalPercentageAT);
-            txtAt = itemView.findViewById(R.id.txtAt);
-            txtGroupMat = itemView.findViewById(R.id.txtGroupMat);
-            txtTgtAt = itemView.findViewById(R.id.txtTgtAt);
+            txtProduct = itemView.findViewById(R.id.txtProduct);
+            recyclerView = itemView.findViewById(R.id.recyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(mContext.getContext()));
+            recyclerView.setHasFixedSize(true);
             itemView.setOnClickListener(this);
         }
 
@@ -104,7 +103,7 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_target, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_target_header, parent, false);
         return new Holder(itemView);
     }
 
@@ -112,21 +111,9 @@ public class TargetAdapter extends RecyclerView.Adapter<TargetAdapter.Holder> im
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Target detail = mFilteredList.get(position);
-        holder.txtGroupMat.setText(detail.getMaterial_group_name());
-        holder.txtTgtAt.setText(format.format(detail.getTgt_at()));
-        holder.txtAt.setText(format.format(detail.getAt()));
-        holder.txtTgtOms.setText(format.format(detail.getTgt_oms()));
-        holder.txtOms.setText(format.format(detail.getOms()));
-
-        double totalPercentAT = ((double) detail.getAt() / detail.getTgt_at()) * 100;
-        double totalPercentOMS = ((double) detail.getOms() / detail.getTgt_oms()) * 100;
-        double totalAT = detail.getAt() - detail.getTgt_at();
-        double totalOMS = detail.getOms() - detail.getTgt_oms();
-
-        holder.txtTotalPercentageAT.setText(format.format(Math.round(totalPercentAT)) + "%");
-        holder.txtTotalPercentageOMS.setText(format.format(Math.round(totalPercentOMS)) + "%");
-        holder.txtTotalAT.setText(format.format(totalAT));
-        holder.txtTotalOMS.setText(format.format(totalOMS));
+        holder.txtProduct.setText(detail.getName_material_group());
+        mAdapter = new TargetPekanAdapter(mContext, detail.getPekan_list());
+        holder.recyclerView.setAdapter(mAdapter);
     }
 
     @Override

@@ -120,11 +120,11 @@ public class NetworkHelper {
 
             RestTemplate restTemplate = new RestTemplate();
 
-            HttpComponentsClientHttpRequestFactory fac = new HttpComponentsClientHttpRequestFactory();
-            fac.setConnectTimeout(10000);
-
-            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-            factory.setConnectTimeout(1000);
+//            HttpComponentsClientHttpRequestFactory fac = new HttpComponentsClientHttpRequestFactory();
+//            fac.setConnectTimeout(10000);
+//
+//            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+//            factory.setConnectTimeout(1000);
 
             HttpHeaders requestHeaders = new HttpHeaders();
             requestHeaders.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -132,7 +132,7 @@ public class NetworkHelper {
 
             HttpEntity<?> requestEntity = new HttpEntity<>(body, requestHeaders);
             restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
-            restTemplate.setRequestFactory(fac);
+//            restTemplate.setRequestFactory(fac);
 
             try {
                 responseEntity = restTemplate.exchange(url, HttpMethod.POST, requestEntity, responseType);

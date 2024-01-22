@@ -119,9 +119,8 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
         setFormatSeparator();
         Material detail = mFilteredList.get(position);
         holder.text.setText(detail.getId() + " - " + detail.getNama() + " (" + detail.getId_material_group() + " - " + detail.getMaterial_group_name() + ")");
-        String qtyStock = String.valueOf(detail.getQtyStock());
         String uomStock = String.valueOf(detail.getUomStock());
-        holder.textStock.setText("Stock : " + format.format(detail.getQtyStock()) + " " + uomStock);
+        holder.textStock.setText("Stock : " + format.format(detail.getQtySisa()) + " " + uomStock);
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);

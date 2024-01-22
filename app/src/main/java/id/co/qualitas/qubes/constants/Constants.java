@@ -552,6 +552,7 @@ public class Constants {
     public static final String API_GET_IP_ADDRESS = "getIPAddress";
     public static final String API_UPDATE_LOCATION_SALESMAN = "updateLocationSalesman";
     public static final String API_SYNC_OFFLINE_DATA = "syncOfflineData";
+    public static final String API_GET_DETAIL_CUSTOMER = "getDetailCustomer";
     public static final String API_GET_MASTER_REASON = "getMasterReason";
     public static final String API_GET_MASTER_BANK = "getMasterBank";
     public static final String API_GET_MASTER_DAERAH_TINGKAT = "getMasterDaerahTingkat";

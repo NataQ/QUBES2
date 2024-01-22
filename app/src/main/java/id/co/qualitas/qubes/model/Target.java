@@ -1,63 +1,34 @@
 package id.co.qualitas.qubes.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Target implements Serializable {
     public String id_material_group;
-    public String material_group_name;
-    public double tgt_at;
-    public double at;
-    public double tgt_oms;
-    public double oms;
+    public String name_material_group;
+    public List<TargetPekan> pekan_list;
 
-    public Target() {
+    public String getId_material_group() {
+        return id_material_group;
     }
 
-    public Target(String material_group_name, double tgt_at, double at, double tgt_oms, double oms) {
-        this.material_group_name = material_group_name;
-        this.tgt_at = tgt_at;
-        this.at = at;
-        this.tgt_oms = tgt_oms;
-        this.oms = oms;
+    public void setId_material_group(String id_material_group) {
+        this.id_material_group = id_material_group;
     }
 
-    public String getMaterial_group_name() {
-        return material_group_name;
+    public String getName_material_group() {
+        return name_material_group;
     }
 
-    public void setMaterial_group_name(String material_group_name) {
-        this.material_group_name = material_group_name;
+    public void setName_material_group(String name_material_group) {
+        this.name_material_group = name_material_group;
     }
 
-    public double getTgt_at() {
-        return tgt_at;
+    public List<TargetPekan> getPekan_list() {
+        return pekan_list;
     }
 
-    public void setTgt_at(double tgt_at) {
-        this.tgt_at = tgt_at;
-    }
-
-    public double getAt() {
-        return at;
-    }
-
-    public void setAt(double at) {
-        this.at = at;
-    }
-
-    public double getTgt_oms() {
-        return tgt_oms;
-    }
-
-    public void setTgt_oms(double tgt_oms) {
-        this.tgt_oms = tgt_oms;
-    }
-
-    public double getOms() {
-        return oms;
-    }
-
-    public void setOms(double oms) {
-        this.oms = oms;
+    public void setPekan_list(List<TargetPekan> pekan_list) {
+        this.pekan_list = pekan_list;
     }
 }

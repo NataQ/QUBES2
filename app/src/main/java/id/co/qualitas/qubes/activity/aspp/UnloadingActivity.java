@@ -11,6 +11,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -241,7 +242,7 @@ public class UnloadingActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             try {
                 if (PARAM == 4) {
-                    String nameLash = user.getUsername() + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_7, SessionManagerQubes.getStartDay().getDate());
+                    String nameLash = user.getUsername() + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_7, startVisit.getDate());
                     pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/" + nameLash + ".pdf");
                     List<Map> lashList = new ArrayList<>();
                     lashList = database.getDatalash();
@@ -290,18 +291,19 @@ public class UnloadingActivity extends BaseActivity {
                     }
                 }
 
-                if (fromUnloading == 0) {
-                    progress.show();
-                    PARAM = 3;
-                    new RequestUrl().execute();//3 get data offline
-                }
+//                if (fromUnloading == 0) {
+//                    progress.show();
+//                    PARAM = 3;
+//                    new RequestUrl().execute();//3 get data offline
+//                }
             }
         }
     }
 
     private void initData() {
         header = SessionManagerQubes.getStockRequestHeader();
-        startVisit = SessionManagerQubes.getStartDay();
+        startVisit = database.getLastStartVisit();
+//        startVisit = SessionManagerQubes.getStartDay();
         fromUnloading = Helper.getItemParam(Constants.FROM_STOCK_REQUEST) != null ? (int) Helper.getItemParam(Constants.FROM_STOCK_REQUEST) : 1;
         if (header == null) {
             onBackPressed();
@@ -584,7 +586,8 @@ public class UnloadingActivity extends BaseActivity {
                     startVisit.setKm_akhir(kmAkhir);
                     startVisit.setPhoto_km_akhir(imageType.getPhotoAkhir());
                     startVisit.setPhoto_complete(imageType.getPhotoSelesai());
-                    SessionManagerQubes.setStartDay(startVisit);
+                    database.updateEndVisit(startVisit);
+//                    SessionManagerQubes.setStartDay(startVisit);
                     if (workManager != null) {
                         workManager.cancelAllWork();
                     }

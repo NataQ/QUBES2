@@ -26,11 +26,11 @@
             android:id="@+id/imgLogOut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_log_out" />
+            android:src="@drawable/ic_log_out"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -83,7 +83,7 @@
 
         </LinearLayout>
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <RelativeLayout
             android:id="@+id/f1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -127,24 +127,38 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_centerInParent="true"
                 android:indeterminateDrawable="@drawable/progress"
                 android:visibility="gone" />
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeLayout"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_stock_request_list" />
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/aspp_row_view_stock_request_list" />
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <include
+                    android:id="@+id/loadingDataBottom"
+                    layout="@layout/aspp_layout_loading_data_bottom"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
 
     </LinearLayout>
 </LinearLayout>

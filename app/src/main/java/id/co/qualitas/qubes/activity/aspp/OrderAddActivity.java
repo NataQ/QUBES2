@@ -154,7 +154,12 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
-            addProduct();
+            if (stockHeader != null) {
+                addProduct();
+            } else {
+                setToast("Silahkan melakukan request stock");
+            }
+
         });
 
         btnNext.setOnClickListener(v -> {
@@ -361,7 +366,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
-        stockHeader = database.getAllStockMaterial();
+        stockHeader = database.getAllStockMaterial(user);
         mList = new ArrayList<>();
         setDate();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
@@ -624,9 +629,9 @@ public class OrderAddActivity extends BaseActivity {
                     }
                 }
             }
-            Material conversionStock = database.getQtySmallUom(materialStock);
-            double qtyStock = conversionStock.getQty();
-            materialStock.setQty(qtyStock);
+            Material conversionStock = database.getQtySmallUomSisa(materialStock);
+            double qtyStock = conversionStock.getQtySisa();
+            materialStock.setQtySisa(qtyStock);
             materialStock.setTotalQtyOrder(qtyOrder);
             materialStock.setUom(conversionStock.getUom());
         }
@@ -636,9 +641,9 @@ public class OrderAddActivity extends BaseActivity {
             for (Material materialMaster : listSpinner) {
                 for (Material materialStock : stockHeader.getMaterialList()) {
                     if (materialMaster.getId().equals(materialStock.getId())) {
-                        double stock = materialStock.getQty() - materialStock.getTotalQtyOrder();
+                        double stock = materialStock.getQtySisa() - materialStock.getTotalQtyOrder();
                         if (stock != 0) {
-                            materialMaster.setQtyStock(stock);
+                            materialMaster.setQtySisa(stock);
                             materialMaster.setUomStock(materialStock.getUom());
                             listFinalStock.add(materialMaster);
                             break;

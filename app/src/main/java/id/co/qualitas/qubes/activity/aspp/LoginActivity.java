@@ -525,18 +525,19 @@ public class LoginActivity extends AppCompatActivity {
                         database.addMasterCustomerType(param, userResponse.getUsername());
                     }
 
-                    if (response.get("visit") != null) {
-                        StartVisit startDay = Helper.ObjectToGSON(response.get("visit"), StartVisit.class);
-                        SessionManagerQubes.setStartDay(startDay);
-//                        LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
-//                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
-//                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") :0;
-//                        SessionManagerQubes.setStartDay((int) statusVisit);
-//                        SessionManagerQubes.setIdVisit((int) idVisit);
-                    } else {
-                        SessionManagerQubes.setStartDay(null);
-//                        SessionManagerQubes.setIdVisit(0);
-                    }
+//                    if (response.get("visit") != null) {
+//                        StartVisit startDay = Helper.ObjectToGSON(response.get("visit"), StartVisit.class);
+//                        database.addStartVisit(startDay);
+////                        SessionManagerQubes.setStartDay(startDay);
+////                        LinkedTreeMap startDay = (LinkedTreeMap) response.get("visit");
+////                        double statusVisit = startDay.get("statusVisit") != null ? (double) startDay.get("statusVisit") : 0;
+////                        double idVisit = startDay.get("idVisit") != null ? (double) startDay.get("idVisit") :0;
+////                        SessionManagerQubes.setStartDay((int) statusVisit);
+////                        SessionManagerQubes.setIdVisit((int) idVisit);
+//                    } else {
+////                        SessionManagerQubes.setStartDay(null);
+////                        SessionManagerQubes.setIdVisit(0);
+//                    }
 
                     Customer[] paramArray = Helper.ObjectToGSON(response.get("listCustomerSalesman"), Customer[].class);
                     List<Customer> mList = new ArrayList<>();

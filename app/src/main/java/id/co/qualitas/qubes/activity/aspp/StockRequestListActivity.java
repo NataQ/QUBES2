@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
@@ -17,7 +18,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
@@ -38,6 +41,10 @@ public class StockRequestListActivity extends BaseActivity {
     private Button btnAdd;
     private WSMessage resultWsMessage, logResult;
     private boolean saveDataSuccess = false;
+    int offset;
+    LinearLayout loadingDataBottom;
+    private LinearLayoutManager linearLayout;
+    private boolean loading = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +52,24 @@ public class StockRequestListActivity extends BaseActivity {
         setContentView(R.layout.aspp_activity_stock_request_list);
 
         initialize();
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (offset == 0) {
+                    itemCount();
+                } else {
+                    if (dy > 0) //check for scroll down
+                    {
+                        itemCount();
+                    } else {
+                        loadingDataBottom.setVisibility(View.GONE);
+                        loading = true;
+                    }
+                }
+            }
+        });
 
         btnAdd.setOnClickListener(v -> {
 //            if (database.checkUnloadingRequest() == 0) {
@@ -76,6 +101,22 @@ public class StockRequestListActivity extends BaseActivity {
         });
     }
 
+    public void itemCount() {
+        int visibleItemCount = linearLayout.getChildCount();
+        int totalItemCount = linearLayout.getItemCount();
+        int pastVisiblesItems = linearLayout.findFirstVisibleItemPosition();
+
+        if (loading) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                loading = false;
+                offset = totalItemCount;
+                loadingDataBottom.setVisibility(View.VISIBLE);
+                PARAM = 1;
+                new RequestUrl().execute();//1 scroll bottom
+            }
+        }
+    }
+
     private void setAdapter() {
         mAdapter = new StockRequestListAdapter(this, mList, header -> {
             SessionManagerQubes.setStockRequestHeader(header);
@@ -99,6 +140,8 @@ public class StockRequestListActivity extends BaseActivity {
     }
 
     private void initialize() {
+        offset = 0;
+        loading = true;
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
         llNoData = findViewById(R.id.llNoData);
@@ -109,8 +152,11 @@ public class StockRequestListActivity extends BaseActivity {
         imgLogOut = findViewById(R.id.imgLogOut);
         btnAdd = findViewById(R.id.btnAdd);
         recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        loadingDataBottom = findViewById(R.id.loadingDataBottom);
+        linearLayout = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(linearLayout);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setNestedScrollingEnabled(false);
 
         userRoleList = new ArrayList<>();
         userRoleList.addAll(getRoleUser());
@@ -129,11 +175,12 @@ public class StockRequestListActivity extends BaseActivity {
     }
 
     private void getFirstDataOffline() {
-        getData();
+//        getData();//get first data offline
+        offset = 0;
         setAdapter();
 
 //        if (mList == null || mList.isEmpty()) {
-            requestData();
+        requestData();
 //        }
     }
 
@@ -142,12 +189,16 @@ public class StockRequestListActivity extends BaseActivity {
         recyclerView.setVisibility(View.GONE);
         progressCircle.setVisibility(View.VISIBLE);
         PARAM = 1;
-        new RequestUrl().execute();
+        new RequestUrl().execute();//request data
     }
 
     private void getData() {
-        mList = new ArrayList<>();
-        mList = database.getAllStockRequestHeader();
+        if(offset == 0 || Helper.isEmptyOrNull(mList)){
+            mList = database.getAllStockRequestHeader(offset);
+        }else{
+            mList.addAll(database.getAllStockRequestHeader(offset));
+        }
+
     }
 
     private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
@@ -158,31 +209,37 @@ public class StockRequestListActivity extends BaseActivity {
                 if (PARAM == 1) {
                     String URL_ = Constants.API_STOCK_REQUEST_LIST;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+                    Map request = new HashMap();
+                    request.put("page", offset);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
                     return null;
                 } else {
-                    mList = new ArrayList<>();
+                    List<StockRequest> beList = new ArrayList<>();
                     StockRequest[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), StockRequest[].class);
+
                     if (paramArray != null) {
-                        Collections.addAll(mList, paramArray);
-                        database.deleteStockRequestHeader();
-                        database.deleteStockRequestDetail();
+                        Collections.addAll(beList, paramArray);
+                        if (offset == 0) {
+                            database.deleteStockRequestHeader();
+                            database.deleteStockRequestDetail();
+                        }
+
+                        for (StockRequest param : beList) {
+                            List<Material> listMat = new ArrayList<>();
+                            Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
+                            if (matArray != null) {
+                                Collections.addAll(listMat, matArray);
+                            }
+                            param.setMaterialList(listMat);
+
+                            int idHeader = database.addStockRequestHeader(param, user.getUsername());
+                            for (Material mat : listMat) {
+                                database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUsername());
+                            }
+                        }
                     }
 
-                    for (StockRequest param : mList) {
-                        List<Material> listMat = new ArrayList<>();
-                        Material[] matArray = Helper.ObjectToGSON(param.getMaterialList(), Material[].class);
-                        if (matArray != null) {
-                            Collections.addAll(listMat, matArray);
-                        }
-                        param.setMaterialList(listMat);
-
-                        int idHeader = database.addStockRequestHeader(param, user.getUsername());
-                        for (Material mat : listMat) {
-                            database.addStockRequestDetail(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-                    }
-                    getData();
+                    getData();//param 2
                     saveDataSuccess = true;
                     return null;
                 }
@@ -219,10 +276,10 @@ public class StockRequestListActivity extends BaseActivity {
                 if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
                     resultWsMessage = logResult;
                     PARAM = 2;
-                    new RequestUrl().execute();
+                    new RequestUrl().execute();//param 1
                 } else {
                     progressCircle.setVisibility(View.GONE);
-                    getData();
+                    getData();//param 1
                     mAdapter.setData(mList);
                     if (Helper.isEmptyOrNull(mList)) {
                         recyclerView.setVisibility(View.GONE);
@@ -233,6 +290,7 @@ public class StockRequestListActivity extends BaseActivity {
                     }
                 }
             } else {
+                loadingDataBottom.setVisibility(View.GONE);
                 progressCircle.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
                 if (saveDataSuccess) {

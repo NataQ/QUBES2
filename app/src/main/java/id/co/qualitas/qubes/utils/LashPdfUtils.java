@@ -35,8 +35,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.DepoRegion;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
@@ -72,6 +74,7 @@ public class LashPdfUtils {
     private Context context;
     private static final String TAG = "LashPdfUtils";
     private User user;
+    private StartVisit startVisit;
 
     public static LashPdfUtils getInstance(Context context) {
         if (instance == null) {
@@ -286,7 +289,8 @@ public class LashPdfUtils {
 
         String date;
         try {
-            date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, SessionManagerQubes.getStartDay().getDate());
+            startVisit = new Database(context).getLastStartVisit();
+            date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_15, startVisit.getDate());
         } catch (Exception e) {
             date = Helper.getTodayDate(Constants.DATE_TYPE_15);
         }

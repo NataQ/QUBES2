@@ -37,7 +37,7 @@ public abstract class SessionManagerQubes {
     private static final String PREF_CUSTOMER_NOO = "pref_customer_noo";
     private static final String PREF_IMAGE_TYPE = "pref_image_type";
     private static final String PREF_OUTLET_HEADER = "pref_outlet_header";
-    private static final String PREF_START_VISIT = "pref_start_visit";
+//    private static final String PREF_START_VISIT = "pref_start_visit";
     private static final String PREF_LOGIN = "pref_login";
     private static final String PREF_RETURN = "pref_return";
     private static final String PREF_ALREADY_PRINT = "pref_already_print";
@@ -53,7 +53,7 @@ public abstract class SessionManagerQubes {
     private static final String KEY_CUSTOMER_NOO = "key_customer_noo";
     private static final String KEY_IMAGE_TYPE = "key_image_type";
     private static final String KEY_OUTLET_HEADER = "key_outlet_header";
-    private static final String KEY_START_VISIT = "key_start_visit";
+//    private static final String KEY_START_VISIT = "key_start_visit";
     private static final String KEY_USER_PROFILE = "key_user_profile";
     private static final String KEY_STOCK_REQUEST_HEADER = "key_stock_request_header";
     private static final String KEY_ROUTE_CUSTOMER_HEADER = "key_route_customer_header";
@@ -72,7 +72,7 @@ public abstract class SessionManagerQubes {
     private static SharedPreferences imageTypePrefs;
     private static SharedPreferences returnPrefs;
     private static SharedPreferences outletHeaderPrefs;
-    private static SharedPreferences startDayPrefs;
+//    private static SharedPreferences startDayPrefs;
     private static SharedPreferences prefs;
     private static SharedPreferences loginPrefs;
     private static SharedPreferences stockRequestHeaderPrefs;
@@ -93,7 +93,7 @@ public abstract class SessionManagerQubes {
         collectionHeaderPrefs = context.getSharedPreferences(PREF_COLLECTION_HEADER, Context.MODE_PRIVATE);
         collectionPrefs = context.getSharedPreferences(PREF_COLLECTION, Context.MODE_PRIVATE);
         routeCustomerHeaderPrefs = context.getSharedPreferences(PREF_ROUTE_CUSTOMER_HEADER, Context.MODE_PRIVATE);
-        startDayPrefs = context.getSharedPreferences(PREF_START_VISIT, Context.MODE_PRIVATE);
+//        startDayPrefs = context.getSharedPreferences(PREF_START_VISIT, Context.MODE_PRIVATE);
         outletHeaderPrefs = context.getSharedPreferences(PREF_OUTLET_HEADER, Context.MODE_PRIVATE);
         imageTypePrefs = context.getSharedPreferences(PREF_IMAGE_TYPE, Context.MODE_PRIVATE);
         customerNooPrefs = context.getSharedPreferences(PREF_CUSTOMER_NOO, Context.MODE_PRIVATE);
@@ -112,13 +112,13 @@ public abstract class SessionManagerQubes {
         }
     }
 
-    public static void setStartDay(StartVisit param) {
-        if (param != null) {
-            synchronized (sync) {
-                startDayPrefs.edit().putString(KEY_START_VISIT, gson.toJson(param)).apply();
-            }
-        }
-    }
+//    public static void setStartDay(StartVisit param) {
+//        if (param != null) {
+//            synchronized (sync) {
+//                startDayPrefs.edit().putString(KEY_START_VISIT, gson.toJson(param)).apply();
+//            }
+//        }
+//    }
 
     public static void setUrl(String url) {
         synchronized (sync) {
@@ -302,9 +302,9 @@ public abstract class SessionManagerQubes {
         return gson.fromJson(orderPrefs.getString(KEY_ORDER, null), Order.class);
     }
 
-    public static StartVisit getStartDay() {
-        return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
-    }
+//    public static StartVisit getStartDay() {
+//        return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
+//    }
 
     public static BluetoothConnector getPrinter() {
         return gson.fromJson(printerPrefs.getString(KEY_PRINT, null), BluetoothConnector.class);
@@ -328,7 +328,7 @@ public abstract class SessionManagerQubes {
         clearCustomerNooSession();
         clearOrderSession();
         clearOutletHeaderSession();
-        clearStartDaySession();
+//        clearStartDaySession();
         clearPrinterSession();
         clearLoginSession();
         clearStockRequestHeaderSession();
@@ -374,9 +374,9 @@ public abstract class SessionManagerQubes {
         outletHeaderPrefs.edit().clear().apply();
     }
 
-    public static void clearStartDaySession() {
-        startDayPrefs.edit().clear().apply();
-    }
+//    public static void clearStartDaySession() {
+//        startDayPrefs.edit().clear().apply();
+//    }
 
     public static void clearPrinterSession() {
         printerPrefs.edit().clear().apply();

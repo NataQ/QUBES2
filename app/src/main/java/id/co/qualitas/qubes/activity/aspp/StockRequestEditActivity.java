@@ -448,6 +448,7 @@ public class StockRequestEditActivity extends BaseActivity {
                     saveDataSuccess = true;
                     return null;
                 } else {
+                    prepareData();
                     String URL_ = Constants.API_STOCK_REQUEST_UPDATE_STATUS;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     Map request = new HashMap();

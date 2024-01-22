@@ -40,6 +40,7 @@ import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.SalesPriceDetail;
 import id.co.qualitas.qubes.model.SalesPriceHeader;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
@@ -57,6 +58,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "Qubes";
 
     // table name
+    private static final String TABLE_START_VISIT = "StartVisit";
     private static final String TABLE_STOCK_REQUEST_HEADER = "StockRequestHeader";
     private static final String TABLE_STOCK_REQUEST_DETAIL = "StockRequestDetail";
     private static final String TABLE_INVOICE_HEADER = "InvoiceHeader";
@@ -130,6 +132,14 @@ public class Database extends SQLiteOpenHelper {
     //MasterSalesPriceDetail
     private static final String KEY_ID_SALES_PRICE_DETAIL_DB = "idSalesPriceDetailDB";
     private static final String SELLING_PRICE = "sellingPrice";
+
+    //start visit
+    private static final String KEY_ID_START_VISIT = "idStartVisit";
+    private static final String KEY_START_TIME = "startTime";
+    private static final String KEY_END_TIME = "endTime";
+    private static final String KEY_KM_AWAL = "kmAwal";
+    private static final String KEY_KM_AKHIR = "kmAkhir";
+    private static final String RUTE_INAP_DATE = "ruteInapDate";
 
     // column table StockRequestHeader
     private static final String KEY_ID_STOCK_REQUEST_HEADER_DB = "idStockRequestHeaderDB";
@@ -381,6 +391,23 @@ public class Database extends SQLiteOpenHelper {
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
+    public static String CREATE_TABLE_START_VISIT = "CREATE TABLE IF NOT EXISTS " + TABLE_START_VISIT + "("
+            + KEY_ID_START_VISIT + " INTEGER PRIMARY KEY,"
+            + KEY_DATE + " TEXT,"
+            + KEY_ID_SALESMAN + " TEXT,"
+            + KEY_START_TIME + " TEXT,"
+            + KEY_END_TIME + " TEXT,"
+            + KEY_KM_AWAL + " TEXT,"
+            + KEY_KM_AKHIR + " TEXT,"
+            + RUTE_INAP_DATE + " TEXT,"
+            + KEY_STATUS + " INTEGER DEFAULT 0,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + KEY_UPDATED_BY + " TEXT,"
+            + KEY_UPDATED_DATE + " TEXT,"
+            + " UNIQUE (" + KEY_ID_START_VISIT + ", " + KEY_DATE + "," + KEY_ID_SALESMAN + ")"
+            + ")";
 
     public static String CREATE_TABLE_STOCK_REQUEST_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_STOCK_REQUEST_HEADER + "("
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -1110,6 +1137,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_TABLE_START_VISIT);
         db.execSQL(CREATE_TABLE_STOCK_REQUEST_HEADER);
         db.execSQL(CREATE_TABLE_STOCK_REQUEST_DETAIL);
         db.execSQL(CREATE_TABLE_INVOICE_HEADER);
@@ -1151,6 +1179,7 @@ public class Database extends SQLiteOpenHelper {
     // on Upgrade database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_START_VISIT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK_REQUEST_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK_REQUEST_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICE_HEADER);
@@ -1191,6 +1220,31 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //add
+    public int addStartVisit(StartVisit param) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID_START_VISIT, param.getId());
+        values.put(KEY_DATE, param.getDate());
+        values.put(KEY_ID_SALESMAN, param.getId_salesman());
+        values.put(KEY_START_TIME, param.getStart_time());
+        values.put(KEY_KM_AWAL, param.getKm_awal());
+        values.put(KEY_KM_AKHIR, param.getKm_akhir());
+        values.put(RUTE_INAP_DATE, param.getRute_inap_date());
+        values.put(KEY_STATUS, param.getStatus_visit());
+        values.put(KEY_CREATED_BY, param.getId_salesman());
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_START_VISIT, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
     public int addStockRequestHeader(StockRequest param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -3243,10 +3297,11 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<StockRequest> getAllStockRequestHeader() {
+    public List<StockRequest> getAllStockRequestHeader(int offset) {
         List<StockRequest> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc";
+//        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc ";
+        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " order by " + KEY_ID_STOCK_REQUEST_HEADER_DB + " desc LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -3272,6 +3327,31 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    public StartVisit getLastStartVisit() {
+        StartVisit paramModel = new StartVisit();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_START_VISIT + " order by " + KEY_DATE + " desc";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            paramModel = new StartVisit();
+            paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_START_VISIT)));
+            paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+            paramModel.setId_salesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
+            paramModel.setStart_time(cursor.getString(cursor.getColumnIndexOrThrow(KEY_START_TIME)));
+            paramModel.setEnd_time(cursor.getString(cursor.getColumnIndexOrThrow(KEY_END_TIME)));
+            paramModel.setKm_awal(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KM_AWAL)));
+            paramModel.setKm_akhir(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KM_AKHIR)));
+            paramModel.setRute_inap_date(cursor.getString(cursor.getColumnIndexOrThrow(RUTE_INAP_DATE)));
+            paramModel.setStatus_visit(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+        }
+
+        cursor.close();
+        return paramModel;
     }
 
     public StockRequest getStockRequestByDate(String date) {
@@ -3502,6 +3582,33 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
+    public Material getQtySmallUomSisa(Material mat) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String countQuery;
+        Cursor cursor;
+        int qty = 0;
+
+        String smallUom = getSmallUom(mat.getId());
+
+        countQuery = "SELECT " + KEY_CONVERSION + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? and " + KEY_UOM + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{mat.getId(), mat.getUom()});
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                qty = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CONVERSION));
+            }
+        }
+
+        assert cursor != null;
+        cursor.close();
+
+        Material result = new Material();
+        result.setUom(smallUom);
+        result.setQtySisa(mat.getQtySisa() * qty);
+
+        return result;
+    }
+
     public int getConversionUom(Material mat) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
@@ -3574,10 +3681,23 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public StockRequest getAllStockMaterial() {
+    public StockRequest getAllStockMaterial(User user) {
         // Select All Query
-        StockRequest result = new StockRequest();
-        String selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 and " + KEY_STATUS + " = ? order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+        SQLiteDatabase db = this.getWritableDatabase();
+        StockRequest result = null;
+        String selectQuery;
+        Cursor cursor;
+
+        if (user.getRute_inap() == 1) {
+            selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS + " = ? and "
+                    + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+            cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
+        } else {
+            selectQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS + " = ? and " + KEY_REQUEST_DATE + " = ? and "
+                    + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc limit 1";
+            cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE, Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+        }
+
         String selectQueryDetail = "select a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", (a." + KEY_QTY + "*b." + KEY_CONVERSION + ") as " + KEY_QTY + " , (select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = a." + KEY_MATERIAL_ID + " order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_STOCK_REQUEST_DETAIL + " a \n" +
                 "left join " + TABLE_MASTER_UOM + " b on a." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + "  and b." + KEY_UOM + " = a." + KEY_UOM + "\n" +
@@ -3592,9 +3712,6 @@ public class Database extends SQLiteOpenHelper {
                 "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and b." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 and b." + KEY_DELETED + " = 0";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{Constants.STATUS_APPROVE});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -3672,7 +3789,7 @@ public class Database extends SQLiteOpenHelper {
 
         String selectQueryOrderExtra = "select coalesce(sum(d." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_ORDER_HEADER + " a join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
-                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d."+KEY_DELETED+" = 0\n" +
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0\n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and b." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 and b." + KEY_DELETED + " = 0";
 
@@ -3778,9 +3895,11 @@ public class Database extends SQLiteOpenHelper {
                 "from " +
                 lkQuery +
                 "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'co' and " + KEY_DELETED + " = 0) b , " +
-                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
-                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
-                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b. " + KEY_DELETED + " = 0) c ";
+                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM CollectionHeader a " +
+                "INNER JOIN CollectionDetail b on b.idCollectionHeaderDB = a.idCollectionHeaderDB and b.typePayment = 'cash'  WHERE a.customerId = ? and b. deleted = 0) c";
+//                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
+//                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
+//                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b. " + KEY_DELETED + " = 0) c ";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4477,10 +4596,15 @@ public class Database extends SQLiteOpenHelper {
     public double getTotalTagihanCustomer(String idCust) {
         double result = 0.0;
         // Select All Query
-        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_IS_VERIF + " = 1";
+//        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_IS_VERIF + " = 1";
+        String selectQuery = "select (a.invoiceTotal + b.totalPaid) as total from " +
+                "(select coalesce(sum((invoiceTotal - paid)),0) as invoiceTotal from invoiceheader where customerId = ? and isVerif = 1) a, " +
+                "(select sum(a.omzet-coalesce(c.totalPaid, 0))  as totalPaid from OrderHeader a " +
+                " left join CollectionHeader c on a.idOrderHeaderDB = c.invoiceNo and a.customerId = c.customerId and c.deleted = 0 " +
+                " where a.customerId = ? and a.deleted = 0 ) b ";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -5175,13 +5299,20 @@ public class Database extends SQLiteOpenHelper {
         return count;
     }
 
-    public int getCountStockRequestToday() {
+    public int getCountStockRequestToday(User user) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
         //+ KEY_REQUEST_DATE + " = ? and "
-        countQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS + " = ? and " + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc";
-        cursor = db.rawQuery(countQuery, new String[]{Constants.STATUS_APPROVE});
+        if (user.getRute_inap() == 1) {
+            countQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS + " = ? and "
+                    + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc";
+            cursor = db.rawQuery(countQuery, new String[]{Constants.STATUS_APPROVE});
+        } else {
+            countQuery = "SELECT * FROM " + TABLE_STOCK_REQUEST_HEADER + " WHERE " + KEY_STATUS + " = ? and " + KEY_REQUEST_DATE + " = ? and "
+                    + KEY_IS_UNLOADING + " = 0 and " + KEY_IS_VERIF + " = 1 order by " + KEY_ID_STOCK_REQUEST_HEADER_BE + " desc";
+            cursor = db.rawQuery(countQuery, new String[]{Constants.STATUS_APPROVE, Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+        }
 
         int count = cursor.getCount();
         cursor.close();
@@ -7484,6 +7615,34 @@ public class Database extends SQLiteOpenHelper {
 //        //db.close();
 //    }
 
+    public void updateFinishVisit(StartVisit param) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_END_TIME, param.getEnd_time());
+        values.put(KEY_KM_AKHIR, param.getKm_akhir());
+        values.put(KEY_STATUS, param.getStatus_visit());
+        values.put(KEY_UPDATED_BY, param.getId_salesman());
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_START_VISIT, values, KEY_ID_START_VISIT + " = ?",
+                new String[]{String.valueOf(param.getId())});
+        //db.close();
+    }
+
+    public void updateEndVisit(StartVisit param) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_STATUS, param.getStatus_visit());
+        values.put(KEY_UPDATED_BY, param.getId_salesman());
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_START_VISIT, values, KEY_ID_START_VISIT + " = ?",
+                new String[]{String.valueOf(param.getId())});
+        //db.close();
+    }
+
     public void updateStockRequestVerification(StockRequest param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -7697,6 +7856,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteCustomerPromotion() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_PROMOTION);
+    }
+
+    public void deleteStartVisit() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_START_VISIT);
     }
 
     public void deleteCustomerDct() {
