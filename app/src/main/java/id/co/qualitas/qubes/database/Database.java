@@ -35,11 +35,9 @@ import id.co.qualitas.qubes.model.LogModel;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Parameter;
-import id.co.qualitas.qubes.model.PriceCode;
+import id.co.qualitas.qubes.model.Price;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
-import id.co.qualitas.qubes.model.SalesPriceDetail;
-import id.co.qualitas.qubes.model.SalesPriceHeader;
 import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.Uom;
@@ -67,6 +65,8 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_CUSTOMER = "Customer";
     private static final String TABLE_CUSTOMER_PROMOTION = "CustomerPromotion";
     private static final String TABLE_CUSTOMER_DCT = "CustomerDCT";
+    private static final String TABLE_CUSTOMER_MAX_BON = "CustomerMaxBon";
+    private static final String TABLE_CUSTOMER_DROP_SIZE = "CustomerDropSize";
     private static final String TABLE_VISIT_SALESMAN = "VisitSalesman";
     private static final String TABLE_STORE_CHECK = "StoreCheck";
     private static final String TABLE_ORDER_HEADER = "OrderHeader";
@@ -83,23 +83,32 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_MASTER_MATERIAL = "MasterMaterial";
     private static final String TABLE_MASTER_UOM = "MasterUom";
     private static final String TABLE_MASTER_DAERAH_TINGKAT = "MasterDaerahTingkat";
-    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER = "MasterNonRouteCustomer";
-    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "MasterNonRouteCustomerPromotion";
-    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT = "MasterNonRouteCustomerDct";
-    private static final String TABLE_MASTER_PRICE_CODE = "MasterTopPriceCode";
-    private static final String TABLE_MASTER_LIMIT_BON = "MasterLimitBon";
-    private static final String TABLE_MASTER_SALES_PRICE_HEADER = "MasterSalesPriceHeader";
-    private static final String TABLE_MASTER_SALES_PRICE_DETAIL = "MasterSalesPriceDetail";
+    private static final String TABLE_MASTER_CUSTOMER_SALESMAN = "MasterCustomerSalesman";
+    private static final String TABLE_MASTER_PRICE = "MasterPrice";
+    private static final String TABLE_MASTER_GROUP_SALES_MAX_BON = "MasterGroupSalesMaxBon";
+    //    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "MasterNonRouteCustomerPromotion";
+//    private static final String TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT = "MasterNonRouteCustomerDct";
+//    private static final String TABLE_MASTER_PRICE_CODE = "MasterTopPriceCode";
+//    private static final String TABLE_MASTER_LIMIT_BON = "MasterLimitBon";
+//    private static final String TABLE_MASTER_SALES_PRICE_HEADER = "MasterSalesPriceHeader";
+//    private static final String TABLE_MASTER_SALES_PRICE_DETAIL = "MasterSalesPriceDetail";
     private static final String TABLE_MASTER_PARAMETER = "MasterParameter";
     private static final String TABLE_MASTER_CUSTOMER_TYPE = "MasterCustomerType";
-    private static final String TABLE_MASTER_MAX_BON_LIMIT = "MasterMaxBonLimit";
+    //    private static final String TABLE_MASTER_MAX_BON_LIMIT = "MasterMaxBonLimit";
     private static final String TABLE_LOG = "Log";
     private static final String TABLE_PHOTO = "Photo";
 
-    private static final String KEY_ID_MASTER_MAX_BON_LIMIT = "idMasterMaxBonLimit";
+    //    private static final String KEY_ID_MASTER_MAX_BON_LIMIT = "idMasterMaxBonLimit";
+    private static final String KEY_ID_CUSTOMER_MAX_BON_DB = "idCustomerMaxBonDB";
+    private static final String KEY_ID_CUSTOMER_DROP_SIZE_DB = "idCustomerDropSizeDB";
+    private static final String KEY_ID_MASTER_PRICE_DB = "idMasterPriceDB";
+    private static final String KEY_ID_MASTER_GROUP_SALES_MAX_BON_DB = "idMasterGroupSalesMaxBonDB";
     private static final String KEY_ID_GROUP_MAX_BON = "idGroupMaxBon";
+    private static final String KEY_ID_GROUP_SALES = "idGroupSales";
     private static final String KEY_NAME_GROUP_MAX_BON = "nameGroupMaxBon";
     private static final String KEY_LIMITS = "limits";
+    private static final String KEY_TOP_GT = "topGT";
+    private static final String KEY_TOP_ON = "topON";
 
     private static final String KEY_ID_CUSTOMER_TYPE = "idCustomerType";
     private static final String KEY_ID_TYPE_PRICE = "idTypePrice";
@@ -243,7 +252,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_CUSTOMER_ADDRESS = "customerAddress";
     private static final String KEY_SISA_KREDIT_LIMIT = "sisaKreditLimit";
     private static final String KEY_UDF_5 = "udf5";
-    private static final String KEY_UDF_5_DESC = "udf5Desc";
+    private static final String KEY_TOP_KHUSUS = "topKhusus";
     private static final String KEY_KELAS_OUTLET = "kelasOutlet";
     private static final String KEY_TOTAL_TAGIHAN = "totalTagihan";
 
@@ -452,7 +461,7 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER + "("
+    public static String CREATE_TABLE_MASTER_CUSTOMER_SALESMAN = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_CUSTOMER_SALESMAN + "("
             + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_CUSTOMER_NAME + " TEXT,"
@@ -463,7 +472,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ORDER_ROUTE + " TEXT,"
             + KEY_TYPE_PRICE + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
-            + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_TOP_KHUSUS + " TEXT,"
             + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_NAME_PEMILIK + " TEXT,"
             + KEY_LATITUDE + " REAL,"
@@ -478,9 +487,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_KODE_POS + " TEXT,"
             + KEY_NAME_KOTA_KABUPATEN + " TEXT,"
             + KEY_IS_ROUTE + " INTEGER DEFAULT 0,"
-//            + KEY_PHOTO_KTP + " TEXT,"
-//            + KEY_PHOTO_NPWP + " TEXT,"
-//            + KEY_PHOTO_OUTLET + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -489,42 +495,42 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
-            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT ,"
-            + KEY_CUSTOMER_ID + " TEXT,"
-            + KEY_ID_PROMOTION + " TEXT,"
-            + KEY_NO_PROMOTION + " TEXT,"
-            + KEY_NAME_PROMOTION + " TEXT,"
-            + KEY_DESC + " TEXT,"
-            + KEY_TOLERANSI + " TEXT,"
-            + KEY_JENIS_PROMOSI + " TEXT,"
-            + KEY_SEGMEN + " TEXT,"
-            + KEY_VALID_FROM_PROMOTION + " TEXT,"
-            + KEY_VALID_TO_PROMOTION + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
-            + ")";
-
-    public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
-            + KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT,"
-            + KEY_CUSTOMER_ID + " TEXT,"
-            + KEY_MATERIAL_GROUP_ID + " TEXT,"
-            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
-            + KEY_QTY + " REAL,"
-            + KEY_TARGET + " REAL,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
-            + ")";
+//    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
+//            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT ,"
+//            + KEY_CUSTOMER_ID + " TEXT,"
+//            + KEY_ID_PROMOTION + " TEXT,"
+//            + KEY_NO_PROMOTION + " TEXT,"
+//            + KEY_NAME_PROMOTION + " TEXT,"
+//            + KEY_DESC + " TEXT,"
+//            + KEY_TOLERANSI + " TEXT,"
+//            + KEY_JENIS_PROMOSI + " TEXT,"
+//            + KEY_SEGMEN + " TEXT,"
+//            + KEY_VALID_FROM_PROMOTION + " TEXT,"
+//            + KEY_VALID_TO_PROMOTION + " TEXT,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + KEY_UPDATED_BY + " TEXT,"
+//            + KEY_UPDATED_DATE + " TEXT,"
+//            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
+//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
+//            + ")";
+//
+//    public static String CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + "("
+//            + KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " TEXT,"
+//            + KEY_CUSTOMER_ID + " TEXT,"
+//            + KEY_MATERIAL_GROUP_ID + " TEXT,"
+//            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
+//            + KEY_QTY + " REAL,"
+//            + KEY_TARGET + " REAL,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + KEY_UPDATED_BY + " TEXT,"
+//            + KEY_UPDATED_DATE + " TEXT,"
+//            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
+//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
+//            + ")";
 
     public static String CREATE_TABLE_INVOICE_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_INVOICE_HEADER + "("
             + KEY_ID_INVOICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -579,7 +585,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_LONGITUDE + " REAL,"
             + KEY_KODE_POS + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
-            + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_TOP_KHUSUS + " TEXT,"
             + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_ID_DESA_KELURAHAN + " TEXT,"
             + KEY_NAME_DESA_KELURAHAN + " TEXT,"
@@ -609,18 +615,11 @@ public class Database extends SQLiteOpenHelper {
             + KEY_SISA_KREDIT_LIMIT + " REAL,"
             + KEY_TOTAL_TAGIHAN + " REAL,"
             + KEY_ROUTE + " TEXT,"
-//            + KEY_PHOTO_KTP + " TEXT,"
-//            + KEY_PHOTO_NPWP + " TEXT,"
-//            + KEY_PHOTO_OUTLET + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-//            + KEY_IS_SYNC_PHOTO_KTP + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_NPWP + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_OUTLET + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0"
-//            + " UNIQUE (" + KEY_ID_NOO_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER + "("
@@ -635,7 +634,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TYPE_CUSTOMER_NAME + " TEXT,"
             + KEY_TYPE_PRICE + " TEXT,"
             + KEY_UDF_5 + " TEXT,"
-            + KEY_UDF_5_DESC + " TEXT,"
+            + KEY_TOP_KHUSUS + " TEXT,"
             + KEY_KELAS_OUTLET + " TEXT,"
             + KEY_NAME_PEMILIK + " TEXT,"
             + KEY_LATITUDE + " REAL,"
@@ -650,16 +649,10 @@ public class Database extends SQLiteOpenHelper {
             + KEY_KODE_POS + " TEXT,"
             + KEY_NAME_KOTA_KABUPATEN + " TEXT,"
             + KEY_IS_ROUTE + " INTEGER DEFAULT 0,"
-//            + KEY_PHOTO_KTP + " TEXT,"
-//            + KEY_PHOTO_NPWP + " TEXT,"
-//            + KEY_PHOTO_OUTLET + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-//            + KEY_IS_SYNC_PHOTO_KTP + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_NPWP + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_OUTLET + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
             + ")";
@@ -681,7 +674,27 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0"
-//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_PROMOTION + ")"
+            + ")";
+
+    public static String CREATE_TABLE_CUSTOMER_MAX_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_MAX_BON + "("
+            + KEY_ID_CUSTOMER_MAX_BON_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_GROUP_MAX_BON + " TEXT,"
+            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
+            + KEY_LIMITS + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
+            + ")";
+
+    public static String CREATE_TABLE_CUSTOMER_DROP_SIZE = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_DROP_SIZE + "("
+            + KEY_ID_CUSTOMER_DROP_SIZE_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_MATERIAL_ID + " TEXT,"
+            + KEY_UOM + " TEXT,"
+            + KEY_QTY_MAX + " TEXT,"
+            + KEY_QTY_MIN + " TEXT,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_DCT = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_DCT + "("
@@ -726,23 +739,17 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_PAUSE_REASON + " TEXT,"
             + KEY_NAME_PAUSE_REASON + " TEXT,"
             + KEY_DESC_PAUSE_REASON + " TEXT,"
-//            + KEY_PHOTO_PAUSE_REASON + " TEXT,"
             + KEY_DURATION + " TEXT,"
             + KEY_ID_NOT_VISIT_REASON + " TEXT,"
             + KEY_NAME_NOT_VISIT_REASON + " TEXT,"
             + KEY_DESC_NOT_VISIT_REASON + " TEXT,"
-//            + KEY_PHOTO_NOT_VISIT_REASON + " TEXT,"
             + KEY_ID_NOT_BUY_REASON + " TEXT,"
             + KEY_NAME_NOT_BUY_REASON + " TEXT,"
             + KEY_DESC_NOT_BUY_REASON + " TEXT,"
-//            + KEY_PHOTO_NOT_BUY_REASON + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-//            + KEY_IS_SYNC_PHOTO_REASON_PAUSE + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_REASON_NOT_VISIT + " INTEGER DEFAULT 0,"
-//            + KEY_IS_SYNC_PHOTO_REASON_NOT_BUY + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
             + ")";
@@ -881,12 +888,10 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_REASON_RETURN + " TEXT,"
             + KEY_NAME_REASON_RETURN + " TEXT,"
             + KEY_DESC_REASON_RETURN + " TEXT,"
-//            + KEY_PHOTO_REASON_RETURN + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-//            + KEY_IS_SYNC_PHOTO + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
             + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
             + ")";
@@ -1009,14 +1014,43 @@ public class Database extends SQLiteOpenHelper {
             + KEY_MATERIAL_ID_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
+            + KEY_UOM + " TEXT,"
             + KEY_MATERIAL_SALES + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " TEXT,"
             + KEY_MATERIAL_GROUP_NAME + " TEXT,"
             + KEY_MATERIAL_PRODUCT_ID + " TEXT,"
             + KEY_MATERIAL_PRODUCT_NAME + " TEXT,"
+            + KEY_ID_GROUP_MAX_BON + " TEXT,"
+            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
+            + KEY_TOP_GT + " TEXT,"
+            + KEY_TOP_ON + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + " UNIQUE (" + KEY_MATERIAL_ID + ")"
+            + ")";
+
+    public static String CREATE_TABLE_MASTER_PRICE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE + "("
+            + KEY_ID_MASTER_PRICE_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_TYPE_CUSTOMER + " TEXT,"
+            + KEY_PRICE_LIST_CODE + " TEXT,"
+            + KEY_TOP + " TEXT,"
+            + KEY_MATERIAL_ID + " TEXT,"
+            + KEY_QTY + " TEXT,"
+            + KEY_UOM + " TEXT,"
+            + KEY_PRICE + " TEXT,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
+            + ")";
+
+    public static String CREATE_TABLE_MASTER_GROUP_SALES_MAX_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_GROUP_SALES_MAX_BON + "("
+//    id_group_sales, id_group_max_bon, limits
+            + KEY_ID_MASTER_GROUP_SALES_MAX_BON_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_GROUP_SALES + " TEXT,"
+            + KEY_ID_GROUP_MAX_BON + " TEXT,"
+            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
+            + KEY_LIMITS + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_MASTER_UOM = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_UOM + "("
@@ -1047,39 +1081,39 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_KODE_POS + ", " + KEY_ID_DESA_KELURAHAN + "," + KEY_ID_KECAMATAN + "," + KEY_ID_KOTA_KABUPATEN + "," + KEY_ID_PROVINSI + ")"
             + ")";
 
-    public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE_CODE + "("
-            + KEY_ID_PRICE_CODE_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_MATERIAL_PRODUCT_ID + " TEXT,"
-            + KEY_UDF_5 + " TEXT,"
-            + KEY_UDF_5_DESC + " TEXT,"
-            + KEY_PRICE_LIST_CODE + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
-            + ")";
-
-    public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER + "("
-            + KEY_ID_SALES_PRICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_TOP + " TEXT,"
-            + KEY_PRICE_LIST_CODE + " TEXT,"
-            + KEY_VALID_FROM + " TEXT,"
-            + KEY_VALID_TO + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_PRICE_LIST_CODE + ")"
-            + ")";
-
-    public static String CREATE_TABLE_MASTER_SALES_PRICE_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL + "("
-            + KEY_ID_SALES_PRICE_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_MATERIAL_ID + " TEXT,"
-            + KEY_PRICE_LIST_CODE + " TEXT,"
-            + KEY_UOM + " TEXT,"
-            + KEY_QTY + " REAL,"
-            + SELLING_PRICE + " REAL,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_MATERIAL_ID + ", " + KEY_PRICE_LIST_CODE + ")"
-            + ")";
+//    public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE_CODE + "("
+//            + KEY_ID_PRICE_CODE_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_MATERIAL_PRODUCT_ID + " TEXT,"
+//            + KEY_UDF_5 + " TEXT,"
+//            + KEY_TOP_KHUSUS + " TEXT,"
+//            + KEY_PRICE_LIST_CODE + " TEXT,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + " UNIQUE (" + KEY_MATERIAL_PRODUCT_ID + ", " + KEY_UDF_5 + ")"
+//            + ")";
+//
+//    public static String CREATE_TABLE_MASTER_SALES_PRICE_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER + "("
+//            + KEY_ID_SALES_PRICE_HEADER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_TOP + " TEXT,"
+//            + KEY_PRICE_LIST_CODE + " TEXT,"
+//            + KEY_VALID_FROM + " TEXT,"
+//            + KEY_VALID_TO + " TEXT,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + " UNIQUE (" + KEY_PRICE_LIST_CODE + ")"
+//            + ")";
+//
+//    public static String CREATE_TABLE_MASTER_SALES_PRICE_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL + "("
+//            + KEY_ID_SALES_PRICE_DETAIL_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_MATERIAL_ID + " TEXT,"
+//            + KEY_PRICE_LIST_CODE + " TEXT,"
+//            + KEY_UOM + " TEXT,"
+//            + KEY_QTY + " REAL,"
+//            + SELLING_PRICE + " REAL,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + " UNIQUE (" + KEY_MATERIAL_ID + ", " + KEY_PRICE_LIST_CODE + ")"
+//            + ")";
 
     public static String CREATE_TABLE_PARAMETER = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PARAMETER + "("
             + KEY_ID_PARAMETER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -1100,25 +1134,25 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
             + ")";
 
-    public static String CREATE_TABLE_MAX_BON_LIMIT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MAX_BON_LIMIT + "("
-            + KEY_ID_GROUP_MAX_BON + " TEXT PRIMARY KEY,"
-            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
-            + KEY_LIMITS + " TEXT,"
-            + KEY_MATERIAL_GROUP_ID + " TEXT,"
-            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT"
-            + ")";
-
-    public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_LIMIT_BON + "("
-            + KEY_ID_MINIMAL_ORDER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-            + KEY_MATERIAL_ID + " TEXT,"
-            + KEY_CUSTOMER_ID + " TEXT,"
-            + KEY_BON_LIMIT + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_CUSTOMER_ID + ")"
-            + ")";
+//    public static String CREATE_TABLE_MAX_BON_LIMIT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MAX_BON_LIMIT + "("
+//            + KEY_ID_GROUP_MAX_BON + " TEXT PRIMARY KEY,"
+//            + KEY_NAME_GROUP_MAX_BON + " TEXT,"
+//            + KEY_LIMITS + " TEXT,"
+//            + KEY_MATERIAL_GROUP_ID + " TEXT,"
+//            + KEY_MATERIAL_GROUP_NAME + " TEXT,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT"
+//            + ")";
+//
+//    public static String CREATE_TABLE_MASTER_LIMIT_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_LIMIT_BON + "("
+//            + KEY_ID_MINIMAL_ORDER_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//            + KEY_MATERIAL_ID + " TEXT,"
+//            + KEY_CUSTOMER_ID + " TEXT,"
+//            + KEY_BON_LIMIT + " TEXT,"
+//            + KEY_CREATED_BY + " TEXT,"
+//            + KEY_CREATED_DATE + " TEXT,"
+//            + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_CUSTOMER_ID + ")"
+//            + ")";
 
     public static String CREATE_TABLE_PHOTO = "CREATE TABLE IF NOT EXISTS " + TABLE_PHOTO + "("
             + KEY_ID_PHOTO_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -1142,12 +1176,11 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_STOCK_REQUEST_DETAIL);
         db.execSQL(CREATE_TABLE_INVOICE_HEADER);
         db.execSQL(CREATE_TABLE_INVOICE_DETAIL);
-        db.execSQL(CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER);
-        db.execSQL(CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
-        db.execSQL(CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT);
         db.execSQL(CREATE_TABLE_NOO);
         db.execSQL(CREATE_TABLE_CUSTOMER);
         db.execSQL(CREATE_TABLE_CUSTOMER_PROMOTION);
+        db.execSQL(CREATE_TABLE_CUSTOMER_MAX_BON);
+        db.execSQL(CREATE_TABLE_CUSTOMER_DROP_SIZE);
         db.execSQL(CREATE_TABLE_CUSTOMER_DCT);
         db.execSQL(CREATE_TABLE_VISIT_SALESMAN);
         db.execSQL(CREATE_TABLE_STORE_CHECK);
@@ -1165,15 +1198,20 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MASTER_UOM);
         db.execSQL(CREATE_TABLE_MASTER_DAERAH_TINGKAT);
         db.execSQL(CREATE_TABLE_MASTER_PROMOTION);
-        db.execSQL(CREATE_TABLE_MASTER_PRICE_CODE);
-        db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_HEADER);
-        db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_DETAIL);
-        db.execSQL(CREATE_TABLE_MASTER_LIMIT_BON);
+        db.execSQL(CREATE_TABLE_MASTER_CUSTOMER_SALESMAN);
+        db.execSQL(CREATE_TABLE_MASTER_PRICE);
+        db.execSQL(CREATE_TABLE_MASTER_GROUP_SALES_MAX_BON);
         db.execSQL(CREATE_TABLE_PARAMETER);
         db.execSQL(CREATE_TABLE_LOG);
         db.execSQL(CREATE_TABLE_CUSTOMER_TYPE);
-        db.execSQL(CREATE_TABLE_MAX_BON_LIMIT);
         db.execSQL(CREATE_TABLE_PHOTO);
+//        db.execSQL(CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+//        db.execSQL(CREATE_TABLE_NON_ROUTE_CUSTOMER_DCT);
+//        db.execSQL(CREATE_TABLE_MASTER_PRICE_CODE);
+//        db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_HEADER);
+//        db.execSQL(CREATE_TABLE_MASTER_SALES_PRICE_DETAIL);
+//        db.execSQL(CREATE_TABLE_MASTER_LIMIT_BON);
+//        db.execSQL(CREATE_TABLE_MAX_BON_LIMIT);
     }
 
     // on Upgrade database
@@ -1184,12 +1222,11 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK_REQUEST_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICE_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_INVOICE_DETAIL);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOO);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_PROMOTION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_MAX_BON);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_DROP_SIZE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CUSTOMER_DCT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VISIT_SALESMAN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STORE_CHECK);
@@ -1201,21 +1238,26 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_ITEM);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_SALESMAN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_GROUP_SALES_MAX_BON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_REASON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_BANK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MATERIAL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_UOM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_DAERAH_TINGKAT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PROMOTION);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE_CODE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_LIMIT_BON);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PARAMETER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOG);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_TYPE);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MAX_BON_LIMIT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PHOTO);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE_CODE);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_HEADER);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_SALES_PRICE_DETAIL);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_LIMIT_BON);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_MAX_BON_LIMIT);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
         onCreate(db);
     }
 
@@ -1409,7 +1451,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_STATUS, param.getStatus());
         values.put(KEY_KODE_POS, param.getKode_pos());
         values.put(KEY_UDF_5, param.getUdf_5());
-        values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_TOP_KHUSUS, param.getTop_khusus());
         values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ID_DESA_KELURAHAN, param.getIdKelurahan());
         values.put(KEY_NAME_DESA_KELURAHAN, param.getKelurahan());
@@ -1467,7 +1509,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_CUSTOMER_NAME, param.getName_type_customer());
         values.put(KEY_TYPE_PRICE, param.getType_price());
         values.put(KEY_UDF_5, param.getUdf_5());
-        values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_TOP_KHUSUS, param.getTop_khusus());
         values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ROUTE, param.getRute());
         values.put(KEY_KODE_POS, param.getKode_pos());
@@ -1479,7 +1521,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CREDIT_LIMIT, param.getLimit_kredit());
         values.put(KEY_NO_KTP, param.getNik());
         values.put(KEY_NO_NPWP, param.getNo_npwp());
-        values.put(KEY_IS_ROUTE, param.isRoute());
+        values.put(KEY_IS_ROUTE, param.getIs_route());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -1493,7 +1535,7 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addNonRouteCustomer(Customer param, String idSales) {
+    public int addCustomerSalesman(Customer param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1506,7 +1548,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_TYPE_CUSTOMER_NAME, param.getName_type_customer());
         values.put(KEY_TYPE_PRICE, param.getType_price());
         values.put(KEY_UDF_5, param.getUdf_5());
-        values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
+        values.put(KEY_TOP_KHUSUS, param.getTop_khusus());
         values.put(KEY_KELAS_OUTLET, param.getKelas_outlet());
         values.put(KEY_ROUTE, param.getRute());
         values.put(KEY_KODE_POS, param.getKode_pos());
@@ -1524,7 +1566,7 @@ public class Database extends SQLiteOpenHelper {
 
         int id = -1;
         try {
-            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER, null, values);//return id yg ud d create
+            id = (int) db.insert(TABLE_MASTER_CUSTOMER_SALESMAN, null, values);//return id yg ud d create
         } catch (Exception e) {
             id = -1;
         }
@@ -1532,58 +1574,58 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addNonRouteCustomerPromotion(Promotion param, String idHeader, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB, idHeader);
-        values.put(KEY_CUSTOMER_ID, param.getIdCustomer());
-        values.put(KEY_ID_PROMOTION, param.getId());
-        values.put(KEY_NAME_PROMOTION, param.getNama_promo());
-        values.put(KEY_NO_PROMOTION, param.getNo_promo());
-        values.put(KEY_DESC, param.getKeterangan());
-        values.put(KEY_TOLERANSI, param.getToleransi());
-        values.put(KEY_JENIS_PROMOSI, param.getJenis_promosi());
-        values.put(KEY_SEGMEN, param.getSegmen());
-        values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
-        values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addNonRouteCustomerDct(Material param, String idHeader, String idSales, String idCust) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB, idHeader);
-        values.put(KEY_CUSTOMER_ID, idCust);
-        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
-        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
-        values.put(KEY_QTY, param.getQty());
-        values.put(KEY_TARGET, param.getTarget());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
+//    public int addNonRouteCustomerPromotion(Promotion param, String idHeader, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB, idHeader);
+//        values.put(KEY_CUSTOMER_ID, param.getIdCustomer());
+//        values.put(KEY_ID_PROMOTION, param.getId());
+//        values.put(KEY_NAME_PROMOTION, param.getNama_promo());
+//        values.put(KEY_NO_PROMOTION, param.getNo_promo());
+//        values.put(KEY_DESC, param.getKeterangan());
+//        values.put(KEY_TOLERANSI, param.getToleransi());
+//        values.put(KEY_JENIS_PROMOSI, param.getJenis_promosi());
+//        values.put(KEY_SEGMEN, param.getSegmen());
+//        values.put(KEY_VALID_FROM_PROMOTION, param.getValid_from());
+//        values.put(KEY_VALID_TO_PROMOTION, param.getValid_to());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+////        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
+//
+//    public int addNonRouteCustomerDct(Material param, String idHeader, String idSales, String idCust) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB, idHeader);
+//        values.put(KEY_CUSTOMER_ID, idCust);
+//        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+//        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
+//        values.put(KEY_QTY, param.getQty());
+//        values.put(KEY_TARGET, param.getTarget());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+////        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
 
     public int addCustomerPromotion(Promotion param, String idHeader, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
@@ -1606,6 +1648,49 @@ public class Database extends SQLiteOpenHelper {
         int id = -1;
         try {
             id = (int) db.insert(TABLE_CUSTOMER_PROMOTION, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addCustomerMaxBon(GroupMaxBon param, String idHeader, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, idHeader);
+        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
+        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
+        values.put(KEY_LIMITS, param.getLimits());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_CUSTOMER_MAX_BON, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addCustomerDropSize(Uom param, String idHeader, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CUSTOMER_ID, idHeader);
+        values.put(KEY_MATERIAL_ID, param.getId_material());
+        values.put(KEY_UOM, param.getUom());
+        values.put(KEY_QTY_MAX, param.getQty_max());
+        values.put(KEY_QTY_MIN, param.getQty_min());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_CUSTOMER_DROP_SIZE, null, values);//return id yg ud d create
         } catch (Exception e) {
             id = -1;
         }
@@ -2909,7 +2994,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_UOM, param.getId_uom());
+        values.put(KEY_UOM, param.getUom());
         values.put(KEY_MATERIAL_ID, param.getId_material());
         values.put(KEY_CONVERSION, param.getConversion());
         values.put(KEY_QTY_MIN, param.getQty_min());
@@ -2927,17 +3012,67 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
+    public int addMasterGroupSalesMaxBon(GroupMaxBon param, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ID_GROUP_SALES, param.getId_group_sales());
+        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
+        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
+        values.put(KEY_LIMITS, param.getLimits());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_GROUP_SALES_MAX_BON, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
+    public int addMasterPrice(Price param, String idSales) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TYPE_CUSTOMER, param.getType_customer());
+        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
+        values.put(KEY_TOP, param.getTop());
+        values.put(KEY_MATERIAL_ID, param.getId_material());
+        values.put(KEY_QTY, param.getQty());
+        values.put(KEY_UOM, param.getUom());
+        values.put(KEY_PRICE, param.getSelling_price());
+        values.put(KEY_CREATED_BY, idSales);
+        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        int id = -1;
+        try {
+            id = (int) db.insert(TABLE_MASTER_PRICE, null, values);//return id yg ud d create
+        } catch (Exception e) {
+            id = -1;
+        }
+        //db.close();
+        return id;
+    }
+
     public int addMasterMaterial(Material param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
+        values.put(KEY_UOM, param.getUom());
         values.put(KEY_MATERIAL_SALES, param.getMaterial_sales());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
         values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
         values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
         values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
+        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
+        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
+        values.put(KEY_TOP_GT, param.getTop_gt());
+        values.put(KEY_TOP_ON, param.getTop_on());
         values.put(KEY_CREATED_BY, idSales);
         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
@@ -2977,86 +3112,86 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addMasterPriceCode(PriceCode param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
-        values.put(KEY_UDF_5, param.getUdf_5());
-        values.put(KEY_UDF_5_DESC, param.getUdf_5_desc());
-        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_PRICE_CODE, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addMasterSalesPriceHeader(SalesPriceHeader param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_TOP, param.getTop());
-        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
-        values.put(KEY_VALID_FROM, param.getValid_from());
-        values.put(KEY_VALID_TO, param.getValid_to());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_HEADER, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public void addLimitBon(Material param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_MATERIAL_ID, param.getId());
-        values.put(KEY_CUSTOMER_ID, param.getId_customer());
-        values.put(KEY_BON_LIMIT, param.getMax_bon());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        try {
-            db.insert(TABLE_MASTER_LIMIT_BON, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            //done
-        }
-    }
-
-    public int addMasterSalesPriceDetail(SalesPriceDetail param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_MATERIAL_ID, param.getId_material());
-        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
-        values.put(KEY_UOM, param.getUom());
-        values.put(KEY_QTY, param.getQty());
-        values.put(SELLING_PRICE, param.getSelling_price());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_DETAIL, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
+//    public int addMasterPriceCode(PriceCode param, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
+//        values.put(KEY_UDF_5, param.getUdf_5());
+//        values.put(KEY_TOP_KHUSUS, param.getUdf_5_desc());
+//        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_PRICE_CODE, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
+//
+//    public int addMasterSalesPriceHeader(SalesPriceHeader param, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_TOP, param.getTop());
+//        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
+//        values.put(KEY_VALID_FROM, param.getValid_from());
+//        values.put(KEY_VALID_TO, param.getValid_to());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_HEADER, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
+//
+//    public void addLimitBon(Material param, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_MATERIAL_ID, param.getId());
+//        values.put(KEY_CUSTOMER_ID, param.getId_customer());
+//        values.put(KEY_BON_LIMIT, param.getMax_bon());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        try {
+//            db.insert(TABLE_MASTER_LIMIT_BON, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            //done
+//        }
+//    }
+//
+//    public int addMasterSalesPriceDetail(SalesPriceDetail param, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_MATERIAL_ID, param.getId_material());
+//        values.put(KEY_PRICE_LIST_CODE, param.getPrice_list_code());
+//        values.put(KEY_UOM, param.getUom());
+//        values.put(KEY_QTY, param.getQty());
+//        values.put(SELLING_PRICE, param.getSelling_price());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_SALES_PRICE_DETAIL, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
 
     public int addMasterCustomerType(CustomerType param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
@@ -3078,27 +3213,27 @@ public class Database extends SQLiteOpenHelper {
         return id;
     }
 
-    public int addMasterMaxBonLimits(GroupMaxBon param, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
-        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
-        values.put(KEY_LIMITS, param.getLimits());
-        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
-        values.put(KEY_MATERIAL_GROUP_NAME, param.getName_material_group());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_MASTER_MAX_BON_LIMIT, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
+//    public int addMasterMaxBonLimits(GroupMaxBon param, String idSales) {
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_ID_GROUP_MAX_BON, param.getId_group_max_bon());
+//        values.put(KEY_NAME_GROUP_MAX_BON, param.getName_group_max_bon());
+//        values.put(KEY_LIMITS, param.getLimits());
+//        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
+//        values.put(KEY_MATERIAL_GROUP_NAME, param.getName_material_group());
+//        values.put(KEY_CREATED_BY, idSales);
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        int id = -1;
+//        try {
+//            id = (int) db.insert(TABLE_MASTER_MAX_BON_LIMIT, null, values);//return id yg ud d create
+//        } catch (Exception e) {
+//            id = -1;
+//        }
+//        //db.close();
+//        return id;
+//    }
 
     public int addMasterParameter(Parameter param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
@@ -3150,63 +3285,99 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<GroupMaxBon> getMaxBonByIdCustomer(String idCust) {
+        List<GroupMaxBon> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, " +
+                "coalesce(b.limits, a.limits) - COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits " +
+                "from MasterGroupSalesMaxBon a " +
+                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon " +
+                "and b.customerId = ? " +
+                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa " +
+                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo " +
+                "left JOIN MasterMaterial cc on bb.materialId = cc.materialId " +
+                "WHERE aa.customerId = ?) c on c.idGroupMaxBon = a.idGroupMaxBon  " +
+                "left join (SELECT COUNT(*) as valuePaid, d.idGroupMaxBon FROM InvoiceHeader a  " +
+                "INNER JOIN CollectionHeader b ON a.invoiceNo = b.invoiceNo and b.deleted = 0  " +
+                "INNER JOIN CollectionItem c ON b.idCollectionHeaderDB  = c.idCollectionHeaderDB and c.deleted = 0  " +
+                "left JOIN MasterMaterial d on c.materialId = d.materialId " +
+                "WHERE a.customerId = ?) d on d.idGroupMaxBon = a.idGroupMaxBon  " +
+                "order by a.idGroupMaxBon ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                GroupMaxBon paramModel = new GroupMaxBon();
+                paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+                paramModel.setLimits(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LIMITS)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     //get
-    public List<Promotion> getPromotionNonRouteByIdCustomer(String idCust) {
-        List<Promotion> arrayList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_CUSTOMER_ID + " = ?";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Promotion paramModel = new Promotion();
-                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB)));
-                paramModel.setIdParent(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB)));
-                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_PROMOTION)));
-                paramModel.setIdCustomer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                paramModel.setNama_promo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROMOTION)));
-                paramModel.setNo_promo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_PROMOTION)));
-                paramModel.setKeterangan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC)));
-                paramModel.setToleransi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOLERANSI)));
-                paramModel.setJenis_promosi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_JENIS_PROMOSI)));
-                paramModel.setValid_from(cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALID_FROM_PROMOTION)));
-                paramModel.setValid_to(cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALID_TO_PROMOTION)));
-                paramModel.setSegmen(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEGMEN)));
-
-                arrayList.add(paramModel);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return arrayList;
-    }
-
-    public List<Material> getDctNonRouteByIdCustomer(String idCust) {
-        List<Material> arrayList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_CUSTOMER_ID + " = ?";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Material paramModel = new Material();
-                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB)));
-                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                paramModel.setTarget(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TARGET)));
-
-                arrayList.add(paramModel);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return arrayList;
-    }
-
+//    public List<Promotion> getPromotionNonRouteByIdCustomer(String idCust) {
+//        List<Promotion> arrayList = new ArrayList<>();
+//        // Select All Query
+//        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                Promotion paramModel = new Promotion();
+//                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_PROMOTION_DB)));
+//                paramModel.setIdParent(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB)));
+//                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_PROMOTION)));
+//                paramModel.setIdCustomer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+//                paramModel.setNama_promo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PROMOTION)));
+//                paramModel.setNo_promo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_PROMOTION)));
+//                paramModel.setKeterangan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC)));
+//                paramModel.setToleransi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOLERANSI)));
+//                paramModel.setJenis_promosi(cursor.getString(cursor.getColumnIndexOrThrow(KEY_JENIS_PROMOSI)));
+//                paramModel.setValid_from(cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALID_FROM_PROMOTION)));
+//                paramModel.setValid_to(cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALID_TO_PROMOTION)));
+//                paramModel.setSegmen(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEGMEN)));
+//
+//                arrayList.add(paramModel);
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
+//
+//    public List<Material> getDctNonRouteByIdCustomer(String idCust) {
+//        List<Material> arrayList = new ArrayList<>();
+//        // Select All Query
+//        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                Material paramModel = new Material();
+//                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NON_ROUTE_CUSTOMER_TARGET_DB)));
+//                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+//                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+//                paramModel.setTarget(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TARGET)));
+//
+//                arrayList.add(paramModel);
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
+//
     public List<Material> getDctByIdCustomer(String idCust) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
@@ -3894,16 +4065,25 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT (a." + KEY_CREDIT_LIMIT + " - b.value + c.value) as " + KEY_CREDIT_LIMIT + " " +
                 "from " +
                 lkQuery +
-                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'co' and " + KEY_DELETED + " = 0) b , " +
+                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DELETED + " = 0) b , " +
                 "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM CollectionHeader a " +
                 "INNER JOIN CollectionDetail b on b.idCollectionHeaderDB = a.idCollectionHeaderDB and b.typePayment = 'cash'  WHERE a.customerId = ? and b. deleted = 0) c";
+
+        String query = "select (? - a.value + b.value) as creditLimit \n" +
+                "from \n" +
+                "(select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0) a,\n" +
+                "(select coalesce(sum(b.totalPayment),0) as value from CollectionHeader a \n" +
+                "inner join CollectionDetail b on a.idCollectionHeaderDB and b.idCollectionHeaderDB \n" +
+                "where a.customerId = ? and b.deleted = 0 and b.typePayment = 'cash') b";
+
 //                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
 //                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
 //                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b. " + KEY_DELETED + " = 0) c ";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(cust.getLimit_kredit()), cust.getId(), cust.getId()});
 
         if (cursor != null) {
             if (cursor.moveToFirst()) {
@@ -3916,32 +4096,54 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public double getLimitBon(String idMat, String idCust) {
+    public Integer getLimitBon(Map param) {
         // Select All Query
-        double result = 0;
-        String selectQuery = "SELECT COALESCE(a.value,0) - COALESCE(b.value,0) + COALESCE(c.value,0) as " + KEY_BON_LIMIT + " " +
-                "FROM " +
-                "(SELECT a." + KEY_BON_LIMIT + " as value FROM " + TABLE_MASTER_LIMIT_BON + " a  WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_CUSTOMER_ID + " = ?) a, " +
-                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
-                "INNER JOIN " + TABLE_INVOICE_DETAIL + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + " AND b.  " + KEY_MATERIAL_ID + " = ? " +
-                "WHERE a." + KEY_CUSTOMER_ID + " = ?) b, " +
-                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
-                "INNER JOIN " + TABLE_COLLECTION_HEADER + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + "  and b." + KEY_DELETED + " = 0 " +
-                "INNER JOIN " + TABLE_COLLECTION_ITEM + " c ON b." + KEY_ID_COLLECTION_HEADER_DB + " = c." + KEY_ID_COLLECTION_HEADER_DB + " AND c.  " + KEY_MATERIAL_ID + " = ? and c." + KEY_DELETED + " = 0 " +
-                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c";
+        Integer result = null;
+        String id_customer = param.get("id_customer").toString();
+        String id_group_max_bon = param.get("id_group_max_bon").toString();
+        String id = param.get("id").toString();
+
+//        String selectQuery = "SELECT COALESCE(a.value,0) - COALESCE(b.value,0) + COALESCE(c.value,0) as " + KEY_BON_LIMIT + " " +
+//                "FROM " +
+//                "(SELECT a." + KEY_BON_LIMIT + " as value FROM " + TABLE_MASTER_LIMIT_BON + " a  WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_CUSTOMER_ID + " = ?) a, " +
+//                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
+//                "INNER JOIN " + TABLE_INVOICE_DETAIL + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + " AND b.  " + KEY_MATERIAL_ID + " = ? " +
+//                "WHERE a." + KEY_CUSTOMER_ID + " = ?) b, " +
+//                "(SELECT COUNT(*) as value FROM " + TABLE_INVOICE_HEADER + " a " +
+//                "INNER JOIN " + TABLE_COLLECTION_HEADER + " b ON a." + KEY_INVOICE_NO + " = b." + KEY_INVOICE_NO + "  and b." + KEY_DELETED + " = 0 " +
+//                "INNER JOIN " + TABLE_COLLECTION_ITEM + " c ON b." + KEY_ID_COLLECTION_HEADER_DB + " = c." + KEY_ID_COLLECTION_HEADER_DB + " AND c.  " + KEY_MATERIAL_ID + " = ? and c." + KEY_DELETED + " = 0 " +
+//                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c";
+
+        String selectQuery = "select COALESCE(a.value,0) - COALESCE(b.value,0) + COALESCE(c.value,0) as bonLimit\n" +
+                "from \n" +
+                "(select COALESCE(b.limits, a.limits) as value \n" +
+                "from MasterGroupSalesMaxBon a \n" +
+                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon and b.customerId = ?\n" +
+                "where a.idGroupMaxBon = ?) a,\n" +
+                "(select COUNT(*) as value from InvoiceHeader a \n" +
+                "inner join InvoiceDetail b on a.invoiceNo = b.invoiceNo where a.customerId = ? and b.materialId = ? ) b,\n" +
+                "(select COUNT(*) as value from InvoiceHeader a \n" +
+                "inner join CollectionHeader b on a.invoiceNo = b.invoiceNo and b.deleted = 0 \n" +
+                "inner join CollectionItem c on b.idCollectionHeaderDB = c.idCollectionHeaderDB \n" +
+                "where c.materialId = ? and c.deleted = 0 and a.customerId = ?) c ";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat, idCust, idMat, idCust, idMat, idCust});
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat, idCust, idMat, idCust, idMat, idCust});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id_customer, id_group_max_bon, id_customer, id, id, id_customer});
 
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT));
+        try {
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    result = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_BON_LIMIT));
+                }
             }
-        }
 
-        assert cursor != null;
-        cursor.close();
+            assert cursor != null;
+            cursor.close();
+        } catch (Exception e) {
+            result = null;
+        }
         return result;
     }
 
@@ -4086,10 +4288,10 @@ public class Database extends SQLiteOpenHelper {
         List<Customer> arrayList = new ArrayList<>();
         String selectQuery = null;
         Cursor cursor = null;
-        selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? " +
+        selectQuery = "select c.* from " + TABLE_MASTER_CUSTOMER_SALESMAN + " c WHERE c." + KEY_ROUTE + " like ? " +
                 "union " +
                 "select b.* from " + TABLE_INVOICE_HEADER + " a " +
-                "inner join " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
+                "inner join " + TABLE_MASTER_CUSTOMER_SALESMAN + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
                 "where a." + KEY_DATE + " = ? group by b." + KEY_CUSTOMER_ID;
         cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%", Helper.getTodayDate(Constants.DATE_FORMAT_3)});
 
@@ -4112,7 +4314,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -4146,15 +4348,15 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = null;
         Cursor cursor = null;
         if (coverage) {
-            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? ";
+            selectQuery = "select c.* from " + TABLE_MASTER_CUSTOMER_SALESMAN + " c WHERE c." + KEY_ROUTE + " like ? ";
             cursor = db.rawQuery(selectQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
         } else {
-//            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_CUSTOMER_NAME + " LIKE ? ORDER BY c." + KEY_CUSTOMER_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset ;
-            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c ";
-//            selectQuery = "select c.* from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c WHERE c." + KEY_ROUTE + " like ? " +
+//            selectQuery = "select c.* from " + TABLE_MASTER_CUSTOMER_SALESMAN + " c WHERE c." + KEY_CUSTOMER_NAME + " LIKE ? ORDER BY c." + KEY_CUSTOMER_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset ;
+            selectQuery = "select c.* from " + TABLE_MASTER_CUSTOMER_SALESMAN + " c ";
+//            selectQuery = "select c.* from " + TABLE_MASTER_CUSTOMER_SALESMAN + " c WHERE c." + KEY_ROUTE + " like ? " +
 //                    "union " +
 //                    "select b.* from " + TABLE_INVOICE_HEADER + " a " +
-//                    "inner join " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
+//                    "inner join " + TABLE_MASTER_CUSTOMER_SALESMAN + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and a." + KEY_IS_ROUTE + " = 0 " +
 //                    "where a." + KEY_DATE + " = ? group by b." + KEY_CUSTOMER_ID;
 //            cursor = db.rawQuery(selectQuery, new String[]{"%" + (!Helper.isNullOrEmpty(searchMat) ? searchMat :"")+ "%"});
             cursor = db.rawQuery(selectQuery, null);
@@ -4180,7 +4382,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -4314,6 +4516,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setRoute_order(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_ROUTE)));
                 paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
                 paramModel.setRute(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ROUTE)));
+                paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setName_type_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER_NAME)));
                 paramModel.setType_price(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PRICE)));
                 paramModel.setLatitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LATITUDE)));
@@ -4321,7 +4524,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -4338,7 +4541,8 @@ public class Database extends SQLiteOpenHelper {
 //                paramModel.setPhotoNpwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_NPWP)));
 //                paramModel.setPhotoOutlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHOTO_OUTLET)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
-                paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
+                paramModel.setRoute(paramModel.getIs_route() != 0);
+//                paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
 //                if (currentLocation != null) {
 //                    double distance = Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
@@ -4382,7 +4586,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                 paramModel.setKota(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_KOTA_KABUPATEN)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -4688,7 +4892,7 @@ public class Database extends SQLiteOpenHelper {
         setFormatSeparator();
         List<Customer> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER;
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_CUSTOMER_SALESMAN;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -4712,7 +4916,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -4741,7 +4945,7 @@ public class Database extends SQLiteOpenHelper {
         setFormatSeparator();
         List<Customer> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT c.* FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " c " +
+        String selectQuery = "SELECT c.* FROM " + TABLE_MASTER_CUSTOMER_SALESMAN + " c " +
                 "left join " + TABLE_CUSTOMER + " a on a." + KEY_CUSTOMER_ID + " = c." + KEY_CUSTOMER_ID +
                 " WHERE c." + KEY_ROUTE + " not like ? and a." + KEY_CUSTOMER_ID + " is null";
 
@@ -4767,7 +4971,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
                 paramModel.setNama_pemilik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PEMILIK)));
                 paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
@@ -5483,7 +5687,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER;
+        countQuery = "SELECT * FROM " + TABLE_MASTER_CUSTOMER_SALESMAN;
         cursor = db.rawQuery(countQuery, null);
 
         int count = cursor.getCount();
@@ -5543,10 +5747,10 @@ public class Database extends SQLiteOpenHelper {
         String countQuery;
         Cursor cursor;
         if (allRoute) {
-            countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER;
+            countQuery = "SELECT * FROM " + TABLE_MASTER_CUSTOMER_SALESMAN;
             cursor = db.rawQuery(countQuery, null);
         } else {// today route
-            countQuery = "SELECT * FROM " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " WHERE " + KEY_ROUTE + " LIKE ?";
+            countQuery = "SELECT * FROM " + TABLE_MASTER_CUSTOMER_SALESMAN + " WHERE " + KEY_ROUTE + " LIKE ?";
             cursor = db.rawQuery(countQuery, new String[]{"%" + Helper.getTodayRoute() + "%"});
         }
 
@@ -5598,6 +5802,11 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                 paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+                paramModel.setTop_gt(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_GT)));
+                paramModel.setTop_on(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_ON)));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -5653,203 +5862,365 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Material> getAllMasterMaterialOrder(Map request) {
-        List<Material> arrayList = new ArrayList<>();
-        String priceListCode = null, top = null;
+//    public List<Material> getAllMasterMaterialOrder(Map request) {
+//        List<Material> arrayList = new ArrayList<>();
+//        String priceListCode = null, top = null;
+//
+//        // Select All Query
+//        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
+//
+//        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
+//
+//        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
+//                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
+//                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
+//                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
+//                + " WHERE spd." + KEY_PRICE_LIST_CODE + " = ? ";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
+//
+//        if (cursorPriceListCode.moveToFirst()) {
+//            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
+//        }
+//        cursorPriceListCode.close();
+//
+//        if (priceListCode != null) {
+//            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
+//
+//            if (cursorTop.moveToFirst()) {
+//                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
+//            }
+//            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
+//            cursorTop.close();
+//
+//            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{priceListCode});
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    Material paramModel = new Material();
+//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+//                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+//                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+//                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+//                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+//                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+//                    paramModel.setTop(top);
+//                    paramModel.setPriceListCode(priceListCode);
+//
+//                    arrayList.add(paramModel);
+//                } while (cursor.moveToNext());
+//            }
+//        }
+//
+//        return arrayList;
+//    }
+//
 
-        // Select All Query
-        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
-
-        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
-
-        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
-                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
-                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
-                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
-                + " WHERE spd." + KEY_PRICE_LIST_CODE + " = ? ";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
-
-        if (cursorPriceListCode.moveToFirst()) {
-            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
-        }
-        cursorPriceListCode.close();
-
-        if (priceListCode != null) {
-            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
-
-            if (cursorTop.moveToFirst()) {
-                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
-            }
-            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
-            cursorTop.close();
-
-            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{priceListCode});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    Material paramModel = new Material();
-                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
-                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
-                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-                    paramModel.setTop(top);
-                    paramModel.setPriceListCode(priceListCode);
-
-                    arrayList.add(paramModel);
-                } while (cursor.moveToNext());
-            }
-        }
-
-        return arrayList;
-    }
-
-    public List<Material> getAllMasterMaterialCanvasByCustomer(Map request) {
+    public List<Material> getTOMaterialPricing(Map request) {
         List<Material> arrayList = new ArrayList<>();
         List<String> priceListCodeList = new ArrayList<>();
-        String top = null;
+        String id_sales_group = request.get("id_sales_group") != null ? request.get("id_sales_group").toString() : null;//gt/on
+        String id_customer = request.get("id_customer") != null ? request.get("id_customer").toString() : null;
+        String type_customer = request.get("type_customer") != null ? request.get("type_customer").toString() : null;//rg/bt
+        String sales_category = request.get("sales_category") != null ? request.get("sales_category").toString() : null;//rg/bt
+        String top = request.get("top") != null ? request.get("top").toString() : null;
+        String material_group_id = request.get("material_group_id") != null ? request.get("material_group_id").toString() : null;
+        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("id_stock_request_header").toString() : null;
 
-//        select a.
-//        priceListCode, b.top, d.materialId, c.sellingPrice, c.uom, c.qty, d.materialName, d.materialGroupId, d.materialGroupName, d.materialProductId, d.materialProductName
-//        from mastertoppricecode a
-//        join mastersalespriceheader b on a.priceListCode = b.priceListCode and date ('2023-11-14')
-//        between b.validFrom and b.validTo
-//        join MasterSalesPriceDetail c on a.priceListCode = c.priceListCode
-//        join mastermaterial d on c.materialId = d.materialId
-//        where a.udf5 = 'G' and a.priceListCode = ifnull('GT - TOP 14', a.priceListCode) and d.
-//        materialGroupId = ifnull('11', d.materialGroupId) GROUP BY d.materialId
+//        select b.topKhusus, b.typeCustomer, a.materialId, a.materialName, a.materialGroupId, a.materialGroupName,
+//                a.materialProductId, c.qty, c.uom, c.price, CASE WHEN 'GT' = 'ON' THEN a.topON ELSE a.topGT END AS top
+//        from MasterMaterial a,
+//                (select typeCustomer, topKhusus from Customer where customerId = '201000003') b
+//        inner join MasterPrice c on a.materialId = c.materialId
+//        where CASE WHEN 'GT' = 'ON' THEN a.topON = COALESCE(null, a.topON) else a.topGT = COALESCE(null, a.topGT) END
+//        AND CASE WHEN 'BT' = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END
+//        AND a.materialGroupId = COALESCE(null, a.materialGroupId)
+//        order by a.materialId ASC LIMIT 15 offset 0
 
         String allQuery = null;
-        String query = "select a." + KEY_PRICE_LIST_CODE + ", b." + KEY_TOP + ", d." + KEY_MATERIAL_ID + ", c." + SELLING_PRICE + ", c." + KEY_UOM
-                + ", c." + KEY_QTY + ", d." + KEY_MATERIAL_NAME + ", d." + KEY_MATERIAL_GROUP_ID + ", d." + KEY_MATERIAL_GROUP_NAME
-                + ", d." + KEY_MATERIAL_PRODUCT_ID + ", d." + KEY_MATERIAL_PRODUCT_NAME + ", d." + KEY_MATERIAL_SALES + " "
-                + "from " + TABLE_MASTER_PRICE_CODE + " a "
-                + "join " + TABLE_MASTER_SALES_PRICE_HEADER + " b on a." + KEY_PRICE_LIST_CODE + " = b." + KEY_PRICE_LIST_CODE + " and date(?) between b." + KEY_VALID_FROM + " and  b." + KEY_VALID_TO + " "
-                + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
-                + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
-                + "where a." + KEY_UDF_5 + " = ? ";
-        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
-        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
-        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
-        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
+        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, \n" +//b.topKhusus, b.typeCustomer,
+                "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top \n" +
+                "from MasterMaterial a \n" +
+                "inner join MasterPrice c on a.materialId = c.materialId and c.typeCustomer = ? \n" +
+                "where CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END \n";
+
+        //"LIMIT " + Constants.LIMIT_ITEM_LIST + " offset 0 ";??
+
+//        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+//        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
+//        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
+//        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
+
+        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n";
+        String queryOrder = "order by a.materialId ASC ";
+        String queryTop = "AND CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END \n";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
-        if (request.get("price_list_code") != null) {
-            allQuery = query + queryPriceList;
-        } else {
-            allQuery = query;
-        }
-        if (request.get("material_group_id") != null) {
-            allQuery = allQuery + querymaterialGroupId;
-        }
-        allQuery = allQuery + groupBy;
+//        if (request.get("price_list_code") != null) {
+//            allQuery = query + queryPriceList;
+//        } else {
+//            allQuery = query;
+//        }
+//        if (request.get("material_group_id") != null) {
+//            allQuery = allQuery + querymaterialGroupId;
+//        }
+//        allQuery = allQuery + groupBy;
         // Select All Query
 
         try {
-            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+//            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+            if (material_group_id != null) {
+                cursor = db.rawQuery(query + queryTop + queryMaterialGroup + queryOrder,
+                        new String[]{id_sales_group, type_customer, sales_category, id_sales_group, top, top, material_group_id});
+            } else {
+                cursor = db.rawQuery(query + queryOrder, new String[]{id_sales_group, type_customer, sales_category});
+            }
             if (cursor.moveToFirst()) {
                 do {
                     Material paramModel = new Material();
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
-                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
-                    paramModel.setPriceListCode(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE)));
-
                     arrayList.add(paramModel);
                 } while (cursor.moveToNext());
             }
+            cursor.close();
         } catch (Exception e) {
             arrayList = new ArrayList<>();
         }
-        cursor.close();
+
         return arrayList;
     }
 
-    public List<Material> getAllMasterMaterialByCustomer(Map request) {
+    public List<Material> getCOMaterialPricing(Map request) {
         List<Material> arrayList = new ArrayList<>();
         List<String> priceListCodeList = new ArrayList<>();
-        String top = null;
+        String id_sales_group = request.get("id_sales_group") != null ? request.get("id_sales_group").toString() : null;//gt/on
+        String id_customer = request.get("id_customer") != null ? request.get("id_customer").toString() : null;
+        String sales_category = request.get("sales_category") != null ? request.get("sales_category").toString() : null;//rg/bt
+        String top = request.get("top") != null ? request.get("top").toString() : null;
+        String material_group_id = request.get("material_group_id") != null ? request.get("material_group_id").toString() : null;
+        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("material_group_id").toString() : null;
 
-//        select a.
-//        priceListCode, b.top, d.materialId, c.sellingPrice, c.uom, c.qty, d.materialName, d.materialGroupId, d.materialGroupName, d.materialProductId, d.materialProductName
-//        from mastertoppricecode a
-//        join mastersalespriceheader b on a.priceListCode = b.priceListCode and date ('2023-11-14')
-//        between b.validFrom and b.validTo
-//        join MasterSalesPriceDetail c on a.priceListCode = c.priceListCode
-//        join mastermaterial d on c.materialId = d.materialId
-//        where a.udf5 = 'G' and a.priceListCode = ifnull('GT - TOP 14', a.priceListCode) and d.
-//        materialGroupId = ifnull('11', d.materialGroupId) GROUP BY d.materialId
+//        select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName,
+//                a.materialProductId, c.qty, c.uom, c.price, CASE WHEN 'GT' = 'ON' THEN a.topON ELSE a.topGT END AS top
+//        from MasterMaterial a,
+//                (select typeCustomer, topKhusus from Customer where customerId = '201000003') b
+//        inner join MasterPrice c on a.materialId = c.materialId and b.typeCustomer = c.typeCustomer
+//        inner join StockRequestDetail d on a.materialId = d.materialId and d.idStockRequestHeaderDB = '111'
+//        where CASE WHEN 'GT' = 'ON' THEN a.topON = COALESCE(null, a.topON) else a.topGT = COALESCE(null, a.topGT) END
+//        AND CASE WHEN 'BT' = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END
+//        AND a.materialGroupId = COALESCE(null, a.materialGroupId)
+//        order by a.materialId ASC
 
         String allQuery = null;
-        String query = "select a." + KEY_PRICE_LIST_CODE + ", b." + KEY_TOP + ", d." + KEY_MATERIAL_ID + ", c." + SELLING_PRICE + ", c." + KEY_UOM
-                + ", c." + KEY_QTY + ", d." + KEY_MATERIAL_NAME + ", d." + KEY_MATERIAL_GROUP_ID + ", d." + KEY_MATERIAL_GROUP_NAME
-                + ", d." + KEY_MATERIAL_PRODUCT_ID + ", d." + KEY_MATERIAL_PRODUCT_NAME + ", d." + KEY_MATERIAL_SALES + " "
-                + "from " + TABLE_MASTER_PRICE_CODE + " a "
-                + "join " + TABLE_MASTER_SALES_PRICE_HEADER + " b on a." + KEY_PRICE_LIST_CODE + " = b." + KEY_PRICE_LIST_CODE + " and date(?) between b." + KEY_VALID_FROM + " and  b." + KEY_VALID_TO + " "
-                + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
-                + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
-                + "where a." + KEY_UDF_5 + " = ? ";
-        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
-        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
-        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
-        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
+        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon,\n" +
+                "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top\n" +
+                "from MasterMaterial a,\n" +
+                "(select typeCustomer, topKhusus from Customer where customerId = ?) b\n" +
+                "inner join MasterPrice c on a.materialId = c.materialId and b.typeCustomer = c.typeCustomer \n" +
+                "inner join StockRequestDetail d on a.materialId = d.materialId and d.idStockRequestHeaderDB = ?\n" +
+                "where CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END\n" +
+                "AND CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END\n" +
+                "AND a.materialGroupId = COALESCE(null, a.materialGroupId)\n" +
+                "order by a.materialId ASC";
+        //"LIMIT " + Constants.LIMIT_ITEM_LIST + " offset 0 ";??
+
+//        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+//        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
+//        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
+//        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = null;
-        if (request.get("price_list_code") != null) {
-            allQuery = query + queryPriceList;
-        } else {
-            allQuery = query;
-        }
-        if (request.get("material_group_id") != null) {
-            allQuery = allQuery + querymaterialGroupId;
-        }
-        allQuery = allQuery + groupBy;
+//        if (request.get("price_list_code") != null) {
+//            allQuery = query + queryPriceList;
+//        } else {
+//            allQuery = query;
+//        }
+//        if (request.get("material_group_id") != null) {
+//            allQuery = allQuery + querymaterialGroupId;
+//        }
+//        allQuery = allQuery + groupBy;
         // Select All Query
 
         try {
-            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+//            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+            cursor = db.rawQuery(query, new String[]{id_sales_group, id_customer, id_stock_request_header, id_sales_group, top, top, sales_category, material_group_id});
             if (cursor.moveToFirst()) {
                 do {
                     Material paramModel = new Material();
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
-                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
-                    paramModel.setPriceListCode(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE)));
-
                     arrayList.add(paramModel);
                 } while (cursor.moveToNext());
             }
+            cursor.close();
         } catch (Exception e) {
             arrayList = new ArrayList<>();
         }
-        cursor.close();
+
         return arrayList;
     }
+
+//    public List<Material> getAllMasterMaterialCanvasByCustomer(Map request) {
+//        List<Material> arrayList = new ArrayList<>();
+//        List<String> priceListCodeList = new ArrayList<>();
+//        String top = null;
+//
+////        select a.
+////        priceListCode, b.top, d.materialId, c.sellingPrice, c.uom, c.qty, d.materialName, d.materialGroupId, d.materialGroupName, d.materialProductId, d.materialProductName
+////        from mastertoppricecode a
+////        join mastersalespriceheader b on a.priceListCode = b.priceListCode and date ('2023-11-14')
+////        between b.validFrom and b.validTo
+////        join MasterSalesPriceDetail c on a.priceListCode = c.priceListCode
+////        join mastermaterial d on c.materialId = d.materialId
+////        where a.udf5 = 'G' and a.priceListCode = ifnull('GT - TOP 14', a.priceListCode) and d.
+////        materialGroupId = ifnull('11', d.materialGroupId) GROUP BY d.materialId
+//
+//        String allQuery = null;
+//        String query = "select a." + KEY_PRICE_LIST_CODE + ", b." + KEY_TOP + ", d." + KEY_MATERIAL_ID + ", c." + SELLING_PRICE + ", c." + KEY_UOM
+//                + ", c." + KEY_QTY + ", d." + KEY_MATERIAL_NAME + ", d." + KEY_MATERIAL_GROUP_ID + ", d." + KEY_MATERIAL_GROUP_NAME
+//                + ", d." + KEY_MATERIAL_PRODUCT_ID + ", d." + KEY_MATERIAL_PRODUCT_NAME + ", d." + KEY_MATERIAL_SALES + " "
+//                + "from " + TABLE_MASTER_PRICE_CODE + " a "
+//                + "join " + TABLE_MASTER_SALES_PRICE_HEADER + " b on a." + KEY_PRICE_LIST_CODE + " = b." + KEY_PRICE_LIST_CODE + " and date(?) between b." + KEY_VALID_FROM + " and  b." + KEY_VALID_TO + " "
+//                + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
+//                + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
+//                + "where a." + KEY_UDF_5 + " = ? ";
+//        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+//        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
+//        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
+//        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = null;
+//        if (request.get("price_list_code") != null) {
+//            allQuery = query + queryPriceList;
+//        } else {
+//            allQuery = query;
+//        }
+//        if (request.get("material_group_id") != null) {
+//            allQuery = allQuery + querymaterialGroupId;
+//        }
+//        allQuery = allQuery + groupBy;
+//        // Select All Query
+//
+//        try {
+//            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    Material paramModel = new Material();
+//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+//                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+//                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+//                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+//                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+//                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+//                    paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+//                    paramModel.setPriceListCode(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE)));
+//
+//                    arrayList.add(paramModel);
+//                } while (cursor.moveToNext());
+//            }
+//        } catch (Exception e) {
+//            arrayList = new ArrayList<>();
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
+
+//    public List<Material> getAllMasterMaterialByCustomer(Map request) {
+//        List<Material> arrayList = new ArrayList<>();
+//        List<String> priceListCodeList = new ArrayList<>();
+//        String top = null;
+//
+////        select a.
+////        priceListCode, b.top, d.materialId, c.sellingPrice, c.uom, c.qty, d.materialName, d.materialGroupId, d.materialGroupName, d.materialProductId, d.materialProductName
+////        from mastertoppricecode a
+////        join mastersalespriceheader b on a.priceListCode = b.priceListCode and date ('2023-11-14')
+////        between b.validFrom and b.validTo
+////        join MasterSalesPriceDetail c on a.priceListCode = c.priceListCode
+////        join mastermaterial d on c.materialId = d.materialId
+////        where a.udf5 = 'G' and a.priceListCode = ifnull('GT - TOP 14', a.priceListCode) and d.
+////        materialGroupId = ifnull('11', d.materialGroupId) GROUP BY d.materialId
+//
+//        String allQuery = null;
+//        String query = "select a." + KEY_PRICE_LIST_CODE + ", b." + KEY_TOP + ", d." + KEY_MATERIAL_ID + ", c." + SELLING_PRICE + ", c." + KEY_UOM
+//                + ", c." + KEY_QTY + ", d." + KEY_MATERIAL_NAME + ", d." + KEY_MATERIAL_GROUP_ID + ", d." + KEY_MATERIAL_GROUP_NAME
+//                + ", d." + KEY_MATERIAL_PRODUCT_ID + ", d." + KEY_MATERIAL_PRODUCT_NAME + ", d." + KEY_MATERIAL_SALES + " "
+//                + "from " + TABLE_MASTER_PRICE_CODE + " a "
+//                + "join " + TABLE_MASTER_SALES_PRICE_HEADER + " b on a." + KEY_PRICE_LIST_CODE + " = b." + KEY_PRICE_LIST_CODE + " and date(?) between b." + KEY_VALID_FROM + " and  b." + KEY_VALID_TO + " "
+//                + "join " + TABLE_MASTER_SALES_PRICE_DETAIL + " c on  a." + KEY_PRICE_LIST_CODE + " = c." + KEY_PRICE_LIST_CODE + " "
+//                + "join " + TABLE_MASTER_MATERIAL + " d on c." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " "
+//                + "where a." + KEY_UDF_5 + " = ? ";
+//        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
+//        String querymaterialGroupId = "and d." + KEY_MATERIAL_GROUP_ID + " = \'" + request.get("material_group_id") + "\' ";//"and d." + KEY_MATERIAL_GROUP_ID + " = ifnull(?, d." + KEY_MATERIAL_GROUP_ID + ") ";
+//        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
+//        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = null;
+//        if (request.get("price_list_code") != null) {
+//            allQuery = query + queryPriceList;
+//        } else {
+//            allQuery = query;
+//        }
+//        if (request.get("material_group_id") != null) {
+//            allQuery = allQuery + querymaterialGroupId;
+//        }
+//        allQuery = allQuery + groupBy;
+//        // Select All Query
+//
+//        try {
+//            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    Material paramModel = new Material();
+//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+//                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+//                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+//                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+//                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+//                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+//                    paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+//                    paramModel.setPriceListCode(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE)));
+//
+//                    arrayList.add(paramModel);
+//                } while (cursor.moveToNext());
+//            }
+//        } catch (Exception e) {
+//            arrayList = new ArrayList<>();
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
 
     public List<String> getUom(String idMat) {
         List<String> arrayList = new ArrayList<>();
@@ -5994,62 +6365,62 @@ public class Database extends SQLiteOpenHelper {
         return price;
     }
 
-    public Material getPriceMaterial(Map request) {
-        Material result = new Material();
-        String priceListCode = null, top = null;
-
-        // Select All Query
-        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
-
-        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
-
-        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
-                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
-                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
-                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
-                + " WHERE spd." + KEY_PRICE_LIST_CODE + " like ? and spd." + KEY_MATERIAL_ID + " = ? ";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
-
-        if (cursorPriceListCode.moveToFirst()) {
-            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
-        }
-        cursorPriceListCode.close();
-
-        if (priceListCode != null) {
-            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
-
-            if (cursorTop.moveToFirst()) {
-                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
-            }
-            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
-            cursorTop.close();
-
-            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{"%" + priceListCode + "%", request.get("matId").toString()});
-
-            if (cursor.moveToFirst()) {
-                do {
-                    result = new Material();
-                    result.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    result.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-                    result.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    result.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-                    result.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
-                    result.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
-                    result.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-                    result.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-                    result.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-                    result.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-                    result.setTop(top);
-                    result.setPriceListCode(priceListCode);
-
-                } while (cursor.moveToNext());
-            }
-        }
-
-        return result;
-    }
+//    public Material getPriceMaterial(Map request) {
+//        Material result = new Material();
+//        String priceListCode = null, top = null;
+//
+//        // Select All Query
+//        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
+//
+//        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
+//
+//        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
+//                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
+//                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
+//                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
+//                + " WHERE spd." + KEY_PRICE_LIST_CODE + " like ? and spd." + KEY_MATERIAL_ID + " = ? ";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
+//
+//        if (cursorPriceListCode.moveToFirst()) {
+//            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
+//        }
+//        cursorPriceListCode.close();
+//
+//        if (priceListCode != null) {
+//            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
+//
+//            if (cursorTop.moveToFirst()) {
+//                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
+//            }
+//            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
+//            cursorTop.close();
+//
+//            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{"%" + priceListCode + "%", request.get("matId").toString()});
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    result = new Material();
+//                    result.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    result.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+//                    result.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    result.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+//                    result.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+//                    result.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
+//                    result.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                    result.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                    result.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+//                    result.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+//                    result.setTop(top);
+//                    result.setPriceListCode(priceListCode);
+//
+//                } while (cursor.moveToNext());
+//            }
+//        }
+//
+//        return result;
+//    }
 
 //    public List<Uom> getUom(String idMat) {
 //        List<Uom> arrayList = new ArrayList<>();
@@ -6560,7 +6931,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setLongitude(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONGITUDE)));
                     paramModel.setKode_pos(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KODE_POS)));
                     paramModel.setUdf_5(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5)));
-                    paramModel.setUdf_5_desc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UDF_5_DESC)));
+                    paramModel.setTop_khusus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP_KHUSUS)));
                     paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                     paramModel.setIdKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DESA_KELURAHAN)));
                     paramModel.setKelurahan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_DESA_KELURAHAN)));
@@ -7708,13 +8079,14 @@ public class Database extends SQLiteOpenHelper {
         deleteStockRequestDetail();
         deleteInvoiceHeader();
         deleteInvoiceDetail();
-        deleteMasterNonRouteCustomer();
-        deleteMasterNonRouteCustomerPromotion();
-        deleteMasterNonRouteCustomerDct();
+//        deleteMasterNonRouteCustomerPromotion();
+//        deleteMasterNonRouteCustomerDct();
         deleteNoo();
         deleteCustomer();
         deleteCustomerPromotion();
         deleteCustomerDct();
+        deleteCustomerDropSize();
+        deleteCustomerMaxBon();
         deleteVisitSalesman();
         deleteStoreCheck();
         deleteOrderHeader();
@@ -7731,14 +8103,17 @@ public class Database extends SQLiteOpenHelper {
         deleteMasterUom();
         deleteMasterDaerahTingkat();
         deleteMasterPromotion();
-        deleteMasterPriceCode();
-        deleteMasterSalesPriceHeader();
-        deleteMasterSalesPriceDetail();
-        deleteMasterMinimalOrder();
+//        deleteMasterPriceCode();
+//        deleteMasterSalesPriceHeader();
+//        deleteMasterSalesPriceDetail();
+//        deleteMasterMinimalOrder();
         deleteMasterParameter();
         deleteMasterLog();
+        deleteMasterCustomerSalesman();
         deleteMasterCustomerType();
-        deleteMasterMaxBonLimits();
+        deleteMasterPrice();
+        deleteMasterGroupSalesMaxBon();
+//        deleteMasterMaxBonLimits();
         deletePhoto();
     }
 
@@ -7858,6 +8233,14 @@ public class Database extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_PROMOTION);
     }
 
+    public void deleteCustomerMaxBon() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_MAX_BON);
+    }
+
+    public void deleteCustomerDropSize() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_CUSTOMER_DROP_SIZE);
+    }
+
     public void deleteStartVisit() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_START_VISIT);
     }
@@ -7922,17 +8305,25 @@ public class Database extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_BANK);
     }
 
-    public void deleteMasterNonRouteCustomerById(String idHeader) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
-        //db.close();
+    public void deleteMasterPrice() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_PRICE);
     }
 
-    public void deleteMasterNonRouteCustomerPromotionById(String idHeader) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
-        //db.close();
+    public void deleteMasterGroupSalesMaxBon() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_GROUP_SALES_MAX_BON);
     }
+
+//    public void deleteMasterNonRouteCustomerById(String idHeader) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.execSQL("delete from " + TABLE_MASTER_CUSTOMER_SALESMAN + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+//        //db.close();
+//    }
+//
+//    public void deleteMasterNonRouteCustomerPromotionById(String idHeader) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+//        //db.close();
+//    }
 
     public void deleteRequestStockDetail(String idHeader) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -7940,23 +8331,23 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
-    public void deleteMasterNonRouteCustomerDctById(String idHeader) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
-        //db.close();
-    }
+//    public void deleteMasterNonRouteCustomerDctById(String idHeader) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT + " WHERE " + KEY_ID_MASTER_NON_ROUTE_CUSTOMER_HEADER_DB + " = " + idHeader);
+//        //db.close();
+//    }
 
-    public void deleteMasterNonRouteCustomer() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER);
+    public void deleteMasterCustomerSalesman() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_CUSTOMER_SALESMAN);
     }
-
-    public void deleteMasterNonRouteCustomerPromotion() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
-    }
-
-    public void deleteMasterNonRouteCustomerDct() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
-    }
+//
+//    public void deleteMasterNonRouteCustomerPromotion() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION);
+//    }
+//
+//    public void deleteMasterNonRouteCustomerDct() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_NON_ROUTE_CUSTOMER_DCT);
+//    }
 
     public void deleteMasterMaterial() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MATERIAL);
@@ -7970,21 +8361,21 @@ public class Database extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_DAERAH_TINGKAT);
     }
 
-    public void deleteMasterPriceCode() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_PRICE_CODE);
-    }
-
-    public void deleteMasterSalesPriceHeader() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_SALES_PRICE_HEADER);
-    }
-
-    public void deleteMasterSalesPriceDetail() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_SALES_PRICE_DETAIL);
-    }
-
-    public void deleteMasterMinimalOrder() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_LIMIT_BON);
-    }
+//    public void deleteMasterPriceCode() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_PRICE_CODE);
+//    }
+//
+//    public void deleteMasterSalesPriceHeader() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_SALES_PRICE_HEADER);
+//    }
+//
+//    public void deleteMasterSalesPriceDetail() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_SALES_PRICE_DETAIL);
+//    }
+//
+//    public void deleteMasterMinimalOrder() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_LIMIT_BON);
+//    }
 
     public void deleteMasterParameter() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_PARAMETER);
@@ -7994,9 +8385,9 @@ public class Database extends SQLiteOpenHelper {
         this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_CUSTOMER_TYPE);
     }
 
-    public void deleteMasterMaxBonLimits() {
-        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MAX_BON_LIMIT);
-    }
+//    public void deleteMasterMaxBonLimits() {
+//        this.getWritableDatabase().execSQL("delete from " + TABLE_MASTER_MAX_BON_LIMIT);
+//    }
 
     public void deletePhoto() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_PHOTO);

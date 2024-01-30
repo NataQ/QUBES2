@@ -117,6 +117,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/blue6_aspp"
                     android:textSize="@dimen/text_small"
+                    android:visibility="gone"
                     app:cornerRadius="5dp"
                     app:strokeColor="@color/blue6_aspp" />
 
@@ -219,7 +220,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_search_aspp" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtSearchVisit"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -299,6 +300,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
                         android:layout_margin="5dp"
+                        android:visibility="gone"
                         app:backgroundTint="@color/new_blue"
                         app:fabSize="normal"
                         app:srcCompat="@drawable/ic_plus"
@@ -327,7 +329,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_search_aspp" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtSearchNoo"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -407,6 +409,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
                         android:layout_margin="5dp"
+                        android:visibility="gone"
                         app:backgroundTint="@color/new_blue"
                         app:fabSize="normal"
                         app:srcCompat="@drawable/ic_plus"

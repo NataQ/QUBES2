@@ -6,7 +6,7 @@ public class GroupMaxBon implements Serializable {
     private String id_group_max_bon;
     private String name_group_max_bon;
     private String id_group_sales;
-    private String limits;
+    private double limits;
     private String id_material_group;
     private String name_material_group;
 
@@ -37,11 +37,11 @@ public class GroupMaxBon implements Serializable {
         this.id_group_sales = id_group_sales;
     }
 
-    public String getLimits() {
+    public double getLimits() {
         return limits;
     }
 
-    public void setLimits(String limits) {
+    public void setLimits(double limits) {
         this.limits = limits;
     }
 

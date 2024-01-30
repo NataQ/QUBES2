@@ -268,13 +268,13 @@ public class RouteCustomerFragment extends BaseFragment {
 //        }
     }
 
-    private void requestData() {
-        progressCircle.setVisibility(View.VISIBLE);
-        recyclerView.setVisibility(View.GONE);
-//        setDataDummyCustomer();
-        PARAM = 1;
-        new RequestUrl().execute();//1
-    }
+//    private void requestData() {
+//        progressCircle.setVisibility(View.VISIBLE);
+//        recyclerView.setVisibility(View.GONE);
+////        setDataDummyCustomer();
+//        PARAM = 1;
+//        new RequestUrl().execute();//1
+//    }
 
     private void setAdapter() {
         mAdapter = new RouteCustomerAdapter(this, mListFiltered);
@@ -288,160 +288,160 @@ public class RouteCustomerFragment extends BaseFragment {
         Helper.setItemParam(Constants.CURRENTPAGE, "2");
     }
 
-    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
-
-        @Override
-        protected WSMessage doInBackground(Void... voids) {
-            try {
-                if (PARAM == 1) {
-                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
-                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
-                    return null;
-                } else {
-                    mList = new ArrayList<>();
-                    List<Customer> mListNonRoute = new ArrayList<>();
-                    Map result = (Map) resultWsMessage.getResult();
-
-//                    if (result.get("visit") != null) {
-//                        StartVisit startDay = Helper.ObjectToGSON(result.get("visit"), StartVisit.class);
-//                        database.addStartVisit(startDay);
-////                        SessionManagerQubes.setStartDay(startDay);
-//                    } else {
-////                        SessionManagerQubes.setStartDay(null);
+//    private class RequestUrl extends AsyncTask<Void, Void, WSMessage> {
+//
+//        @Override
+//        protected WSMessage doInBackground(Void... voids) {
+//            try {
+//                if (PARAM == 1) {
+//                    String URL_ = Constants.API_GET_TODAY_CUSTOMER;
+//                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+//                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, user);
+//                    return null;
+//                } else {
+//                    mList = new ArrayList<>();
+//                    List<Customer> mListNonRoute = new ArrayList<>();
+//                    Map result = (Map) resultWsMessage.getResult();
+//
+////                    if (result.get("visit") != null) {
+////                        StartVisit startDay = Helper.ObjectToGSON(result.get("visit"), StartVisit.class);
+////                        database.addStartVisit(startDay);
+//////                        SessionManagerQubes.setStartDay(startDay);
+////                    } else {
+//////                        SessionManagerQubes.setStartDay(null);
+////                    }
+//
+////                    if (result.get("visit") != null) {
+////                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
+////                        double id = (double) startDay.get("id");
+////                        SessionManagerQubes.setStartDay((int) id);
+////                    } else {
+////                        SessionManagerQubes.setStartDay(0);
+////                    }
+//                    Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
+//                    if (param1Array != null) {
+//                        Collections.addAll(mListNonRoute, param1Array);
+//                        database.deleteMasterCustomerSalesman();
+//                        database.deleteMasterNonRouteCustomerPromotion();
+//                        database.deleteMasterNonRouteCustomerDct();
 //                    }
-
-//                    if (result.get("visit") != null) {
-//                        LinkedTreeMap startDay = (LinkedTreeMap) result.get("visit");
-//                        double id = (double) startDay.get("id");
-//                        SessionManagerQubes.setStartDay((int) id);
-//                    } else {
-//                        SessionManagerQubes.setStartDay(0);
+//
+//                    for (Customer param : mListNonRoute) {
+//                        List<Promotion> arrayList = new ArrayList<>();
+//                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+//                        if (matArray != null) {
+//                            Collections.addAll(arrayList, matArray);
+//                            param.setPromoList(arrayList);
+//                        }
+//
+//                        List<Material> arrayDctList = new ArrayList<>();
+//                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+//                        if (dctArray != null) {
+//                            Collections.addAll(arrayDctList, dctArray);
+//                        }
+//                        param.setDctList(arrayDctList);
+//
+//                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
+//                        for (Promotion mat : arrayList) {
+//                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+//                        }
+//                        for (Material mat : arrayDctList) {
+//                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
+//                        }
 //                    }
-                    Customer[] param1Array = Helper.ObjectToGSON(result.get("customerNonRoute"), Customer[].class);
-                    if (param1Array != null) {
-                        Collections.addAll(mListNonRoute, param1Array);
-                        database.deleteMasterNonRouteCustomer();
-                        database.deleteMasterNonRouteCustomerPromotion();
-                        database.deleteMasterNonRouteCustomerDct();
-                    }
-
-                    for (Customer param : mListNonRoute) {
-                        List<Promotion> arrayList = new ArrayList<>();
-                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
-                            param.setPromoList(arrayList);
-                        }
-
-                        List<Material> arrayDctList = new ArrayList<>();
-                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        if (dctArray != null) {
-                            Collections.addAll(arrayDctList, dctArray);
-                        }
-                        param.setDctList(arrayDctList);
-
-                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-                        for (Material mat : arrayDctList) {
-                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
-                        }
-                    }
-
-                    Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
-                    if (paramArray != null) {
-                        Collections.addAll(mList, paramArray);
-                        database.deleteCustomer();
-                        database.deleteCustomerPromotion();
-                        database.deleteCustomerDct();
-                        database.deleteVisitSalesman();
-                        database.deleteNoo();
-                    }
-
-                    for (Customer param : mList) {
-                        List<Promotion> arrayList = new ArrayList<>();
-                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
-                        }
-                        param.setPromoList(arrayList);
-
-                        List<Material> arrayDctList = new ArrayList<>();
-                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        if (dctArray != null) {
-                            Collections.addAll(arrayDctList, dctArray);
-                        }
-                        param.setDctList(arrayDctList);
-                        int idHeader = database.addCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-
-                        for (Material mat : arrayDctList) {
-                            database.addCustomerDct(mat, param.getId(), user.getUsername());
-                        }
-                    }
-
-                    getData();
-                    saveDataSuccess = true;
-                    return null;
-                }
-            } catch (Exception ex) {
-                if (ex.getMessage() != null) {
-                    Log.e("routeCustomer", ex.getMessage());
-                }
-                if (PARAM == 2) {
-                    saveDataSuccess = false;
-                } else {
-                    logResult = new WSMessage();
-                    logResult.setIdMessage(0);
-                    logResult.setMessage("Route Customer error: " + ex.getMessage());
-                }
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(WSMessage re) {
-            if (PARAM == 1) {
-                if (logResult.getIdMessage() == 1) {
-                    String message = "Route Customer : " + logResult.getMessage();
-                    logResult.setMessage(message);
-                }
-                database.addLog(logResult);
-                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
-                    resultWsMessage = logResult;
-                    PARAM = 2;
-                    new RequestUrl().execute();//2
-                } else {
-                    progressCircle.setVisibility(View.GONE);
-                    getData();
-                    filterData(allCustomer);//no data request failed
-                }
-            } else {
-                progressCircle.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                if (saveDataSuccess) {
-                    filterData(allCustomer);//request url
-                } else {
-                    if (Helper.isEmptyOrNull(mList)) {
-                        recyclerView.setVisibility(View.GONE);
-                        llNoData.setVisibility(View.VISIBLE);
-                    } else {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        llNoData.setVisibility(View.GONE);
-                    }
-                }
-            }
-        }
-    }
+//
+//                    Customer[] paramArray = Helper.ObjectToGSON(result.get("todayCustomer"), Customer[].class);
+//                    if (paramArray != null) {
+//                        Collections.addAll(mList, paramArray);
+//                        database.deleteCustomer();
+//                        database.deleteCustomerPromotion();
+//                        database.deleteCustomerDct();
+//                        database.deleteVisitSalesman();
+//                        database.deleteNoo();
+//                    }
+//
+//                    for (Customer param : mList) {
+//                        List<Promotion> arrayList = new ArrayList<>();
+//                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+//                        if (matArray != null) {
+//                            Collections.addAll(arrayList, matArray);
+//                        }
+//                        param.setPromoList(arrayList);
+//
+//                        List<Material> arrayDctList = new ArrayList<>();
+//                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+//                        if (dctArray != null) {
+//                            Collections.addAll(arrayDctList, dctArray);
+//                        }
+//                        param.setDctList(arrayDctList);
+//                        int idHeader = database.addCustomer(param, user.getUsername());
+//                        for (Promotion mat : arrayList) {
+//                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+//                        }
+//
+//                        for (Material mat : arrayDctList) {
+//                            database.addCustomerDct(mat, param.getId(), user.getUsername());
+//                        }
+//                    }
+//
+//                    getData();
+//                    saveDataSuccess = true;
+//                    return null;
+//                }
+//            } catch (Exception ex) {
+//                if (ex.getMessage() != null) {
+//                    Log.e("routeCustomer", ex.getMessage());
+//                }
+//                if (PARAM == 2) {
+//                    saveDataSuccess = false;
+//                } else {
+//                    logResult = new WSMessage();
+//                    logResult.setIdMessage(0);
+//                    logResult.setMessage("Route Customer error: " + ex.getMessage());
+//                }
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(WSMessage re) {
+//            if (PARAM == 1) {
+//                if (logResult.getIdMessage() == 1) {
+//                    String message = "Route Customer : " + logResult.getMessage();
+//                    logResult.setMessage(message);
+//                }
+//                database.addLog(logResult);
+//                if (logResult.getIdMessage() == 1 && logResult.getResult() != null) {
+//                    resultWsMessage = logResult;
+//                    PARAM = 2;
+//                    new RequestUrl().execute();//2
+//                } else {
+//                    progressCircle.setVisibility(View.GONE);
+//                    getData();
+//                    filterData(allCustomer);//no data request failed
+//                }
+//            } else {
+//                progressCircle.setVisibility(View.GONE);
+//                recyclerView.setVisibility(View.VISIBLE);
+//                if (saveDataSuccess) {
+//                    filterData(allCustomer);//request url
+//                } else {
+//                    if (Helper.isEmptyOrNull(mList)) {
+//                        recyclerView.setVisibility(View.GONE);
+//                        llNoData.setVisibility(View.VISIBLE);
+//                    } else {
+//                        recyclerView.setVisibility(View.VISIBLE);
+//                        llNoData.setVisibility(View.GONE);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     private void getData() {
         mList = new ArrayList<>();

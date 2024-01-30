@@ -220,6 +220,7 @@ public class Helper extends BaseFragment {
         int height = metrics.heightPixels;
         return width;
     }
+
     public static Calendar todayDate() {
         Calendar c = Calendar.getInstance();
         return c;
@@ -1063,5 +1064,9 @@ public class Helper extends BaseFragment {
                 .findAny()
                 .orElse(null);
         return result != null;
+    }
+
+    public static boolean isCanvasSales(User user) {
+        return user.getType_sales().equals("CO");
     }
 }

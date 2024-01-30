@@ -91,42 +91,34 @@ public class OrderAddActivity extends BaseActivity {
     private static final int REQUEST_LOCATION_PERMISSION = 5;
 
     ArrayList<String> permissionsList;
-    String[] permissionsStr = {
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.BLUETOOTH_SCAN
-    };
+    String[] permissionsStr = {Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH_SCAN};
     int permissionsCount = 0;
 
-    ActivityResultLauncher<String[]> permissionsLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
-                    new ActivityResultCallback<Map<String, Boolean>>() {
-                        @RequiresApi(api = Build.VERSION_CODES.M)
-                        @Override
-                        public void onActivityResult(Map<String, Boolean> result) {
-                            ArrayList<Boolean> list = new ArrayList<>(result.values());
-                            permissionsList = new ArrayList<>();
-                            permissionsCount = 0;
-                            for (int i = 0; i < list.size(); i++) {
-                                if (shouldShowRequestPermissionRationale(permissionsStr[i])) {
-                                    permissionsList.add(permissionsStr[i]);
-                                } else if (!hasPermission(OrderAddActivity.this, permissionsStr[i])) {
-                                    permissionsCount++;
-                                }
-                            }
-                            if (permissionsList.size() > 0) {
-                                //Some permissions are denied and can be asked again.
-                                askForPermissions(permissionsList);
-                            } else if (permissionsCount > 0) {
-                                //Show alert dialog
-                                showPermissionDialog();
-                            } else {
-                                dialogConfirm();
-                            }
-                        }
-                    });
+    ActivityResultLauncher<String[]> permissionsLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), new ActivityResultCallback<Map<String, Boolean>>() {
+        @RequiresApi(api = Build.VERSION_CODES.M)
+        @Override
+        public void onActivityResult(Map<String, Boolean> result) {
+            ArrayList<Boolean> list = new ArrayList<>(result.values());
+            permissionsList = new ArrayList<>();
+            permissionsCount = 0;
+            for (int i = 0; i < list.size(); i++) {
+                if (shouldShowRequestPermissionRationale(permissionsStr[i])) {
+                    permissionsList.add(permissionsStr[i]);
+                } else if (!hasPermission(OrderAddActivity.this, permissionsStr[i])) {
+                    permissionsCount++;
+                }
+            }
+            if (permissionsList.size() > 0) {
+                //Some permissions are denied and can be asked again.
+                askForPermissions(permissionsList);
+            } else if (permissionsCount > 0) {
+                //Show alert dialog
+                showPermissionDialog();
+            } else {
+                dialogConfirm();
+            }
+        }
+    });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,12 +146,15 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
-            if (stockHeader != null) {
-                addProduct();
+            if (user.getType_sales().equals("CO")) {
+                if (stockHeader != null) {
+                    addProduct();
+                } else {
+                    setToast("Silahkan melakukan request stock");
+                }
             } else {
-                setToast("Silahkan melakukan request stock");
+                addProduct();
             }
-
         });
 
         btnNext.setOnClickListener(v -> {
@@ -322,9 +317,16 @@ public class OrderAddActivity extends BaseActivity {
     private boolean checkDoubleBon() {
         ketDB = "";
         boolean isMaxBon = false;
+        Map request = new HashMap();
         for (Material material : mList) {
-            double limitBon = database.getLimitBon(material.getId(), outletHeader.getId());
-            if (limitBon != 0) {
+            request = new HashMap();
+            request.put("id_customer", outletHeader.getId());
+            request.put("id_group_max_bon", material.getId_group_max_bon());
+            request.put("id", material.getId());
+
+            Integer limitBon = database.getLimitBon(request);
+            if (limitBon != null && limitBon < 1) {
+                //kalau di bawah 1, double bon
                 isMaxBon = true;
                 ketDB = ketDB + "Double Bon : " + material.getNama() + "\n";
                 break;
@@ -366,7 +368,9 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
-        stockHeader = database.getAllStockMaterial(user);
+        if (user.getType_sales().equals("CO")) {
+            stockHeader = database.getAllStockMaterial(user);
+        }
         mList = new ArrayList<>();
         setDate();
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
@@ -420,7 +424,7 @@ public class OrderAddActivity extends BaseActivity {
         listSpinner = new ArrayList<>();
         listSpinner.addAll(initDataMaterial());
 
-        spinnerAdapter = new SpinnerProductOrderAdapter(OrderAddActivity.this, listSpinner, (nameItem, adapterPosition) -> {
+        spinnerAdapter = new SpinnerProductOrderAdapter(OrderAddActivity.this, listSpinner, user, (nameItem, adapterPosition) -> {
         });
 
         rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -581,23 +585,29 @@ public class OrderAddActivity extends BaseActivity {
     }
 
     private List<Material> initDataMaterial() {
-        List<Material> listSpinner = new ArrayList<>(),
-                listFinalStock = new ArrayList<>();
+        List<Material> listSpinner = new ArrayList<>(), listFinalStock = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
-        req.put("udf_5", outletHeader.getUdf_5());
-        req.put("is_stock_request_header", stockHeader.getIdHeader());
+//        req.put("udf_5", outletHeader.getUdf_5());
+        req.put("id_sales_group", user.getId_sales_group());//gt/on
+        req.put("id_customer", outletHeader.getId());
+        req.put("type_customer", outletHeader.getType_customer());
+        req.put("sales_category", user.getSales_category());//rg/bt
+        req.put("id_stock_request_header", stockHeader != null ? stockHeader.getIdHeader() : null);
         if (Helper.isNotEmptyOrNull(mList)) {
-            req.put("price_list_code", mList.get(0).getPriceListCode());
+//            req.put("price_list_code", mList.get(0).getPriceListCode());
+//            String top = user.getId_sales_group().equals("ON") ? mList.get(0).getTop_on() : mList.get(0).getTop_gt();
+            req.put("top", mList.get(0).getTop());
             req.put("material_group_id", mList.get(0).getId_material_group());
         } else {
-            req.put("price_list_code", null);
+//            req.put("price_list_code", null);
+            req.put("top", null);
             req.put("material_group_id", null);
         }
-        if (user.getType_sales().equals("CO")) {
-            listMat.addAll(database.getAllMasterMaterialCanvasByCustomer(req));
+        if (user.getType_sales().equals("TO")) {
+            listMat.addAll(database.getTOMaterialPricing(req));
         } else {
-            listMat.addAll(database.getAllMasterMaterialByCustomer(req));
+            listMat.addAll(database.getCOMaterialPricing(req));
         }
         for (Material param : listMat) {
             int exist = 0;
@@ -612,31 +622,31 @@ public class OrderAddActivity extends BaseActivity {
             }
         }
 
-        //itung stock dari order skrg
-        for (Material materialStock : stockHeader.getMaterialList()) {
-            double qtyOrder = 0;
-            for (Material matOrder : mList) {
-                if (materialStock.getId().equals(matOrder.getId())) {
-                    Material conversionOrder = database.getQtySmallUom(matOrder);
-                    qtyOrder = qtyOrder + conversionOrder.getQty();
-                }
-                if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
-                    for (Material matExtra : matOrder.getExtraItem()) {
-                        if (materialStock.getId().equals(matExtra.getId())) {
-                            Material conversionExtra = database.getQtySmallUom(matExtra);
-                            qtyOrder = qtyOrder + conversionExtra.getQty();
+        if (user.getType_sales().equals("CO")) {
+            //itung stock
+            for (Material materialStock : stockHeader.getMaterialList()) {
+                double qtyOrder = 0;
+                for (Material matOrder : mList) {
+                    if (materialStock.getId().equals(matOrder.getId())) {
+                        Material conversionOrder = database.getQtySmallUom(matOrder);
+                        qtyOrder = qtyOrder + conversionOrder.getQty();
+                    }
+                    if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
+                        for (Material matExtra : matOrder.getExtraItem()) {
+                            if (materialStock.getId().equals(matExtra.getId())) {
+                                Material conversionExtra = database.getQtySmallUom(matExtra);
+                                qtyOrder = qtyOrder + conversionExtra.getQty();
+                            }
                         }
                     }
                 }
+                Material conversionStock = database.getQtySmallUomSisa(materialStock);
+                double qtyStock = conversionStock.getQtySisa();
+                materialStock.setQtySisa(qtyStock);
+                materialStock.setTotalQtyOrder(qtyOrder);
+                materialStock.setUom(conversionStock.getUom());
             }
-            Material conversionStock = database.getQtySmallUomSisa(materialStock);
-            double qtyStock = conversionStock.getQtySisa();
-            materialStock.setQtySisa(qtyStock);
-            materialStock.setTotalQtyOrder(qtyOrder);
-            materialStock.setUom(conversionStock.getUom());
-        }
-
-        if (user.getType_sales().equals("CO")) {
+            //itung stock dari order skrg
             listFinalStock = new ArrayList<>();
             for (Material materialMaster : listSpinner) {
                 for (Material materialStock : stockHeader.getMaterialList()) {
@@ -753,13 +763,14 @@ public class OrderAddActivity extends BaseActivity {
                         omzet = 0;
                     }
                     String date = Helper.changeDateFormat(Constants.DATE_FORMAT_1, Constants.DATE_FORMAT_3, txtTglKirim.getText().toString().trim());
+                    String top = !Helper.isNullOrEmpty(outletHeader.getTop_khusus()) ? outletHeader.getTop_khusus() : (Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setTanggal_kirim(date);
                     headerSave.setOmzet(omzet);
                     headerSave.setIdStockHeaderBE(stockHeader.getId());
                     headerSave.setIdStockHeaderDb(stockHeader.getId_mobile());
                     headerSave.setStatus(Constants.STATUS_DRAFT);
                     headerSave.setIsSync(0);
-                    headerSave.setTop(Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
+                    headerSave.setTop(top);
                     headerSave.setMaterialList(mList);
                     headerSave.setDiscount(getDiscount);
                     headerSave.setType_customer(outletHeader.getType_customer());
@@ -901,16 +912,14 @@ public class OrderAddActivity extends BaseActivity {
             } else {
                 String text = "";
                 if (overLK) text = text + "Order ini melebihi limit customer.";
-                if (doubleBon)
-                    text = text + "\nOrder ini memiliki double bon.";
+                if (doubleBon) text = text + "\nOrder ini memiliki double bon.";
                 text = text + "\nAnda yakin ingin menyimpan order ini?";
                 txtDialog.setText(text);
             }
         } else {
             String text = null;
             if (overLK) text = text + "Order ini melebihi limit customer.";
-            if (doubleBon)
-                text = text + "\nOrder ini memiliki double bon.";
+            if (doubleBon) text = text + "\nOrder ini memiliki double bon.";
             text = text + "\nAnda yakin ingin menyimpan order ini?";
             txtDialog.setText(text);
         }
@@ -961,11 +970,9 @@ public class OrderAddActivity extends BaseActivity {
 
     private void showPermissionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Permission required")
-                .setMessage("Some permissions are needed to be allowed to use this app without any problems.")
-                .setPositiveButton("Ok", (dialog, which) -> {
-                    dialog.dismiss();
-                });
+        builder.setTitle("Permission required").setMessage("Some permissions are needed to be allowed to use this app without any problems.").setPositiveButton("Ok", (dialog, which) -> {
+            dialog.dismiss();
+        });
         if (alertDialog == null) {
             alertDialog = builder.create();
             if (!alertDialog.isShowing()) {

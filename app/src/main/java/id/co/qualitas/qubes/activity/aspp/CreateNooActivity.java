@@ -3,7 +3,6 @@ package id.co.qualitas.qubes.activity.aspp;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -26,7 +25,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -52,7 +50,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.rpc.Help;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +65,6 @@ import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.SpinnerAllDropDownAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerDaerahTingkatAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerTypePriceAdapter;
-import id.co.qualitas.qubes.adapter.aspp.SpinnerProductStockRequestAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
@@ -725,7 +721,7 @@ public class CreateNooActivity extends BaseActivity {
                     customerNoo = new Customer();
                 }
                 String text = adapterView.getItemAtPosition(i).toString();
-                customerNoo.setUdf_5_desc(text);
+                customerNoo.setTop_khusus(text);
                 customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
 //                }
             }
@@ -1638,7 +1634,7 @@ public class CreateNooActivity extends BaseActivity {
 //        int spinnerPositionSuku = sukuAdapter.getPosition(customerNoo.getSuku());
 //        int spinnerPositionStatusToko = statusTokoAdapter.getPosition(customerNoo.getStatus_toko());
 //        int spinnerPositionStatusNpwp = statusNpwpAdapter.getPosition(customerNoo.getStatus_npwp());
-        int spinnerPositionUdf5 = udf5Adapter.getPosition(customerNoo.getUdf_5_desc());
+        int spinnerPositionUdf5 = udf5Adapter.getPosition(customerNoo.getTop_khusus());
 
         spnSuku.setSelection(customerNoo.getSuku_pos());
         spnDay.setSelection(customerNoo.getDay_pos());

@@ -90,6 +90,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
@@ -113,7 +114,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private CustomerInfoPromoAdapter promoAdapter;
     private CustomerInfoOutstandingFakturAdapter fakturAdapter;
     private CustomerInfoDctOutletAdapter dctOutletAdapter;
-    private List<Material> fakturList;
+    private List<GroupMaxBon> fakturList;
     private List<Material> dctOutletList;
     private List<Promotion> promoList;
     static int h;
@@ -925,8 +926,8 @@ public class DailySalesmanActivity extends BaseActivity {
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
-                    dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));
-                    fakturList.addAll(database.getOutstandingFaktur(outletHeader.getId()));
+                    dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));//getDctByIdCustomer
+                    fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getOutstandingFaktur
                 }
 
                 setLayoutFromStatus();//first

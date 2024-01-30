@@ -9,7 +9,7 @@ public class Customer {
     private String address;
     private String no_tlp;
     private String udf_5;
-    private String udf_5_desc;
+    private String top_khusus;
     private double latitude;
     private double longitude;
     private int status; //0-> no status, 1 -> check in, 2 -> pause, 3-> check out
@@ -60,6 +60,8 @@ public class Customer {
     private int isSync;
     private List<Promotion> promoList;
     private List<Material> dctList;
+    private List<GroupMaxBon> maxBonList;
+    private List<Uom> dropSizeList;
     private boolean route;
 //    private LatLng position;
     private double limit_kredit;
@@ -68,6 +70,7 @@ public class Customer {
     private double totalFaktur;
     private boolean noo;
     private String mileage;
+    private int is_route;
     private int idReason;
     private String nameReason;
     private String createdDate;
@@ -92,6 +95,30 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public int getIs_route() {
+        return is_route;
+    }
+
+    public void setIs_route(int is_route) {
+        this.is_route = is_route;
+    }
+
+    public List<GroupMaxBon> getMaxBonList() {
+        return maxBonList;
+    }
+
+    public void setMaxBonList(List<GroupMaxBon> maxBonList) {
+        this.maxBonList = maxBonList;
+    }
+
+    public List<Uom> getDropSizeList() {
+        return dropSizeList;
+    }
+
+    public void setDropSizeList(List<Uom> dropSizeList) {
+        this.dropSizeList = dropSizeList;
     }
 
     public boolean isW1() {
@@ -374,12 +401,12 @@ public class Customer {
         this.udf_5 = udf_5;
     }
 
-    public String getUdf_5_desc() {
-        return udf_5_desc;
+    public String getTop_khusus() {
+        return top_khusus;
     }
 
-    public void setUdf_5_desc(String udf_5_desc) {
-        this.udf_5_desc = udf_5_desc;
+    public void setTop_khusus(String top_khusus) {
+        this.top_khusus = top_khusus;
     }
 
     public double getLatitude() {

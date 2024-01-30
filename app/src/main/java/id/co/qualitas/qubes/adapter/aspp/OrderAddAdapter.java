@@ -184,7 +184,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
         setProgress();
-        stockHeader = new Database((mContext)).getAllStockMaterial(user);
+        if (Helper.isCanvasSales(user)) {
+            stockHeader = new Database((mContext)).getAllStockMaterial(user);
+        }
         user = SessionManagerQubes.getUserProfile();
         mListExtra = new ArrayList<>();
         mListDiskon = new ArrayList<>();
@@ -327,7 +329,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 List<Material> listSpinnerMat = new ArrayList<>();
                 listSpinnerMat.addAll(initDataMaterial(pos, detail));
 
-                SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, (nameItem, adapterPosition) -> {
+                SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, user, (nameItem, adapterPosition) -> {
                 });
 
                 rv.setLayoutManager(new LinearLayoutManager(mContext));
@@ -655,7 +657,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
         req.put("udf_5", outletHeader.getUdf_5());
-        req.put("is_stock_request_header", stockHeader.getIdHeader());
+        req.put("is_stock_request_header", stockHeader != null ?stockHeader.getIdHeader() : null);
         if (Helper.isNotEmptyOrNull(mList)) {
             req.put("price_list_code", mList.get(0).getPriceListCode());
             req.put("material_group_id", mList.get(0).getId_material_group());
@@ -663,11 +665,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             req.put("price_list_code", null);
             req.put("material_group_id", null);
         }
-//        if (user.getType_sales().equals("CO")) {
-//            listMat.addAll(new Database(mContext).getAllMasterMaterialCanvasByCustomer(req));
-//        } else {
-        listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));
-//        }
+        listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));ubah ambil materialnya
 
         if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
             for (Material param : listMat) {

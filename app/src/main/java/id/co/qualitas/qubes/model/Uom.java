@@ -36,11 +36,20 @@ public class Uom implements Serializable {
 
     //aspp
     String idHeader;
+    String id_customer;
     String id_material;
-    String id_uom;
+    String uom;
     int conversion;
     double qty_min;
     double qty_max;
+
+    public String getId_customer() {
+        return id_customer;
+    }
+
+    public void setId_customer(String id_customer) {
+        this.id_customer = id_customer;
+    }
 
     public double getQty_min() {
         return qty_min;
@@ -86,12 +95,12 @@ public class Uom implements Serializable {
         this.id_material = id_material;
     }
 
-    public String getId_uom() {
-        return id_uom;
+    public String getUom() {
+        return uom;
     }
 
-    public void setId_uom(String id_uom) {
-        this.id_uom = id_uom;
+    public void setUom(String uom) {
+        this.uom = uom;
     }
 
     public void setConversion(int conversion) {

@@ -48,6 +48,7 @@ public class User implements Serializable {
     private String idPlant;
 
     //aspp qubes=========================================================================================
+
     private String username;
     //    private List<Group> listGroup;
 //    private List<Authority> listAuthority;
@@ -59,6 +60,10 @@ public class User implements Serializable {
     private String apk_version;
     private String tipe;
     private int rute_inap;
+    private String sales_type;
+    private String gudang_canvas;
+    private String sales_category;
+    private String sales_type_infor;
     private String id_sales_group;
     private String sales_group_name;
     private String id_driver;
@@ -73,6 +78,38 @@ public class User implements Serializable {
     private int max_visit;
     private List<DepoRegion> depoRegionList;
     private List<Role> roleList;
+
+    public String getSales_type() {
+        return sales_type;
+    }
+
+    public void setSales_type(String sales_type) {
+        this.sales_type = sales_type;
+    }
+
+    public String getGudang_canvas() {
+        return gudang_canvas;
+    }
+
+    public void setGudang_canvas(String gudang_canvas) {
+        this.gudang_canvas = gudang_canvas;
+    }
+
+    public String getSales_category() {
+        return sales_category;
+    }
+
+    public void setSales_category(String sales_category) {
+        this.sales_category = sales_category;
+    }
+
+    public String getSales_type_infor() {
+        return sales_type_infor;
+    }
+
+    public void setSales_type_infor(String sales_type_infor) {
+        this.sales_type_infor = sales_type_infor;
+    }
 
     public List<Role> getRoleList() {
         return roleList;
@@ -105,6 +142,7 @@ public class User implements Serializable {
     public void setAt(double at) {
         this.at = at;
     }
+
     public String getType_sales() {
         return type_sales;
     }

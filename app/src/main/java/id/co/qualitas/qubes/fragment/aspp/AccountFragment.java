@@ -2,12 +2,10 @@ package id.co.qualitas.qubes.fragment.aspp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.LinkedMultiValueMap;
@@ -37,66 +34,37 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import id.co.qualitas.qubes.BuildConfig;
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.adapter.aspp.LogAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.fragment.BaseFragment;
-import id.co.qualitas.qubes.helper.CalendarUtils;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
-import id.co.qualitas.qubes.helper.SecureDate;
 import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.Discount;
-import id.co.qualitas.qubes.model.FreeGoods;
 import id.co.qualitas.qubes.model.GroupMaxBon;
-import id.co.qualitas.qubes.model.JenisJualandTop;
-import id.co.qualitas.qubes.model.LastLog;
 import id.co.qualitas.qubes.model.LogModel;
 import id.co.qualitas.qubes.model.Material;
-import id.co.qualitas.qubes.model.MaterialResponse;
-import id.co.qualitas.qubes.model.MessageResponse;
-import id.co.qualitas.qubes.model.OffDate;
-import id.co.qualitas.qubes.model.OfflineLoginData;
-import id.co.qualitas.qubes.model.OptionFreeGoods;
 import id.co.qualitas.qubes.model.Order;
-import id.co.qualitas.qubes.model.OrderPlanHeader;
-import id.co.qualitas.qubes.model.OutletResponse;
 import id.co.qualitas.qubes.model.Parameter;
-import id.co.qualitas.qubes.model.PriceCode;
-import id.co.qualitas.qubes.model.Promotion;
+import id.co.qualitas.qubes.model.Price;
 import id.co.qualitas.qubes.model.Reason;
-import id.co.qualitas.qubes.model.Return;
-import id.co.qualitas.qubes.model.ReturnRequest;
-import id.co.qualitas.qubes.model.ReturnResponse;
-import id.co.qualitas.qubes.model.SalesPriceDetail;
-import id.co.qualitas.qubes.model.SalesPriceHeader;
-import id.co.qualitas.qubes.model.StartVisit;
-import id.co.qualitas.qubes.model.StoreCheck;
-import id.co.qualitas.qubes.model.ToPrice;
 import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
-import id.co.qualitas.qubes.model.VisitOrderDetailResponse;
-import id.co.qualitas.qubes.model.VisitOrderHeader;
-import id.co.qualitas.qubes.model.VisitOrderRequest;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
-import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class AccountFragment extends BaseFragment {
@@ -523,51 +491,71 @@ public class AccountFragment extends BaseFragment {
                         database.addMasterUom(param, user.getUsername());
                     }
 
-                    List<PriceCode> priceList = new ArrayList<>();
-                    PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
+                    List<GroupMaxBon> listGroupSalesMaxBon = new ArrayList<>();
+                    GroupMaxBon[] paramArray6 = Helper.ObjectToGSON(response.get("listGroupSalesMaxBon"), GroupMaxBon[].class);
                     if (paramArray6 != null) {
-                        Collections.addAll(priceList, paramArray6);
-                        database.deleteMasterPriceCode();
+                        Collections.addAll(listGroupSalesMaxBon, paramArray6);
+                        database.deleteMasterGroupSalesMaxBon();
                     }
-                    for (PriceCode param : priceList) {
-                        database.addMasterPriceCode(param, user.getUsername());
+                    for (GroupMaxBon param : listGroupSalesMaxBon) {
+                        database.addMasterGroupSalesMaxBon(param, user.getUsername());
                     }
 
-                    List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
-                    SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
+                    List<Price> listPrice = new ArrayList<>();
+                    Price[] paramArray7 = Helper.ObjectToGSON(response.get("listPrice"), Price[].class);
                     if (paramArray7 != null) {
-                        Collections.addAll(salesPriceHeaderList, paramArray7);
-                        database.deleteMasterSalesPriceHeader();
+                        Collections.addAll(listPrice, paramArray7);
+                        database.deleteMasterPrice();
                     }
-                    for (SalesPriceHeader param : salesPriceHeaderList) {
-                        database.addMasterSalesPriceHeader(param, user.getUsername());
-                    }
-
-                    List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
-                    SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
-                    if (paramArray8 != null) {
-                        Collections.addAll(salesPriceDetailList, paramArray8);
-                        database.deleteMasterSalesPriceDetail();
-                    }
-                    for (SalesPriceDetail param : salesPriceDetailList) {
-                        database.addMasterSalesPriceDetail(param, user.getUsername());
+                    for (Price param : listPrice) {
+                        database.addMasterPrice(param, user.getUsername());
                     }
 
-                    List<Material> minOrderList = new ArrayList<>();
-                    Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
-                    Collections.addAll(minOrderList, paramArray11);
-                    database.deleteMasterMinimalOrder();
-                    for (Material param : minOrderList) {
-                        database.addLimitBon(param, user.getUserLogin());
-                    }
-
-                    List<GroupMaxBon> groupMaxBonList = new ArrayList<>();
-                    GroupMaxBon[] paramArray12 = Helper.ObjectToGSON(response.get("listMaxBonLimit"), GroupMaxBon[].class);
-                    Collections.addAll(groupMaxBonList, paramArray12);
-                    database.deleteMasterMaxBonLimits();
-                    for (GroupMaxBon param : groupMaxBonList) {
-                        database.addMasterMaxBonLimits(param, user.getUserLogin());
-                    }
+//                    List<PriceCode> priceList = new ArrayList<>();
+//                    PriceCode[] paramArray6 = Helper.ObjectToGSON(response.get("listPriceCode"), PriceCode[].class);
+//                    if (paramArray6 != null) {
+//                        Collections.addAll(priceList, paramArray6);
+//                        database.deleteMasterPriceCode();
+//                    }
+//                    for (PriceCode param : priceList) {
+//                        database.addMasterPriceCode(param, user.getUsername());
+//                    }
+//
+//                    List<SalesPriceHeader> salesPriceHeaderList = new ArrayList<>();
+//                    SalesPriceHeader[] paramArray7 = Helper.ObjectToGSON(response.get("listSalesPriceHeader"), SalesPriceHeader[].class);
+//                    if (paramArray7 != null) {
+//                        Collections.addAll(salesPriceHeaderList, paramArray7);
+//                        database.deleteMasterSalesPriceHeader();
+//                    }
+//                    for (SalesPriceHeader param : salesPriceHeaderList) {
+//                        database.addMasterSalesPriceHeader(param, user.getUsername());
+//                    }
+//
+//                    List<SalesPriceDetail> salesPriceDetailList = new ArrayList<>();
+//                    SalesPriceDetail[] paramArray8 = Helper.ObjectToGSON(response.get("listSalesPriceDetail"), SalesPriceDetail[].class);
+//                    if (paramArray8 != null) {
+//                        Collections.addAll(salesPriceDetailList, paramArray8);
+//                        database.deleteMasterSalesPriceDetail();
+//                    }
+//                    for (SalesPriceDetail param : salesPriceDetailList) {
+//                        database.addMasterSalesPriceDetail(param, user.getUsername());
+//                    }
+//
+//                    List<Material> minOrderList = new ArrayList<>();
+//                    Material[] paramArray11 = Helper.ObjectToGSON(response.get("listMinimalOrder"), Material[].class);
+//                    Collections.addAll(minOrderList, paramArray11);
+//                    database.deleteMasterMinimalOrder();
+//                    for (Material param : minOrderList) {
+//                        database.addLimitBon(param, user.getUserLogin());
+//                    }
+//
+//                    List<GroupMaxBon> groupMaxBonList = new ArrayList<>();
+//                    GroupMaxBon[] paramArray12 = Helper.ObjectToGSON(response.get("listMaxBonLimit"), GroupMaxBon[].class);
+//                    Collections.addAll(groupMaxBonList, paramArray12);
+//                    database.deleteMasterMaxBonLimits();
+//                    for (GroupMaxBon param : groupMaxBonList) {
+//                        database.addMasterMaxBonLimits(param, user.getUserLogin());
+//                    }
 
                     saveDataSuccess = true;
                     return null;
@@ -636,33 +624,33 @@ public class AccountFragment extends BaseFragment {
                     List<Customer> mList = new ArrayList<>();
                     if (paramArray != null) {
                         Collections.addAll(mList, paramArray);
-                        database.deleteMasterNonRouteCustomer();
-                        database.deleteMasterNonRouteCustomerPromotion();
-                        database.deleteMasterNonRouteCustomerDct();
+                        database.deleteMasterCustomerSalesman();
+//                        database.deleteMasterNonRouteCustomerPromotion();
+//                        database.deleteMasterNonRouteCustomerDct();
                     }
 
                     for (Customer param : mList) {
-                        List<Promotion> arrayList = new ArrayList<>();
-                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
-                        }
-                        param.setPromoList(arrayList);
-
-                        List<Material> arrayDctList = new ArrayList<>();
-                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
-                        if (dctArray != null) {
-                            Collections.addAll(arrayDctList, dctArray);
-                        }
-                        param.setDctList(arrayDctList);
-                        int idHeader = database.addNonRouteCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
-                        }
-
-                        for (Material mat : arrayDctList) {
-                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
-                        }
+//                        List<Promotion> arrayList = new ArrayList<>();
+//                        Promotion[] matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+//                        if (matArray != null) {
+//                            Collections.addAll(arrayList, matArray);
+//                        }
+//                        param.setPromoList(arrayList);
+//
+//                        List<Material> arrayDctList = new ArrayList<>();
+//                        Material[] dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
+//                        if (dctArray != null) {
+//                            Collections.addAll(arrayDctList, dctArray);
+//                        }
+//                        param.setDctList(arrayDctList);
+                        int idHeader = database.addCustomerSalesman(param, user.getUsername());
+//                        for (Promotion mat : arrayList) {
+//                            database.addNonRouteCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+//                        }
+//
+//                        for (Material mat : arrayDctList) {
+//                            database.addNonRouteCustomerDct(mat, String.valueOf(idHeader), user.getUsername(), param.getId());
+//                        }
                     }
 
                     saveDataSuccess = true;

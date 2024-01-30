@@ -107,6 +107,7 @@ import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.ImageType;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.OfflineData;
@@ -114,6 +115,7 @@ import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
 import id.co.qualitas.qubes.model.StartVisit;
+import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
@@ -320,7 +322,7 @@ public class VisitActivity extends BaseActivity {
                                 setToast("Silahkan Start Visit");
                                 break;
                             case 1:
-                                openDialogAdd();
+                                openDialogAdd();//btnAddVisit click
                                 break;
                             case 2:
                             case 3:
@@ -475,7 +477,7 @@ public class VisitActivity extends BaseActivity {
         Button btnNo = dialog.findViewById(R.id.btnNo);
         Button btnYes = dialog.findViewById(R.id.btnYes);
 
-        String cust = String.valueOf(custNonRoute.getId()) + "-" + Helper.isEmpty(custNonRoute.getNama(),"");
+        String cust = String.valueOf(custNonRoute.getId()) + "-" + Helper.isEmpty(custNonRoute.getNama(), "");
         txtTitle.setText("Customer Non Route");
         txtDialog.setText("Anda yakin menambahkan " + cust + " ke list non route?");
 
@@ -1944,22 +1946,42 @@ public class VisitActivity extends BaseActivity {
                         Collections.addAll(mList, paramArray);
                         database.deleteCustomer();
                         database.deleteCustomerPromotion();
+                        database.deleteCustomerMaxBon();
+                        database.deleteCustomerDropSize();
                         database.deleteCustomerDct();
                         database.deleteVisitSalesman();
                         database.deleteNoo();
                     }
 
-                    List<Promotion> arrayList = new ArrayList<>();
-                    Promotion[] matArray;
+                    List<Promotion> promotionList;
+                    List<GroupMaxBon> maxBonList;
+                    List<Uom> dropSizeList;
+                    Promotion[] promoArray;
+                    GroupMaxBon[] maxBonArray;
+                    Uom[] dropSizeArray;
                     List<Material> arrayDctList;
                     Material[] dctArray;
                     for (Customer param : mList) {
-                        arrayList = new ArrayList<>();
-                        matArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
-                        if (matArray != null) {
-                            Collections.addAll(arrayList, matArray);
+                        promotionList = new ArrayList<>();
+                        promoArray = Helper.ObjectToGSON(param.getPromoList(), Promotion[].class);
+                        if (promoArray != null) {
+                            Collections.addAll(promotionList, promoArray);
                         }
-                        param.setPromoList(arrayList);
+                        param.setPromoList(promotionList);
+
+                        maxBonList = new ArrayList<>();
+                        maxBonArray = Helper.ObjectToGSON(param.getMaxBonList(), GroupMaxBon[].class);
+                        if (maxBonArray != null) {
+                            Collections.addAll(maxBonList, maxBonArray);
+                        }
+                        param.setMaxBonList(maxBonList);
+
+                        dropSizeList = new ArrayList<>();
+                        dropSizeArray = Helper.ObjectToGSON(param.getDropSizeList(), Uom[].class);
+                        if (dropSizeArray != null) {
+                            Collections.addAll(dropSizeList, dropSizeArray);
+                        }
+                        param.setDropSizeList(dropSizeList);
 
                         arrayDctList = new ArrayList<>();
                         dctArray = Helper.ObjectToGSON(param.getDctList(), Material[].class);
@@ -1967,9 +1989,16 @@ public class VisitActivity extends BaseActivity {
                             Collections.addAll(arrayDctList, dctArray);
                         }
                         param.setDctList(arrayDctList);
+
                         int idHeader = database.addCustomer(param, user.getUsername());
-                        for (Promotion mat : arrayList) {
-                            database.addCustomerPromotion(mat, String.valueOf(idHeader), user.getUsername());
+                        for (Promotion mat : promotionList) {
+                            database.addCustomerPromotion(mat, param.getId(), user.getUsername());
+                        }
+                        for (GroupMaxBon mat : maxBonList) {
+                            database.addCustomerMaxBon(mat, param.getId(), user.getUsername());
+                        }
+                        for (Uom mat : dropSizeList) {
+                            database.addCustomerDropSize(mat, param.getId(), user.getUsername());
                         }
 
                         for (Material mat : arrayDctList) {
@@ -2063,33 +2092,57 @@ public class VisitActivity extends BaseActivity {
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, customerNonRoute);
                     return null;
                 } else {
-                    Customer paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Customer.class);
+                    Customer cust = Helper.ObjectToGSON(resultWsMessage.getResult(), Customer.class);
 
-                    List<Promotion> arrayList = new ArrayList<>();
-                    Promotion[] matArray;
-                    List<Material> arrayDctList;
+                    List<Promotion> promotionList;
+                    List<GroupMaxBon> maxBonList;
+                    List<Uom> dropSizeList;
+                    Promotion[] promoArray;
+                    GroupMaxBon[] maxBonArray;
+                    Uom[] dropSizeArray;
+                    List<Material> dctList;
                     Material[] dctArray;
 
-                    matArray = Helper.ObjectToGSON(paramArray.getPromoList(), Promotion[].class);
-                    if (matArray != null) {
-                        Collections.addAll(arrayList, matArray);
+                    promotionList = new ArrayList<>();
+                    promoArray = Helper.ObjectToGSON(cust.getPromoList(), Promotion[].class);
+                    if (promoArray != null) {
+                        Collections.addAll(promotionList, promoArray);
                     }
-                    paramArray.setPromoList(arrayList);
+                    cust.setPromoList(promotionList);
 
-                    arrayDctList = new ArrayList<>();
-                    dctArray = Helper.ObjectToGSON(paramArray.getDctList(), Material[].class);
+                    maxBonList = new ArrayList<>();
+                    maxBonArray = Helper.ObjectToGSON(cust.getMaxBonList(), GroupMaxBon[].class);
+                    if (maxBonArray != null) {
+                        Collections.addAll(maxBonList, maxBonArray);
+                    }
+                    cust.setMaxBonList(maxBonList);
+
+                    dropSizeList = new ArrayList<>();
+                    dropSizeArray = Helper.ObjectToGSON(cust.getDropSizeList(), Uom[].class);
+                    if (dropSizeArray != null) {
+                        Collections.addAll(dropSizeList, dropSizeArray);
+                    }
+                    cust.setDropSizeList(dropSizeList);
+
+                    dctList = new ArrayList<>();
+                    dctArray = Helper.ObjectToGSON(cust.getDctList(), Material[].class);
                     if (dctArray != null) {
-                        Collections.addAll(arrayDctList, dctArray);
+                        Collections.addAll(dctList, dctArray);
                     }
-                    paramArray.setDctList(arrayDctList);
+                    cust.setDctList(dctList);
 
-                    int idHeader = database.addCustomer(paramArray, user.getUsername());
-                    List<Promotion> promoList = database.getPromotionNonRouteByIdCustomer(paramArray.getId());
-                    for (Promotion promo : promoList) {
-                        database.addCustomerPromotion(promo, String.valueOf(idHeader), user.getUsername());
+                    int idHeader = database.addCustomer(cust, user.getUsername());
+                    for (Promotion promo : promotionList) {
+                        database.addCustomerPromotion(promo, cust.getId(), user.getUsername());
+                    }
+                    for (GroupMaxBon mat : maxBonList) {
+                        database.addCustomerMaxBon(mat, cust.getId(), user.getUsername());
+                    }
+                    for (Uom mat : dropSizeList) {
+                        database.addCustomerDropSize(mat, cust.getId(), user.getUsername());
                     }
 
-                    List<Material> dctList = database.getDctNonRouteByIdCustomer(paramArray.getId());
+//                    List<Material> dctList = database.getDctNonRouteByIdCustomer(paramArray.getId());
                     for (Material mat : dctList) {
                         database.addCustomerDct(mat, String.valueOf(idHeader), user.getUsername());
                     }
@@ -2381,7 +2434,7 @@ public class VisitActivity extends BaseActivity {
                 } else {
                     progress.dismiss();
                     setToast(logResult.getMessage());
-                    openDialogAdd();
+                    openDialogAdd();//failed get detail customer add
                 }
             } else {
                 progress.dismiss();
@@ -2445,7 +2498,7 @@ public class VisitActivity extends BaseActivity {
 
                     for (Customer customer : customerList) {
                         //store check
-                        if(storeCheckList == null){
+                        if (storeCheckList == null) {
                             storeCheckList = new ArrayList<>();
                         }
                         storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
@@ -2499,7 +2552,7 @@ public class VisitActivity extends BaseActivity {
                         }
 
                         //return
-                        if(returnList == null){
+                        if (returnList == null) {
                             returnList = new ArrayList<>();
                         }
                         returnList = database.getAllReturnDate(customer.getId(), user.getUsername());

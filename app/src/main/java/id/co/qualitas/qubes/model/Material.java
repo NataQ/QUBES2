@@ -64,6 +64,9 @@ public class Material implements Cloneable {
     private double qtyStock;
     private String uomStock;
     private String id_group_max_bon;
+    private String name_group_max_bon;
+    private String top_gt;
+    private String top_on;
 
     public Material() {
     }
@@ -99,6 +102,30 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getName_group_max_bon() {
+        return name_group_max_bon;
+    }
+
+    public void setName_group_max_bon(String name_group_max_bon) {
+        this.name_group_max_bon = name_group_max_bon;
+    }
+
+    public String getTop_gt() {
+        return top_gt;
+    }
+
+    public void setTop_gt(String top_gt) {
+        this.top_gt = top_gt;
+    }
+
+    public String getTop_on() {
+        return top_on;
+    }
+
+    public void setTop_on(String top_on) {
+        this.top_on = top_on;
     }
 
     public double getTotalQtyOrder() {

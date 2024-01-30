@@ -358,7 +358,11 @@ public class StockRequestDetailActivity extends BaseActivity {
                 }
                 logResult = new WSMessage();
                 logResult.setIdMessage(0);
-                logResult.setMessage("Verification Stock Request error: " + ex.getMessage());
+                if(PARAM == 1) {
+                    logResult.setMessage("Verification Stock Request error: " + ex.getMessage());
+                }else{
+                    logResult.setMessage("Update Stock Request error: " + ex.getMessage());
+                }
                 return null;
             }
         }

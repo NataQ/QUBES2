@@ -637,13 +637,15 @@
                             android:id="@+id/rvOutstandingFaktur"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            tools:listitem="@layout/aspp_row_view_outstanding_dct"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvDCTOutlet"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"
+                            tools:listitem="@layout/aspp_row_view_outstanding_dct"/>
 
                     </LinearLayout>
                 </LinearLayout>
@@ -661,7 +663,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvPromo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/aspp_row_view_promo_info"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

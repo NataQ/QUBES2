@@ -17,18 +17,18 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
-import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.GroupMaxBon;
 
 public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<CustomerInfoOutstandingFakturAdapter.Holder> implements Filterable {
-    private List<Material> mList;
-    private List<Material> mFilteredList;
+    private List<GroupMaxBon> mList;
+    private List<GroupMaxBon> mFilteredList;
     private LayoutInflater mInflater;
     private DailySalesmanActivity mContext;
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CustomerInfoOutstandingFakturAdapter(DailySalesmanActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public CustomerInfoOutstandingFakturAdapter(DailySalesmanActivity mContext, List<GroupMaxBon> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -41,7 +41,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Material> mDataSet) {
+    public void setData(List<GroupMaxBon> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -56,11 +56,11 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Material> filteredList = new ArrayList<>();
-                    for (Material row : mList) {
+                    List<GroupMaxBon> filteredList = new ArrayList<>();
+                    for (GroupMaxBon row : mList) {
 
                         /*filter by name*/
-                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getName_group_max_bon().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -75,7 +75,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Material>) filterResults.values;
+                mFilteredList = (ArrayList<GroupMaxBon>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
@@ -108,9 +108,9 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
-        Material detail = mFilteredList.get(position);
-        holder.txtName.setText("\u2022 " + detail.getMaterial_group_name());
-        holder.txtQty.setText(format.format(detail.getQty()));
+        GroupMaxBon detail = mFilteredList.get(position);
+        holder.txtName.setText("\u2022 " + detail.getName_group_max_bon());
+        holder.txtQty.setText(format.format(detail.getLimits()));
     }
 
     private void setFormatSeparator() {
@@ -127,6 +127,6 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(Material String);
+        void onAdapterClick(GroupMaxBon String);
     }
 }

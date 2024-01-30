@@ -1,57 +1,30 @@
 package id.co.qualitas.qubes.services;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
-
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.Database;
-import id.co.qualitas.qubes.fragment.aspp.AccountFragment;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
-import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
-import id.co.qualitas.qubes.model.CustomerType;
-import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
-import id.co.qualitas.qubes.model.Parameter;
-import id.co.qualitas.qubes.model.PriceCode;
-import id.co.qualitas.qubes.model.Promotion;
-import id.co.qualitas.qubes.model.Reason;
-import id.co.qualitas.qubes.model.SalesPriceDetail;
-import id.co.qualitas.qubes.model.SalesPriceHeader;
-import id.co.qualitas.qubes.model.Uom;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.VisitSalesman;
 import id.co.qualitas.qubes.model.WSMessage;
-import id.co.qualitas.qubes.session.SessionManager;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
-import id.co.qualitas.qubes.utils.Utils;
 
 public class NotiWorker extends Worker {
     private static final int PARAM = 0;

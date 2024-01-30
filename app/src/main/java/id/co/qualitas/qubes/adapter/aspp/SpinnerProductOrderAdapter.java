@@ -21,6 +21,7 @@ import java.util.Locale;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.User;
 
 public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProductOrderAdapter.Holder> implements Filterable {
     private List<Material> mList;
@@ -30,8 +31,9 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
     private OnAdapterListener onAdapterListener;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    protected User user;
 
-    public SpinnerProductOrderAdapter(OrderAddActivity mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
+    public SpinnerProductOrderAdapter(OrderAddActivity mContext, List<Material> mList, User user, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -39,6 +41,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.user = user;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
@@ -97,7 +100,6 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
             text = itemView.findViewById(R.id.text);
             llHeader = itemView.findViewById(R.id.llHeader);
             cvCheck = itemView.findViewById(R.id.cvCheck);
-            textStock.setVisibility(View.VISIBLE);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -121,6 +123,11 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
         holder.text.setText(detail.getId() + " - " + detail.getNama() + " (" + detail.getId_material_group() + " - " + detail.getMaterial_group_name() + ")");
         String uomStock = String.valueOf(detail.getUomStock());
         holder.textStock.setText("Stock : " + format.format(detail.getQtySisa()) + " " + uomStock);
+        if (user.getType_sales().equals("CO")) {
+            holder.textStock.setVisibility(View.VISIBLE);
+        } else {
+            holder.textStock.setVisibility(View.GONE);
+        }
 
         if (detail.isChecked()) {
             holder.cvUncheck.setVisibility(View.GONE);
