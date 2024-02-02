@@ -268,7 +268,7 @@ public class CollectionFormActivity extends BaseActivity {
                             startActivity(intent);
                             break;
                         case 3:
-                            if (SessionManagerQubes.getAlreadyPrint() || user.getType_sales().equals("TO")) {
+                            if (SessionManagerQubes.getAlreadyPrint() || !Helper.isCanvasSales(user)) {
                                 intent = new Intent(CollectionFormActivity.this, OrderActivity.class);
                                 startActivity(intent);
                             } else {

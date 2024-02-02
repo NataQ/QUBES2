@@ -802,7 +802,7 @@ public class Utils {
     public static <T> void loadImageFit(Context mContext, T res, ImageView image) {
         Glide.with(mContext)
                 .load(res)
-                .fitCenter()
+//                .fitCenter()
                 .error(R.drawable.ic_no_picture)
                 .placeholder(R.drawable.ic_loading)
                 .into(image);

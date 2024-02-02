@@ -1832,8 +1832,10 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_ORDER_TYPE, request.getOrder_type());
             values.put(KEY_TYPE_CUSTOMER, request.getType_customer());
             values.put(KEY_TOP, request.getTop());
-            values.put(KEY_ID_STOCK_REQUEST_HEADER_DB, request.getIdStockHeaderDb());
-            values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, request.getIdStockHeaderBE());
+            if (Helper.isCanvasSales(user)) {
+                values.put(KEY_ID_STOCK_REQUEST_HEADER_DB, request.getIdStockHeaderDb());
+                values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, request.getIdStockHeaderBE());
+            }
             values.put(KEY_DATE, request.getOrder_date());
             values.put(KEY_TANGGAL_KIRIM, request.getTanggal_kirim());
             values.put(KEY_OMZET, request.getOmzet());
@@ -1859,8 +1861,10 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
                     values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
                     values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
-                    values.put(KEY_ID_STOCK_REQUEST_HEADER_DB, request.getIdStockHeaderDb());
-                    values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, request.getIdStockHeaderBE());
+                    if (Helper.isCanvasSales(user)) {
+                        values.put(KEY_ID_STOCK_REQUEST_HEADER_DB, request.getIdStockHeaderDb());
+                        values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, request.getIdStockHeaderBE());
+                    }
                     values.put(KEY_QTY, param.getQty());
                     values.put(KEY_UOM, param.getUom());
                     values.put(KEY_PRICE, param.getPrice());
@@ -3288,21 +3292,23 @@ public class Database extends SQLiteOpenHelper {
     public List<GroupMaxBon> getMaxBonByIdCustomer(String idCust) {
         List<GroupMaxBon> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, " +
-                "coalesce(b.limits, a.limits) - COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits " +
-                "from MasterGroupSalesMaxBon a " +
-                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon " +
-                "and b.customerId = ? " +
-                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa " +
-                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo " +
-                "left JOIN MasterMaterial cc on bb.materialId = cc.materialId " +
-                "WHERE aa.customerId = ?) c on c.idGroupMaxBon = a.idGroupMaxBon  " +
-                "left join (SELECT COUNT(*) as valuePaid, d.idGroupMaxBon FROM InvoiceHeader a  " +
-                "INNER JOIN CollectionHeader b ON a.invoiceNo = b.invoiceNo and b.deleted = 0  " +
-                "INNER JOIN CollectionItem c ON b.idCollectionHeaderDB  = c.idCollectionHeaderDB and c.deleted = 0  " +
-                "left JOIN MasterMaterial d on c.materialId = d.materialId " +
-                "WHERE a.customerId = ?) d on d.idGroupMaxBon = a.idGroupMaxBon  " +
-                "order by a.idGroupMaxBon ";
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
+                "coalesce(b.limits, a.limits) - COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
+                "from MasterGroupSalesMaxBon a \n" +
+                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
+                "and b.customerId = ? \n" +
+                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
+                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
+                "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
+                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
+                "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
+                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
+                "from OrderHeader a \n" +
+                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
+                "where a.customerId = ? and a.isPaid = 0 \n" +
+                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
+                "order by a.idGroupMaxBon  ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
@@ -3406,10 +3412,11 @@ public class Database extends SQLiteOpenHelper {
     public List<Material> getAllReturn(String idCust) {
         List<Material> arrayList = new LinkedList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " WHERE  " + KEY_CUSTOMER_ID + " = ?  and " + KEY_DATE + " = ? order by " + KEY_ID_RETURN_DB + " asc";
+//        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " WHERE  " + KEY_CUSTOMER_ID + " = ?  and " + KEY_DATE + " = ? order by " + KEY_ID_RETURN_DB + " asc";
+        String selectQuery = "SELECT * FROM " + TABLE_RETURN + " WHERE  " + KEY_CUSTOMER_ID + " = ?  order by " + KEY_ID_RETURN_DB + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});//, Helper.getTodayDate(Constants.DATE_FORMAT_3)
 
         if (cursor.moveToFirst()) {
             do {
@@ -3442,10 +3449,11 @@ public class Database extends SQLiteOpenHelper {
     public List<Material> getAllStoreCheck(String idCust) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? order by " + KEY_ID_STORE_CHECK_DB + " asc";
+//        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? order by " + KEY_ID_STORE_CHECK_DB + " asc";
+        String selectQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ?  order by " + KEY_ID_STORE_CHECK_DB + " asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});//, Helper.getTodayDate(Constants.DATE_FORMAT_3)
 
         if (cursor.moveToFirst()) {
             do {
@@ -3501,9 +3509,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public StartVisit getLastStartVisit() {
-        StartVisit paramModel = new StartVisit();
+        StartVisit paramModel = null;
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_START_VISIT + " order by " + KEY_DATE + " desc";
+        String selectQuery = "SELECT * FROM " + TABLE_START_VISIT + " order by " + KEY_DATE + " desc limit 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -4073,7 +4081,7 @@ public class Database extends SQLiteOpenHelper {
                 "from \n" +
                 "(select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0) a,\n" +
                 "(select coalesce(sum(b.totalPayment),0) as value from CollectionHeader a \n" +
-                "inner join CollectionDetail b on a.idCollectionHeaderDB and b.idCollectionHeaderDB \n" +
+                "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
                 "where a.customerId = ? and b.deleted = 0 and b.typePayment = 'cash') b";
 
 //                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
@@ -4114,23 +4122,26 @@ public class Database extends SQLiteOpenHelper {
 //                "INNER JOIN " + TABLE_COLLECTION_ITEM + " c ON b." + KEY_ID_COLLECTION_HEADER_DB + " = c." + KEY_ID_COLLECTION_HEADER_DB + " AND c.  " + KEY_MATERIAL_ID + " = ? and c." + KEY_DELETED + " = 0 " +
 //                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c";
 
-        String selectQuery = "select COALESCE(a.value,0) - COALESCE(b.value,0) + COALESCE(c.value,0) as bonLimit\n" +
+        String selectQuery = "select COALESCE(a.value,0) - COALESCE(b.value,0) - COALESCE(c.value,0) as bonLimit \n" +
                 "from \n" +
                 "(select COALESCE(b.limits, a.limits) as value \n" +
                 "from MasterGroupSalesMaxBon a \n" +
-                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon and b.customerId = ?\n" +
+                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon and b.customerId = ? \n" +
                 "where a.idGroupMaxBon = ?) a,\n" +
                 "(select COUNT(*) as value from InvoiceHeader a \n" +
-                "inner join InvoiceDetail b on a.invoiceNo = b.invoiceNo where a.customerId = ? and b.materialId = ? ) b,\n" +
-                "(select COUNT(*) as value from InvoiceHeader a \n" +
-                "inner join CollectionHeader b on a.invoiceNo = b.invoiceNo and b.deleted = 0 \n" +
-                "inner join CollectionItem c on b.idCollectionHeaderDB = c.idCollectionHeaderDB \n" +
-                "where c.materialId = ? and c.deleted = 0 and a.customerId = ?) c ";
+                "inner join InvoiceDetail b on a.invoiceNo = b.invoiceNo \n" +
+                "inner join MasterMaterial c on b.materialId = c.materialId \n" +
+                "where a.customerId = ? and a.invoiceTotal > a.paid and c.idGroupMaxBon = ?) b, \n" +
+                "(select count(*) as value from OrderHeader a \n" +
+                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+                "inner join MasterMaterial c on b.materialId = c.materialId \n" +
+                "where a.customerId = ? and c.idGroupMaxBon = ? \n" +
+                "and a.isPaid = 0  and a.deleted = 0) c";//and a.orderType = 'co'
 
 
         SQLiteDatabase db = this.getWritableDatabase();
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{idMat, idCust, idMat, idCust, idMat, idCust});
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{id_customer, id_group_max_bon, id_customer, id, id, id_customer});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id_customer, id_group_max_bon, id_customer, id_group_max_bon, id_customer, id_group_max_bon});
 
         try {
             if (cursor != null) {
@@ -5259,10 +5270,11 @@ public class Database extends SQLiteOpenHelper {
     public List<Order> getAllOrder(Customer cust) {
         List<Order> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? ";
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+//                + "and " + KEY_DATE + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), Helper.getTodayDate(Constants.DATE_FORMAT_3)});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId()});
 
         if (cursor.moveToFirst()) {
             do {
@@ -5543,8 +5555,9 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? and " + KEY_DELETED + " = 0";
-        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString(), req.get("date").toString()});
+//        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ? and " + KEY_DELETED + " = 0";
+        countQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DELETED + " = 0"; //and " + KEY_DATE + " = ?
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});//, req.get("date").toString()
 
         int count = cursor.getCount();
         cursor.close();
@@ -5557,8 +5570,9 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
         Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ?";
-        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString(), req.get("date").toString()});
+//        countQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DATE + " = ?";
+        countQuery = "SELECT * FROM " + TABLE_STORE_CHECK + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});//, req.get("date").toString()
 
         int count = cursor.getCount();
         cursor.close();
@@ -5783,13 +5797,15 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Material> getAllMasterMaterial(int offset, String search) {
+    public List<Material> getAllMasterMaterial(int offset, String search, String sales_category) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_MATERIAL + " where " + KEY_MATERIAL_NAME + " like ? order by " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset;
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_MATERIAL + " where " + KEY_MATERIAL_NAME + " like ? " +
+                "and CASE WHEN ? = 'BT' THEN materialProductId = '300' ELSE materialProductId = materialProductId END " +
+                "order by " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset;
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + (!Helper.isNullOrEmpty(search) ? search : "") + "%"});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + (!Helper.isNullOrEmpty(search) ? search : "") + "%", sales_category});
 
         if (cursor.moveToFirst()) {
             do {
@@ -5818,10 +5834,14 @@ public class Database extends SQLiteOpenHelper {
     public Material getMinimalOrder(Map request) {
         Material paramModel = new Material();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM + " = ?";
+//        String selectQuery = "SELECT * FROM " + TABLE_MASTER_UOM + " WHERE " + KEY_MATERIAL_ID + " = ? AND " + KEY_UOM + " = ?";
+        String selectQuery = "select a.uom, a.materialId, a.conversion, COALESCE(b.qtyMin, a.qtyMin) as qtyMin, COALESCE(b.qtyMax,a.qtyMax) as qtyMax \n" +
+                "from MasterUom a \n" +
+                "left join CustomerDropSize b on a.uom = b.uom and a.materialId = b.materialId and b.customerId = ? \n" +
+                "where a.materialId = ? and a.uom = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.get("id_material").toString(), request.get("uom").toString()});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{request.get("id_customer").toString(), request.get("id_material").toString(), request.get("uom").toString()});
 
         if (cursor.moveToFirst()) {
             paramModel = new Material();
@@ -5921,12 +5941,80 @@ public class Database extends SQLiteOpenHelper {
 //    }
 //
 
+    public List<Material> getTOMaterialExtra(Map request) {
+        List<Material> arrayList = new ArrayList<>();
+
+        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, a.materialProductId \n" +
+                "from MasterMaterial a \n" +
+                "order by a.materialId ASC";
+//                "CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END \n";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    Material paramModel = new Material();
+                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                    paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+                    arrayList.add(paramModel);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (Exception e) {
+            arrayList = new ArrayList<>();
+        }
+
+        return arrayList;
+    }
+
+    public List<Material> getCOMaterialExtra(Map request) {
+        List<Material> arrayList = new ArrayList<>();
+        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("material_group_id").toString() : null;
+
+        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, a.materialProductId " +
+                "from MasterMaterial a \n" +
+                "inner join StockRequestDetail d on a.materialId = d.materialId and d.idStockRequestHeaderDB = ? \n" +
+                "order by a.materialId ASC \n";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(query, new String[]{id_stock_request_header});
+            if (cursor.moveToFirst()) {
+                do {
+                    Material paramModel = new Material();
+                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                    paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+                    arrayList.add(paramModel);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        } catch (Exception e) {
+            arrayList = new ArrayList<>();
+        }
+
+        return arrayList;
+    }
+
     public List<Material> getTOMaterialPricing(Map request) {
         List<Material> arrayList = new ArrayList<>();
         List<String> priceListCodeList = new ArrayList<>();
         String id_sales_group = request.get("id_sales_group") != null ? request.get("id_sales_group").toString() : null;//gt/on
         String id_customer = request.get("id_customer") != null ? request.get("id_customer").toString() : null;
-        String type_customer = request.get("type_customer") != null ? request.get("type_customer").toString() : null;//rg/bt
+        String type_customer = request.get("type_customer") != null ? request.get("type_customer").toString() : null;
         String sales_category = request.get("sales_category") != null ? request.get("sales_category").toString() : null;//rg/bt
         String top = request.get("top") != null ? request.get("top").toString() : null;
         String material_group_id = request.get("material_group_id") != null ? request.get("material_group_id").toString() : null;
@@ -5943,7 +6031,7 @@ public class Database extends SQLiteOpenHelper {
 //        order by a.materialId ASC LIMIT 15 offset 0
 
         String allQuery = null;
-        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, \n" +//b.topKhusus, b.typeCustomer,
+        String query = "select a.materialId, c.priceListCode, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, \n" +//b.topKhusus, b.typeCustomer,
                 "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top \n" +
                 "from MasterMaterial a \n" +
                 "inner join MasterPrice c on a.materialId = c.materialId and c.typeCustomer = ? \n" +
@@ -5989,6 +6077,8 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                    paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
@@ -6011,6 +6101,7 @@ public class Database extends SQLiteOpenHelper {
         String id_customer = request.get("id_customer") != null ? request.get("id_customer").toString() : null;
         String sales_category = request.get("sales_category") != null ? request.get("sales_category").toString() : null;//rg/bt
         String top = request.get("top") != null ? request.get("top").toString() : null;
+        String type_customer = request.get("type_customer") != null ? request.get("type_customer").toString() : null;
         String material_group_id = request.get("material_group_id") != null ? request.get("material_group_id").toString() : null;
         String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("material_group_id").toString() : null;
 
@@ -6026,16 +6117,17 @@ public class Database extends SQLiteOpenHelper {
 //        order by a.materialId ASC
 
         String allQuery = null;
-        String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon,\n" +
+        String query = "select a.materialId, c.priceListCode, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon,\n" +
                 "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top\n" +
-                "from MasterMaterial a,\n" +
-                "(select typeCustomer, topKhusus from Customer where customerId = ?) b\n" +
-                "inner join MasterPrice c on a.materialId = c.materialId and b.typeCustomer = c.typeCustomer \n" +
+                "from MasterMaterial a \n" +
+                "inner join MasterPrice c on a.materialId = c.materialId and c.typeCustomer = ? \n" +
                 "inner join StockRequestDetail d on a.materialId = d.materialId and d.idStockRequestHeaderDB = ?\n" +
-                "where CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END\n" +
-                "AND CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END\n" +
-                "AND a.materialGroupId = COALESCE(null, a.materialGroupId)\n" +
-                "order by a.materialId ASC";
+                "where CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END \n";
+
+        String queryTop = "AND CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END \n";
+        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n";
+        String queryOrder = "order by a.materialId ASC ";
+
         //"LIMIT " + Constants.LIMIT_ITEM_LIST + " offset 0 ";??
 
 //        String queryPriceList = "and a." + KEY_PRICE_LIST_CODE + " = \'" + request.get("price_list_code") + "\' ";//"and a." + KEY_PRICE_LIST_CODE + " = ifnull(?,a." + KEY_PRICE_LIST_CODE + ") ";
@@ -6055,10 +6147,14 @@ public class Database extends SQLiteOpenHelper {
 //        }
 //        allQuery = allQuery + groupBy;
         // Select All Query
-
         try {
 //            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
-            cursor = db.rawQuery(query, new String[]{id_sales_group, id_customer, id_stock_request_header, id_sales_group, top, top, sales_category, material_group_id});
+            if (material_group_id != null) {
+                cursor = db.rawQuery(query + queryTop + queryMaterialGroup + queryOrder,
+                        new String[]{id_sales_group, type_customer, id_stock_request_header, sales_category, id_sales_group, top, top, material_group_id});
+            } else {
+                cursor = db.rawQuery(query + queryOrder, new String[]{id_sales_group, type_customer, id_stock_request_header, sales_category});
+            }
             if (cursor.moveToFirst()) {
                 do {
                     Material paramModel = new Material();
@@ -6067,6 +6163,8 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                    paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));

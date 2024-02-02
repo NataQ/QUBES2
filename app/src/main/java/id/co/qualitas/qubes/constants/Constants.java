@@ -570,4 +570,7 @@ public class Constants {
     public static final String API_GET_IMAGE = "getImage";
     public static final String API_SEND_DATABASE_LOCAL = "sendDatabaseLocal";
     public static final String API_UPDATE_REGISTER_ID = "updateRegisterId";
+
+    public static final String CLICK_START_VISIT = "clickStartVisit";
+    public static final String CLICK_END_VISIT = "clickEndVisit";
 }

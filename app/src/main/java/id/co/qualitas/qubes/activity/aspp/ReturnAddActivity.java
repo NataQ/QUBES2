@@ -488,7 +488,7 @@ public class ReturnAddActivity extends BaseActivity {
     private List<Material> initDataMaterial(String searchString) {
         List<Material> listSpinner = new LinkedList<>();
         List<Material> listMat = new LinkedList<>();
-        listMat.addAll(database.getAllMasterMaterial(offset, searchString));
+        listMat.addAll(database.getAllMasterMaterial(offset, searchString, user.getSales_category()));
 
         for (Material param : listMat) {
             int exist = 0;

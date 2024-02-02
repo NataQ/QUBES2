@@ -1583,16 +1583,19 @@ public class CreateNooActivity extends BaseActivity {
             customerNoo.setPhotoKtp(imageType.getPhotoKTP());
             Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
             imgDeleteKTP.setVisibility(View.VISIBLE);
+            imgAddKTP.setVisibility(View.GONE);
         }
         if (imageType.getPhotoNPWP() != null) {
             customerNoo.setPhotoNpwp(imageType.getPhotoNPWP());
             Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
             imgDeleteNPWP.setVisibility(View.VISIBLE);
+            imgAddNPWP.setVisibility(View.GONE);
         }
         if (imageType.getPhotoOutlet() != null) {
             customerNoo.setPhotoOutlet(imageType.getPhotoOutlet());
             Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
             imgDeleteOutlet.setVisibility(View.VISIBLE);
+            imgAddOutlet.setVisibility(View.GONE);
         }
 
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);

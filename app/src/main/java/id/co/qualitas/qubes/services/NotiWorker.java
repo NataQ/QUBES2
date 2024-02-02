@@ -477,7 +477,7 @@ public class NotiWorker extends Worker {
 //                List<Material> mList = new ArrayList<>();
 //                Map header = new HashMap();
                 for (Customer customer : customerList) {
-                    returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                    returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
                     if (returnList != null) {
                         setDataSyncSuccess = true;
                     } else {

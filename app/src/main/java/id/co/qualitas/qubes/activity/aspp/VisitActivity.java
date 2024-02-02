@@ -187,7 +187,7 @@ public class VisitActivity extends BaseActivity {
     private StartVisit startVisit;
     private String resultOffline = null;
     private boolean salesInap = false;
-    private boolean clickStartVisit = false, clickEndVisit = false;
+    //    private boolean clickStartVisit = false, clickEndVisit = false;
     private Customer customerNonRoute;
 
     @Override
@@ -242,7 +242,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartVisit.setOnClickListener(v -> {
-            clickStartVisit = true;
+            Helper.setItemParam(Constants.CLICK_START_VISIT, 1);
             if (startVisit != null) {
                 if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                     setToast("Anda sudah melakukan kunjungan hari ini");
@@ -258,7 +258,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnStartDay.setOnClickListener(v -> {
-            clickStartVisit = false;
+            Helper.setItemParam(Constants.CLICK_START_VISIT, 2);
             if (startVisit != null) {
                 if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                     setToast("Anda sudah melakukan kunjungan hari ini");
@@ -274,7 +274,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnEndVisit.setOnClickListener(v -> {
-            clickEndVisit = true;
+            Helper.setItemParam(Constants.CLICK_END_VISIT, "2");
             if (user.getRute_inap() == 1) {
                 if (startVisit.getStatus_visit() == 1) {
                     setToast("Silahkan Finish terlebih dahulu sebelum End of Day");
@@ -294,7 +294,7 @@ public class VisitActivity extends BaseActivity {
         });
 
         btnEndDay.setOnClickListener(v -> {
-            clickEndVisit = false;
+            Helper.setItemParam(Constants.CLICK_END_VISIT, "3");
             if (checkPermission()) {
                 endTodayVisit();//end day
             } else {
@@ -414,7 +414,7 @@ public class VisitActivity extends BaseActivity {
     private void startDayVisit() {
         boolean invoice = database.getCountInvoiceToday() != 0;
         boolean verifInvoice = database.getCountInvoiceToday() == database.getCountInvoiceVerifToday();
-        boolean stockRequest = user.getType_sales().equals("CO") ? database.getCountStockRequestToday(user) != 0 : true;
+        boolean stockRequest = Helper.isCanvasSales(user) ? database.getCountStockRequestToday(user) != 0 : true;
         if (stockRequest) {
             if (invoice) {
                 if (verifInvoice) {
@@ -1793,7 +1793,7 @@ public class VisitActivity extends BaseActivity {
                 if (user.getRute_inap() == 1) {
                     new RequestUrlSync().execute();
                 } else {
-                    if (user.getType_sales().equals("TO")) {
+                    if (!Helper.isCanvasSales(user)) {
                         new RequestUrlSync().execute();
                     } else {
                         SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
@@ -1805,7 +1805,7 @@ public class VisitActivity extends BaseActivity {
 
 //                if (user.getRute_inap() != 1) {
 //                    //bukan rute inap
-//                    if (user.getType_sales().equals("TO")) {
+//                    if (!Helper.isCanvasSales(user)) {
 //                        new RequestUrlSync().execute();
 //                    } else {
 //                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
@@ -2015,7 +2015,8 @@ public class VisitActivity extends BaseActivity {
                     startDay.put("username", user.getUsername());
                     if (user.getRute_inap() == 1) {
                         startDay.put("visitRuteInap", "1");
-                        if (startVisit != null && !clickStartVisit) {//start visitnya gak null dan bukan dari start visit
+                        int clickStartVisit = (int) Helper.getItemParam(Constants.CLICK_START_VISIT);
+                        if (startVisit != null && clickStartVisit == 2) {//start visitnya gak null dan bukan dari start visit
                             startDay.put("rute_inap_date", startVisit.getRute_inap_date());
                             startDay.put("next_day", true);
                         } else {
@@ -2044,7 +2045,8 @@ public class VisitActivity extends BaseActivity {
                     endDay.put("idVisit", String.valueOf(startVisit.getId()));
                     endDay.put("kmAkhir", kmAkhir);
                     endDay.put("username", user.getUsername());
-                    endDay.put("status_visit", clickEndVisit ? "2" : "3");
+                    String clickEndVisit = (String) Helper.getItemParam(Constants.CLICK_END_VISIT);
+                    endDay.put("status_visit", clickEndVisit);
 
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
                     if (imageType.getPhotoAkhir() != null) {
@@ -2356,14 +2358,15 @@ public class VisitActivity extends BaseActivity {
 
                     startVisit.setEnd_time(Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     startVisit.setKm_akhir(kmAkhir);
-                    startVisit.setStatus_visit(clickEndVisit ? 2 : 3);
+                    String clickEndVisit = (String) Helper.getItemParam(Constants.CLICK_END_VISIT);
+                    startVisit.setStatus_visit(Integer.parseInt(clickEndVisit));
                     startVisit.setPhoto_km_akhir(imageType.getPhotoAkhir());
                     startVisit.setPhoto_complete(imageType.getPhotoSelesai());
 //                    SessionManagerQubes.setStartDay(startVisit);
                     database.updateFinishVisit(startVisit);
 
                     validateButton();//end
-//                    if (user.getRute_inap() == 1 && user.getType_sales().equals("CO")) {
+//                    if (user.getRute_inap() == 1 && Helper.isCanvasSales(user)) {
 //                        //rute inap dan dia co
 //                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
 //                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
@@ -2384,7 +2387,7 @@ public class VisitActivity extends BaseActivity {
                 if (saveDataSuccess) {
                     setAdapterVisit();
                     setAdapterNoo();
-//                    if (user.getType_sales().equals("CO")) {
+//                    if (Helper.isCanvasSales(user)) {
 //                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
 //                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
 //                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
@@ -2412,7 +2415,7 @@ public class VisitActivity extends BaseActivity {
                 if (logResult.getIdMessage() == 1) {
                     database.updateEndVisit(startVisit);
                     validateButton();//7
-                    if (user.getType_sales().equals("CO")) {
+                    if (Helper.isCanvasSales(user)) {
                         SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
                         Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
                         Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
@@ -2497,11 +2500,7 @@ public class VisitActivity extends BaseActivity {
                     List<Map> photos = new ArrayList<>();
 
                     for (Customer customer : customerList) {
-                        //store check
-                        if (storeCheckList == null) {
-                            storeCheckList = new ArrayList<>();
-                        }
-                        storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                        storeCheckList.addAll(database.getAllStoreCheckDate(customer.getId(), user.getUsername()));
                         if (storeCheckList != null) {
                             setDataSyncSuccess = true;
                         } else {
@@ -2552,10 +2551,7 @@ public class VisitActivity extends BaseActivity {
                         }
 
                         //return
-                        if (returnList == null) {
-                            returnList = new ArrayList<>();
-                        }
-                        returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                        returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
                         if (returnList != null) {
                             setDataSyncSuccess = true;
                         } else {
@@ -2968,15 +2964,15 @@ public class VisitActivity extends BaseActivity {
 //                            SessionManagerQubes.setStartDay(startVisit);
                             validateButton();//send all data
                         }
-                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()) + "\nSilahkan sync ulang di menu Account");
                     } else {
-                        setToast("Gagal mengirim data : " + String.valueOf(error));
+                        setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
                     }
                 } else {
-                    setToast("Gagal mengirim data : " + String.valueOf(error));
+                    setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
                 }
             } else {
-                setToast("Gagal mengirim data");
+                setToast("Gagal mengirim data. Silahkan sync ulang di menu Account");
             }
             progressDialog.dismiss();
         }

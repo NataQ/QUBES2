@@ -181,24 +181,24 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
-        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        final Material[] detail = {mFilteredList.get(holder.getAbsoluteAdapterPosition())};
         setFormatSeparator();
         setProgress();
+        user = SessionManagerQubes.getUserProfile();
         if (Helper.isCanvasSales(user)) {
             stockHeader = new Database((mContext)).getAllStockMaterial(user);
         }
-        user = SessionManagerQubes.getUserProfile();
         mListExtra = new ArrayList<>();
         mListDiskon = new ArrayList<>();
-        if (Helper.isNotEmptyOrNull(detail.getExtraItem())) {
-            mListExtra.addAll(detail.getExtraItem());
+        if (Helper.isNotEmptyOrNull(detail[0].getExtraItem())) {
+            mListExtra.addAll(detail[0].getExtraItem());
         }
-        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
-            mListDiskon.addAll(detail.getDiskonList());
+        if (Helper.isNotEmptyOrNull(detail[0].getDiskonList())) {
+            mListDiskon.addAll(detail[0].getDiskonList());
         }
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
-        String productId = String.valueOf(detail.getId());
+        String productName = !Helper.isNullOrEmpty(detail[0].getNama()) ? detail[0].getNama() : null;
+        String productId = String.valueOf(detail[0].getId());
         holder.edtProduct.setText(productId + " - " + productName);
 //        if (detail.getQty() == 0 && !Helper.isEmpty(detail.getUom())) {
 //            Map req = new HashMap();
@@ -208,14 +208,14 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 //            holder.edtQty.setText(Helper.setDotCurrencyAmount(minMaxOrder.getQty()));
 //        } else {
         holder.edtQty.clearFocus();
-        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail.getQty()));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail[0].getQty()));
 //        }
-        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-        holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
-        double priceTotal = detail.getPrice() - detail.getTotalDiscount();
+        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
+        holder.txtTotalDiscount.setText("Rp. " + format.format(detail[0].getTotalDiscount()));
+        double priceTotal = detail[0].getPrice() - detail[0].getTotalDiscount();
         holder.txtTotal.setText("Rp. " + format.format(priceTotal));
 
-        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+        if (Helper.isNotEmptyOrNull(detail[0].getDiskonList())) {
             holder.llDiscountAll.setVisibility(View.VISIBLE);
             mAdapterDiscount = new OrderDiscountAdapter(mContext, mListDiskon, header -> {
             });
@@ -224,7 +224,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             holder.llDiscountAll.setVisibility(View.GONE);
         }
 
-        List<String> listSpinner = new Database(mContext).getUom(detail.getId());
+        List<String> listSpinner = new Database(mContext).getUom(detail[0].getId());
         if (listSpinner == null || listSpinner.size() == 0) {
             listSpinner.add("-");
         }
@@ -245,33 +245,59 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         uomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         uomAdapter.addAll(listSpinner);
         holder.autoCompleteUom.setAdapter(uomAdapter);
-        holder.autoCompleteUom.setText(detail.getUom(), false);
+        holder.autoCompleteUom.setText(detail[0].getUom(), false);
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
+            detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
             String selected = listSpinner.get(i).toString();
-            detail.setUom(selected);
-            if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail.getUom())) {
-                if (SessionManagerQubes.getUserProfile().getType_sales().equals("TO")) {
-                    detail.setPrice(new Database(mContext).getPrice(detail));
-                    holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-                    double pt = detail.getPrice() - detail.getTotalDiscount();
-                    holder.txtTotal.setText("Rp. " + format.format(pt));
-                } else {
-                    Map req = new HashMap();
-                    req.put("id_material", productId);
-                    req.put("uom", detail.getUom());
-                    minMaxOrder = new Database(mContext).getMinimalOrder(req);
-                    stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
-                    itemOrder = new Database(mContext).getQtySmallUom(detail);
-
-                    if (detail.getQty() < minMaxOrder.getQtyMin() || detail.getQty() > (minMaxOrder.getQtyMax() == 0 ? detail.getQty() + 1 : minMaxOrder.getQtyMax())) {
+            detail[0].setUom(selected);
+            if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail[0].getUom())) {
+                Map req = new HashMap();
+                req.put("id_material", productId);
+                req.put("uom", detail[0].getUom());
+                req.put("id_customer", outletHeader.getId());
+                minMaxOrder = new Database(mContext).getMinimalOrder(req);
+                double qty = Double.parseDouble(holder.edtQty.getText().toString().replace(",", ""));
+                if (!Helper.isCanvasSales(user)) {
+//                    detail.setPrice(new Database(mContext).getPrice(detail));
+//                    holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+//                    double pt = detail.getPrice() - detail.getTotalDiscount();
+//                    holder.txtTotal.setText("Rp. " + format.format(pt));
+                    if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty + 1 : minMaxOrder.getQtyMax())) {
                         String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
-                        detail.setQty(0);
-                        detail.setPrice(0);
-                        detail.setDiskonList(null);
-                        detail.setTotalDiscount(0);
+                        detail[0].setQty(0);
+                        detail[0].setPrice(0);
+                        detail[0].setDiskonList(null);
+                        detail[0].setTotalDiscount(0);
+                        holder.txtPrice.setText("0");
+                        holder.txtTotal.setText("0");
+                        holder.llDiscountAll.setVisibility(View.GONE);
+                    } else {
+                        detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
+                        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
+                        double pt = detail[0].getPrice() - detail[0].getTotalDiscount();
+                        holder.txtTotal.setText("Rp. " + format.format(pt));
+                    }
+                } else {
+                    stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
+                    Material mat = new Material();
+                    mat.setQty(qty);
+                    mat.setId(productId);
+                    mat.setUom(detail[0].getUom());
+                    itemOrder = new Database(mContext).getQtySmallUom(mat);
+                    boolean overMaxQty = minMaxOrder.getQtyMax() == 0 ? true : false;
+                    if (qty < minMaxOrder.getQtyMin() || (overMaxQty ? false : (qty > minMaxOrder.getQtyMax()))) {
+//                    qty > (minMaxOrder.getQtyMax() == 0 ? qty + 1 : minMaxOrder.getQtyMax())) {
+                        String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
+                        Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                        holder.edtQty.clearFocus();
+                        holder.edtQty.setText("0");
+                        detail[0].setQty(0);
+                        detail[0].setPrice(0);
+                        detail[0].setDiskonList(null);
+                        detail[0].setTotalDiscount(0);
                         holder.txtPrice.setText("0");
                         holder.txtTotal.setText("0");
                         holder.llDiscountAll.setVisibility(View.GONE);
@@ -280,18 +306,17 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
-                        detail.setQty(0);
-                        detail.setPrice(0);
-                        detail.setDiskonList(null);
-                        detail.setTotalDiscount(0);
+                        detail[0].setQty(0);
+                        detail[0].setPrice(0);
+                        detail[0].setDiskonList(null);
+                        detail[0].setTotalDiscount(0);
                         holder.txtPrice.setText("0");
                         holder.txtTotal.setText("0");
                         holder.llDiscountAll.setVisibility(View.GONE);
                     } else {
-                        detail.setPrice(new Database(mContext).getPrice(detail));
-                        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-//                    mContext.calculateOmzet();
-                        double pt = detail.getPrice() - detail.getTotalDiscount();
+                        detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
+                        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
+                        double pt = detail[0].getPrice() - detail[0].getTotalDiscount();
                         holder.txtTotal.setText("Rp. " + format.format(pt));
                     }
                 }
@@ -301,8 +326,9 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         //uom
 
         holder.llAddExtraItem.setOnClickListener(v -> {
+            detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 //            addExtraItem(holder.getAbsoluteAdapterPosition(), detail);
-            if (detail.getQty() > 0 || !Helper.isNullOrEmpty(detail.getUom())) {
+            if (detail[0].getQty() > 0 || !Helper.isNullOrEmpty(detail[0].getUom())) {
                 Dialog dialog = new Dialog(mContext);
 
                 dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
@@ -327,7 +353,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 }
 
                 List<Material> listSpinnerMat = new ArrayList<>();
-                listSpinnerMat.addAll(initDataMaterial(pos, detail));
+                listSpinnerMat.addAll(initDataMaterial(pos, detail[0]));
 
                 SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, user, (nameItem, adapterPosition) -> {
                 });
@@ -397,24 +423,25 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 });
 
                 btnSave.setOnClickListener(v5 -> {
-                    List<Material> addList = new ArrayList<>();
-                    for (Material mat : listSpinnerMat) {
-                        if (mat.isChecked()) {
-                            addList.add(mat);
+                    if(Helper.isNotEmptyOrNull(listSpinnerMat)) {
+                        List<Material> addList = new ArrayList<>();
+                        for (Material mat : listSpinnerMat) {
+                            if (mat.isChecked()) {
+                                addList.add(mat);
+                            }
                         }
-                    }
-                    mListExtra = new ArrayList<>();
-                    if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
-                        mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
-                    }
-                    mListExtra.addAll(addList);
-                    mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
-                    });
-                    holder.rvExtra.setAdapter(mAdapter);
-                    if (mListExtra.size() == 1) {
+                        mListExtra = new ArrayList<>();
+                        if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
+                            mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
+                        }
+                        mListExtra.addAll(addList);
+                        mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+                        });
+                        holder.rvExtra.setAdapter(mAdapter);
+//                    if (mListExtra.size() > 0) {
                         mFilteredList.get(pos).setExtraItem(mListExtra);
                         mAdapter.setData(mListExtra);
-                    } else {
+//                    } else {
                         new CountDownTimer(1000, 1000) {
                             public void onTick(long millisUntilFinished) {
                                 progress.show();
@@ -427,7 +454,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                 holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
                             }
                         }.start();
+                    }else{
+                        Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
                     }
+//                    }
                     dialog.dismiss();
                 });
             } else {
@@ -490,6 +520,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
             @Override
             public void afterTextChanged(Editable s) {
+                detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
                 if (holder.edtQty.isFocused()) {
                     Helper.setDotCurrency(holder.edtQty, this, s);
                     timer.cancel();
@@ -500,81 +531,99 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                 public void run() {
                                     Looper.prepare();
                                     if (!s.toString().equals("") && !s.toString().equals("-")) {
-                                        if (SessionManagerQubes.getUserProfile().getType_sales().equals("TO")) {
-                                            double qty = Double.parseDouble(s.toString().replace(",", ""));
-                                            detail.setQty(qty);
-                                            if (!Helper.isNullOrEmpty(detail.getUom())) {
-                                                detail.setPrice(new Database(mContext).getPrice(detail));
-                                                holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-                                                double priceTotal = detail.getPrice() - detail.getTotalDiscount();
-                                                holder.txtTotal.setText("Rp. " + format.format(priceTotal));
-                                            }
-                                        } else {
-                                            double qty = Double.parseDouble(s.toString().replace(",", ""));
-                                            if (!Helper.isNullOrEmpty(detail.getUom())) {
-                                                Map req = new HashMap();
-                                                req.put("id_material", productId);
-                                                req.put("uom", detail.getUom());
-                                                minMaxOrder = new Database(mContext).getMinimalOrder(req);
-                                                stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
-                                                Material mat = new Material();
-                                                mat.setQty(qty);
-                                                mat.setId(productId);
-                                                mat.setUom(detail.getUom());
-                                                itemOrder = new Database(mContext).getQtySmallUom(mat);
-
-                                                if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty : minMaxOrder.getQtyMax())) {
+                                        double qty = Double.parseDouble(s.toString().replace(",", ""));
+                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
+                                            Map req = new HashMap();
+                                            req.put("id_material", productId);
+                                            req.put("uom", detail[0].getUom());
+                                            req.put("id_customer", outletHeader.getId());
+                                            minMaxOrder = new Database(mContext).getMinimalOrder(req);
+                                            if (!Helper.isCanvasSales(user)) {
+//                                            detail.setQty(qty);
+//                                            if (!Helper.isNullOrEmpty(detail.getUom())) {
+//                                                detail.setPrice(new Database(mContext).getPrice(detail));
+//                                                holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+//                                                double priceTotal = detail.getPrice() - detail.getTotalDiscount();
+//                                                holder.txtTotal.setText("Rp. " + format.format(priceTotal));
+//                                            }
+                                                boolean overMaxQty = minMaxOrder.getQtyMax() == 0 ? true : false;
+//                                                if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty + 1 : minMaxOrder.getQtyMax())) {
+                                                if (qty < minMaxOrder.getQtyMin() || (overMaxQty ? false : (qty > minMaxOrder.getQtyMax()))) {
                                                     String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
-                                                    mContext.runOnUiThread(new Runnable() {
-                                                        public void run() {
-                                                            holder.edtQty.clearFocus();
-                                                            holder.edtQty.setText("0");
-                                                            holder.txtPrice.setText("0");
-                                                            holder.txtTotal.setText("0");
-                                                            holder.llDiscountAll.setVisibility(View.GONE);
-                                                        }
+                                                    mContext.runOnUiThread(() -> {
+                                                        holder.edtQty.clearFocus();
+                                                        holder.edtQty.setText("0");
+                                                        holder.txtPrice.setText("0");
+                                                        holder.txtTotal.setText("0");
+                                                        holder.llDiscountAll.setVisibility(View.GONE);
                                                     });
                                                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                                    detail.setQty(0);
-                                                    detail.setPrice(0);
-                                                    detail.setDiskonList(null);
-                                                    detail.setTotalDiscount(0);
-                                                } else if (itemOrder.getQty() > stockItem.getQty()) {
-                                                    String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
-                                                    mContext.runOnUiThread(new Runnable() {
-                                                        public void run() {
-                                                            holder.edtQty.clearFocus();
-                                                            holder.edtQty.setText("0");
-                                                            holder.txtPrice.setText("0");
-                                                            holder.txtTotal.setText("0");
-                                                            holder.llDiscountAll.setVisibility(View.GONE);
-                                                        }
-                                                    });
-                                                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                                    detail.setQty(0);
-                                                    detail.setPrice(0);
-                                                    detail.setDiskonList(null);
-                                                    detail.setTotalDiscount(0);
+                                                    detail[0].setQty(0);
+                                                    detail[0].setPrice(0);
+                                                    detail[0].setDiskonList(null);
+                                                    detail[0].setTotalDiscount(0);
                                                 } else {
-                                                    mContext.runOnUiThread(new Runnable() {
-                                                        public void run() {
-                                                            detail.setQty(qty);
-                                                            if (!Helper.isNullOrEmpty(detail.getUom())) {
-                                                                detail.setPrice(new Database(mContext).getPrice(detail));
-                                                                holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
-                                                                double priceTotal = detail.getPrice() - detail.getTotalDiscount();
-                                                                holder.txtTotal.setText("Rp. " + format.format(priceTotal));
-                                                            }
+                                                    mContext.runOnUiThread(() -> {
+                                                        detail[0].setQty(qty);
+                                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
+                                                            detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
+                                                            holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
+                                                            double priceTotal1 = detail[0].getPrice() - detail[0].getTotalDiscount();
+                                                            holder.txtTotal.setText("Rp. " + format.format(priceTotal1));
                                                         }
                                                     });
                                                 }
                                             } else {
-                                                mContext.runOnUiThread(new Runnable() {
-                                                    public void run() {
-                                                        detail.setQty(qty);
-                                                    }
-                                                });
+                                                stockItem = getAllStock(holder.getAbsoluteAdapterPosition());
+                                                Material mat = new Material();
+                                                mat.setQty(qty);
+                                                mat.setId(productId);
+                                                mat.setUom(detail[0].getUom());
+                                                itemOrder = new Database(mContext).getQtySmallUom(mat);
+                                                boolean overMaxQty = minMaxOrder.getQtyMax() == 0 ? true : false;
+//                                                if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty + 1 : minMaxOrder.getQtyMax())) {
+                                                if (qty < minMaxOrder.getQtyMin() || (overMaxQty ? false : (qty > minMaxOrder.getQtyMax()))) {
+                                                    String ket = "min qty : " + format.format(minMaxOrder.getQtyMin()) + " " + minMaxOrder.getUom() + "\n" + "max qty : " + format.format(minMaxOrder.getQtyMax()) + " " + minMaxOrder.getUom();
+                                                    mContext.runOnUiThread(() -> {
+                                                        holder.edtQty.clearFocus();
+                                                        holder.edtQty.setText("0");
+                                                        holder.txtPrice.setText("0");
+                                                        holder.txtTotal.setText("0");
+                                                        holder.llDiscountAll.setVisibility(View.GONE);
+                                                    });
+                                                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                    detail[0].setQty(0);
+                                                    detail[0].setPrice(0);
+                                                    detail[0].setDiskonList(null);
+                                                    detail[0].setTotalDiscount(0);
+                                                } else if (itemOrder.getQty() > stockItem.getQty()) {
+                                                    String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
+                                                    mContext.runOnUiThread(() -> {
+                                                        holder.edtQty.clearFocus();
+                                                        holder.edtQty.setText("0");
+                                                        holder.txtPrice.setText("0");
+                                                        holder.txtTotal.setText("0");
+                                                        holder.llDiscountAll.setVisibility(View.GONE);
+                                                    });
+                                                    Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
+                                                    detail[0].setQty(0);
+                                                    detail[0].setPrice(0);
+                                                    detail[0].setDiskonList(null);
+                                                    detail[0].setTotalDiscount(0);
+                                                } else {
+                                                    mContext.runOnUiThread(() -> {
+                                                        detail[0].setQty(qty);
+                                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
+                                                            detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
+                                                            holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
+                                                            double priceTotal12 = detail[0].getPrice() - detail[0].getTotalDiscount();
+                                                            holder.txtTotal.setText("Rp. " + format.format(priceTotal12));
+                                                        }
+                                                    });
+                                                }
                                             }
+                                        } else {
+                                            mContext.runOnUiThread(() -> detail[0].setQty(qty));
                                         }
                                     }
                                 }
@@ -656,16 +705,28 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         ;
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
-        req.put("udf_5", outletHeader.getUdf_5());
-        req.put("is_stock_request_header", stockHeader != null ?stockHeader.getIdHeader() : null);
+//        req.put("udf_5", outletHeader.getUdf_5());
+        req.put("id_sales_group", user.getId_sales_group());//gt/on
+        req.put("id_customer", outletHeader.getId());
+        req.put("type_customer", outletHeader.getType_customer());
+        req.put("sales_category", user.getSales_category());//rg/bt
+        req.put("id_stock_request_header", stockHeader != null ? stockHeader.getIdHeader() : null);
         if (Helper.isNotEmptyOrNull(mList)) {
-            req.put("price_list_code", mList.get(0).getPriceListCode());
+//            req.put("price_list_code", mList.get(0).getPriceListCode());
+//            String top = user.getId_sales_group().equals("ON") ? mList.get(0).getTop_on() : mList.get(0).getTop_gt();
+            req.put("top", mList.get(0).getTop());
             req.put("material_group_id", mList.get(0).getId_material_group());
         } else {
-            req.put("price_list_code", null);
+//            req.put("price_list_code", null);
+            req.put("top", null);
             req.put("material_group_id", null);
         }
-        listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));ubah ambil materialnya
+        if (!Helper.isCanvasSales(user)) {
+            listMat.addAll(new Database(mContext).getTOMaterialExtra(req));
+        } else {
+            listMat.addAll(new Database(mContext).getCOMaterialExtra(req));
+        }
+//        listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));ubah ambil materialnya
 
         if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
             for (Material param : listMat) {
@@ -683,31 +744,31 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             listSpinner.addAll(listMat);
         }
 
-        //itung stock dari order skrg
-        for (Material materialStock : stockHeader.getMaterialList()) {
-            double qtyOrder = 0;
-            for (Material matOrder : mFilteredList) {
-                if (materialStock.getId().equals(matOrder.getId())) {
-                    Material conversionOrder = new Database(mContext).getQtySmallUom(matOrder);
-                    qtyOrder = qtyOrder + conversionOrder.getQty();
-                }
-                if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
-                    for (Material matExtra : matOrder.getExtraItem()) {
-                        if (materialStock.getId().equals(matExtra.getId())) {
-                            Material conversionExtra = new Database(mContext).getQtySmallUom(matExtra);
-                            qtyOrder = qtyOrder + conversionExtra.getQty();
+        if (Helper.isCanvasSales(user)) {
+            //itung stock dari order skrg
+            for (Material materialStock : stockHeader.getMaterialList()) {
+                double qtyOrder = 0;
+                for (Material matOrder : mFilteredList) {
+                    if (materialStock.getId().equals(matOrder.getId())) {
+                        Material conversionOrder = new Database(mContext).getQtySmallUom(matOrder);
+                        qtyOrder = qtyOrder + conversionOrder.getQty();
+                    }
+                    if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
+                        for (Material matExtra : matOrder.getExtraItem()) {
+                            if (materialStock.getId().equals(matExtra.getId())) {
+                                Material conversionExtra = new Database(mContext).getQtySmallUom(matExtra);
+                                qtyOrder = qtyOrder + conversionExtra.getQty();
+                            }
                         }
                     }
                 }
+                Material conversionStock = new Database(mContext).getQtySmallUomSisa(materialStock);
+                double qtyStock = conversionStock.getQtySisa();
+                materialStock.setQtySisa(qtyStock);
+                materialStock.setTotalQtyOrder(qtyOrder);
+                materialStock.setUom(conversionStock.getUom());
             }
-            Material conversionStock = new Database(mContext).getQtySmallUomSisa(materialStock);
-            double qtyStock = conversionStock.getQtySisa();
-            materialStock.setQtySisa(qtyStock);
-            materialStock.setTotalQtyOrder(qtyOrder);
-            materialStock.setUom(conversionStock.getUom());
-        }
 
-        if (user.getType_sales().equals("CO")) {
             listFinalStock = new ArrayList<>();
             for (Material materialMaster : listSpinner) {
                 for (Material materialStock : stockHeader.getMaterialList()) {

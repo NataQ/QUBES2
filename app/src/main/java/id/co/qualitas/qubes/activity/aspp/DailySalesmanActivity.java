@@ -227,7 +227,7 @@ public class DailySalesmanActivity extends BaseActivity {
         llOrder.setOnClickListener(v -> {
             if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
                 if (!Helper.isEmpty(user.getType_sales())) {
-                    if (user.getType_sales().equals("CO")) {
+                    if (Helper.isCanvasSales(user)) {
                         if (Helper.isEmptyOrNull(fakturList)) {
                             moveOrder();
                         } else {
@@ -927,8 +927,8 @@ public class DailySalesmanActivity extends BaseActivity {
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
                     dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));//getDctByIdCustomer
-                    fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getOutstandingFaktur
                 }
+                fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getOutstandingFaktur
 
                 setLayoutFromStatus();//first
                 setView();
@@ -1105,6 +1105,7 @@ public class DailySalesmanActivity extends BaseActivity {
             } else {
                 imgDeleteKTP.setVisibility(View.GONE);
             }
+            imgAddKTP.setVisibility(View.GONE);
         } else {
             Utils.getImageCust(DailySalesmanActivity.this, imgKTP, outletHeader.getId(), Constants.TYPE_PHOTO_KTP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
@@ -1121,6 +1122,7 @@ public class DailySalesmanActivity extends BaseActivity {
             } else {
                 imgDeleteNPWP.setVisibility(View.GONE);
             }
+            imgAddNPWP.setVisibility(View.GONE);
         } else {
             Utils.getImageCust(DailySalesmanActivity.this, imgNPWP, outletHeader.getId(), Constants.TYPE_PHOTO_NPWP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
@@ -1136,6 +1138,7 @@ public class DailySalesmanActivity extends BaseActivity {
             } else {
                 imgDeleteOutlet.setVisibility(View.GONE);
             }
+            imgAddOutlet.setVisibility(View.GONE);
         } else {
             Utils.getImageCust(DailySalesmanActivity.this, imgOutlet, outletHeader.getId(), Constants.TYPE_PHOTO_OUTLET);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {

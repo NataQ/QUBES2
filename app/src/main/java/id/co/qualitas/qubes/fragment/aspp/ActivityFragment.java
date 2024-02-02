@@ -107,7 +107,7 @@ public class ActivityFragment extends BaseFragment {
         super.onResume();
         Helper.setItemParam(Constants.CURRENTPAGE, "3");
 
-        if (user.getType_sales().equals("CO")) {
+        if (Helper.isCanvasSales(user)) {
             llStockRequest.setVisibility(View.VISIBLE);
         } else {
             llStockRequest.setVisibility(View.GONE);

@@ -264,8 +264,8 @@ public class StoreCheckActivity extends BaseActivity {
             }
         });
 
-        btnSearch.setOnClickListener(v ->{
-            if(!Helper.isEmptyEditText(editText)) {
+        btnSearch.setOnClickListener(v -> {
+            if (!Helper.isEmptyEditText(editText)) {
                 searchMat = editText.getText().toString().trim();
                 offset = 0;
                 listSpinner = initDataMaterial(searchMat);
@@ -392,7 +392,7 @@ public class StoreCheckActivity extends BaseActivity {
     private List<Material> initDataMaterial(String searchString) {
         List<Material> listSpinner = new ArrayList<>();
         List<Material> listMat = new ArrayList<>();
-        listMat.addAll(database.getAllMasterMaterial(offset, searchString));
+        listMat.addAll(database.getAllMasterMaterial(offset, searchString, user.getSales_category()));
 
         for (Material param : listMat) {
             int exist = 0;

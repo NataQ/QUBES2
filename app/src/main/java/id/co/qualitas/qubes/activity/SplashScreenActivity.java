@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -60,7 +61,6 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 
 public class SplashScreenActivity extends AppCompatActivity {
-
     private static final int MY_PERMISSIONS_REQUEST_READ_STORAGE = 0;
     private String mUSer, mProfile, mDate;
     private LoginResponse loginResponse;
@@ -78,13 +78,15 @@ public class SplashScreenActivity extends AppCompatActivity {
     private User attendance = new User();
 
     ActivityResultLauncher<String[]> mPermissionResultLauncher;
-//    private boolean isAccessBackgroundLocationPermissionGranted = false;
+    //    private boolean isAccessBackgroundLocationPermissionGranted = false;
     private boolean isLocationPermissionGranted = false;
     private boolean isReadPermissionGranted = false;
     //    private boolean isWritePermissionGranted = false;
     private boolean isCameraPermissionGranted = false;
     private boolean isNotificationPermissionGranted = false;
     private Intent intent;
+
+    final int REQUEST_CODE = 101;
 
 //    private final ActivityResultLauncher<String> requestPermissionLauncher =
 //            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -319,6 +321,14 @@ public class SplashScreenActivity extends AppCompatActivity {
         progress.show();
         new RequestUrl().execute();
 
+//        // in the below line, we are checking for permissions
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            // if permissions are not provided we are requesting for permissions.
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
+//        } else {
+//            getImei();
+//        }
+
 //        new CountDownTimer(Constants.LONG_1000, Constants.LONG_100) {
 //
 //            public void onTick(long millisUntilFinished) {
@@ -349,7 +359,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_STORAGE: {
+            case MY_PERMISSIONS_REQUEST_READ_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
@@ -357,9 +367,32 @@ public class SplashScreenActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-                return;
-            }
+                break;
+            case REQUEST_CODE:
+                if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // if permissions are granted we are displaying below toast message.
+                    Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+                    getImei();
+                } else {
+                    // in the below line, we are displaying toast message
+                    // if permissions are not granted.
+                    Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+                }
+
         }
+    }
+
+    private void getImei() {
+        String imei = "";
+        // in the below line, we are initializing our variables.
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        try {
+            imei = telephonyManager.getImei();
+        } catch (SecurityException e) {
+            imei = null;
+        }
+
+        setToast(imei);
     }
 
     public void initProgress() {

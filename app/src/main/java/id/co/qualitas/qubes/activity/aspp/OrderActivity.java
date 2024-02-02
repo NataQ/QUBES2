@@ -107,7 +107,7 @@ public class OrderActivity extends BaseActivity {
         permissionsList.addAll(Arrays.asList(permissionsStr));
 
         btnAdd.setOnClickListener(y -> {
-            if (user.getType_sales().equals("CO")) {
+            if (Helper.isCanvasSales(user)) {
                 askForPermissions(permissionsList);
             } else {
                 SessionManagerQubes.clearOrderSession();
@@ -172,8 +172,7 @@ public class OrderActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new OrderAdapter(this, mList, outletHeader, header -> {
-//            validasi kalau uda ke sync gak bisa save lagi?
-            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT && !header.isDeleted() && header.getOrder_type().equals("co")) {
                 if (!header.isStatusPaid()) {
                     dialogConfirm(header);
                 } else {

@@ -205,7 +205,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             String selected = listSpinner.get(i).toString();
             detail.setUom(selected);
             if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail.getUom())) {
-                if (!SessionManagerQubes.getUserProfile().getType_sales().equals("TO")) {
+                if (Helper.isCanvasSales(SessionManagerQubes.getUserProfile())) {
                     Map req = new HashMap();
                     req.put("id_material", productId);
                     req.put("uom", detail.getUom());
@@ -239,7 +239,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                     if (!s.toString().equals("") && !s.toString().equals("-")) {
                         double qty = Double.parseDouble(s.toString().replace(",", ""));
                         if (!Helper.isNullOrEmpty(detail.getUom())) {
-                            if (SessionManagerQubes.getUserProfile().getType_sales().equals("CO")) {
+                            if (Helper.isCanvasSales(SessionManagerQubes.getUserProfile())) {
                                 Map req = new HashMap();
                                 req.put("id_material", productId);
                                 req.put("uom", detail.getUom());
@@ -257,7 +257,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                                 } else {
                                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                                 }
-                            }else{
+                            } else {
                                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                             }
                         } else {

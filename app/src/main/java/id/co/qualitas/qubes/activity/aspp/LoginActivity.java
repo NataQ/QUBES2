@@ -1,15 +1,19 @@
 package id.co.qualitas.qubes.activity.aspp;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -92,6 +97,8 @@ public class LoginActivity extends AppCompatActivity {
     protected ProgressDialog progress;
     protected int PARAM = 0;
     private User userResponse;
+    final int REQUEST_CODE = 101;
+    private String imei;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,6 +114,21 @@ public class LoginActivity extends AppCompatActivity {
         initialize();
 
         txtVersion.setText("Version " + String.valueOf(BuildConfig.VERSION_NAME));
+
+//        // in the below line, we are initializing our variables.
+//        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//
+//        // in the below line, we are checking for permissions
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            // if permissions are not provided we are requesting for permissions.
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CODE);
+//        } else {
+//            try {
+//                imei = telephonyManager.getImei();
+//            } catch (SecurityException e) {
+//                imei = null;
+//            }
+//        }
 
         txtVersion.setOnClickListener(v -> {
         });
@@ -815,4 +837,21 @@ public class LoginActivity extends AppCompatActivity {
         });
         dialog.show();
     }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == REQUEST_CODE) {
+//            // in the below line, we are checking if permission is granted.
+//            if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                // if permissions are granted we are displaying below toast message.
+//                Toast.makeText(this, "Permission granted.", Toast.LENGTH_SHORT).show();
+//            } else {
+//                // in the below line, we are displaying toast message
+//                // if permissions are not granted.
+//                Toast.makeText(this, "Permission denied.", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
 }

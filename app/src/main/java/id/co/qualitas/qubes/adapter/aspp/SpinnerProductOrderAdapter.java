@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.OrderAddActivity;
+import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.User;
 
@@ -123,7 +124,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
         holder.text.setText(detail.getId() + " - " + detail.getNama() + " (" + detail.getId_material_group() + " - " + detail.getMaterial_group_name() + ")");
         String uomStock = String.valueOf(detail.getUomStock());
         holder.textStock.setText("Stock : " + format.format(detail.getQtySisa()) + " " + uomStock);
-        if (user.getType_sales().equals("CO")) {
+        if (Helper.isCanvasSales(user)) {
             holder.textStock.setVisibility(View.VISIBLE);
         } else {
             holder.textStock.setVisibility(View.GONE);

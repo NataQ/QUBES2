@@ -146,7 +146,7 @@ public class OrderAddActivity extends BaseActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
-            if (user.getType_sales().equals("CO")) {
+            if (Helper.isCanvasSales(user)) {
                 if (stockHeader != null) {
                     addProduct();
                 } else {
@@ -164,7 +164,7 @@ public class OrderAddActivity extends BaseActivity {
                         overLK = checkOverLk();
                         doubleBon = checkDoubleBon();
                         if (overLK || doubleBon) {
-                            if (user.getType_sales().equals("CO")) {
+                            if (Helper.isCanvasSales(user)) {
                                 setToast(ketLK + ketDB);
                             } else {
                                 dialogConfirm();
@@ -197,7 +197,7 @@ public class OrderAddActivity extends BaseActivity {
         fromDate = Helper.getTodayDate();
         paramFromDate = new SimpleDateFormat(Constants.DATE_FORMAT_1).format(fromDate);
         txtDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
-        if (user.getType_sales().equals("CO")) {
+        if (Helper.isCanvasSales(user)) {
             txtTglKirim.setText(Helper.getTodayDate(Constants.DATE_FORMAT_1));
         }
         txtTglKirim.setOnClickListener(new View.OnClickListener() {
@@ -368,7 +368,7 @@ public class OrderAddActivity extends BaseActivity {
 
     private void initData() {
         outletHeader = SessionManagerQubes.getOutletHeader();
-        if (user.getType_sales().equals("CO")) {
+        if (Helper.isCanvasSales(user)) {
             stockHeader = database.getAllStockMaterial(user);
         }
         mList = new ArrayList<>();
@@ -497,7 +497,7 @@ public class OrderAddActivity extends BaseActivity {
             for (Material mat : listSpinner) {
                 if (mat.isChecked()) {
                     boolean avaiable = false;
-                    if (user.getType_sales().equals("CO")) {
+                    if (Helper.isCanvasSales(user)) {
 //                        Material materialStock = database.getStockMaterial(new HashMap());
                         for (Material materialStock : stockHeader.getMaterialList()) {
                             if (mat.getId().equals(materialStock.getId())) {
@@ -604,7 +604,7 @@ public class OrderAddActivity extends BaseActivity {
             req.put("top", null);
             req.put("material_group_id", null);
         }
-        if (user.getType_sales().equals("TO")) {
+        if (!Helper.isCanvasSales(user)) {
             listMat.addAll(database.getTOMaterialPricing(req));
         } else {
             listMat.addAll(database.getCOMaterialPricing(req));
@@ -622,7 +622,7 @@ public class OrderAddActivity extends BaseActivity {
             }
         }
 
-        if (user.getType_sales().equals("CO")) {
+        if (Helper.isCanvasSales(user)) {
             //itung stock
             for (Material materialStock : stockHeader.getMaterialList()) {
                 double qtyOrder = 0;
@@ -766,8 +766,8 @@ public class OrderAddActivity extends BaseActivity {
                     String top = !Helper.isNullOrEmpty(outletHeader.getTop_khusus()) ? outletHeader.getTop_khusus() : (Helper.isNotEmptyOrNull(mList) ? mList.get(0).getTop() : null);
                     headerSave.setTanggal_kirim(date);
                     headerSave.setOmzet(omzet);
-                    headerSave.setIdStockHeaderBE(stockHeader.getId());
-                    headerSave.setIdStockHeaderDb(stockHeader.getId_mobile());
+                    headerSave.setIdStockHeaderBE(Helper.isCanvasSales(user) ? stockHeader.getId() : 0);
+                    headerSave.setIdStockHeaderDb(Helper.isCanvasSales(user) ? stockHeader.getId_mobile() : null);
                     headerSave.setStatus(Constants.STATUS_DRAFT);
                     headerSave.setIsSync(0);
                     headerSave.setTop(top);
@@ -775,7 +775,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setDiscount(getDiscount);
                     headerSave.setType_customer(outletHeader.getType_customer());
                     headerSave.setStatusPaid(false);
-                    headerSave.setOrder_type(user.getType_sales().equals("CO") ? Constants.ORDER_CANVAS_TYPE : Constants.ORDER_TAKING_TYPE);
+                    headerSave.setOrder_type(Helper.isCanvasSales(user) ? Constants.ORDER_CANVAS_TYPE : Constants.ORDER_TAKING_TYPE);
                     headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                     saveOrder = database.addOrder(headerSave, user);
                     return null;
@@ -830,7 +830,7 @@ public class OrderAddActivity extends BaseActivity {
                         Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
                         startActivity(intent);
                     } else {
-                        if (user.getType_sales().equals("CO")) {
+                        if (Helper.isCanvasSales(user)) {
                             if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
                                 ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
                             } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
@@ -907,20 +907,20 @@ public class OrderAddActivity extends BaseActivity {
 
         txtTitle.setText("Order");
         if (!Helper.isEmpty(user.getType_sales())) {
-            if (user.getType_sales().equals("CO")) {
+            if (Helper.isCanvasSales(user)) {
                 txtDialog.setText("Anda yakin sudah selesai order?");
             } else {
                 String text = "";
-                if (overLK) text = text + "Order ini melebihi limit customer.";
-                if (doubleBon) text = text + "\nOrder ini memiliki double bon.";
-                text = text + "\nAnda yakin ingin menyimpan order ini?";
+                if (overLK) text = text + "Order ini melebihi limit customer.\n";
+                if (doubleBon) text = text + "Order ini melebihi limit bon.\n";
+                text = text + "Anda yakin ingin menyimpan order ini?";
                 txtDialog.setText(text);
             }
         } else {
             String text = null;
-            if (overLK) text = text + "Order ini melebihi limit customer.";
-            if (doubleBon) text = text + "\nOrder ini memiliki double bon.";
-            text = text + "\nAnda yakin ingin menyimpan order ini?";
+            if (overLK) text = text + "Order ini melebihi limit customer.\n";
+            if (doubleBon) text = text + "Order ini melebihi limit bon.\n";
+            text = text + "\nda yakin ingin menyimpan order ini?";
             txtDialog.setText(text);
         }
 
@@ -936,7 +936,7 @@ public class OrderAddActivity extends BaseActivity {
             public void onClick(View v) {
                 dialog.dismiss();
                 if (!Helper.isEmpty(user.getType_sales())) {
-                    if (user.getType_sales().equals("CO")) {
+                    if (Helper.isCanvasSales(user)) {
                         dialogKredit();
                     } else {
                         saveOrderSession();//dialog confirm

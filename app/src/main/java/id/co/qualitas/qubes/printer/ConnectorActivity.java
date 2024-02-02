@@ -285,7 +285,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
             String host = url.substring(0, delimiter > 0 ? delimiter : url.length());
             int port = Integer.parseInt(url.substring(delimiter > 0 ? delimiter + 1 : 0));
             AbstractConnector connector = new NetworkConnector(this, host, port);
-            mConnectorAdapter.addLast(connector);
+            mConnectorAdapter.addLast(connector);//NetworkConnector
             mConnectorView.smoothScrollToPosition(0);
         }
 
@@ -297,7 +297,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
             for (UsbDevice device : deviceList.values()) {
                 if (manager.hasPermission(device)) {
                     AbstractConnector connector = new UsbDeviceConnector(this, manager, device);
-                    mConnectorAdapter.addLast(connector);
+                    mConnectorAdapter.addLast(connector);//UsbDeviceConnector
                     mConnectorView.smoothScrollToPosition(0);
                 }
             }
@@ -329,7 +329,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 } else {
                     connector = new BluetoothSppConnector(this, adapter, device);
                 }
-                mConnectorAdapter.addLast(connector);
+                mConnectorAdapter.addLast(connector);//BluetoothLeConnector (BluetoothSppConnector,BluetoothSppConnector)
                 mConnectorView.smoothScrollToPosition(0);
             }
         }
@@ -411,13 +411,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, (short) -255);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     if (ActivityCompat.checkSelfPermission(ConnectorActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
                     if (device.getType() == BluetoothDevice.DEVICE_TYPE_LE) {

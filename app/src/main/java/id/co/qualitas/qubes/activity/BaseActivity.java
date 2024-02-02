@@ -313,7 +313,7 @@ public class BaseActivity extends AppCompatActivity {
     public String getOrderType(Customer outletHeader, User user) {
         String orderType;
         //outletHeader.getOrder_type() != null ? (outletHeader.getOrder_type().equals("CO") ? "Canvas Order" : "Taking Order") :
-        orderType = user.getType_sales().equals("CO") ? "Canvas Order" : "Taking Order";
+        orderType = Helper.isCanvasSales(user) ?"Canvas Order" : "Taking Order";
         return orderType;
     }
 

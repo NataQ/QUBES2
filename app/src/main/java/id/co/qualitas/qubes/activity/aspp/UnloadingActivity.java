@@ -888,7 +888,7 @@ public class UnloadingActivity extends BaseActivity {
                 List<Map> photos = new ArrayList<>();
 
                 for (Customer customer : customerList) {
-                    storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                    storeCheckList.addAll(database.getAllStoreCheckDate(customer.getId(), user.getUsername()));
                     if (storeCheckList != null) {
                         setDataSyncSuccess = true;
                     } else {
@@ -939,7 +939,7 @@ public class UnloadingActivity extends BaseActivity {
                     }
 
                     //return
-                    returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                    returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
                     if (returnList != null) {
                         setDataSyncSuccess = true;
                     } else {

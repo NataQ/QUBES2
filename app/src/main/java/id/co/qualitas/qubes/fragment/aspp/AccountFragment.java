@@ -687,11 +687,12 @@ public class AccountFragment extends BaseFragment {
                     List<Customer> customerList = database.getAllCustomerCheckOut();
                     if (customerList != null) {
                         if (!customerList.isEmpty()) {
+                            storeCheckList = new ArrayList<>();
 //                            List<Material> mList = new ArrayList<>();
 //                            Map header = new HashMap();
                             for (Customer customer : customerList) {
 //                                mList = new ArrayList<>();
-                                storeCheckList = database.getAllStoreCheckDate(customer.getId(), user.getUsername());
+                                storeCheckList.addAll(database.getAllStoreCheckDate(customer.getId(), user.getUsername()));
                                 if (storeCheckList != null) {
                                     setDataSyncSuccess = true;
                                 } else {
@@ -725,7 +726,7 @@ public class AccountFragment extends BaseFragment {
                             }
                         } else {
                             setDataSyncSuccess = true;
-                            storeCheckList = new ArrayList<>();
+                            returnList = new ArrayList<>();
                         }
                     } else {
                         setDataSyncSuccess = false;
@@ -825,7 +826,7 @@ public class AccountFragment extends BaseFragment {
 //                            List<Material> mList = new ArrayList<>();
 //                            Map header = new HashMap();
                             for (Customer customer : customerList) {
-                                returnList = database.getAllReturnDate(customer.getId(), user.getUsername());
+                                returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
                                 if (returnList != null) {
                                     setDataSyncSuccess = true;
                                 } else {
@@ -937,7 +938,8 @@ public class AccountFragment extends BaseFragment {
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
                 }
-            } catch (Exception ex) {
+            } catch (
+                    Exception ex) {
                 //connection = true;
                 if (ex.getMessage() != null) {
                     Log.e("syncMaster", ex.getMessage());
