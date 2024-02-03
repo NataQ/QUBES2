@@ -104,7 +104,7 @@ public abstract class SessionManagerQubes {
         printerPrefs = context.getSharedPreferences(PREF_PRINT, Context.MODE_PRIVATE);
     }
 
-    public static void setPrinter(BluetoothConnector param) {
+    public static void setPrinter(String param) {
         if (param != null) {
             synchronized (sync) {
                 printerPrefs.edit().putString(KEY_PRINT, gson.toJson(param)).apply();
@@ -306,8 +306,8 @@ public abstract class SessionManagerQubes {
 //        return gson.fromJson(startDayPrefs.getString(KEY_START_VISIT, null), StartVisit.class);
 //    }
 
-    public static BluetoothConnector getPrinter() {
-        return gson.fromJson(printerPrefs.getString(KEY_PRINT, null), BluetoothConnector.class);
+    public static String getPrinter() {
+        return printerPrefs.getString(KEY_PRINT, null);
     }
 
     public static String getImei() {

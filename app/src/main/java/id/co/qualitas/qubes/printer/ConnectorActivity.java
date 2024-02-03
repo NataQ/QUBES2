@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -139,8 +140,86 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         initConnector();
 
         if (SessionManagerQubes.getPrinter() != null) {
-            AbstractConnector lastPrinter = SessionManagerQubes.getPrinter();
-            connectToPrinter(lastPrinter);
+            String desc = SessionManagerQubes.getPrinter();
+            connectPrinter(desc);
+        }
+    }
+
+    private void connectPrinter(String desc) {
+        BluetoothDevice mBluetoothDevice;
+        BluetoothManager bluetoothManager = null;
+        BluetoothAdapter adapter1;
+        BluetoothConnector connector1;
+
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Connecting to device...");
+        dialog.setCancelable(false);
+        dialog.show();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            mBluetoothDevice = bluetoothManager.getAdapter().getRemoteDevice(desc);
+            adapter1 = BluetoothAdapter.getDefaultAdapter();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            if (mBluetoothDevice.getType() == BluetoothDevice.DEVICE_TYPE_LE) {
+                connector1 = new BluetoothLeConnector(this, adapter1, mBluetoothDevice);
+            } else {
+                connector1 = new BluetoothSppConnector(this, adapter1, mBluetoothDevice);
+            }
+
+            if (adapter1 != null && adapter1.isDiscovering()) {
+                adapter1.cancelDiscovery();
+            }
+
+            final Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        try {
+                            connector1.connect();
+                        } catch (Exception e) {
+                            fail("Connection error: " + e.getMessage());
+                            return;
+                        }
+
+                        try {
+                            PrinterManager.instance.init(connector1);
+                        } catch (Exception e) {
+                            try {
+                                connector1.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            fail("Pinpad error: " + e.getMessage());
+                            return;
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                initPrinter();
+                                printText();
+                                onBackPressed();
+                            }
+                        });
+
+                    } finally {
+                        dialog.dismiss();
+                    }
+                }
+            });
+            thread.start();
+        } else {
+            Toast.makeText(this, "Please update your android version", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -246,8 +325,36 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (item instanceof NetworkConnector) {
+                                NetworkConnector connector = (NetworkConnector) item;
+                                String host = connector.getHost();
+                                int port = connector.getPort();
+                                SessionManagerQubes.setUrl(String.valueOf(port));
+                            } else if (item instanceof UsbDeviceConnector) {
+                                UsbDeviceConnector connector = (UsbDeviceConnector) item;
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    String name = connector.getDevice().getProductName();
+                                }
+                                String device = connector.getDevice().getDeviceName();
+                            } else if (item instanceof BluetoothConnector) {
+                                BluetoothConnector connector = (BluetoothConnector) item;
+                                if (ActivityCompat.checkSelfPermission(ConnectorActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                    // TODO: Consider calling
+                                    //    ActivityCompat#requestPermissions
+                                    // here to request the missing permissions, and then overriding
+                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                    //                                          int[] grantResults)
+                                    // to handle the case where the user grants the permission. See the documentation
+                                    // for ActivityCompat#requestPermissions for more details.
+                                    return;
+                                }
+                                String name = connector.getBluetoothDevice().getName();
+                                String desc = connector.getBluetoothDevice().getAddress();
+                                SessionManagerQubes.setPrinter(desc);
+                            } else {
+                                throw new IllegalArgumentException("Invalid connector");
+                            }
                             initPrinter();
-                            SessionManagerQubes.setPrinter((BluetoothConnector) item);
                             printText();
                             onBackPressed();
                         }
