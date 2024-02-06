@@ -283,10 +283,11 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
                     if (paramArray != null) {
                         Collections.addAll(mList, paramArray);
-                        if (startVisit.getStatus_visit() == 1) {
+                        if (startVisit != null && startVisit.getStatus_visit() == 1) {
                             database.deleteInvoiceHeader();
                             database.deleteInvoiceDetail();
                         }
+
                     }
 
                     for (Invoice param : mList) {
