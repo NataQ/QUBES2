@@ -85,11 +85,12 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett, txtLabelRoute;
+        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett, txtLabelRoute, txtNo;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtNo = itemView.findViewById(R.id.txtNo);
             txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
             txtNett = itemView.findViewById(R.id.txtNett);
             txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
@@ -110,7 +111,7 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_invoice_verification, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_invoice_verification_list, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
@@ -133,6 +134,7 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
         }
         holder.txtCustomer.setText(idCust + " - " + nameCust);
         holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getNo_invoice(), "-"));
+        holder.txtNo.setText(format.format(position));
         holder.txtAmount.setText("Rp. " + format.format(detail.getAmount()));
         holder.txtNett.setText("Rp. " + format.format(detail.getNett()));
         holder.txtPaid.setText("Rp. " + format.format(detail.getTotal_paid()));

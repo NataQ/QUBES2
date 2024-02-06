@@ -38,6 +38,7 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
+import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
 import id.co.qualitas.qubes.utils.Utils;
@@ -54,11 +55,12 @@ public class InvoiceVerificationActivity extends BaseActivity {
     private boolean saveDataSuccess = false;
     private String signature;
     private boolean isSigned;
+    private StartVisit startVisit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aspp_activity_invoice_verification);
+        setContentView(R.layout.aspp_activity_invoice_verification_list);
         initialize();
 
         btnSubmit.setOnClickListener(v -> {
@@ -73,10 +75,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
             logOut(InvoiceVerificationActivity.this);
         });
 
-        swipeLayout.setColorSchemeResources(R.color.blue_aspp,
-                R.color.green_aspp,
-                R.color.yellow_krang,
-                R.color.red_krang);
+        swipeLayout.setColorSchemeResources(R.color.blue_aspp, R.color.green_aspp, R.color.yellow_krang, R.color.red_krang);
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -217,6 +216,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
     }
 
     private void getFirstDataOffline() {
+        startVisit = database.getLastStartVisit();
         getData();
         setAdapter();
         setTotal();
@@ -280,10 +280,13 @@ public class InvoiceVerificationActivity extends BaseActivity {
                 } else if (PARAM == 2) {
                     mList = new ArrayList<>();
                     Invoice[] paramArray = Helper.ObjectToGSON(resultWsMessage.getResult(), Invoice[].class);
+
                     if (paramArray != null) {
                         Collections.addAll(mList, paramArray);
-                        database.deleteInvoiceHeader();
-                        database.deleteInvoiceDetail();
+                        if (startVisit.getStatus_visit() == 1) {
+                            database.deleteInvoiceHeader();
+                            database.deleteInvoiceDetail();
+                        }
                     }
 
                     for (Invoice param : mList) {

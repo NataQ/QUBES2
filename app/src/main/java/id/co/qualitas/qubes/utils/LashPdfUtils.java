@@ -792,7 +792,10 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(detail.get("no_customer") != null ? detail.get("no_customer").toString() : "".toString(), calibriRegular));//no cust
+            int removeCollection = detail.get("removeOrder") != null ? (int) detail.get("removeOrder") : 0;
+            String removeC = removeCollection > 0 ?"\u2022 " :"";
+
+            cell = new PdfPCell(new Phrase(removeC + detail.get("no_customer") != null ? detail.get("no_customer").toString() : "", calibriRegular));//no cust
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -822,7 +825,10 @@ public class LashPdfUtils {
             cell.setPadding(5);
             table.addCell(cell);
 
-            cell = new PdfPCell(new Phrase(detail.get("no") != null ? detail.get("no").toString() : "", calibriRegular));//no tagihan
+            int removeOrder = detail.get("removeCollection") != null ? (int) detail.get("removeCollection") : 0;
+            String removeO= removeOrder > 0 ?"\u2022 " :"";
+
+            cell = new PdfPCell(new Phrase(removeO + detail.get("no") != null ? detail.get("no").toString() : "", calibriRegular));//no tagihan
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);

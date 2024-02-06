@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.printer;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,6 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Build;
@@ -19,7 +22,12 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.se.omapi.Session;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -36,12 +44,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.activity.aspp.CollectionActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
 import id.co.qualitas.qubes.activity.aspp.OrderActivity;
+import id.co.qualitas.qubes.activity.aspp.OrderDetailActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Customer;
@@ -67,6 +78,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
     public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
     public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final Handler mHandler = new Handler();
+    private Order order;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +219,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                             @Override
                             public void run() {
                                 initPrinter();
-                                printText();
+                                printText();//pernah save printer sebelumnya
                                 onBackPressed();
                             }
                         });
@@ -356,7 +368,6 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                             }
                             initPrinter();
                             printText();
-                            onBackPressed();
                         }
                     });
                 } finally {
@@ -675,7 +686,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 //                textBuffer.append("{reset}{center}{s}Thank You!{br}");
                 //max character 32
 
-                Order order = SessionManagerQubes.getOrder();
+                order = SessionManagerQubes.getOrder();
 
                 Customer cust = database.getDetailCustomer(order.getId_customer());
                 StockRequest stock = database.getDetailStockRequest(order.getIdStockHeaderDb());
@@ -790,6 +801,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
+        final boolean[] errorPrint = {false};
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -797,18 +809,67 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                     Printer printer = PrinterManager.instance.getPrinter();
                     r.run(dialog, printer);
                 } catch (IOException e) {
+                    errorPrint[0] = true;
                     e.printStackTrace();
                     error("I/O error occurs: " + e.getMessage());
                 } catch (Exception e) {
+                    errorPrint[0] = true;
                     e.printStackTrace();
                     error("Critical error occurs: " + e.getMessage());
                     finish();
                 } finally {
+                    if (errorPrint[0]) {
+                        int printOrder = order.getPrintOrder() + 1;
+                        Map param = new HashMap();
+                        param.put("id", order.getIdHeader());
+                        param.put("print", printOrder);
+                        param.put("username", user.getUsername());
+                        database.updatePrint(param);
+
+                        if (printOrder < database.getMaxPrint()) {
+                            openDialogConfirmation();
+                        } else {
+                            setToast("Sudah mencapai maksimal print");
+                        }
+                    }
                     dialog.dismiss();
                 }
             }
         });
         t.start();
+    }
+
+    private void openDialogConfirmation() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+        txtTitle.setText("Print");
+        txtDialog.setText("Print again?");
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                printText();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                onBackPressed();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

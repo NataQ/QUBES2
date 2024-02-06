@@ -1,12 +1,18 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,23 +64,10 @@ public class OrderDetailActivity extends BaseActivity {
         initData();
 
         btnPrint.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-            } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-            } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
-                }
-            } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                }
-            } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            if (orderHeader.getPrintOrder() < database.getMaxPrint()) {
+                openDialogConfirmation();
             } else {
-                intent = new Intent(OrderDetailActivity.this, ConnectorActivity.class);
-                startActivity(intent);
+                setToast("Sudah mencapai maksimal print");
             }
         });
 
@@ -85,6 +78,60 @@ public class OrderDetailActivity extends BaseActivity {
         imgLogOut.setOnClickListener(v -> {
             logOut(OrderDetailActivity.this);
         });
+    }
+
+    private void openDialogConfirmation() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        final Dialog dialog = new Dialog(this);
+        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+        Button btnNo = dialog.findViewById(R.id.btnNo);
+        Button btnYes = dialog.findViewById(R.id.btnYes);
+        txtTitle.setText("Print");
+        txtDialog.setText("Print again?");
+        btnYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                checkBluetooth();
+            }
+        });
+
+        btnNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                onBackPressed();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void checkBluetooth() {
+        if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+        } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+        } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+            }
+        } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+            }
+        } else if (ContextCompat.checkSelfPermission(OrderDetailActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(OrderDetailActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+        } else {
+            intent = new Intent(OrderDetailActivity.this, ConnectorActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void initData() {

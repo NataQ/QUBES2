@@ -164,6 +164,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_IS_VERIF = "isVerif";
     private static final String KEY_CREATED_BY = "createdBy";
     private static final String KEY_CREATED_DATE = "createdDate";
+    private static final String KEY_PRINT_ORDER = "printOrder";
     private static final String KEY_UPDATED_BY = "updatedBy";
     private static final String KEY_UPDATED_DATE = "updatedDate";
     private static final String KEY_DELETED = "deleted";
@@ -5013,7 +5014,8 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT a.* FROM (\n" +
                 "SELECT a.*, nilai - tunai - giro - cheque- transfer - lain2 sisa_piutang FROM\n" +
                 "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, c.date tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, " +
+                "COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, coalesce(h.remove, 0) removeOrder, 0 as removeCollection \n" +
                 "FROM VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
                 "LEFT JOIN NOO z ON z.idNooDB = a.customerId\n" +
@@ -5024,12 +5026,15 @@ public class Database extends SQLiteOpenHelper {
                 "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
                 "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
                 "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
+                "LEFT JOIN (select count(*) as remove, customerId  from OrderHeader where deleted = 1 group by customerId ) \n" +
+                "h on h.customerId = a.customerId \n" +
                 "GROUP BY a.customerId, b.customerName, z.nameNoo, c.idOrderHeaderDB) a\n" +
                 "UNION\n" +
                 "SELECT b.*, jumlah - tunai - giro - cheque- transfer - lain2 sisa_piutang\n" +
                 "FROM\n" +
                 "(SELECT a.customerId no_customer, b.customerName nama_outlet, c.invoiceDate tanggal,c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, " +
+                "COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, 0 as removeOrder, coalesce(h.remove, 0) as removeCollection \n" +
                 "FROM  VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
                 "INNER JOIN InvoiceHeader c on c.customerId = a.customerId AND c.date = a.date\n" +
@@ -5039,6 +5044,8 @@ public class Database extends SQLiteOpenHelper {
                 "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
                 "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
                 "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
+                "LEFT JOIN (select count(*) as remove, customerId, invoiceNo as inv from CollectionHeader where deleted = 1\n" +
+                "group by customerId ) h on h.customerId = a.customerId and h.inv = c.invoiceNo\n" +
                 "GROUP BY a.customerId, b.customerName, c.invoiceNo, c.invoiceDate, c.invoiceTotal) b\n" +
                 ")a order by a.no_customer";
 
@@ -5062,6 +5069,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.put("lain2", cursor.getDouble(cursor.getColumnIndexOrThrow("lain2")));
                 paramModel.put("sisa_piutang", cursor.getDouble(cursor.getColumnIndexOrThrow("sisa_piutang")));
                 paramModel.put("keterangan", cursor.getString(cursor.getColumnIndexOrThrow("keterangan")));
+                paramModel.put("removeOrder", cursor.getInt(cursor.getColumnIndexOrThrow("removeOrder")));
+                paramModel.put("removeCollection", cursor.getInt(cursor.getColumnIndexOrThrow("removeCollection")));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -5294,6 +5303,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -6860,6 +6870,23 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
+    public int getMaxPrint() {
+        int result = 0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_VALUE + " FROM " + TABLE_MASTER_PARAMETER + " WHERE " + KEY_KEY_PARAMETER + " = \'MAX_PRINT_BON\'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+//            do {
+            result = Integer.parseInt(cursor.getString(cursor.getColumnIndexOrThrow(KEY_VALUE)));
+//            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+    }
+
     public float getRadius() {
         float radius = 0;
         // Select All Query
@@ -7396,6 +7423,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
                     paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                    paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                     paramModel.setMaterialList(getAllOrderDetail(paramModel.getIdHeader()));
                     arrayList.add(paramModel);
                 } while (cursor.moveToNext());
@@ -7422,6 +7450,7 @@ public class Database extends SQLiteOpenHelper {
                     Order paramModel = new Order();
                     paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
                     paramModel.setId_salesman(username);
+                    paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                     paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
@@ -7703,6 +7732,25 @@ public class Database extends SQLiteOpenHelper {
             result = true;
         } catch (Exception e) {
             Log.e("updateVisit", e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
+    public boolean updatePrint(Map param) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        boolean result = false;
+        try {
+            values.put(KEY_PRINT_ORDER, ((Integer) param.get("print")) + 1);
+            values.put(KEY_UPDATED_BY, param.get("username").toString());
+            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+            db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{param.get("id").toString()});
+//            db.setTransactionSuccessful();
+            result = true;
+        } catch (Exception e) {
+            Log.e("updatePrint", e.getMessage());
             result = false;
         }
         return result;
@@ -8240,6 +8288,7 @@ public class Database extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 paramModel = new Order();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));

@@ -22,11 +22,19 @@ public class Order {
     private boolean isDiscount;
     private boolean statusPaid;
     private double omzet;
+    private int printOrder;
     private int isSync;
     private boolean deleted;
 
     public Order() {
+    }
 
+    public int getPrintOrder() {
+        return printOrder;
+    }
+
+    public void setPrintOrder(int printOrder) {
+        this.printOrder = printOrder;
     }
 
     public boolean isDeleted() {
