@@ -173,6 +173,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -180,47 +181,17 @@
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight=".3"
+                        android:textStyle="bold"
                         android:gravity="center"
-                        android:text="No."/>
+                        android:text="No." />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Invoice Date"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Invoice No"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Due Date"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Nett"/>
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:textStyle="bold"
                         android:gravity="center"
                         android:text="Customer"/>
 
@@ -229,6 +200,34 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="Invoice No"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="Invoice Date"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="Due Date"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
                         android:gravity="center"
                         android:text="Amount"/>
 
@@ -237,6 +236,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textStyle="bold"
                         android:gravity="center"
                         android:text="Paid"/>
 
@@ -245,6 +245,16 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:text="Nett"/>
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/TextView_Small"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".7"
+                        android:textStyle="bold"
                         android:gravity="center"
                         android:text="Route"/>
 
@@ -308,7 +318,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:clipToPadding="false"
-                            tools:listitem="@layout/aspp_row_view_invoice_verification" />
+                            tools:listitem="@layout/aspp_row_view_invoice_verification_list" />
 
                     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>

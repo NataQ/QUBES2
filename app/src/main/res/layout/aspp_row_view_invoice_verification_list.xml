@@ -19,9 +19,18 @@
             style="@style/TextView_Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight=".3"
             android:gravity="center"
             android:text="No." />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtCustomer"
+            style="@style/TextView_Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Customer" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtInvoiceNo"
@@ -44,29 +53,11 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtDueDate"
             style="@style/TextView_Small"
-            android:layout_width="0dp"
+            android:layout_width="57dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:text="Due Date" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtNett"
-            style="@style/TextView_Small"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Nett" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtCustomer"
-            style="@style/TextView_Small"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Customer" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtAmount"
@@ -87,11 +78,20 @@
             android:text="Paid" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/txtLabelRoute"
+            android:id="@+id/txtNett"
             style="@style/TextView_Small"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:gravity="center"
+            android:text="Nett" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/txtLabelRoute"
+            style="@style/TextView_Small"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".7"
             android:background="@drawable/bg_label_non_route"
             android:padding="5dp"
             android:textAlignment="center"

@@ -85,12 +85,13 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett, txtLabelRoute, txtNo;
+        TextView txtInvoiceNo, txtCustomer, txtAmount, txtPaid, txtInvoiceDate, txtDueDate, txtNett, txtLabelRoute;
+//                , txtNo;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtNo = itemView.findViewById(R.id.txtNo);
+//            txtNo = itemView.findViewById(R.id.txtNo);
             txtLabelRoute = itemView.findViewById(R.id.txtLabelRoute);
             txtNett = itemView.findViewById(R.id.txtNett);
             txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
@@ -111,7 +112,7 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_invoice_verification_list, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_invoice_verification, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
@@ -124,17 +125,17 @@ public class InvoiceVerificationAdapter extends RecyclerView.Adapter<InvoiceVeri
         String nameCust = Helper.isEmpty(detail.getNama(), "");
 
         if (!Helper.isNullOrEmpty(detail.getInvoice_date())) {
-            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoice_date());
+            String invDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getInvoice_date());
             holder.txtInvoiceDate.setText(invDate);
         }
 
         if (!Helper.isNullOrEmpty(detail.getTanggal_jatuh_tempo())) {
-            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getTanggal_jatuh_tempo());
+            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTanggal_jatuh_tempo());
             holder.txtDueDate.setText(dueDate);
         }
         holder.txtCustomer.setText(idCust + " - " + nameCust);
         holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getNo_invoice(), "-"));
-        holder.txtNo.setText(format.format(position));
+//        holder.txtNo.setText(format.format(position + 1));
         holder.txtAmount.setText("Rp. " + format.format(detail.getAmount()));
         holder.txtNett.setText("Rp. " + format.format(detail.getNett()));
         holder.txtPaid.setText("Rp. " + format.format(detail.getTotal_paid()));

@@ -60,7 +60,7 @@ public class InvoiceVerificationActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.aspp_activity_invoice_verification_list);
+        setContentView(R.layout.aspp_activity_invoice_verification);
         initialize();
 
         btnSubmit.setOnClickListener(v -> {

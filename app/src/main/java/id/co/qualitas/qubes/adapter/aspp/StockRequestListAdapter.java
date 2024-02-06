@@ -112,7 +112,8 @@ public class StockRequestListAdapter extends RecyclerView.Adapter<StockRequestLi
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         StockRequest detail = mFilteredList.get(position);
-        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNo_doc(), ""));
+//        holder.txtNoDoc.setText(Helper.isEmpty(detail.getNo_doc(), ""));
+        holder.txtNoDoc.setText(Helper.isEmpty(detail.getId_mobile(), ""));
         holder.txtSuratJalan.setText(Helper.isEmpty(detail.getNo_surat_jalan(), ""));
         if (!Helper.isNullOrEmpty(detail.getReq_date())) {
             String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getReq_date());
