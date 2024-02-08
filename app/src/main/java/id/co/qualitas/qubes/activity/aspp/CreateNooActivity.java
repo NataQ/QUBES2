@@ -721,7 +721,7 @@ public class CreateNooActivity extends BaseActivity {
                     customerNoo = new Customer();
                 }
                 String text = adapterView.getItemAtPosition(i).toString();
-                customerNoo.setTop_khusus(text);
+//                customerNoo.setTop_khusus(text);
                 customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
 //                }
             }

@@ -791,6 +791,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_OMZET + " REAL,"
             + KEY_IS_DISCOUNT + " INTEGER DEFAULT 0,"
             + KEY_STATUS + " TEXT,"
+            + KEY_PRINT_ORDER + " INTEGER DEFAULT 0,"
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
@@ -4159,6 +4160,19 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
+    public int getCountInvoiceCustomer(String idCust) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? ";
+        Cursor cursor;
+
+        cursor = db.rawQuery(selectQuery, new String[]{idCust});
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
     public List<Invoice> getAllInvoiceCustomer(String idCust) {
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
@@ -5986,7 +6000,7 @@ public class Database extends SQLiteOpenHelper {
 
     public List<Material> getCOMaterialExtra(Map request) {
         List<Material> arrayList = new ArrayList<>();
-        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("material_group_id").toString() : null;
+        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("id_stock_request_header").toString() : null;
 
         String query = "select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, a.materialProductId " +
                 "from MasterMaterial a \n" +
@@ -6113,7 +6127,7 @@ public class Database extends SQLiteOpenHelper {
         String top = request.get("top") != null ? request.get("top").toString() : null;
         String type_customer = request.get("type_customer") != null ? request.get("type_customer").toString() : null;
         String material_group_id = request.get("material_group_id") != null ? request.get("material_group_id").toString() : null;
-        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("material_group_id").toString() : null;
+        String id_stock_request_header = request.get("id_stock_request_header") != null ? request.get("id_stock_request_header").toString() : null;
 
 //        select a.materialId, a.materialName, a.materialGroupId, a.materialGroupName,
 //                a.materialProductId, c.qty, c.uom, c.price, CASE WHEN 'GT' = 'ON' THEN a.topON ELSE a.topGT END AS top
@@ -6177,7 +6191,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
+                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
                     arrayList.add(paramModel);
                 } while (cursor.moveToNext());
@@ -6958,7 +6972,9 @@ public class Database extends SQLiteOpenHelper {
                 result.setLatLokasiTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_LOKASI_TAGIHAN)));
                 result.setLongLokasiTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_LOKASI_TAGIHAN)));
                 result.setInside(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)) != 0);
+                result.setInsideInt(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)));
                 result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
+                result.setInsideCheckOutInt(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)));
                 result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
                 result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
                 result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));
@@ -7208,7 +7224,9 @@ public class Database extends SQLiteOpenHelper {
                     result.setLatLokasiTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LAT_LOKASI_TAGIHAN)));
                     result.setLongLokasiTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LONG_LOKASI_TAGIHAN)));
                     result.setInside(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)) != 0);
+                    result.setInsideInt(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE)));
                     result.setInsideCheckOut(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)) != 0);
+                    result.setInsideCheckOutInt(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_INSIDE_CHECK_OUT)));
                     result.setIdPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_PAUSE_REASON)));
                     result.setNamePauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_PAUSE_REASON)));
                     result.setDescPauseReason(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DESC_PAUSE_REASON)));

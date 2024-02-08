@@ -92,6 +92,7 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.ImageType;
+import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
@@ -116,6 +117,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private CustomerInfoDctOutletAdapter dctOutletAdapter;
     private List<GroupMaxBon> fakturList;
     private List<Material> dctOutletList;
+    private List<Material> oustandingFaktur;
     private List<Promotion> promoList;
     static int h;
     static int m;
@@ -148,6 +150,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private LocationCallback locationCallback;
     private Map currentLocation;
     private int updateLocation = 0;
+    private int outstandingFaktur;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -228,7 +231,7 @@ public class DailySalesmanActivity extends BaseActivity {
             if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
                 if (!Helper.isEmpty(user.getType_sales())) {
                     if (Helper.isCanvasSales(user)) {
-                        if (Helper.isEmptyOrNull(fakturList)) {
+                        if (Helper.isEmptyOrNull(oustandingFaktur)) {
                             moveOrder();
                         } else {
                             dialogConfirm();
@@ -922,13 +925,17 @@ public class DailySalesmanActivity extends BaseActivity {
 
                 fakturList = new ArrayList<>();
                 dctOutletList = new ArrayList<>();
+                oustandingFaktur = new ArrayList<>();
                 promoList = new ArrayList<>();
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
                     dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));//getDctByIdCustomer
                 }
-                fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getOutstandingFaktur
+                fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getMaxBonByIdCustomer
+                oustandingFaktur.addAll(database.getOutstandingFaktur(outletHeader.getId()));//getOutstandingFaktur
+
+//                outstandingFaktur = database.getCountInvoiceCustomer(outletHeader.getId());
 
                 setLayoutFromStatus();//first
                 setView();

@@ -938,8 +938,7 @@ public class AccountFragment extends BaseFragment {
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, param);
                     return null;
                 }
-            } catch (
-                    Exception ex) {
+            } catch (Exception ex) {
                 //connection = true;
                 if (ex.getMessage() != null) {
                     Log.e("syncMaster", ex.getMessage());

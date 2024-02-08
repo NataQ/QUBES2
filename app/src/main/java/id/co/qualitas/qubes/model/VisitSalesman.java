@@ -26,7 +26,9 @@ public class VisitSalesman {
     private double latLokasiTagihan;
     private double longLokasiTagihan;
     private boolean inside;
+    private int insideInt;
     private boolean insideCheckOut;
+    private int insideCheckOutInt;
     private String idPauseReason;
     private String namePauseReason;
     private String descPauseReason;
@@ -45,6 +47,22 @@ public class VisitSalesman {
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public int getInsideInt() {
+        return insideInt;
+    }
+
+    public void setInsideInt(int insideInt) {
+        this.insideInt = insideInt;
+    }
+
+    public int getInsideCheckOutInt() {
+        return insideCheckOutInt;
+    }
+
+    public void setInsideCheckOutInt(int insideCheckOutInt) {
+        this.insideCheckOutInt = insideCheckOutInt;
+    }
 
     public String getPhotoCheckOut() {
         return photoCheckOut;
