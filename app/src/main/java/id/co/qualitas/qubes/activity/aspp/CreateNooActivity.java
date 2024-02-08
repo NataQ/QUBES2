@@ -417,7 +417,12 @@ public class CreateNooActivity extends BaseActivity {
         if (customerNoo.isW4()) {
             week4 = "P4" + day;
         }
-        customerNoo.setRute(week1 + (!Helper.isNullOrEmpty(week2) ? "-" + week2 : "") + (!Helper.isNullOrEmpty(week3) ? "-" + week3 : "") + (!Helper.isNullOrEmpty(week4) ? "-" + week4 : ""));
+        String rute = week1;
+        rute = rute + (!Helper.isNullOrEmpty(week2) ?(!Helper.isNullOrEmpty(rute) ?"-" + week2 :week2) : "");
+        rute = rute + (!Helper.isNullOrEmpty(week3) ?(!Helper.isNullOrEmpty(rute) ?"-" + week3 :week3) : "");
+        rute = rute + (!Helper.isNullOrEmpty(week4) ?(!Helper.isNullOrEmpty(rute) ?"-" + week4 :week4) : "");
+
+        customerNoo.setRute(rute);
         customerNoo.setSisaCreditLimit(0);
         customerNoo.setTotalTagihan(0);
         customerNoo.setIsSync(0);
@@ -722,7 +727,7 @@ public class CreateNooActivity extends BaseActivity {
                 }
                 String text = adapterView.getItemAtPosition(i).toString();
 //                customerNoo.setTop_khusus(text);
-                customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
+//                customerNoo.setUdf_5(text.equals("GT") ? "G" : "O");
 //                }
             }
 
