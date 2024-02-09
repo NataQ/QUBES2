@@ -3657,10 +3657,12 @@ public class Database extends SQLiteOpenHelper {
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and b." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 and b." + KEY_DELETED + " = 0";
 
         String selectQueryOrderExtra = "select coalesce(sum(d." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
-                "from " + TABLE_ORDER_HEADER + " a join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
-                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
+                "from " + TABLE_ORDER_HEADER + " a " +
+//                "join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n"+
+//                " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
-                "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and b." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 and b." + KEY_DELETED + " = 0 ";
+                "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and d." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 "; //and b." + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
@@ -5033,7 +5035,7 @@ public class Database extends SQLiteOpenHelper {
                 "FROM VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
                 "LEFT JOIN NOO z ON z.idNooDB = a.customerId\n" +
-                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date \n" +
+                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date and c.deleted = 0 \n" +
                 "LEFT JOIN CollectionHeader e on e.invoiceNo = c.idOrderHeaderDB\n" +
                 "LEFT JOIN CollectionDetail f on f.idCollectionHeaderDB = e.idCollectionHeaderDB AND f.typePayment = 'cash'\n" +
                 "LEFT JOIN CollectionDetail g on g.idCollectionHeaderDB = e.idCollectionHeaderDB AND g.typePayment = 'giro'\n" +
@@ -6911,7 +6913,11 @@ public class Database extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
 //            do {
-            radius = cursor.getFloat(cursor.getColumnIndexOrThrow(KEY_VALUE));
+            try {
+                radius = cursor.getFloat(cursor.getColumnIndexOrThrow(KEY_VALUE));
+            } catch (Exception e) {
+                radius = 0;
+            }
 //            } while (cursor.moveToNext());
         }
         cursor.close();
@@ -8252,6 +8258,7 @@ public class Database extends SQLiteOpenHelper {
         deleteCustomerDropSize();
         deleteCustomerMaxBon();
         deleteVisitSalesman();
+        deleteStartVisit();
         deleteStoreCheck();
         deleteOrderHeader();
         deleteOrderDetail();

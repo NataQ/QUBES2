@@ -225,7 +225,6 @@ public class VisitActivity extends BaseActivity {
         });
 
         imgLogOut.setOnClickListener(v -> {
-//            SessionManagerQubes.clearStartDaySession();//log out
             logOut(VisitActivity.this);
         });
     }
@@ -549,9 +548,13 @@ public class VisitActivity extends BaseActivity {
                                 break;
                             case 2:
                             case 3:
-                                SessionManagerQubes.setOutletHeader(outletClicked);
-                                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                                startActivity(intent);
+                                if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.CHECK_OUT_VISIT) {
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
+                                }else{
+                                    setToast("Kunjungan hari ini sudah selesai.");
+                                }
                                 break;
 
                         }
@@ -875,19 +878,6 @@ public class VisitActivity extends BaseActivity {
             } else {
                 setToast("Silahkan Start Visit");
             }
-
-//            if (startVisit != null) {
-//                if (startVisit.getStatus_visit() == 1) {
-//                    SessionManagerQubes.clearCustomerNooSession();
-//                    Helper.removeItemParam(Constants.IMAGE_TYPE);
-//                    Intent intent = new Intent(VisitActivity.this, CreateNooActivity.class);
-//                    startActivity(intent);
-//                } else {
-//                    setToast("Silahkan Start Visit");
-//                }
-//            } else {
-//                setToast("Silahkan Start Visit");
-//            }
         });
 
         swipeLayoutNoo.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -989,9 +979,13 @@ public class VisitActivity extends BaseActivity {
                                 break;
                             case 2:
                             case 3:
-                                SessionManagerQubes.setOutletHeader(outletClicked);
-                                Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
-                                startActivity(intent);
+                                if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.CHECK_OUT_VISIT) {
+                                    SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
+                                    startActivity(intent);
+                                }else{
+                                    setToast("Kunjungan hari ini sudah selesai.");
+                                }
                                 break;
 
                         }
@@ -1790,18 +1784,18 @@ public class VisitActivity extends BaseActivity {
                     setToast("Gagal membuat pdf.. Silahkan coba lagi");
                 }
 
-                if (user.getRute_inap() == 1) {
-                    new RequestUrlSync().execute();
-                } else {
-                    if (!Helper.isCanvasSales(user)) {
+//                if (user.getRute_inap() == 1) {
+//                    new RequestUrlSync().execute();
+//                } else {
+//                    if (!Helper.isCanvasSales(user)) {
                         new RequestUrlSync().execute();
-                    } else {
-                        SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
-                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
-                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-                        startActivity(intent);
-                    }
-                }
+//                    } else {???
+//                        SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
+//                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+//                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+//                        startActivity(intent);
+//                    }
+//                }
 
 //                if (user.getRute_inap() != 1) {
 //                    //bukan rute inap
@@ -2958,13 +2952,10 @@ public class VisitActivity extends BaseActivity {
                 }
                 if (listResult.size() == offlineData.size()) {//ganti sizeData
                     if (error == 0) {
-                        if (user.getRute_inap() == 1) {
-//                            startVisit.setEndDay(false);
-//                            startVisit.setStartDay(false);
-//                            SessionManagerQubes.setStartDay(startVisit);
+//                        if (user.getRute_inap() == 1) {
                             validateButton();//send all data
-                        }
-                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()) + "\nSilahkan sync ulang di menu Account");
+//                        }
+                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
                     } else {
                         setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
                     }
@@ -2973,6 +2964,13 @@ public class VisitActivity extends BaseActivity {
                 }
             } else {
                 setToast("Gagal mengirim data. Silahkan sync ulang di menu Account");
+            }
+
+            if (Helper.isCanvasSales(user)) {
+                SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
+                Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
+                Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
+                startActivity(intent);
             }
             progressDialog.dismiss();
         }

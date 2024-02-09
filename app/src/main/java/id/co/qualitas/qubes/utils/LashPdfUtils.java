@@ -44,7 +44,6 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class LashPdfUtils {
     Font calibriRegularWhite, calibriRegular, bigCalibriBold, bigCalibri, calibriBold, arialRegular, bigArialBold, arialBold, myriadproRegular;
-
     int SIZE_FONT_NORMAL = 5;
     int SIZE_FONT_BIG = 10;
     int MAX_COLUMN_TABLE = 15;
@@ -795,7 +794,7 @@ public class LashPdfUtils {
             int removeCollection = detail.get("removeOrder") != null ? (int) detail.get("removeOrder") : 0;
             String removeC = removeCollection > 0 ?"\u2022 " :"";
 
-            cell = new PdfPCell(new Phrase(removeC + detail.get("no_customer") != null ? detail.get("no_customer").toString() : "", calibriRegular));//no cust
+            cell = new PdfPCell(new Phrase(detail.get("no_customer") != null ? removeC + detail.get("no_customer").toString() : removeC + "", calibriRegular));//no cust
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -828,7 +827,7 @@ public class LashPdfUtils {
             int removeOrder = detail.get("removeCollection") != null ? (int) detail.get("removeCollection") : 0;
             String removeO= removeOrder > 0 ?"\u2022 " :"";
 
-            cell = new PdfPCell(new Phrase(removeO + detail.get("no") != null ? detail.get("no").toString() : "", calibriRegular));//no tagihan
+            cell = new PdfPCell(new Phrase(detail.get("no") != null ? removeO + detail.get("no").toString() : removeO + "", calibriRegular));//no tagihan
             cell.setUseAscender(true);
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);

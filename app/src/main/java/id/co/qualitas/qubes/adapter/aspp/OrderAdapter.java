@@ -208,8 +208,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
             TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
             Button btnNo = alertDialog.findViewById(R.id.btnNo);
             Button btnYes = alertDialog.findViewById(R.id.btnYes);
-            txtTitle.setText("Delete Payment");
-            txtDialog.setText("Are you sure want to delete this payment?");
+            txtTitle.setText("Delete Order");
+            txtDialog.setText("Are you sure want to delete this order?");
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

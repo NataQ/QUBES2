@@ -282,21 +282,48 @@ public class CreateNooActivity extends BaseActivity {
         setEditTextListener(edtNik3, edtNik4);
         setEditTextListener(edtNik4, null);
 
-        cb1.setOnCheckedChangeListener(new checkWeek());
-        cb2.setOnCheckedChangeListener(new checkWeek());
-        cb3.setOnCheckedChangeListener(new checkWeek());
-        cb4.setOnCheckedChangeListener(new checkWeek());
+        cb1.setOnCheckedChangeListener(new checkWeek1());
+        cb2.setOnCheckedChangeListener(new checkWeek2());
+        cb3.setOnCheckedChangeListener(new checkWeek3());
+        cb4.setOnCheckedChangeListener(new checkWeek4());
     }
 
-    class checkWeek implements CompoundButton.OnCheckedChangeListener {
+    class checkWeek1 implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (customerNoo == null) {
                 customerNoo = new Customer();
             }
             customerNoo.setW1(cb1.isChecked());
+        }
+    }
+
+    class checkWeek2 implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
             customerNoo.setW2(cb2.isChecked());
+        }
+    }
+
+    class checkWeek3 implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
             customerNoo.setW3(cb3.isChecked());
+        }
+    }
+
+    class checkWeek4 implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (customerNoo == null) {
+                customerNoo = new Customer();
+            }
             customerNoo.setW4(cb4.isChecked());
         }
     }
@@ -418,9 +445,9 @@ public class CreateNooActivity extends BaseActivity {
             week4 = "P4" + day;
         }
         String rute = week1;
-        rute = rute + (!Helper.isNullOrEmpty(week2) ?(!Helper.isNullOrEmpty(rute) ?"-" + week2 :week2) : "");
-        rute = rute + (!Helper.isNullOrEmpty(week3) ?(!Helper.isNullOrEmpty(rute) ?"-" + week3 :week3) : "");
-        rute = rute + (!Helper.isNullOrEmpty(week4) ?(!Helper.isNullOrEmpty(rute) ?"-" + week4 :week4) : "");
+        rute = rute + (!Helper.isNullOrEmpty(week2) ? (!Helper.isNullOrEmpty(rute) ? "-" + week2 : week2) : "");
+        rute = rute + (!Helper.isNullOrEmpty(week3) ? (!Helper.isNullOrEmpty(rute) ? "-" + week3 : week3) : "");
+        rute = rute + (!Helper.isNullOrEmpty(week4) ? (!Helper.isNullOrEmpty(rute) ? "-" + week4 : week4) : "");
 
         customerNoo.setRute(rute);
         customerNoo.setSisaCreditLimit(0);
@@ -1634,8 +1661,8 @@ public class CreateNooActivity extends BaseActivity {
         edtLokasi.setText(Helper.isEmpty(customerNoo.getLocation(), ""));
         edtJenisUsaha.setText(Helper.isEmpty(customerNoo.getJenis_usaha(), ""));
         edtLamaUsaha.setText(Helper.isEmpty(customerNoo.getLama_usaha(), ""));
-        txtTypeToko.setText(Helper.isEmpty(customerNoo.getType_customer(), ""));
-        txtPriceListType.setText(Helper.isEmpty(customerNoo.getType_price(), ""));
+        txtTypeToko.setText(Helper.isEmpty(customerNoo.getName_type_customer(), ""));
+        txtPriceListType.setText(Helper.isEmpty(customerNoo.getName_type_customer(), ""));
         txtCreditLimit.setText(customerNoo.getLimit_kredit() != 0 ? format.format(customerNoo.getLimit_kredit()) : format.format(Double.parseDouble(database.getCreditLimit() != null ? database.getCreditLimit() : "0")));
         edtRoute.setText(Helper.isEmpty(customerNoo.getRute(), Helper.getTodayRoute()));
 
