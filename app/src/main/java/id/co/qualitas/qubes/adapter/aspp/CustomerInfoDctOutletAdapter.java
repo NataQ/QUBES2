@@ -101,7 +101,7 @@ public class CustomerInfoDctOutletAdapter extends RecyclerView.Adapter<CustomerI
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_outstanding_dct, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_faktur_dct, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 

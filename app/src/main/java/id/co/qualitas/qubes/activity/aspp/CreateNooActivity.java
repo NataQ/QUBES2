@@ -807,7 +807,7 @@ public class CreateNooActivity extends BaseActivity {
         RecyclerView rv = dialog.findViewById(R.id.list_view);
 
         List<CustomerType> arrayList = new ArrayList<>();
-        arrayList.addAll(database.getAllCustomerType());
+        arrayList.addAll(database.getAllCustomerType());//openDialogTypeOutlet
 
         typeTokoAdapter = new FilteredSpinnerTypePriceAdapter(CreateNooActivity.this, 1, arrayList, (header, adapterPosition) -> {
             if (customerNoo == null) {

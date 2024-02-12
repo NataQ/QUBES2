@@ -204,7 +204,14 @@ public class CollectionFormActivity extends BaseActivity {
                     request.put("mListCash", mListCash);
                     request.put("isSync", isSync);
                     if (colLFrom == 3) {
-                        if (totalAmountPaid > orderHeader.getOmzet() || totalAmountPaid == orderHeader.getOmzet()) {
+                        double paid = 0;
+                        if (Helper.isNotEmptyOrNull(mListMaster)) {
+                            paid = orderHeader.getOmzet() - mListMaster.get(0).getTotalAmountPaid();
+                        } else {
+                            paid = orderHeader.getOmzet();
+                        }
+                        if (totalAmountPaid > paid || totalAmountPaid == paid) {
+//                        if (totalAmountPaid > nett || totalAmountPaid == nett) {
                             request.put("isPaid", 1);
                             orderHeader.setStatusPaid(true);
                         } else {

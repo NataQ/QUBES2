@@ -153,7 +153,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
         if (SessionManagerQubes.getPrinter() != null) {
             String desc = SessionManagerQubes.getPrinter();
-            connectPrinter(desc);
+            connectPrinter(desc.replace("\"", ""));
         }
     }
 
@@ -165,73 +165,79 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Connecting to device...");
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.show();
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-            mBluetoothDevice = bluetoothManager.getAdapter().getRemoteDevice(desc);
-            adapter1 = BluetoothAdapter.getDefaultAdapter();
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            if (mBluetoothDevice.getType() == BluetoothDevice.DEVICE_TYPE_LE) {
-                connector1 = new BluetoothLeConnector(this, adapter1, mBluetoothDevice);
-            } else {
-                connector1 = new BluetoothSppConnector(this, adapter1, mBluetoothDevice);
-            }
-
-            if (adapter1 != null && adapter1.isDiscovering()) {
-                adapter1.cancelDiscovery();
-            }
-
-            final Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        try {
-                            connector1.connect();
-                        } catch (Exception e) {
-                            fail("Connection error: " + e.getMessage());
-                            return;
-                        }
-
-                        try {
-                            PrinterManager.instance.init(connector1);
-                        } catch (Exception e) {
-                            try {
-                                connector1.close();
-                            } catch (IOException e1) {
-                                e1.printStackTrace();
-                            }
-                            fail("Pinpad error: " + e.getMessage());
-                            return;
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                initPrinter();
-                                printText();//pernah save printer sebelumnya
-                                onBackPressed();
-                            }
-                        });
-
-                    } finally {
-                        dialog.dismiss();
-                    }
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+                mBluetoothDevice = bluetoothManager.getAdapter().getRemoteDevice(desc);
+                adapter1 = BluetoothAdapter.getDefaultAdapter();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
                 }
-            });
-            thread.start();
-        } else {
-            Toast.makeText(this, "Please update your android version", Toast.LENGTH_SHORT).show();
+                if (mBluetoothDevice.getType() == BluetoothDevice.DEVICE_TYPE_LE) {
+                    connector1 = new BluetoothLeConnector(this, adapter1, mBluetoothDevice);
+                } else {
+                    connector1 = new BluetoothSppConnector(this, adapter1, mBluetoothDevice);
+                }
+
+                if (adapter1 != null && adapter1.isDiscovering()) {
+                    adapter1.cancelDiscovery();
+                }
+
+                final Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            try {
+                                connector1.connect();
+                            } catch (Exception e) {
+                                fail("Connection error: " + e.getMessage());
+                                return;
+                            }
+
+                            try {
+                                PrinterManager.instance.init(connector1);
+                            } catch (Exception e) {
+                                try {
+                                    connector1.close();
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                                fail("Pinpad error: " + e.getMessage());
+                                return;
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    initPrinter();
+                                    printText();//pernah save printer sebelumnya
+                                    onBackPressed();
+                                }
+                            });
+
+                        } finally {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                thread.start();
+            } else {
+                Toast.makeText(this, "Please update your android version", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        } catch (Exception e) {
+//            setToast("");
+            dialog.dismiss();
         }
     }
 
@@ -361,7 +367,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                                     return;
                                 }
                                 String name = connector.getBluetoothDevice().getName();
-                                String desc = connector.getBluetoothDevice().getAddress();
+                                String desc = connector.getBluetoothDevice().getAddress().replace("\"", "");
                                 SessionManagerQubes.setPrinter(desc);
                             } else {
                                 throw new IllegalArgumentException("Invalid connector");
@@ -818,25 +824,33 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                     error("Critical error occurs: " + e.getMessage());
                     finish();
                 } finally {
-                    if (errorPrint[0]) {
-                        int printOrder = order.getPrintOrder() + 1;
-                        Map param = new HashMap();
-                        param.put("id", order.getIdHeader());
-                        param.put("print", printOrder);
-                        param.put("username", user.getUsername());
-                        database.updatePrint(param);
-
-                        if (printOrder < database.getMaxPrint()) {
-                            openDialogConfirmation();
-                        } else {
-                            setToast("Sudah mencapai maksimal print");
-                        }
+                    if (!errorPrint[0]) {
+                        updateMaxPrint();
                     }
                     dialog.dismiss();
                 }
             }
         });
         t.start();
+    }
+
+    private void updateMaxPrint() {
+        int printOrder = order.getPrintOrder() + 1;
+        Map param = new HashMap();
+        param.put("id", order.getIdHeader());
+        param.put("print", printOrder);
+        param.put("username", user.getUsername());
+        database.updatePrint(param);
+
+        if (printOrder < database.getMaxPrint()) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    openDialogConfirmation();
+                }
+            });
+        } else {
+            setToast("Sudah mencapai maksimal print");
+        }
     }
 
     private void openDialogConfirmation() {

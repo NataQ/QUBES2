@@ -135,7 +135,8 @@ public class Constants {
     public static final int FAILURE_RESULT = 1;
 
     public static String URL = "http://139.255.33.84:8282";
-    //    public static String IP = "192.168.1.18:8282";
+//    public static String URL = "http://192.168.1.7:8282";
+        public static String IP = "139.255.33.84:8282";
     public static final String TOKEN = "TOKEN";
     public static final String REGISTERID = "";
 

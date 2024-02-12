@@ -175,6 +175,7 @@ public class CollectionCashAdapter extends RecyclerView.Adapter<CollectionCashAd
 
                     @Override
                     public void afterTextChanged(Editable s) {
+
                         Helper.setDotCurrency(edtPaid, this, s);
                     }
                 });

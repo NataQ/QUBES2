@@ -602,7 +602,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center_vertical"
-                            android:text="Outstanding Faktur"
+                            android:text="Limit Faktur"
                             android:textAllCaps="true"
                             android:textColor="@color/black_aspp"
                             android:textStyle="bold" />
@@ -634,18 +634,18 @@
                         android:orientation="horizontal">
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rvOutstandingFaktur"
+                            android:id="@+id/rvLimitFaktur"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            tools:listitem="@layout/aspp_row_view_outstanding_dct"/>
+                            tools:listitem="@layout/aspp_row_view_faktur_dct"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rvDCTOutlet"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            tools:listitem="@layout/aspp_row_view_outstanding_dct"/>
+                            tools:listitem="@layout/aspp_row_view_faktur_dct"/>
 
                     </LinearLayout>
                 </LinearLayout>

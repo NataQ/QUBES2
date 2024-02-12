@@ -79,7 +79,7 @@ import java.util.Map;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.BaseActivity;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoDctOutletAdapter;
-import id.co.qualitas.qubes.adapter.aspp.CustomerInfoOutstandingFakturAdapter;
+import id.co.qualitas.qubes.adapter.aspp.CustomerInfoLimitFakturAdapter;
 import id.co.qualitas.qubes.adapter.aspp.CustomerInfoPromoAdapter;
 import id.co.qualitas.qubes.adapter.aspp.FilteredSpinnerReasonAdapter;
 import id.co.qualitas.qubes.constants.Constants;
@@ -92,7 +92,6 @@ import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.ImageType;
-import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Promotion;
 import id.co.qualitas.qubes.model.Reason;
@@ -111,13 +110,13 @@ public class DailySalesmanActivity extends BaseActivity {
     private ImageView imgKTP, imgNPWP, imgOutlet, imgPause;
     private ImageView imgDeleteKTP, imgDeleteNPWP, imgDeleteOutlet;
     private ImageView imgAddKTP, imgAddNPWP, imgAddOutlet;
-    private RecyclerView rvPromo, rvOutstandingFaktur, rvDCTOutlet;
+    private RecyclerView rvPromo, rvLimitFaktur, rvDCTOutlet;
     private CustomerInfoPromoAdapter promoAdapter;
-    private CustomerInfoOutstandingFakturAdapter fakturAdapter;
+    private CustomerInfoLimitFakturAdapter limitFakturAdapter;
     private CustomerInfoDctOutletAdapter dctOutletAdapter;
-    private List<GroupMaxBon> fakturList;
+    private List<GroupMaxBon> limitFakturList;
     private List<Material> dctOutletList;
-    private List<Material> oustandingFaktur;
+//    private List<Material> oustandingFaktur;
     private List<Promotion> promoList;
     static int h;
     static int m;
@@ -151,6 +150,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private Map currentLocation;
     private int updateLocation = 0;
     private int outstandingFaktur;
+    private double totalTagihan = 0;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -231,7 +231,10 @@ public class DailySalesmanActivity extends BaseActivity {
             if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
                 if (!Helper.isEmpty(user.getType_sales())) {
                     if (Helper.isCanvasSales(user)) {
-                        if (Helper.isEmptyOrNull(oustandingFaktur)) {
+//                        if (Helper.isEmptyOrNull(oustandingFaktur)) {
+                        double tagihanInvoice = database.getTotalTagihanInvoiceCustomer(outletHeader.getId());
+//                        if (outstandingFaktur == 0) {
+                        if (tagihanInvoice == 0) {
                             moveOrder();
                         } else {
                             dialogConfirm();
@@ -886,10 +889,10 @@ public class DailySalesmanActivity extends BaseActivity {
     }
 
     private void setView() {
-        fakturAdapter = new CustomerInfoOutstandingFakturAdapter(this, fakturList, header -> {
+        limitFakturAdapter = new CustomerInfoLimitFakturAdapter(this, limitFakturList, header -> {
         });
 
-        rvOutstandingFaktur.setAdapter(fakturAdapter);
+        rvLimitFaktur.setAdapter(limitFakturAdapter);
 
         dctOutletAdapter = new CustomerInfoDctOutletAdapter(this, dctOutletList, header -> {
         });
@@ -910,7 +913,8 @@ public class DailySalesmanActivity extends BaseActivity {
             if (visitSales != null) {
                 txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
                 txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
-                txtTotalTagihan.setText(format.format(database.getTotalTagihanCustomer(outletHeader.getId())));
+                totalTagihan = database.getTotalTagihanInvoiceCustomer(outletHeader.getId()) + database.getTotalTagihanOrderCustomer(outletHeader.getId());
+                txtTotalTagihan.setText(format.format(totalTagihan));
                 txtSisaKreditLimit.setText(format.format(database.getLKCustomer(outletHeader)));
                 txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
                 txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
@@ -923,19 +927,19 @@ public class DailySalesmanActivity extends BaseActivity {
                 String nameTypeCust = Helper.isEmpty(outletHeader.getName_type_customer(), "");
                 txtTypeOutlet.setText(idTypeCust + " - " + nameTypeCust);
 
-                fakturList = new ArrayList<>();
+                limitFakturList = new ArrayList<>();
                 dctOutletList = new ArrayList<>();
-                oustandingFaktur = new ArrayList<>();
+//                oustandingFaktur = new ArrayList<>();
                 promoList = new ArrayList<>();
 
                 if (!outletHeader.isNoo()) {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
                     dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));//getDctByIdCustomer
                 }
-                fakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getMaxBonByIdCustomer
-                oustandingFaktur.addAll(database.getOutstandingFaktur(outletHeader.getId()));//getOutstandingFaktur
+                limitFakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getMaxBonByIdCustomer
+//                oustandingFaktur.addAll(database.getOutstandingFaktur(outletHeader.getId()));//getOutstandingFaktur
 
-//                outstandingFaktur = database.getCountInvoiceCustomer(outletHeader.getId());
+                outstandingFaktur = database.getCountInvoiceCustomer(outletHeader.getId());
 
                 setLayoutFromStatus();//first
                 setView();
@@ -988,9 +992,9 @@ public class DailySalesmanActivity extends BaseActivity {
         rvDCTOutlet = findViewById(R.id.rvDCTOutlet);
         rvDCTOutlet.setLayoutManager(new LinearLayoutManager(this));
         rvDCTOutlet.setHasFixedSize(true);
-        rvOutstandingFaktur = findViewById(R.id.rvOutstandingFaktur);
-        rvOutstandingFaktur.setLayoutManager(new LinearLayoutManager(this));
-        rvOutstandingFaktur.setHasFixedSize(true);
+        rvLimitFaktur = findViewById(R.id.rvLimitFaktur);
+        rvLimitFaktur.setLayoutManager(new LinearLayoutManager(this));
+        rvLimitFaktur.setHasFixedSize(true);
         rvPromo = findViewById(R.id.rvPromo);
         rvPromo.setLayoutManager(new LinearLayoutManager(this));
         rvPromo.setHasFixedSize(true);

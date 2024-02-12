@@ -7,8 +7,17 @@ import java.io.Serializable;
 public class CustomerType implements Serializable{
     @SerializedName("id")
     private String id;
+    private String sales_group;
     private String type_price;
     private String name;
+
+    public String getSales_group() {
+        return sales_group;
+    }
+
+    public void setSales_group(String sales_group) {
+        this.sales_group = sales_group;
+    }
 
     public String getId() {
         return id;

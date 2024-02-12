@@ -193,8 +193,8 @@ public class CollectionGiroAdapter extends RecyclerView.Adapter<CollectionGiroAd
             holder.txtTglCair.setText(null);
         }
 
-        List<Bank> bankASPPList = database.getAllBank("Bank ASPP");
-        List<Bank> bankCustomerList = database.getAllBank("Bank Customer");
+        List<Bank> bankASPPList = database.getAllBank("Bank ASPP");//Bank ASPP
+        List<Bank> bankCustomerList = database.getAllBank("Bank Customer");//Bank Customer
 
         holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);

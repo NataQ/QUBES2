@@ -19,7 +19,7 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.DailySalesmanActivity;
 import id.co.qualitas.qubes.model.GroupMaxBon;
 
-public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<CustomerInfoOutstandingFakturAdapter.Holder> implements Filterable {
+public class CustomerInfoLimitFakturAdapter extends RecyclerView.Adapter<CustomerInfoLimitFakturAdapter.Holder> implements Filterable {
     private List<GroupMaxBon> mList;
     private List<GroupMaxBon> mFilteredList;
     private LayoutInflater mInflater;
@@ -28,7 +28,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public CustomerInfoOutstandingFakturAdapter(DailySalesmanActivity mContext, List<GroupMaxBon> mList, OnAdapterListener onAdapterListener) {
+    public CustomerInfoLimitFakturAdapter(DailySalesmanActivity mContext, List<GroupMaxBon> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -101,7 +101,7 @@ public class CustomerInfoOutstandingFakturAdapter extends RecyclerView.Adapter<C
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_outstanding_dct, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_faktur_dct, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
