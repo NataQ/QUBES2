@@ -831,20 +831,25 @@ public class OrderAddActivity extends BaseActivity {
                         startActivity(intent);
                     } else {
                         if (Helper.isCanvasSales(user)) {
-                            if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
-                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
-                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH}, PERMISSION_BLUETOOTH);
+                                } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_ADMIN}, PERMISSION_BLUETOOTH_ADMIN);
+                                } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, PERMISSION_BLUETOOTH_CONNECT);
+                                    }
+                                } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                        ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
+                                    }
+                                } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+                                } else {
+                                    intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
+                                    startActivity(intent);
                                 }
-                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                    ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, PERMISSION_BLUETOOTH_SCAN);
-                                }
-                            } else if (ContextCompat.checkSelfPermission(OrderAddActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(OrderAddActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
                             } else {
                                 intent = new Intent(OrderAddActivity.this, ConnectorActivity.class);
                                 startActivity(intent);

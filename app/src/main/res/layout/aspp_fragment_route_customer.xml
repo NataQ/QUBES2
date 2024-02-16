@@ -61,18 +61,18 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight=".7"
                     android:background="@drawable/edit_text_search"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="6dp">
+                    android:padding="8dp">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_search_aspp" />
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtSearch"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -88,16 +88,18 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight=".3"
                     android:layout_marginStart="5dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <Spinner
+                    <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/spinnerRouteCustomer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_spinner_new"/>
 
                     <!--                    <ImageView-->
                     <!--                        android:id="@+id/imgFilter"-->

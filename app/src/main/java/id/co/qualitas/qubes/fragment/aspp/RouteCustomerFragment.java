@@ -171,7 +171,7 @@ public class RouteCustomerFragment extends BaseFragment {
         List<String> listSpinner = new ArrayList<>();
         listSpinner.add("Route");
         listSpinner.add("All");
-        setSpinnerAdapter3(listSpinner, spinnerRouteCustomer);
+        setSpinnerRoute(listSpinner, spinnerRouteCustomer);
 
 //        spnRouteCustAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, listSpinner);
 //        spnRouteCustAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

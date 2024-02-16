@@ -1522,21 +1522,21 @@ public class VisitActivity extends BaseActivity {
                 Helper.takePhoto(VisitActivity.this);
             }
         } else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
-                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
-                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                    Constants.REQUEST_CAMERA_CODE,
-                                    R.string.camera_and_storage_permission_not_granted)
-                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
-                }
-            } else {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+//                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) ||
+//                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                    ConfirmationDialogFragment.newInstance(R.string.camera_permission_confirmation,
+//                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                                    Constants.REQUEST_CAMERA_CODE,
+//                                    R.string.camera_and_storage_permission_not_granted)
+//                            .show(getSupportFragmentManager(), Constants.FRAGMENT_DIALOG);
+//                } else {
+//                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
+//                }
+//            } else {
                 Helper.takePhoto(VisitActivity.this);
-            }
+//            }
         }
     }
 
@@ -3068,7 +3068,8 @@ public class VisitActivity extends BaseActivity {
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
             Helper.takePhoto(VisitActivity.this);
-        } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+        } else if (requestCode == PERMISSION_REQUEST_CODE && (grantResults.length > 0 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
             endTodayVisit();//end day/visit
         } else if (requestCode == Constants.LOCATION_PERMISSION_REQUEST
                 && grantResults.length > 0

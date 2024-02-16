@@ -622,7 +622,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
-                llKredit.setVisibility(View.VISIBLE);
+                llKredit.setVisibility(View.GONE);
 
                 buttonCash.setEnabled(true);
                 buttonTransfer.setEnabled(true);
@@ -650,7 +650,7 @@ public class CollectionFormActivity extends BaseActivity {
                 llGiro.setVisibility(View.GONE);
                 llCheque.setVisibility(View.GONE);
                 llLain.setVisibility(View.GONE);
-                llKredit.setVisibility(View.VISIBLE);
+                llKredit.setVisibility(View.GONE);
 
                 buttonCash.setEnabled(false);
                 buttonTransfer.setEnabled(false);

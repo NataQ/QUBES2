@@ -69,7 +69,6 @@ public class OrderActivity extends BaseActivity {
     ActivityResultLauncher<String[]> permissionsLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(),
                     new ActivityResultCallback<Map<String, Boolean>>() {
-                        @RequiresApi(api = Build.VERSION_CODES.M)
                         @Override
                         public void onActivityResult(Map<String, Boolean> result) {
                             ArrayList<Boolean> list = new ArrayList<>(result.values());
@@ -108,7 +107,13 @@ public class OrderActivity extends BaseActivity {
 
         btnAdd.setOnClickListener(y -> {
             if (Helper.isCanvasSales(user)) {
-                askForPermissions(permissionsList);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    askForPermissions(permissionsList);
+                } else {
+                    SessionManagerQubes.clearOrderSession();
+                    Intent intent = new Intent(OrderActivity.this, OrderAddActivity.class);
+                    startActivity(intent);
+                }
             } else {
                 SessionManagerQubes.clearOrderSession();
                 Intent intent = new Intent(OrderActivity.this, OrderAddActivity.class);

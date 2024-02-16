@@ -4454,7 +4454,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setRoute(Helper.checkTodayRoute(paramModel.getRute()));
 
                 if (currentLocation != null) {
-                    double distance = Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
+                    int distance = (int) Helper.distance(paramModel.getLatitude(), paramModel.getLongitude(), currentLocation.getLatitude(), currentLocation.getLongitude(), "K");
                     paramModel.setMileage(format.format(distance));
                 }
 

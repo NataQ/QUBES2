@@ -2592,6 +2592,23 @@ public class BaseFragment extends Fragment implements SearchView.OnQueryTextList
         spinner.setAdapter(spinnerAdapter);
     }
 
+    public void setSpinnerRoute(List<String> items, Spinner spinner) {
+        spinnerAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_route) {
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text = view.findViewById(R.id.text1);
+                text.setTextColor(getResources().getColor(R.color.black));
+                return view;
+            }
+        };
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.addAll(items);
+        spinner.setAdapter(spinnerAdapter);
+    }
+
     public void notifySpinnerAdapterDataChanged() {
         spinnerAdapter.notifyDataSetChanged();
     }
