@@ -124,7 +124,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
     @Override
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
-        Material detail = mFilteredList.get(position);
+        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         List<String> listSpinner = new Database(mContext).getUom(detail.getId());
         if (listSpinner == null || listSpinner.size() == 0) {
@@ -177,7 +177,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
                 Helper.setDotCurrency(holder.edtQty, this, s);
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
                     double qty = Double.parseDouble(s.toString().replace(",", ""));
-                    detail.setQty(qty);
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                 }
 //                else {
 //                    detail.setQty(0);
@@ -189,7 +189,7 @@ public class StockRequestAddAdapter extends RecyclerView.Adapter<StockRequestAdd
             @Override
             public void onItemSelected(AdapterView adapterView, View view, int position, long l) {
                 String selected = listSpinner.get(position).toString();
-                detail.setUom(selected);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setUom(selected);
             }
 
             @Override

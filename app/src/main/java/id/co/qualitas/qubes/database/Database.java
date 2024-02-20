@@ -3313,7 +3313,45 @@ public class Database extends SQLiteOpenHelper {
                 "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
                 "where a.customerId = ? and a.isPaid = 0 \n" +
                 "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
-                "order by a.idGroupMaxBon  ";
+                "order by a.idGroupMaxBon asc";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                GroupMaxBon paramModel = new GroupMaxBon();
+                paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+                paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+                paramModel.setLimits(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LIMITS)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<GroupMaxBon> getUsedBonByIdCustomer(String idCust) {
+        List<GroupMaxBon> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
+                "COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
+                "from MasterGroupSalesMaxBon a \n" +
+                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
+                "and b.customerId = ? \n" +
+                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
+                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
+                "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
+                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
+                "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
+                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
+                "from OrderHeader a \n" +
+                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
+                "where a.customerId = ? and a.isPaid = 0 \n" +
+                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
+                "order by a.idGroupMaxBon  asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
@@ -3662,7 +3700,7 @@ public class Database extends SQLiteOpenHelper {
         String selectQueryOrderExtra = "select coalesce(sum(d." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_ORDER_HEADER + " a " +
 //                "join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
-                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n"+
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n" +
 //                " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and d." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 "; //and b." + KEY_DELETED + " = 0 ";
@@ -3902,7 +3940,7 @@ public class Database extends SQLiteOpenHelper {
         String selectQueryOrderExtra = "select coalesce(sum(d." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_ORDER_HEADER + " a " +
 //                "join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
-                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n"+
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n" +
 //                " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and d." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 "; //and b." + KEY_DELETED + " = 0 ";
@@ -3990,7 +4028,7 @@ public class Database extends SQLiteOpenHelper {
         String selectQueryOrderExtra = "select coalesce(sum(d." + KEY_QTY + "*c." + KEY_CONVERSION + "),0) as " + KEY_QTY + " ,(select " + KEY_UOM + " from " + TABLE_MASTER_UOM + " where " + KEY_MATERIAL_ID + " = ? order by " + KEY_CONVERSION + " asc limit 1) as " + KEY_UOM + " \n" +
                 "from " + TABLE_ORDER_HEADER + " a " +
 //                "join " + TABLE_ORDER_DETAIL + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_ID_ORDER_HEADER_DB + "\n" +
-                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n"+
+                "left join " + TABLE_ORDER_DETAIL_EXTRA + " d on d." + KEY_ID_ORDER_HEADER_DB + " = a." + KEY_ID_ORDER_HEADER_DB + " and d." + KEY_DELETED + " = 0 \n" +
 //                " and d." + KEY_MATERIAL_ID + " = b." + KEY_MATERIAL_ID + " and d." + KEY_DELETED + " = 0 \n" +
                 "left join " + TABLE_MASTER_UOM + " c on d." + KEY_MATERIAL_ID + " = c." + KEY_MATERIAL_ID + "  and d." + KEY_UOM + " = c." + KEY_UOM + "\n" +
                 "where a." + KEY_ID_STOCK_REQUEST_HEADER_DB + " = ? and d." + KEY_MATERIAL_ID + "=? and a." + KEY_DELETED + " = 0 "; //and b." + KEY_DELETED + " = 0 ";
@@ -4485,7 +4523,7 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 double total = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL));
-                if(total > 0) {
+                if (total > 0) {
                     paramModel = new Material();
                     paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
@@ -4879,6 +4917,7 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return result;
     }
+
     public double getTotalTagihanOrderCustomer(String idCust) {
         double result = 0.0;
         // Select All Query
@@ -5885,12 +5924,19 @@ public class Database extends SQLiteOpenHelper {
     public List<Material> getAllMasterMaterial(int offset, String search, String sales_category) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_MASTER_MATERIAL + " where " + KEY_MATERIAL_NAME + " like ? " +
-                "and CASE WHEN ? = 'BT' THEN materialProductId = '300' ELSE materialProductId = materialProductId END " +
-                "order by " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset;
+        String queryBT = "and materialProductId = '300' ";
+        String order = "order by " + KEY_MATERIAL_ID + " ASC ";
+//                + "LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + offset;
 
+        String selectQuery = "SELECT * FROM " + TABLE_MASTER_MATERIAL + " where " + KEY_MATERIAL_NAME + " like ? ";
+        String query;
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{"%" + (!Helper.isNullOrEmpty(search) ? search : "") + "%", sales_category});
+        if (sales_category.equals("BT")) {
+            query = selectQuery + queryBT + order;
+        } else {
+            query = selectQuery + order;
+        }
+        Cursor cursor = db.rawQuery(query, new String[]{"%" + (!Helper.isNullOrEmpty(search) ? search : "") + "%"});
 
         if (cursor.moveToFirst()) {
             do {

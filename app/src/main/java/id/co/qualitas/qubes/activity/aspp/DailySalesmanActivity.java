@@ -936,7 +936,8 @@ public class DailySalesmanActivity extends BaseActivity {
                     promoList.addAll(database.getPromotionRouteByIdCustomer(outletHeader.getId()));
                     dctOutletList.addAll(database.getDctByIdCustomer(outletHeader.getId()));//getDctByIdCustomer
                 }
-                limitFakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//getMaxBonByIdCustomer
+                limitFakturList.addAll(database.getUsedBonByIdCustomer(outletHeader.getId()));//hitung bon yg sudah terpakai
+//                limitFakturList.addAll(database.getMaxBonByIdCustomer(outletHeader.getId()));//hitung sisa bon yang masih bisa di pakai
 //                oustandingFaktur.addAll(database.getOutstandingFaktur(outletHeader.getId()));//getOutstandingFaktur
 
                 outstandingFaktur = database.getCountInvoiceCustomer(outletHeader.getId());

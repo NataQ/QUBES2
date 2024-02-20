@@ -7,8 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +37,6 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
-import id.co.qualitas.qubes.listener.OnLoadMoreListener;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StockRequest;
 import id.co.qualitas.qubes.model.User;
@@ -198,13 +195,14 @@ public class StockRequestAddActivity extends BaseActivity {
         mList = new ArrayList<>();
     }
 
-    private void addNew(List<Material> addedList) {
+    private void addNew(List<Material> addedList, int size) {
         mList.addAll(addedList);
 
         new CountDownTimer(1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 progress.show();
+//                mAdapter.notifyItemRangeInserted(size, mList.size());
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -245,23 +243,23 @@ public class StockRequestAddActivity extends BaseActivity {
         });
         rv.setAdapter(spinnerAdapter);
 
-        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (offset == 0) {
-                    itemCount();
-                } else {
-                    if (dy > 0) //check for scroll down
-                    {
-                        itemCount();
-                    } else {
-                        loadingDataBottom.setVisibility(View.GONE);
-                        loading = true;
-                    }
-                }
-            }
-        });
+//        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                if (offset == 0) {
+//                    itemCount();
+//                } else {
+//                    if (dy > 0) //check for scroll down
+//                    {
+//                        itemCount();
+//                    } else {
+//                        loadingDataBottom.setVisibility(View.GONE);
+//                        loading = true;
+//                    }
+//                }
+//            }
+//        });
 
         btnSearch.setOnClickListener(v -> {
             if (!Helper.isEmptyEditText(editText)) {
@@ -323,7 +321,7 @@ public class StockRequestAddActivity extends BaseActivity {
                     addList.add(mat);
                 }
             }
-            addNew(addList);
+            addNew(addList, mList.size());
             dialog.dismiss();
         });
     }
