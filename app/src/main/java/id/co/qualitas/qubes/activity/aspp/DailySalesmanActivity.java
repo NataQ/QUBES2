@@ -116,7 +116,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private CustomerInfoDctOutletAdapter dctOutletAdapter;
     private List<GroupMaxBon> limitFakturList;
     private List<Material> dctOutletList;
-//    private List<Material> oustandingFaktur;
+    //    private List<Material> oustandingFaktur;
     private List<Promotion> promoList;
     static int h;
     static int m;
@@ -434,12 +434,11 @@ public class DailySalesmanActivity extends BaseActivity {
 //            payment = database.getCountPaymentCustomer(req);
 //        }
 
-
-        if (orderOutlet == 0) {
-            result = 1;// no order
+        if (storeCheck == 0) {
+            result = 2;
         } else {
-            if (storeCheck == 0) {
-                result = 2;
+            if (orderOutlet == 0) {
+                result = 1;// no order
             }
         }
 //        else {
@@ -712,7 +711,8 @@ public class DailySalesmanActivity extends BaseActivity {
         }
 
         if (imageType.getPhotoReason() != null) {
-            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoReason(), photo);
+            photo.setImageURI(Uri.parse(imageType.getPhotoReason()));
+//            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoReason(), photo);
             photo.setVisibility(View.VISIBLE);
             imgDelete.setVisibility(View.VISIBLE);
             layoutUpload.setVisibility(View.GONE);
@@ -820,7 +820,8 @@ public class DailySalesmanActivity extends BaseActivity {
         Button btnSave = dialog.findViewById(R.id.btnSave);
 
         if (imageType.getPhotoCheckOut() != null) {
-            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoCheckOut(), photo);
+            photo.setImageURI(Uri.parse(imageType.getPhotoCheckOut()));
+//            Utils.loadImageFit(DailySalesmanActivity.this, imageType.getPhotoCheckOut(), photo);
             photo.setVisibility(View.VISIBLE);
             imgDelete.setVisibility(View.VISIBLE);
             layoutUpload.setVisibility(View.GONE);
@@ -1111,7 +1112,8 @@ public class DailySalesmanActivity extends BaseActivity {
 //            }
         }
         if (outletHeader.getPhotoKtp() != null) {
-            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), imgKTP);
+            imgKTP.setImageURI(Uri.parse(outletHeader.getPhotoKtp()));
+//            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), imgKTP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgDeleteKTP.setVisibility(View.VISIBLE);
             } else {
@@ -1128,7 +1130,8 @@ public class DailySalesmanActivity extends BaseActivity {
         }
 
         if (outletHeader.getPhotoNpwp() != null) {
-            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), imgNPWP);
+            imgNPWP.setImageURI(Uri.parse(outletHeader.getPhotoNpwp()));
+//            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), imgNPWP);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgDeleteNPWP.setVisibility(View.VISIBLE);
             } else {
@@ -1144,7 +1147,8 @@ public class DailySalesmanActivity extends BaseActivity {
             }
         }
         if (outletHeader.getPhotoOutlet() != null) {
-            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), imgOutlet);
+            imgOutlet.setImageURI(Uri.parse(outletHeader.getPhotoOutlet()));
+//            Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), imgOutlet);
             if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                 imgDeleteOutlet.setVisibility(View.VISIBLE);
             } else {
@@ -1462,7 +1466,9 @@ public class DailySalesmanActivity extends BaseActivity {
         switch (typeImage) {
             case 8:
                 if (outletHeader.getPhotoKtp() != null) {
-                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), photo);
+                    photo.setImageURI(Uri.parse(outletHeader.getPhotoKtp()));
+//                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoKtp(), photo);
+
 //                    photo.setVisibility(View.VISIBLE);
 //                    layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -1473,7 +1479,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 break;
             case 9:
                 if (outletHeader.getPhotoNpwp() != null) {
-                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), photo);
+                    photo.setImageURI(Uri.parse(outletHeader.getPhotoNpwp()));
+//                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoNpwp(), photo);
+
 //                    photo.setVisibility(View.VISIBLE);
 //                    layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -1484,7 +1492,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 break;
             case 10:
                 if (outletHeader.getPhotoOutlet() != null) {
-                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), photo);
+                    photo.setImageURI(Uri.parse(outletHeader.getPhotoOutlet()));
+//                    Utils.loadImageFit(DailySalesmanActivity.this, outletHeader.getPhotoOutlet(), photo);
+
 //                    photo.setVisibility(View.VISIBLE);
 //                    layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -1566,7 +1576,7 @@ public class DailySalesmanActivity extends BaseActivity {
 //                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
 //                }
 //            } else {
-                Helper.takePhoto(DailySalesmanActivity.this);
+            Helper.takePhoto(DailySalesmanActivity.this);
 //            }
         }
     }

@@ -4,6 +4,7 @@ import java.util.List;
 
 public class StockRequest {
     private String idHeader;
+    private String id_driver;
     private int id;
     private String id_mobile;
     private String id_salesman;
@@ -20,6 +21,14 @@ public class StockRequest {
     private List<Material> materialList;
 
     public StockRequest() {
+    }
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
     }
 
     public String getId_mobile() {

@@ -633,7 +633,7 @@ public class Utils {
         return inSampleSize;
     }
 
-    public static File getDirLocPDF(Context applicationContext) {
+    public static File getDirLocPDF(Context applicationContext, int type) {
         File directory = null;
         directory = new File(String.valueOf(applicationContext.getFilesDir()));
 
@@ -644,7 +644,20 @@ public class Utils {
         if (!newDir.exists()) {
             newDir.mkdir();
         }
-
+        switch (type) {
+            case 1:
+                newDir = new File(directory + "/QUBES/UNLOADING");
+                break;
+            case 2:
+                newDir = new File(directory + "/QUBES/LASH");
+                break;
+            case 3:
+                newDir = new File(directory + "/QUBES/BACK_UP");
+                break;
+        }
+        if (!newDir.exists()) {
+            newDir.mkdir();
+        }
         return newDir;
     }
 
@@ -803,6 +816,14 @@ public class Utils {
         Glide.with(mContext)
                 .load(res)
 //                .fitCenter()
+                .error(R.drawable.ic_no_picture)
+                .placeholder(R.drawable.ic_loading)
+                .into(image);
+    }
+
+    public static void loadImageUri(Context mContext, Uri path, ImageView image) {
+        Glide.with(mContext)
+                .load(new File(String.valueOf(path))) // Uri of the picture
                 .error(R.drawable.ic_no_picture)
                 .placeholder(R.drawable.ic_loading)
                 .into(image);

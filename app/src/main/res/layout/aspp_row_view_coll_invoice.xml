@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_margin="0dp"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="5dp">
@@ -34,7 +34,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight=".7"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:visibility="visible">
@@ -44,19 +44,19 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
-                        android:text="No. Cheque"
+                        android:text="Invoice"
                         android:textColor="@color/gray8_aspp"
                         android:textStyle="bold" />
 
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/edtNoCheque"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtNoFaktur"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
-                        android:background="@drawable/editbox"
                         android:padding="5dp"
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/black_aspp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -64,7 +64,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight=".3"
                     android:gravity="end"
                     android:orientation="horizontal"
                     android:visibility="visible">
@@ -80,7 +81,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llPayment"
+                android:id="@+id/llItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -91,6 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -105,19 +107,17 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Tanggal Cheque" />
+                            android:text="Tgl JT" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtTglCheque"
+                            android:id="@+id/txtTglJatuhTempo"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:text=""
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                            android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
 
@@ -134,87 +134,19 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Tanggal Cair" />
+                            android:text="Amount" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtTglCair"
+                            android:id="@+id/txtAmountInv"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:text=""
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                            android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Bank Name" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/spnBankASPP"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/bg_spinner_2"
-                            android:completionThreshold="1"
-                            android:hint="Search bank.."
-                            android:padding="5dp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Bank Cust." />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/spnBankCust"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/bg_spinner_2"
-                            android:completionThreshold="1"
-                            android:hint="Search bank.."
-                            android:padding="5dp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -236,18 +168,16 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Total Payment" />
+                            android:text="Total Paid" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/edtPayment"
+                            android:id="@+id/txtTotalPaid"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
                             android:background="@drawable/editbox"
-                            android:inputType="numberDecimal"
                             android:padding="5dp"
-                            android:hint="0"
                             android:text=""
                             android:textColor="@color/black_aspp" />
 
@@ -269,13 +199,13 @@
                             android:text="Left" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtLeft"
+                            android:id="@+id/txtLeftAmount"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
                             android:padding="5dp"
-                            android:text="0"
+                            android:text=""
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
@@ -285,15 +215,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
-                    card_view:cardBackgroundColor="@color/white"
+                    card_view:cardBackgroundColor="@color/space_transparent"
                     card_view:cardCornerRadius="@dimen/corner_fragment"
-                    card_view:cardElevation="1dp">
+                    card_view:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -301,19 +231,20 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <androidx.appcompat.widget.AppCompatTextView
+                            <androidx.appcompat.widget.AppCompatCheckBox
+                                android:id="@+id/cbAll"
                                 style="@style/TextView_Small"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
+                                android:layout_marginEnd="5dp"
                                 android:text=""
                                 android:textColor="@color/black_aspp"
-                                android:visibility="gone" />
+                                android:visibility="visible" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="2dp"
                                 android:layout_weight=".05"
                                 android:text="No"
                                 android:textColor="@color/black_aspp"
@@ -372,6 +303,8 @@
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
+
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -379,7 +312,7 @@
         android:id="@+id/llDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="7dp"
         android:background="@color/red_aspp"
         android:padding="5dp">
 

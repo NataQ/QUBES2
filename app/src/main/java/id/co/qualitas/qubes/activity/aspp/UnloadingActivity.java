@@ -243,7 +243,7 @@ public class UnloadingActivity extends BaseActivity {
             try {
                 if (PARAM == 4) {
                     String nameLash = user.getUsername() + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_7, startVisit.getDate());
-                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/" + nameLash + ".pdf");
+                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext(), 2) + "/" + nameLash + ".pdf");
                     List<Map> lashList = new ArrayList<>();
                     lashList = database.getDatalash();
                     success = pdfUtils.createPDF(pdfFile, lashList, nameLash);
@@ -252,7 +252,7 @@ public class UnloadingActivity extends BaseActivity {
                     header = database.getStockRequestHeader(header.getIdHeader());
                     header.setId_salesman(user.getUsername());
                     String pdfName = header.getId_salesman() + "_" + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, header.getReq_date());
-                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/unloading_" + pdfName + ".pdf");
+                    pdfFile = new File(Utils.getDirLocPDF(getApplicationContext(), 1) + "/unloading_" + pdfName + ".pdf");
                     success = pdfUnloadingUtils.createPDF(pdfFile, header, mList);
                     return success;
                 }

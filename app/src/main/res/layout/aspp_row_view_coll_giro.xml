@@ -247,6 +247,7 @@
                             android:background="@drawable/editbox"
                             android:inputType="numberDecimal"
                             android:padding="5dp"
+                            android:hint="0"
                             android:text=""
                             android:textColor="@color/black_aspp" />
 

@@ -39,7 +39,7 @@
             android:text="KM Awal"
             android:textColor="@color/black_aspp" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/txtKmAwal"
             style="@style/TextView_Small"
             android:layout_width="match_parent"

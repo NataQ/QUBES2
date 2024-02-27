@@ -214,8 +214,10 @@ public class FCMService extends FirebaseMessagingService {
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId,
-                    "Channel human readable title",
-                    NotificationManager.IMPORTANCE_HIGH);
+                    "Channel human readable title", NotificationManager.IMPORTANCE_LOW);
+            channel.enableVibration(false);
+            channel.setSound(null, null);
+            channel.enableLights(false);
             notificationManager.createNotificationChannel(channel);
         }
 

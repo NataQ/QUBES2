@@ -552,7 +552,7 @@ public class VisitActivity extends BaseActivity {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
-                                }else{
+                                } else {
                                     setToast("Kunjungan hari ini sudah selesai.");
                                 }
                                 break;
@@ -705,6 +705,7 @@ public class VisitActivity extends BaseActivity {
                 visitSalesman.setInside(inside);
                 visitSalesman.setIdVisit(String.valueOf(startVisit.getId()));
                 visitSalesman.setIdSalesman(user.getUsername());
+                visitSalesman.setIdDriver(user.getId_driver());
                 visitSalesman.setCustomerId(outletClicked.getId());
                 visitSalesman.setCustomerName(outletClicked.getNama());
                 visitSalesman.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
@@ -983,7 +984,7 @@ public class VisitActivity extends BaseActivity {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
-                                }else{
+                                } else {
                                     setToast("Kunjungan hari ini sudah selesai.");
                                 }
                                 break;
@@ -1306,6 +1307,7 @@ public class VisitActivity extends BaseActivity {
         inside = Helper.checkRadius(currLoc, locCustomer);
 
         vs.setIdSalesman(user.getUsername());
+        vs.setIdDriver(user.getId_driver());
         vs.setDate(Helper.getTodayDate(Constants.DATE_FORMAT_3));
         vs.setStatus(Constants.CHECK_OUT_VISIT);
         vs.setInside(inside);
@@ -1344,6 +1346,7 @@ public class VisitActivity extends BaseActivity {
         dialog.setContentView(R.layout.aspp_dialog_end_visit);
         Button btnEnd = dialog.findViewById(R.id.btnEnd);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        EditText txtKmAwal = dialog.findViewById(R.id.txtKmAkhir);
         EditText txtKmAkhir = dialog.findViewById(R.id.txtKmAkhir);
         LinearLayout llImgSelesai = dialog.findViewById(R.id.llImgSelesai);
         LinearLayout llImgPulang = dialog.findViewById(R.id.llImgPulang);
@@ -1354,7 +1357,8 @@ public class VisitActivity extends BaseActivity {
 
         if (imageType != null) {
             if (imageType.getPhotoSelesai() != null) {
-                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoSelesai(), imgSelesai);
+                imgSelesai.setImageURI(Uri.parse(imageType.getPhotoSelesai()));
+//                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoSelesai(), imgSelesai);
                 imgAddSelesai.setVisibility(View.GONE);
             } else {
                 imgAddSelesai.setVisibility(View.VISIBLE);
@@ -1365,7 +1369,8 @@ public class VisitActivity extends BaseActivity {
 
         if (imageType != null) {
             if (imageType.getPhotoAkhir() != null) {
-                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoAkhir(), imgPulang);
+                imgPulang.setImageURI(Uri.parse(imageType.getPhotoAkhir()));
+//                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoAkhir(), imgPulang);
                 imgAddPulang.setVisibility(View.GONE);
             } else {
                 imgAddPulang.setVisibility(View.VISIBLE);
@@ -1375,6 +1380,7 @@ public class VisitActivity extends BaseActivity {
         }
 
         txtKmAkhir.setText(imageType.getKmAkhir());
+        txtKmAwal.setText(startVisit != null ? format.format(startVisit.getKm_awal()) : null);
 
         llImgPulang.setOnClickListener(v -> {
             if (imageType == null) {
@@ -1444,8 +1450,9 @@ public class VisitActivity extends BaseActivity {
         LinearLayout llImgBerangkat = dialog.findViewById(R.id.llImgBerangkat);
 
         if (uriBerangkat != null) {
-            Utils.loadImageFit(VisitActivity.this, uriBerangkat.getPath(), imgBerangkat);
-//            imgBerangkat.setImageURI(uriBerangkat);
+//            Utils.loadImageFit(VisitActivity.this, uriBerangkat.getPath(), imgBerangkat);
+//            Utils.loadImageFit(VisitActivity.this, uriBerangkat.getPath(), imgBerangkat);
+            imgBerangkat.setImageURI(Uri.parse(uriBerangkat.getPath()));
             imgAdd.setVisibility(View.GONE);
         } else {
             imgAdd.setVisibility(View.VISIBLE);
@@ -1535,7 +1542,7 @@ public class VisitActivity extends BaseActivity {
 //                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.REQUEST_CAMERA_CODE);
 //                }
 //            } else {
-                Helper.takePhoto(VisitActivity.this);
+            Helper.takePhoto(VisitActivity.this);
 //            }
         }
     }
@@ -1760,7 +1767,7 @@ public class VisitActivity extends BaseActivity {
         protected Boolean doInBackground(Void... voids) {
             try {
                 String nameLash = user.getUsername() + Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_TYPE_7, startVisit.getDate());
-                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext()) + "/" + nameLash + ".pdf");
+                pdfFile = new File(Utils.getDirLocPDF(getApplicationContext(), 2) + "/" + nameLash + ".pdf");
                 List<Map> lashList = new ArrayList<>();
                 lashList = database.getDatalash();
                 success = pdfUtils.createPDF(pdfFile, lashList, nameLash);
@@ -1788,7 +1795,7 @@ public class VisitActivity extends BaseActivity {
 //                    new RequestUrlSync().execute();
 //                } else {
 //                    if (!Helper.isCanvasSales(user)) {
-                        new RequestUrlSync().execute();
+                new RequestUrlSync().execute();
 //                    } else {???
 //                        SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
 //                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
@@ -2007,6 +2014,7 @@ public class VisitActivity extends BaseActivity {
                     startDay = new HashMap();
                     startDay.put("kmAwal", kmAwal);
                     startDay.put("username", user.getUsername());
+                    startDay.put("id_driver", user.getId_driver());
                     if (user.getRute_inap() == 1) {
                         startDay.put("visitRuteInap", "1");
                         int clickStartVisit = (int) Helper.getItemParam(Constants.CLICK_START_VISIT);
@@ -2953,7 +2961,7 @@ public class VisitActivity extends BaseActivity {
                 if (listResult.size() == offlineData.size()) {//ganti sizeData
                     if (error == 0) {
 //                        if (user.getRute_inap() == 1) {
-                            validateButton();//send all data
+                        validateButton();//send all data
 //                        }
                         setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
                     } else {

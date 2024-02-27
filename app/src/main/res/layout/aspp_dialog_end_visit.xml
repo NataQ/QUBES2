@@ -35,18 +35,37 @@
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="KM Awal"
+            android:textColor="@color/black_aspp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/txtKmAwal"
+            style="@style/TextView_Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/editbox"
+            android:inputType="numberDecimal"
+            android:padding="5dp"
+            android:textColor="@color/gray8_aspp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            style="@style/TextView_Small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="KM Akhir"
             android:textColor="@color/black_aspp" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/txtKmAkhir"
             style="@style/TextView_Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/editbox"
-            android:padding="5dp"
             android:inputType="numberDecimal"
+            android:padding="5dp"
             android:textColor="@color/gray8_aspp"
             android:textSize="@dimen/superSmallFont" />
 

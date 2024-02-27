@@ -203,7 +203,8 @@ public class CreateNooActivity extends BaseActivity {
             imageType.setPhotoKTP(null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
-            Utils.loadImageFit(CreateNooActivity.this, null, imgKTP);
+            imgKTP.setImageURI(null);
+//            Utils.loadImageFit(CreateNooActivity.this, null, imgKTP);
             imgAddKTP.setVisibility(View.VISIBLE);
             imgDeleteKTP.setVisibility(View.GONE);
             imgKTP.setVisibility(View.GONE);
@@ -216,7 +217,8 @@ public class CreateNooActivity extends BaseActivity {
             imageType.setPhotoNPWP(null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
-            Utils.loadImageFit(CreateNooActivity.this, null, imgNPWP);
+            imgNPWP.setImageURI(null);
+//            Utils.loadImageFit(CreateNooActivity.this, null, imgNPWP);
             imgAddNPWP.setVisibility(View.VISIBLE);
             imgDeleteNPWP.setVisibility(View.GONE);
             imgNPWP.setVisibility(View.GONE);
@@ -229,7 +231,8 @@ public class CreateNooActivity extends BaseActivity {
             imageType.setPhotoOutlet(null);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
 //            SessionManagerQubes.setImageType(imageType);
-            Utils.loadImageFit(CreateNooActivity.this, null, imgOutlet);
+            imgOutlet.setImageURI(null);
+//            Utils.loadImageFit(CreateNooActivity.this, null, imgOutlet);
             imgAddOutlet.setVisibility(View.VISIBLE);
             imgDeleteOutlet.setVisibility(View.GONE);
             imgOutlet.setVisibility(View.GONE);
@@ -553,7 +556,8 @@ public class CreateNooActivity extends BaseActivity {
         switch (typeImage) {
             case 1:
                 if (imageType.getPhotoKTP() != null) {
-                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), photo);
+                    photo.setImageURI(Uri.parse(imageType.getPhotoKTP()));
+//                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -563,7 +567,8 @@ public class CreateNooActivity extends BaseActivity {
                 break;
             case 2:
                 if (imageType.getPhotoNPWP() != null) {
-                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), photo);
+                    photo.setImageURI(Uri.parse(imageType.getPhotoNPWP()));
+//                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -573,7 +578,8 @@ public class CreateNooActivity extends BaseActivity {
                 break;
             case 3:
                 if (imageType.getPhotoOutlet() != null) {
-                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), photo);
+                    photo.setImageURI(Uri.parse(imageType.getPhotoOutlet()));
+//                    Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), photo);
                     photo.setVisibility(View.VISIBLE);
                     layoutUpload.setVisibility(View.GONE);
                 } else {
@@ -1613,19 +1619,22 @@ public class CreateNooActivity extends BaseActivity {
         }
         if (imageType.getPhotoKTP() != null) {
             customerNoo.setPhotoKtp(imageType.getPhotoKTP());
-            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
+            imgKTP.setImageURI(Uri.parse(imageType.getPhotoKTP()));
+//            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoKTP(), imgKTP);
             imgDeleteKTP.setVisibility(View.VISIBLE);
             imgAddKTP.setVisibility(View.GONE);
         }
         if (imageType.getPhotoNPWP() != null) {
             customerNoo.setPhotoNpwp(imageType.getPhotoNPWP());
-            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
+            imgNPWP.setImageURI(Uri.parse(imageType.getPhotoNPWP()));
+//            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
             imgDeleteNPWP.setVisibility(View.VISIBLE);
             imgAddNPWP.setVisibility(View.GONE);
         }
         if (imageType.getPhotoOutlet() != null) {
             customerNoo.setPhotoOutlet(imageType.getPhotoOutlet());
-            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
+            imgOutlet.setImageURI(Uri.parse(imageType.getPhotoOutlet()));
+//            Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
             imgDeleteOutlet.setVisibility(View.VISIBLE);
             imgAddOutlet.setVisibility(View.GONE);
         }
@@ -1806,21 +1815,24 @@ public class CreateNooActivity extends BaseActivity {
                 switch (typeImage) {
                     case 1:
                         imageType.setPhotoKTP(selectedImage);
-                        Utils.loadImageFit(CreateNooActivity.this, selectedImage, imgKTP);
+                        imgKTP.setImageURI(Uri.parse(selectedImage));
+//                        Utils.loadImageFit(CreateNooActivity.this, selectedImage, imgKTP);
                         imgKTP.setVisibility(View.VISIBLE);
                         imgDeleteKTP.setVisibility(View.VISIBLE);
                         imgAddKTP.setVisibility(View.GONE);
                         break;
                     case 2:
                         imageType.setPhotoNPWP(selectedImage);
-                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
+                        imgNPWP.setImageURI(Uri.parse(selectedImage));
+//                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoNPWP(), imgNPWP);
                         imgNPWP.setVisibility(View.VISIBLE);
                         imgDeleteNPWP.setVisibility(View.VISIBLE);
                         imgAddNPWP.setVisibility(View.GONE);
                         break;
                     case 3:
                         imageType.setPhotoOutlet(selectedImage);
-                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
+                        imgOutlet.setImageURI(Uri.parse(selectedImage));
+//                        Utils.loadImageFit(CreateNooActivity.this, imageType.getPhotoOutlet(), imgOutlet);
                         imgOutlet.setVisibility(View.VISIBLE);
                         imgDeleteOutlet.setVisibility(View.VISIBLE);
                         imgAddOutlet.setVisibility(View.GONE);
@@ -1862,6 +1874,7 @@ public class CreateNooActivity extends BaseActivity {
                 customerNoo.setId(Constants.ID_NOO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 customerNoo.setOrder_type(user.getType_sales());
                 customerNoo.setRoute_order(getDepo());
+                customerNoo.setId_driver(user.getId_driver());
                 int header = database.addNoo(customerNoo, user.getUsername());
                 if (header == -1) {
                     result = false;

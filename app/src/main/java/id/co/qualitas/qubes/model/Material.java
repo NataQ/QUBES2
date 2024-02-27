@@ -6,6 +6,7 @@ public class Material implements Cloneable {
     private String idheader;//aspp
     private String idItem;//aspp
     private String id;//aspp
+    private String id_driver;//aspp
     private String id_customer;//aspp
     private String nama;//aspp
     private String materialCode;
@@ -102,6 +103,14 @@ public class Material implements Cloneable {
         this.nama = nama;
         this.materialQty = materialQty;
         this.uom = uom;
+    }
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
     }
 
     public String getName_group_max_bon() {

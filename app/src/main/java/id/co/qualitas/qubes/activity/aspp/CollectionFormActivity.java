@@ -218,6 +218,7 @@ public class CollectionFormActivity extends BaseActivity {
                             request.put("isPaid", 0);
                             orderHeader.setStatusPaid(false);
                         }
+                        orderHeader.setId_driver(user.getId_driver());
                         SessionManagerQubes.setOrder(orderHeader);
                         request.put("header", orderHeader);
                         saveCollection = database.addCollectionOrder(request);
@@ -315,6 +316,7 @@ public class CollectionFormActivity extends BaseActivity {
     private Map prepareData() {
         Map request = new HashMap();
         request.put("no_invoice", header.getNo_invoice());
+        request.put("id_driver", user.getId_driver());
         request.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
         request.put("username", user.getUsername());
         request.put("totalAmount", totalAmountPaid);

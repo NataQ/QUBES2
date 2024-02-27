@@ -23,25 +23,28 @@ public class CollectionDetail implements Serializable, Cloneable {
     public double totalPayment;
     public double left;
     public List<Material> materialList;
+    public List<Invoice> invoiceList;
     public List<Material> checkedMaterialList;
+    public List<Invoice> checkedInvoiceList;
     private int isSync;
 
     public CollectionDetail() {
     }
-    public CollectionDetail(String tgl, List<Material> materialList) {
-        this.tgl = tgl;
-        this.materialList = materialList;
+
+    public List<Invoice> getInvoiceList() {
+        return invoiceList;
     }
 
-    public CollectionDetail(String no, String tglCair, String tgl, String idBankASPP, String bankNameASPP, String idBankCust, String bankCust, List<Material> materialList) {
-        this.no = no;
-        this.tglCair = tglCair;
-        this.tgl = tgl;
-        this.idBankASPP = idBankASPP;
-        this.bankNameASPP = bankNameASPP;
-        this.idBankCust = idBankCust;
-        this.bankCust = bankCust;
-        this.materialList = materialList;
+    public void setInvoiceList(List<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    public List<Invoice> getCheckedInvoiceList() {
+        return checkedInvoiceList;
+    }
+
+    public void setCheckedInvoiceList(List<Invoice> checkedInvoiceList) {
+        this.checkedInvoiceList = checkedInvoiceList;
     }
 
     public String getTypePayment() {

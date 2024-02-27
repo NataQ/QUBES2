@@ -27,33 +27,36 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.CollectionFormActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionFormActivityNew;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 
-public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<CollectionTransferPaymentAdapter.Holder> implements Filterable {
+public class CollectionItemLainAdapter extends RecyclerView.Adapter<CollectionItemLainAdapter.Holder> implements Filterable {
     private List<Material> mList;
     private List<Material> mFilteredList;
+    private Invoice invoiceHeader;
     private LayoutInflater mInflater;
-    private CollectionFormActivity mContext;
+    private CollectionFormActivityNew mContext;
     private OnAdapterListener onAdapterListener;
     SparseBooleanArray itemStateArray = new SparseBooleanArray();
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
-    protected CollectionTransferAdapter headerAdapter;
+    protected int posHeader;
     protected boolean checked = true;
-    protected int idHeader;
+    CollectionInvoiceLainAdapter headerAdapter;
 
-    public CollectionTransferPaymentAdapter(CollectionFormActivity mContext, CollectionTransferAdapter headerAdapter, int idHeader, List<Material> mList, OnAdapterListener onAdapterListener) {
-        if (mList != null) {
-            this.mList = mList;
-            this.mFilteredList = mList;
+    public CollectionItemLainAdapter(CollectionFormActivityNew mContext, CollectionInvoiceLainAdapter headerAdapter, int posHeader, Invoice invoiceHeader, OnAdapterListener onAdapterListener) {
+        if (Helper.isNotEmptyOrNull(invoiceHeader.getMaterialList())) {
+            this.mList = invoiceHeader.getMaterialList();
+            this.mFilteredList = invoiceHeader.getMaterialList();
         } else {
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
-        this.idHeader = idHeader;
+        this.invoiceHeader = invoiceHeader;
         this.headerAdapter = headerAdapter;
+        this.posHeader = posHeader;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
@@ -100,7 +103,7 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice, txtPaid; //txtLeft
+        TextView txtNo, txtProduct, txtPrice, txtPaid;
         EditText edtPaid;
         CheckBox cb;
         OnAdapterListener onAdapterListener;
@@ -110,7 +113,6 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             edtPaid = itemView.findViewById(R.id.edtPaid);
-//            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtPrice = itemView.findViewById(R.id.txtPrice);
             txtPaid = itemView.findViewById(R.id.txtPaid);
             cb = itemView.findViewById(R.id.cb);
@@ -134,16 +136,21 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
         Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
+        itemStateArray.put(holder.getAbsoluteAdapterPosition(), mFilteredList.get(holder.getAbsoluteAdapterPosition()).isChecked());
+        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+            holder.cb.setChecked(false);
+        } else {
+            holder.cb.setChecked(true);
+        }
 
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(Helper.isEmpty(detail.getNama(), ""));
         holder.txtPrice.setText("Rp." + format.format(detail.getPrice()));
-//        holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
         holder.edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
         holder.txtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
 
         holder.txtPaid.setOnClickListener(view -> {
-            if (headerAdapter.getTotalAmount(idHeader) > 0) {
+            if (invoiceHeader.getTotalPayment() > 0) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 final Dialog dialog = new Dialog(mContext);
                 View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_paid, null);
@@ -152,16 +159,18 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
                 TextView txtMaterial = dialog.findViewById(R.id.txtMaterial);
-                TextView txtPrice = dialog.findViewById(R.id.txtPrice);
                 TextView txtLeft = dialog.findViewById(R.id.txtLeft);
+                TextView txtPrice = dialog.findViewById(R.id.txtPrice);
                 EditText edtPaid = dialog.findViewById(R.id.edtPaid);
                 Button btnCancel = dialog.findViewById(R.id.btnCancel);
                 Button btnSave = dialog.findViewById(R.id.btnSave);
+                double left = mContext.getKurangBayar(invoiceHeader, mFilteredList.get(holder.getAbsoluteAdapterPosition()), 1);
 
-                txtMaterial.setText(Helper.isEmpty(detail.getNama(), ""));
-                txtPrice.setText("Rp." + format.format(detail.getPrice()));
-                txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                edtPaid.setText(detail.getAmountPaid() != 0 ? Helper.setDotCurrencyAmount(detail.getAmountPaid()) : null);
+                txtMaterial.setText(Helper.isEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getNama(), ""));
+                txtPrice.setText("Rp." + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                txtLeft.setText("Rp." + format.format(left));
+                edtPaid.setText(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getAmountPaid() != 0
+                        ? Helper.setDotCurrencyAmount(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getAmountPaid()) : null);
 
                 edtPaid.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -192,33 +201,56 @@ public class CollectionTransferPaymentAdapter extends RecyclerView.Adapter<Colle
                     public void onClick(View v) {
                         if (!Helper.isEmptyEditText(edtPaid)) {
                             double qty = Double.parseDouble(edtPaid.getText().toString().replace(",", ""));
-                            if (qty > mContext.getSisaPrice(holder.getAbsoluteAdapterPosition(), 2, idHeader)) {
+                            double kurangBayar = left + mFilteredList.get(holder.getAbsoluteAdapterPosition()).getAmountPaid();
+                            if (qty > kurangBayar) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi sisa harga barang", Toast.LENGTH_SHORT).show();
-                            } else if (headerAdapter.calculateLeft(qty, holder.getAbsoluteAdapterPosition()) < 0) {
+                            } else if (qty > headerAdapter.calculateLeftWoPos(invoiceHeader, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getId())) {
                                 Toast.makeText(mContext, "Saldo tidak cukup", Toast.LENGTH_SHORT).show();
-                            } else if (qty > headerAdapter.getTotalAmount(idHeader)) {
-                                Toast.makeText(mContext, "Tidak boleh melebihi total amount", Toast.LENGTH_SHORT).show();
-                            } else if (qty > detail.getPrice()) {
+                            } else if (qty > mFilteredList.get(holder.getAbsoluteAdapterPosition()).getNett()) {
                                 Toast.makeText(mContext, "Tidak boleh melebihi harga barang", Toast.LENGTH_SHORT).show();
                             } else {
                                 holder.txtPaid.setText(Helper.setDotCurrencyAmount(qty));
-                                detail.setAmountPaid(qty);
-                                mContext.setKurangBayar(holder.getAbsoluteAdapterPosition());
-//                                holder.txtLeft.setText("Rp." + format.format(mContext.getKurangBayar(holder.getAbsoluteAdapterPosition())));
-                                headerAdapter.setLeft(idHeader);
-//                                mContext.updateLeft(2, idHeader);
+                                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(qty);
+                                headerAdapter.notifyItemChanged(posHeader);
                                 dialog.dismiss();
                             }
                         } else {
                             dialog.dismiss();
-//                            holder.txtPaid.setError(mContext.getString(R.string.emptyField));
                         }
                     }
                 });
                 dialog.show();
             } else {
-                Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Masukkan total paid", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        holder.cb.setOnClickListener(v -> {
+            if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+                if (invoiceHeader.getTotalPayment() > 0) {
+                    double kurangBayarMaterial = mContext.getKurangBayar(invoiceHeader, mFilteredList.get(holder.getAbsoluteAdapterPosition()), 1);
+                    kurangBayarMaterial = kurangBayarMaterial + mFilteredList.get(holder.getAbsoluteAdapterPosition()).getAmountPaid();
+                    if (kurangBayarMaterial > 0) {
+                        if (invoiceHeader.getTotalPayment() > kurangBayarMaterial || invoiceHeader.getTotalPayment() == kurangBayarMaterial) {
+                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(kurangBayarMaterial);
+                        } else if (invoiceHeader.getTotalPayment() < kurangBayarMaterial) {
+                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(invoiceHeader.getTotalPayment());
+                        }
+                        holder.cb.setChecked(true);
+                        itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setChecked(true);
+                    }
+                } else {
+                    Toast.makeText(mContext, "Masukkan total paid", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                holder.cb.setChecked(false);
+                itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setChecked(false);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(0);
+            }
+            headerAdapter.setCheckedAll(posHeader);
+            headerAdapter.notifyItemChanged(posHeader);
         });
     }
 

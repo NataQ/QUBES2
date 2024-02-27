@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Customer {
     private String idHeader;
+    private String id_driver;
     private String id;
     private String nama;
     private String address;
@@ -65,6 +66,7 @@ public class Customer {
     private boolean route;
 //    private LatLng position;
     private double limit_kredit;
+    private double limit_kredit_awal;
     private double sisaCreditLimit;
     private double totalTagihan;
     private double totalFaktur;
@@ -72,6 +74,7 @@ public class Customer {
     private String mileage;
     private int is_route;
     private int idReason;
+    private int printBon;
     private String nameReason;
     private String createdDate;
     private int posReason;
@@ -95,6 +98,30 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
+    }
+
+    public int getPrintBon() {
+        return printBon;
+    }
+
+    public void setPrintBon(int printBon) {
+        this.printBon = printBon;
+    }
+
+    public double getLimit_kredit_awal() {
+        return limit_kredit_awal;
+    }
+
+    public void setLimit_kredit_awal(double limit_kredit_awal) {
+        this.limit_kredit_awal = limit_kredit_awal;
     }
 
     public int getIs_route() {

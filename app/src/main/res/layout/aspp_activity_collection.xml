@@ -62,6 +62,22 @@
                 android:text="Collection"
                 android:textColor="@color/black_aspp" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAdd"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Payment"
+                android:textAllCaps="true"
+                android:textColor="@color/black_aspp"
+                android:textSize="@dimen/text_small"
+                app:cornerRadius="5dp"
+                app:icon="@drawable/ic_add_aspp"
+                app:iconSize="@dimen/icon_add_inside_btn"
+                app:iconTint="@null"
+                app:strokeColor="@color/blue6_aspp" />
+
         </LinearLayout>
 
         <androidx.cardview.widget.CardView

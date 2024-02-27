@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionActivity extends BaseActivity {
+    private Button btnAdd;
     private CollectionAdapter mAdapter;
     private List<Invoice> mList;
     private TextView txtDate, txtTotalInvoice, txtTotalPaid;
@@ -58,6 +60,11 @@ public class CollectionActivity extends BaseActivity {
                 setAdapter();
                 swipeLayout.setRefreshing(false);
             }
+        });
+
+        btnAdd.setOnClickListener(v -> {
+            intent = new Intent(this, CollectionFormActivityNew.class);
+            startActivity(intent);
         });
     }
 
@@ -119,6 +126,7 @@ public class CollectionActivity extends BaseActivity {
     private void initialize() {
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        btnAdd = findViewById(R.id.btnAdd);
         txtDate = findViewById(R.id.txtDate);
         txtTotalInvoice = findViewById(R.id.txtTotalInvoice);
         txtTotalPaid = findViewById(R.id.txtTotalPaid);

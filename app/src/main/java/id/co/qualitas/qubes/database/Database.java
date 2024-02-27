@@ -50,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
     // static variable
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database name
     private static final String DATABASE_NAME = "Qubes";
@@ -244,6 +244,9 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_LAMA_USAHA = "lamaUsaha";
     private static final String KEY_SUKU = "suku";
     private static final String KEY_CREDIT_LIMIT = "creditLimit";
+    private static final String KEY_CREDIT_LIMIT_AWAL = "creditLimitAwal";
+    private static final String KEY_PRINT_BON = "printBon";
+    private static final String KEY_ID_DRIVER = "idDriver";
     private static final String KEY_ROUTE = "route";
 //    private static final String KEY_PHOTO_KTP = "photoKtp";
 //    private static final String KEY_PHOTO_NPWP = "photoNpwp";
@@ -406,6 +409,7 @@ public class Database extends SQLiteOpenHelper {
     public static String CREATE_TABLE_START_VISIT = "CREATE TABLE IF NOT EXISTS " + TABLE_START_VISIT + "("
             + KEY_ID_START_VISIT + " INTEGER PRIMARY KEY,"
             + KEY_DATE + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
             + KEY_START_TIME + " TEXT,"
             + KEY_END_TIME + " TEXT,"
@@ -425,6 +429,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_STOCK_REQUEST_HEADER_BE + " TEXT,"
             + KEY_REQUEST_DATE + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_ID_MOBILE + " TEXT,"
             + KEY_NO_DOC + " TEXT,"
             + KEY_TANGGAL_KIRIM + " TEXT,"
@@ -579,6 +584,7 @@ public class Database extends SQLiteOpenHelper {
     public static String CREATE_TABLE_NOO = "CREATE TABLE IF NOT EXISTS " + TABLE_NOO + "("
             + KEY_ID_NOO_DB + " TEXT PRIMARY KEY,"
             + KEY_NAME_NOO + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_ADDRESS_NOO + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
             + KEY_ORDER_ROUTE + " TEXT,"
@@ -631,6 +637,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CUSTOMER_ADDRESS + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
             + KEY_ORDER_ROUTE + " TEXT,"
+            + KEY_PRINT_BON + " INTEGER DEFAULT 0,"
             + KEY_STATUS + " INTEGER DEFAULT 0,"
             + KEY_TYPE_CUSTOMER + " TEXT,"
             + KEY_TYPE_CUSTOMER_NAME + " TEXT,"
@@ -644,6 +651,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_PHONE + " TEXT,"
             + KEY_SISA_KREDIT_LIMIT + " REAL,"
             + KEY_CREDIT_LIMIT + " REAL,"
+            + KEY_CREDIT_LIMIT_AWAL + " REAL,"
             + KEY_TOTAL_TAGIHAN + " REAL,"
             + KEY_NO_KTP + " TEXT,"
             + KEY_NO_NPWP + " TEXT,"
@@ -718,6 +726,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_VISIT_SALESMAN_DB + " TEXT PRIMARY KEY ,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ID_VISIT + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_ID_SALESMAN + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_CHECK_IN_TIME + " TEXT,"
@@ -760,6 +769,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_STORE_CHECK_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MOBILE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
@@ -781,6 +791,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_ORDER_HEADER_DB + " TEXT PRIMARY KEY,"
             + KEY_ID_ORDER_BACK_END + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
             + KEY_TYPE_CUSTOMER + " TEXT,"
             + KEY_ID_STOCK_REQUEST_HEADER_DB + " TEXT,"
@@ -877,6 +888,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_RETURN_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + KEY_ID_MOBILE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_DATE + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
@@ -903,6 +915,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT PRIMARY KEY,"
             + KEY_DATE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
             + KEY_INVOICE_NO + " TEXT,"
             + KEY_INVOICE_DATE + " TEXT,"
             + KEY_INVOICE_TOTAL + " REAL,"
@@ -1273,6 +1286,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_START_VISIT, param.getId());
         values.put(KEY_DATE, param.getDate());
         values.put(KEY_ID_SALESMAN, param.getId_salesman());
+        values.put(KEY_ID_DRIVER, param.getId_driver());
         values.put(KEY_START_TIME, param.getStart_time());
         values.put(KEY_KM_AWAL, param.getKm_awal());
         values.put(KEY_KM_AKHIR, param.getKm_akhir());
@@ -1298,6 +1312,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_ID_STOCK_REQUEST_HEADER_BE, param.getId());
         values.put(KEY_REQUEST_DATE, param.getReq_date());
         values.put(KEY_ID_SALESMAN, idSales);
+        values.put(KEY_ID_DRIVER, param.getId_driver());
         values.put(KEY_ID_MOBILE, param.getId_mobile());
         values.put(KEY_NO_DOC, param.getNo_doc());
         values.put(KEY_TANGGAL_KIRIM, param.getTanggal_kirim());
@@ -1446,6 +1461,7 @@ public class Database extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_ID_NOO_DB, param.getId());
+        values.put(KEY_ID_DRIVER, param.getId_driver());
         values.put(KEY_NAME_NOO, param.getNama());
         values.put(KEY_ORDER_TYPE, param.getOrder_type());
         values.put(KEY_ORDER_ROUTE, param.getRoute_order());
@@ -1523,6 +1539,8 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_PHONE, param.getNo_tlp());
         values.put(KEY_NAME_PEMILIK, param.getNama_pemilik());
         values.put(KEY_CREDIT_LIMIT, param.getLimit_kredit());
+        values.put(KEY_PRINT_BON, param.getPrintBon());
+        values.put(KEY_CREDIT_LIMIT_AWAL, param.getLimit_kredit_awal());
         values.put(KEY_NO_KTP, param.getNik());
         values.put(KEY_NO_NPWP, param.getNo_npwp());
         values.put(KEY_IS_ROUTE, param.getIs_route());
@@ -1731,6 +1749,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID_VISIT_SALESMAN_DB, param.getIdHeader());
         values.put(KEY_CUSTOMER_ID, param.getCustomerId());
+        values.put(KEY_ID_DRIVER, param.getIdDriver());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_ID_VISIT, param.getIdVisit());
         values.put(KEY_DATE, param.getDate());
@@ -1771,6 +1790,7 @@ public class Database extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_ID_VISIT_SALESMAN_DB, param.getIdHeader());
         values.put(KEY_ID_VISIT, param.getIdVisit());
+        values.put(KEY_ID_DRIVER, param.getIdDriver());
         values.put(KEY_CUSTOMER_ID, param.getCustomerId());
         values.put(KEY_ID_SALESMAN, param.getIdSalesman());
         values.put(KEY_DATE, param.getDate());
@@ -1800,6 +1820,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
         values.put(KEY_DATE, header.get("date").toString());
         values.put(KEY_ID_MOBILE, header.get("id_header").toString());
+        values.put(KEY_ID_DRIVER, header.get("id_driver").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -1833,6 +1854,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
             values.put(KEY_ID_ORDER_BACK_END, request.getId());
             values.put(KEY_CUSTOMER_ID, request.getId_customer());
+            values.put(KEY_ID_DRIVER, request.getId_driver());
             values.put(KEY_ORDER_TYPE, request.getOrder_type());
             values.put(KEY_TYPE_CUSTOMER, request.getType_customer());
             values.put(KEY_TOP, request.getTop());
@@ -2037,6 +2059,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
         values.put(KEY_DATE, header.get("date").toString());
         values.put(KEY_ID_MOBILE, header.get("id_header").toString());
+        values.put(KEY_ID_DRIVER, header.get("id_driver").toString());
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -2139,6 +2162,7 @@ public class Database extends SQLiteOpenHelper {
             requestHeader.put("id_header", Constants.ID_CO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
             requestHeader.put("customer_id", header.getId_customer());
             requestHeader.put("no_invoice", header.getIdHeader());
+            requestHeader.put("id_driver", header.getId_driver());
             requestHeader.put("invoice_date", header.getOrder_date());
             requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
             requestHeader.put("status", "paid");
@@ -2155,6 +2179,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
             values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
             values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
             values.put(KEY_DATE, requestHeader.get("date").toString());
             values.put(KEY_STATUS, requestHeader.get("status").toString());
             values.put(KEY_TYPE_PAYMENT, "order");
@@ -2473,6 +2498,7 @@ public class Database extends SQLiteOpenHelper {
             requestHeader.put("id_header", Constants.ID_CI_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
             requestHeader.put("customer_id", header.getId_customer());
             requestHeader.put("no_invoice", header.getNo_invoice());
+            requestHeader.put("id_driver", user.getId_driver());
             requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
             requestHeader.put("invoice_date", header.getInvoice_date());
             requestHeader.put("status", "paid");
@@ -2486,6 +2512,7 @@ public class Database extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
             values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
+            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
             values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
             values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
             values.put(KEY_DATE, requestHeader.get("date").toString());
@@ -3466,6 +3493,7 @@ public class Database extends SQLiteOpenHelper {
                 Material paramModel = new Material();
                 paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
@@ -3503,6 +3531,7 @@ public class Database extends SQLiteOpenHelper {
                 Material paramModel = new Material();
                 paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
@@ -3535,6 +3564,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
                 paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
@@ -3563,6 +3593,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel = new StartVisit();
             paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_START_VISIT)));
             paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+            paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
             paramModel.setId_salesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
             paramModel.setStart_time(cursor.getString(cursor.getColumnIndexOrThrow(KEY_START_TIME)));
             paramModel.setEnd_time(cursor.getString(cursor.getColumnIndexOrThrow(KEY_END_TIME)));
@@ -3590,6 +3621,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
             paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
             paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
             paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
             paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
             paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
@@ -3644,6 +3676,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
             paramModel.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
             paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+            paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
             paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
             paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
             paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
@@ -3889,6 +3922,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
                 result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
+                result.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 result.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 result.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
@@ -3951,6 +3985,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                 result.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 result.setReq_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_REQUEST_DATE)));
+                result.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 result.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                 result.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
                 result.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
@@ -4261,6 +4296,39 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Invoice> getAllInvoiceCustomerCollection(String idCust, String invNo) {
+        idCust = "201000008";
+        List<Invoice> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? and " + KEY_INVOICE_NO + " like ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, "%" + invNo + "%"});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice paramModel = new Invoice();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
+                paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
+                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setMaterialList(getAllInvoiceDetail(paramModel));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -4620,8 +4688,10 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setKelas_outlet(cursor.getString(cursor.getColumnIndexOrThrow(KEY_KELAS_OUTLET)));
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
+                paramModel.setLimit_kredit_awal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT_AWAL)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
                 paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
                 paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
                 paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
 
@@ -4663,6 +4733,7 @@ public class Database extends SQLiteOpenHelper {
                 Customer paramModel = new Customer();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setStatus(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
                 paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
@@ -5102,7 +5173,9 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
+                paramModel.setLimit_kredit_awal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT_AWAL)));
                 paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
+                paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
                 paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
                 paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
 
@@ -5205,6 +5278,7 @@ public class Database extends SQLiteOpenHelper {
                 CollectionHeader paramModel = new CollectionHeader();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
                 paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
@@ -5405,6 +5479,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
@@ -6542,6 +6617,7 @@ public class Database extends SQLiteOpenHelper {
             paramModel.setNo_doc(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_DOC)));
             paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
             paramModel.setNo_surat_jalan(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_SURAT_JALAN)));
+            paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
             paramModel.setId_mobile(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
         }
         cursor.close();
@@ -7066,6 +7142,7 @@ public class Database extends SQLiteOpenHelper {
                 result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT_SALESMAN_DB)));
                 result.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 result.setIdVisit(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT)));
+                result.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 result.setIdSalesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
                 result.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 result.setCheckInTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CHECK_IN_TIME)));
@@ -7176,6 +7253,7 @@ public class Database extends SQLiteOpenHelper {
                     Customer paramModel = new Customer();
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
+                    paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NOO)));
                     paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
                     paramModel.setRoute_order(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_ROUTE)));
@@ -7317,6 +7395,7 @@ public class Database extends SQLiteOpenHelper {
                     result.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT_SALESMAN_DB)));
                     result.setTotalOrder(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                     result.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                    result.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     result.setIdVisit(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_VISIT)));
                     result.setIdSalesman(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_SALESMAN)));
                     result.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
@@ -7382,6 +7461,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.put("date", cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.put("id_salesman", username);
                     paramModel.put("id_customer", cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                    paramModel.put("id_driver", cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.put("listData", getAllReturnDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE))));
 
                     arrayList.add(paramModel);
@@ -7445,6 +7525,7 @@ public class Database extends SQLiteOpenHelper {
                     Map paramModel = new HashMap();
                     paramModel.put("id_mobile", cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                     paramModel.put("date", cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                    paramModel.put("id_driver", cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.put("id_salesman", username);
                     paramModel.put("id_customer", cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.put("listData", getAllStoreCheckDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE))));
@@ -7505,6 +7586,7 @@ public class Database extends SQLiteOpenHelper {
                     Material paramModel = new Material();
                     paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                    paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
@@ -7582,6 +7664,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId_salesman(username);
                     paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                     paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
+                    paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
                     paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
@@ -7717,6 +7800,7 @@ public class Database extends SQLiteOpenHelper {
                     Material paramModel = new Material();
                     paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_MOBILE)));
                     paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                    paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
@@ -7756,6 +7840,7 @@ public class Database extends SQLiteOpenHelper {
                 do {
                     CollectionHeader paramModel = new CollectionHeader();
                     paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                    paramModel.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                     paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                     paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
@@ -8422,6 +8507,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                 paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                 paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                 paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));

@@ -1011,7 +1011,7 @@ public class Helper extends BaseFragment {
 //        String currentDBPath1 = "/data/data/" + context.getPackageName() + "//databases//Qubes.db";
 //        String currentDBPath = getDbPath(context, "Qubes.db");
         String currentDBPath = context.getDatabasePath("Qubes").getPath();
-        String backupDBPath = Utils.getDirLocPDF(context) + "/Qubes_backup_" + username + ".db";
+        String backupDBPath = Utils.getDirLocPDF(context, 3) + "/Qubes_backup_" + username + ".db";
         File currentDB = new File(currentDBPath);
         File backupDB = new File(backupDBPath);
         try {
@@ -1037,7 +1037,7 @@ public class Helper extends BaseFragment {
 //        String currentDBPath1 = "/data/data/" + context.getPackageName() + "//databases//Qubes.db";
 //        String currentDBPath = getDbPath(context, "Qubes.db");
         String currentDBPath = context.getDatabasePath("Qubes").getPath();
-        String backupDBPath = Utils.getDirLocPDF(context) + "/Qubes_backup_" + username + ".db";
+        String backupDBPath = Utils.getDirLocPDF(context, 3) + "/Qubes_backup_" + username + ".db";
         File currentDB = new File(currentDBPath);
         File backupDB = new File(backupDBPath);
 

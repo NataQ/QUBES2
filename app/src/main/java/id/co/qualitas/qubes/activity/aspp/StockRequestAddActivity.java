@@ -137,6 +137,7 @@ public class StockRequestAddActivity extends BaseActivity {
         headerRequest.setReq_date(date);
         headerRequest.setId_mobile(Constants.ID_RS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
         headerRequest.setId_salesman(user.getUsername());
+        headerRequest.setId_driver(user.getId_driver());
         headerRequest.setStatus(Constants.STATUS_DRAFT);
         headerRequest.setEnabled(1);
         headerRequest.setIsSync(0);

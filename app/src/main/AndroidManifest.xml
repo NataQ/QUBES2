@@ -209,6 +209,12 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
+            android:name=".activity.aspp.CollectionFormActivityNew"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
+        <activity
             android:name=".activity.aspp.VisitActivity"
             android:exported="true"
             android:label="@string/app_name"

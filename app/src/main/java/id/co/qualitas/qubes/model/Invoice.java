@@ -9,6 +9,7 @@ public class Invoice {
     private String date;
     private String id_customer;
     private double amount;
+    private double totalPayment;
     private double total_paid;
     private double nett;
     private String invoice_date;
@@ -16,10 +17,12 @@ public class Invoice {
     private String route;
     private String status;
     private String signature;
-    private boolean isChecked;
+    private boolean isCheckedInvoice;
+    private boolean isCheckAllMaterial;
     private int is_route;
     private int isSync;
     private int is_verif;
+    private boolean open;
     private List<Material> materialList;
 
     public Invoice() {
@@ -44,6 +47,30 @@ public class Invoice {
         this.invoice_date = invoice_date;
         this.is_route = is_route ? 1 : 0;
         this.materialList = materialList;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
+    public double getTotalPayment() {
+        return totalPayment;
+    }
+
+    public void setTotalPayment(double totalPayment) {
+        this.totalPayment = totalPayment;
+    }
+
+    public boolean isCheckAllMaterial() {
+        return isCheckAllMaterial;
+    }
+
+    public void setCheckAllMaterial(boolean checkAllMaterial) {
+        isCheckAllMaterial = checkAllMaterial;
     }
 
     public String getDate() {
@@ -150,12 +177,12 @@ public class Invoice {
         this.signature = signature;
     }
 
-    public boolean isChecked() {
-        return isChecked;
+    public boolean isCheckedInvoice() {
+        return isCheckedInvoice;
     }
 
-    public void setChecked(boolean checked) {
-        isChecked = checked;
+    public void setCheckedInvoice(boolean checkedInvoice) {
+        isCheckedInvoice = checkedInvoice;
     }
 
     public int getIs_route() {
@@ -189,4 +216,6 @@ public class Invoice {
     public void setMaterialList(List<Material> materialList) {
         this.materialList = materialList;
     }
+
+
 }

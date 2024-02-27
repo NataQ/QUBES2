@@ -9,6 +9,7 @@ public class CollectionHeader implements Serializable, Cloneable {
     public String idHeader;
     public String date;
     public String customerId;
+    public String idDriver;
     public String invoiceNo;
     public String invoiceDate;
     public String typePayment;
@@ -23,6 +24,14 @@ public class CollectionHeader implements Serializable, Cloneable {
     public List<CollectionDetail> lainList;
     private int isSync;
     private boolean deleted;
+
+    public String getIdDriver() {
+        return idDriver;
+    }
+
+    public void setIdDriver(String idDriver) {
+        this.idDriver = idDriver;
+    }
 
     public boolean isDeleted() {
         return deleted;

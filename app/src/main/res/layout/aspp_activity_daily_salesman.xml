@@ -483,6 +483,33 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".25"
+                                android:text="Kredit Limit Awal"
+                                android:textColor="@color/gray8_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtKreditLimitAwal"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:layout_weight=".75"
+                                android:text=""
+                                android:textColor="@color/orange_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
                                 android:text="Sisa Kredit Limit"
                                 android:textColor="@color/gray8_aspp" />
 

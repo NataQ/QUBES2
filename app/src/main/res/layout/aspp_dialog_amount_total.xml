@@ -78,7 +78,7 @@
             android:textSize="@dimen/text_status"
             android:layout_marginTop="5dp"
             android:textColor="@color/red_krang"
-            android:text="*Mengubah total payment akan menghapus semua amount paid yang sudah di input" />
+            android:text="*Mengubah total payment akan menghapus semua faktur yang sudah di input" />
 
         <LinearLayout
             android:layout_width="match_parent"

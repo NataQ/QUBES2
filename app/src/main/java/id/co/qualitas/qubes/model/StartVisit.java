@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class StartVisit implements Serializable {
     private int id;
     private String id_salesman;
+    private String id_driver;
     private String date;
     private String rute_inap_date;
     private String start_time;
@@ -19,6 +20,14 @@ public class StartVisit implements Serializable {
     private boolean endDay;
     private boolean startDay;
     private int status_visit;
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
+    }
 
     public int getStatus_visit() {
         return status_visit;

@@ -774,6 +774,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setMaterialList(mList);
                     headerSave.setDiscount(getDiscount);
                     headerSave.setType_customer(outletHeader.getType_customer());
+                    headerSave.setId_driver(user.getId_driver());
                     headerSave.setStatusPaid(false);
                     headerSave.setOrder_type(Helper.isCanvasSales(user) ? Constants.ORDER_CANVAS_TYPE : Constants.ORDER_TAKING_TYPE);
                     headerSave.setIdHeader(Constants.ID_OP_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));

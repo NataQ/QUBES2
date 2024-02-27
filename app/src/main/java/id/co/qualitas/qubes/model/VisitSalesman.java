@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.model;
 public class VisitSalesman {
     private String idHeader;
     private String idVisit;
+    private String idDriver;
     private String customerId;
     private String customerName;
     private String address;
@@ -47,6 +48,14 @@ public class VisitSalesman {
     private int isSync;
     private boolean isNoo;
     private boolean isRoute;
+
+    public String getIdDriver() {
+        return idDriver;
+    }
+
+    public void setIdDriver(String idDriver) {
+        this.idDriver = idDriver;
+    }
 
     public int getInsideInt() {
         return insideInt;

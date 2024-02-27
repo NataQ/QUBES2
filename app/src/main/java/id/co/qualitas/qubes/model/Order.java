@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.model;
 import java.util.List;
 
 public class Order {
+    private String id_driver;
     private String order_type;
     private String status;
     private String top;
@@ -27,6 +28,14 @@ public class Order {
     private boolean deleted;
 
     public Order() {
+    }
+
+    public String getId_driver() {
+        return id_driver;
+    }
+
+    public void setId_driver(String id_driver) {
+        this.id_driver = id_driver;
     }
 
     public int getPrintOrder() {
