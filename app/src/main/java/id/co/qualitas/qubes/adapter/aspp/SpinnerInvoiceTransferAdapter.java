@@ -22,7 +22,7 @@ import id.co.qualitas.qubes.activity.aspp.CollectionFormActivityNew;
 import id.co.qualitas.qubes.listener.OnLoadMoreListener;
 import id.co.qualitas.qubes.model.Invoice;
 
-public class SpinnerInvoiceAdapter extends RecyclerView.Adapter<SpinnerInvoiceAdapter.Holder> implements Filterable {
+public class SpinnerInvoiceTransferAdapter extends RecyclerView.Adapter<SpinnerInvoiceTransferAdapter.Holder> implements Filterable {
     private List<Invoice> mList;
     private List<Invoice> mFilteredList;
     private LayoutInflater mInflater;
@@ -30,10 +30,11 @@ public class SpinnerInvoiceAdapter extends RecyclerView.Adapter<SpinnerInvoiceAd
     private OnAdapterListener onAdapterListener;
     private OnLoadMoreListener onLoadMoreListener;
     private boolean isLoading = false;
+    CollectionTransferNewAdapter transferAdapter;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public SpinnerInvoiceAdapter(CollectionFormActivityNew mContext, List<Invoice> mList, OnAdapterListener onAdapterListener) {
+    public SpinnerInvoiceTransferAdapter(CollectionFormActivityNew mContext, CollectionTransferNewAdapter transferAdapter, List<Invoice> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -42,6 +43,7 @@ public class SpinnerInvoiceAdapter extends RecyclerView.Adapter<SpinnerInvoiceAd
             this.mFilteredList = new ArrayList<>();
         }
         this.mContext = mContext;
+        this.transferAdapter = transferAdapter;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
     }
@@ -135,7 +137,7 @@ public class SpinnerInvoiceAdapter extends RecyclerView.Adapter<SpinnerInvoiceAd
                 holder.cvUncheck.setVisibility(View.GONE);
                 holder.cvCheck.setVisibility(View.VISIBLE);
             }
-            mContext.setCheckedAll();
+            transferAdapter.setCheckedAll();
         });
     }
 

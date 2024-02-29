@@ -123,7 +123,7 @@ public class CollectionVisitActivity extends BaseActivity {
                 if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                     SessionManagerQubes.setCollectionHeader(header);
                     SessionManagerQubes.setCollectionSource(2);
-
+//                    PINDAH KE HALAMAN DETAIL AJA
                     Intent intent = new Intent(this, CollectionFormActivity.class);
                     startActivity(intent);
                 } else if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {

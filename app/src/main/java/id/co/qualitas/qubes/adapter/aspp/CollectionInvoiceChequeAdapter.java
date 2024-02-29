@@ -1,14 +1,24 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +34,9 @@ import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionFormActivityNew;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.Material;
 
 public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<CollectionInvoiceChequeAdapter.Holder> implements Filterable {
     private List<Invoice> mList;
@@ -35,23 +47,27 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
     SparseBooleanArray itemStateArray = new SparseBooleanArray();
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
-    protected boolean checked = true;
+    protected boolean checked = false;
     private CollectionItemChequeAdapter mAdapter;
     boolean visible = false;
-    CollectionChequeNewAdapter headerAdapter;
-    int idHeader;
+    CollectionChequeNewAdapter chequeAdapter;
+    private Holder dataObjectHolder;
+    int chequePosition;
+    CollectionDetail collectionDetail;
 
-    public CollectionInvoiceChequeAdapter(CollectionFormActivityNew mContext, CollectionChequeNewAdapter headerAdapter, int idHeader, List<Invoice> mList, OnAdapterListener onAdapterListener) {
-        if (mList != null) {
-            this.mList = mList;
-            this.mFilteredList = mList;
+    public CollectionInvoiceChequeAdapter(CollectionFormActivityNew mContext, CollectionChequeNewAdapter chequeAdapter,
+                                          int chequePosition, CollectionDetail collectionDetail, OnAdapterListener onAdapterListener) {
+        if (Helper.isNotEmptyOrNull(collectionDetail.getInvoiceList())) {
+            this.mList = collectionDetail.getInvoiceList();
+            this.mFilteredList = collectionDetail.getInvoiceList();
         } else {
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
-        this.headerAdapter = headerAdapter;
+        this.collectionDetail = collectionDetail;
+        this.chequeAdapter = chequeAdapter;
         this.mContext = mContext;
-        this.idHeader = idHeader;
+        this.chequePosition = chequePosition;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
     }
@@ -97,21 +113,27 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNoFaktur, txtTglJatuhTempo, txtAmountInv, txtTotalPaid, txtLeftAmount;
-        LinearLayout layout, llItem;
+        TextView txtNoFaktur, txtTglJatuhTempo, txtTotalInv, txtTotalPaid, txtLeftAmount;
+        TextView txtOutstanding, txtAmountInvoice;
+        LinearLayout layout, llItem, llDelete;
         ImageView imgView;
+        CheckBox cbAll;
         RecyclerView recyclerView;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtAmountInvoice = itemView.findViewById(R.id.txtAmountInvoice);
+            txtOutstanding = itemView.findViewById(R.id.txtOutstanding);
+            cbAll = itemView.findViewById(R.id.cbAll);
             txtNoFaktur = itemView.findViewById(R.id.txtNoFaktur);
             txtTglJatuhTempo = itemView.findViewById(R.id.txtTglJatuhTempo);
             txtLeftAmount = itemView.findViewById(R.id.txtLeftAmount);
-            txtAmountInv = itemView.findViewById(R.id.txtAmountInv);
+            txtTotalInv = itemView.findViewById(R.id.txtTotalInv);
             txtTotalPaid = itemView.findViewById(R.id.txtTotalPaid);
             layout = itemView.findViewById(R.id.layout);
             llItem = itemView.findViewById(R.id.llItem);
+            llDelete = itemView.findViewById(R.id.llDelete);
             imgView = itemView.findViewById(R.id.imgView);
             recyclerView = itemView.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -137,15 +159,35 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
         setFormatSeparator();
         Invoice detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
+        if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+            holder.cbAll.setChecked(false);
+        } else {
+            holder.cbAll.setChecked(true);
+        }
+
+        if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).isOpen()) {
+            visible = true;
+            holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
+            holder.llItem.setVisibility(View.VISIBLE);
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(true);
+        } else {
+            visible = false;
+            holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(false);
+            holder.llItem.setVisibility(View.GONE);
+        }
+
         holder.layout.setOnClickListener(v -> {
             if (visible) {
                 visible = false;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(false);
                 holder.llItem.setVisibility(View.GONE);
             } else {
                 visible = true;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
                 holder.llItem.setVisibility(View.VISIBLE);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(true);
             }
         });
 
@@ -154,14 +196,69 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
             String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getTanggal_jatuh_tempo());
             holder.txtTglJatuhTempo.setText(dueDate);
         }
-        holder.txtAmountInv.setText("Rp." + format.format(detail.getAmount()));
-        holder.txtLeftAmount.setText("Rp." + format.format(0));
-        holder.txtTotalPaid.setText("Rp." + format.format(0));
+        holder.txtTotalInv.setText("Rp." + format.format(detail.getAmount()));
+        holder.txtAmountInvoice.setText("Rp." + format.format(detail.getNett()));
+        holder.txtOutstanding.setText("Rp." + format.format(mContext.getOutstandingInvoice(mFilteredList.get(holder.getAbsoluteAdapterPosition()))));
+//        holder.txtLeftAmount.setText("Rp." + format.format(calculateLeft(mFilteredList.get(holder.getAbsoluteAdapterPosition()))));
+//        holder.txtTotalPaid.setText("Rp." + format.format(detail.getTotalPayment()));
 
-        mAdapter = new CollectionItemChequeAdapter(mContext, headerAdapter, CollectionInvoiceChequeAdapter.this, idHeader, holder.getAbsoluteAdapterPosition(), mFilteredList.get(holder.getAbsoluteAdapterPosition()).getMaterialList(), header -> {
-
+        mAdapter = new CollectionItemChequeAdapter(mContext, chequeAdapter, CollectionInvoiceChequeAdapter.this, chequePosition,
+                holder.getAbsoluteAdapterPosition(), mFilteredList.get(holder.getAbsoluteAdapterPosition()), header -> {
         });
         holder.recyclerView.setAdapter(mAdapter);
+
+        holder.llDelete.setOnClickListener(v -> {
+            final Dialog dialog = new Dialog(mContext);
+            LayoutInflater inflater = LayoutInflater.from(mContext);
+            View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(dialogView);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+            TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+            Button btnNo = dialog.findViewById(R.id.btnNo);
+            Button btnYes = dialog.findViewById(R.id.btnYes);
+            txtTitle.setText("Hapus");
+            txtDialog.setText("Anda yakin?");
+            btnYes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    mContext.notifyAdapter(3);
+                    dialog.dismiss();
+                }
+            });
+            btnNo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        });
+
+//        holder.txtTotalPaid.setOnClickListener(v -> {
+//            if (collectionDetail.getTotalPayment() > 0) {
+//                openDialogTotalPaid(holder.getAbsoluteAdapterPosition());
+//            } else {
+//                Toast.makeText(mContext, "Masukkan total payment", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+        holder.cbAll.setOnClickListener(v -> {
+            if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
+                holder.cbAll.setChecked(true);
+                itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+                setCheckedMaterial(holder.getAbsoluteAdapterPosition(), true);
+            } else {
+                holder.cbAll.setChecked(false);
+                itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+                setCheckedMaterial(holder.getAbsoluteAdapterPosition(), false);
+            }
+        });
     }
 
     @Override
@@ -180,4 +277,136 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
         format = new DecimalFormat("#,###,###,###.###", otherSymbols);
         format.setDecimalSeparatorAlwaysShown(false);
     }
+
+//    public double calculateLeft(Invoice invoice) {
+//        double left = 0, totalPaid = 0;
+//        for (Material detail2 : invoice.getMaterialList()) {
+//            totalPaid = totalPaid + detail2.getAmountPaid();
+//        }
+//        left = invoice.getTotalPayment() - totalPaid;
+//        return left;
+//    }
+//
+//    public double calculateLeftWoPos(Invoice invoice, String idMat) {
+//        double left = 0, totalPaid = 0;
+//        for (Material detail2 : invoice.getMaterialList()) {
+//            if (!detail2.getId().equals(idMat)) {
+//                totalPaid = totalPaid + detail2.getAmountPaid();
+//            }
+//        }
+//        left = invoice.getTotalPayment() - totalPaid;
+//        return left;
+//    }
+
+    private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
+//        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
+        double totalPaymentGiro = chequeAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
+
+        for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
+            Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
+            if (checked) {
+                if (totalPaymentGiro > 0) {
+                    double kurangBayarMaterial = mContext.getKurangBayarMaterial(mFilteredList.get(absoluteAdapterPosition), detail);
+                    if (kurangBayarMaterial > 0) {
+                        if (totalPaymentGiro > kurangBayarMaterial || totalPaymentGiro == kurangBayarMaterial) {
+                            detail.setChecked(true);
+                            detail.setAmountPaid(kurangBayarMaterial);
+                        } else if (totalPaymentGiro < kurangBayarMaterial) {
+                            detail.setChecked(true);
+                            detail.setAmountPaid(totalPaymentGiro);
+                        }
+                    }
+                }
+            } else {
+                detail.setChecked(false);
+                detail.setAmountPaid(0);
+            }
+        }
+        mContext.notifyAdapter(3);
+//        notifyItemChanged(absoluteAdapterPosition);
+    }
+
+//    private void openDialogTotalPaid(int pos) {
+//        LayoutInflater inflater = LayoutInflater.from(mContext);
+//        final Dialog dialog = new Dialog(mContext);
+//        View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_total, null);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(dialogView);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+//        TextView txtTypePayment = dialog.findViewById(R.id.txtTypePayment);
+//        EditText edtTotalPayment = dialog.findViewById(R.id.edtTotalPayment);
+//        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+//        Button btnSave = dialog.findViewById(R.id.btnSave);
+//
+//        txtTypePayment.setText("Cheque");
+//        edtTotalPayment.setText(mFilteredList.get(pos).getTotalPayment() != 0 ? Helper.setDotCurrencyAmount(mFilteredList.get(pos).getTotalPayment()) : null);
+//
+//        edtTotalPayment.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Helper.setDotCurrency(edtTotalPayment, this, s);
+//            }
+//        });
+//
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        btnSave.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                double totalPayment = collectionDetail.getTotalPayment();
+//                double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
+//                if (qty < totalPayment || qty == totalPayment) {
+//                    mFilteredList.get(pos).setTotalPayment(qty);
+//                    for (Material detail : mFilteredList.get(pos).getMaterialList()) {
+//                        detail.setChecked(false);
+//                        detail.setAmountPaid(0);
+//                    }
+//                    chequeAdapter.notifyItemChanged(chequePosition);
+//                    dialog.dismiss();
+//                } else {
+//                    Toast.makeText(mContext, "Melebihi total payment cheque", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        dialog.show();
+//    }
+
+    public void setCheckedAll(int idHeader) {
+        int checked = 0;
+        for (Material detail : mFilteredList.get(idHeader).getMaterialList()) {
+            if (detail.isChecked()) checked++;
+        }
+        if (checked == mFilteredList.get(idHeader).getMaterialList().size()) {
+            dataObjectHolder.cbAll.setChecked(true);
+        } else {
+            dataObjectHolder.cbAll.setChecked(false);
+        }
+    }
+
+//    public double getTotalAmount(int transferPosition) {
+//        return mFilteredList.get(transferPosition).getTotalPayment();
+//    }
+//
+//    public void setLeftInvoice(int invoicePosition, Invoice invoice) {
+//        double left = calculateLeft(invoice);
+//        mFilteredList.get(invoicePosition).setLeft(left);
+//        notifyItemChanged(invoicePosition);
+//    }
 }

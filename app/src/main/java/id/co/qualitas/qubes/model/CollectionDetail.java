@@ -27,8 +27,17 @@ public class CollectionDetail implements Serializable, Cloneable {
     public List<Material> checkedMaterialList;
     public List<Invoice> checkedInvoiceList;
     private int isSync;
+    private boolean isOpen;
 
     public CollectionDetail() {
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
     }
 
     public List<Invoice> getInvoiceList() {

@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.util.Log;
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import java.util.Map;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.Bank;
+import id.co.qualitas.qubes.model.Collection;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
@@ -76,6 +79,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_RETURN = "Return";
     private static final String TABLE_COLLECTION_HEADER = "CollectionHeader";
     private static final String TABLE_COLLECTION_DETAIL = "CollectionDetail";
+    private static final String TABLE_COLLECTION_INVOICE = "CollectionInvoice";
     private static final String TABLE_COLLECTION_ITEM = "CollectionItem";
     private static final String TABLE_MASTER_REASON = "MasterReason";
     private static final String TABLE_MASTER_PROMOTION = "MasterPromotion";
@@ -355,8 +359,10 @@ public class Database extends SQLiteOpenHelper {
 //    private static final String KEY_PHOTO_REASON_RETURN = "photoReasonReturn";
 
     // column table CollectionHeader
+    private static final String KEY_CATEGORY_PAYMENT = "categoryPayment";
     private static final String KEY_ID_COLLECTION_HEADER_DB = "idCollectionHeaderDB";
     // column table CollectionDetail
+    private static final String KEY_ID_COLLECTION_INVOICE_DB = "idCollectionInvoiceDB";
     private static final String KEY_ID_COLLECTION_DETAIL_DB = "idCollectionDetailDB";
 
     // column table CollectionItem
@@ -916,10 +922,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_DATE + " TEXT,"
             + KEY_CUSTOMER_ID + " TEXT,"
             + KEY_ID_DRIVER + " TEXT,"
-            + KEY_INVOICE_NO + " TEXT,"
-            + KEY_INVOICE_DATE + " TEXT,"
-            + KEY_INVOICE_TOTAL + " REAL,"
-            + KEY_TOTAL_PAID + " REAL,"
+            + KEY_ID_SALESMAN + " TEXT,"
             + KEY_TYPE_PAYMENT + " TEXT,"
             + KEY_STATUS + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
@@ -933,7 +936,6 @@ public class Database extends SQLiteOpenHelper {
     public static String CREATE_TABLE_COLLECTION_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_DETAIL + "("
             + KEY_ID_COLLECTION_DETAIL_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
-            + KEY_INVOICE_NO + " TEXT,"
             + KEY_STATUS + " TEXT,"
             + KEY_TYPE_PAYMENT + " TEXT,"
             + KEY_TOTAL_PAYMENT + " REAL,"
@@ -954,10 +956,33 @@ public class Database extends SQLiteOpenHelper {
             + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + ")"
             + ")";
 
-    public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_ITEM + "("
-            + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY,"
+    public static String CREATE_TABLE_COLLECTION_INVOICE = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_INVOICE + "("
+            + KEY_ID_COLLECTION_INVOICE_DB + " INTEGER PRIMARY KEY,"
             + KEY_ID_COLLECTION_DETAIL_DB + " TEXT,"
             + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
+            + KEY_CATEGORY_PAYMENT + " TEXT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_ID_DRIVER + " TEXT,"
+            + KEY_ID_SALESMAN + " TEXT,"
+            + KEY_INVOICE_NO + " TEXT,"
+            + KEY_INVOICE_DATE + " TEXT,"
+            + KEY_INVOICE_TOTAL + " REAL,"
+            + KEY_TOTAL_PAID + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + KEY_UPDATED_BY + " TEXT,"
+            + KEY_UPDATED_DATE + " TEXT,"
+            + KEY_DELETED + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
+            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + "," + KEY_ID_COLLECTION_INVOICE_DB + ")"
+            + ")";
+
+    public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_ITEM + "("
+            + KEY_ID_COLLECTION_ITEM_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_COLLECTION_INVOICE_DB + " TEXT,"
+            + KEY_ID_COLLECTION_DETAIL_DB + " TEXT,"
+            + KEY_ID_COLLECTION_HEADER_DB + " TEXT,"
+            + KEY_INVOICE_NO + " TEXT,"
             + KEY_MATERIAL_ID + " TEXT,"
             + KEY_MATERIAL_NAME + " TEXT,"
             + KEY_MATERIAL_GROUP_ID + " TEXT,"
@@ -972,7 +997,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + ")"
+            + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + "," + KEY_ID_COLLECTION_INVOICE_DB + ")"
             + ")";
 
     public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_REASON + "("
@@ -1208,6 +1233,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_RETURN);
         db.execSQL(CREATE_TABLE_COLLECTION_HEADER);
         db.execSQL(CREATE_TABLE_COLLECTION_DETAIL);
+        db.execSQL(CREATE_TABLE_COLLECTION_INVOICE);
         db.execSQL(CREATE_TABLE_COLLECTION_ITEM);
         db.execSQL(CREATE_TABLE_MASTER_REASON);
         db.execSQL(CREATE_TABLE_MASTER_BANK);
@@ -1254,6 +1280,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RETURN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_DETAIL);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_INVOICE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_ITEM);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_CUSTOMER_SALESMAN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MASTER_PRICE);
@@ -2202,7 +2229,6 @@ public class Database extends SQLiteOpenHelper {
                 requestDetail.put("type_payment", "cash");
                 requestDetail.put("total_payment", totalPaymentCash);
                 requestDetail.put("left", leftCash);
-//            int idDetail = database.addCollectionCashLain(requestDetail);
                 values = new ContentValues();
                 values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
                 values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
@@ -2217,7 +2243,6 @@ public class Database extends SQLiteOpenHelper {
                 int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
                 for (Material material : cashList) {
-//                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
                     values = new ContentValues();
                     values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                     values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
@@ -2413,6 +2438,330 @@ public class Database extends SQLiteOpenHelper {
 
             db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{header.getIdHeader()});
 
+            result = true;
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e("Collection", e.getMessage());
+            result = false;
+        }
+        db.endTransaction();
+        return result;
+        //addCollectionHeader
+    }
+
+    public boolean addCollectionNew(Collection request) {
+        boolean result = false;
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransactionNonExclusive();
+        int idDetail, idInvoice, idItem;
+
+        int idCollHeader = -1;
+        try {
+            String idMobileCollection = Constants.ID_CI_MOBILE.concat(request.getUser().getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime()));
+            //addCollectionHeader
+            ContentValues values = new ContentValues();
+            values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+            values.put(KEY_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_3));
+            values.put(KEY_STATUS, "paid");
+            values.put(KEY_TYPE_PAYMENT, "invoice");
+            values.put(KEY_CUSTOMER_ID, request.getCustomer().getId());
+            values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+            values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+            values.put(KEY_CREATED_BY, request.getUser().getUsername());
+            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+            values.put(KEY_IS_SYNC, request.getIsSync());
+            idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+
+            if (request.getCash() != null) {
+                values = new ContentValues();
+                values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                values.put(KEY_STATUS, "paid");
+                values.put(KEY_TYPE_PAYMENT, "cash");
+                values.put(KEY_TOTAL_PAYMENT, request.getTotalPayment());
+                values.put(KEY_LEFT, request.getLeft());
+                values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                for (Invoice inv : request.getCash().getInvoiceList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                    values.put(KEY_CUSTOMER_ID, inv.getId_customer());
+                    values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+                    values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+                    values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                    values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                    values.put(KEY_INVOICE_TOTAL, inv.getNett());
+                    values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                    values.put(KEY_TOTAL_PAID, 0);
+                    values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                    idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
+
+                    for (Material material : inv.getMaterialList()) {
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                        values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                        values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                        values.put(KEY_MATERIAL_ID, material.getId());
+                        values.put(KEY_MATERIAL_NAME, material.getNama());
+                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                        values.put(KEY_PRICE, material.getNett());
+                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                        values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                        idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                    }
+                }
+            }
+
+            if (request.getLain() != null) {
+                values = new ContentValues();
+                values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                values.put(KEY_STATUS, "paid");
+                values.put(KEY_TYPE_PAYMENT, "lain");
+                values.put(KEY_TOTAL_PAYMENT, request.getTotalPayment());
+                values.put(KEY_LEFT, request.getLeft());
+                values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                for (Invoice inv : request.getLain().getInvoiceList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                    values.put(KEY_CUSTOMER_ID, inv.getId_customer());
+                    values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+                    values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+                    values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                    values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                    values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                    values.put(KEY_INVOICE_TOTAL, inv.getNett());
+                    values.put(KEY_TOTAL_PAID, 0);
+                    values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                    idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
+
+                    for (Material material : inv.getMaterialList()) {
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                        values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                        values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                        values.put(KEY_MATERIAL_ID, material.getId());
+                        values.put(KEY_MATERIAL_NAME, material.getNama());
+                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                        values.put(KEY_PRICE, material.getNett());
+                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                        values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                        idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                    }
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(request.getTfList())) {
+                for (CollectionDetail collection : request.getTfList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                    values.put(KEY_TYPE_PAYMENT, "transfer");
+                    values.put(KEY_STATUS, "paid");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                    idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Invoice inv : collection.getInvoiceList()) {
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                        values.put(KEY_CUSTOMER_ID, inv.getId_customer());
+                        values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+                        values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+                        values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_TOTAL, inv.getNett());
+                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                        idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
+
+                        for (Material material : inv.getMaterialList()) {
+                            values = new ContentValues();
+                            values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                            values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
+                            values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                            values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                            values.put(KEY_MATERIAL_ID, material.getId());
+                            values.put(KEY_MATERIAL_NAME, material.getNama());
+                            values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                            values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                            values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                            values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                            values.put(KEY_PRICE, material.getNett());
+                            values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                            values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                            values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                            idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                        }
+                    }
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(request.getGiroList())) {
+                for (CollectionDetail collection : request.getGiroList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                    values.put(KEY_TYPE_PAYMENT, "giro");
+                    values.put(KEY_STATUS, "paid");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_NO, collection.getNo());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_DUE_DATE, collection.getTglCair());
+                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+                    values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                    idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Invoice inv : collection.getInvoiceList()) {
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                        values.put(KEY_CUSTOMER_ID, inv.getId_customer());
+                        values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+                        values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+                        values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_TOTAL, inv.getNett());
+                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                        idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
+
+                        for (Material material : inv.getMaterialList()) {
+                            values = new ContentValues();
+                            values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                            values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
+                            values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                            values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                            values.put(KEY_MATERIAL_ID, material.getId());
+                            values.put(KEY_MATERIAL_NAME, material.getNama());
+                            values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                            values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                            values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                            values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                            values.put(KEY_PRICE, material.getNett());
+                            values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                            values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                            values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                            idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                        }
+                    }
+                }
+            }
+
+            if (Helper.isNotEmptyOrNull(request.getCekList())) {
+                for (CollectionDetail collection : request.getCekList()) {
+                    values = new ContentValues();
+                    values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                    values.put(KEY_TYPE_PAYMENT, "cheque");
+                    values.put(KEY_STATUS, "paid");
+                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+                    values.put(KEY_LEFT, collection.getLeft());
+                    values.put(KEY_NO, collection.getNo());
+                    values.put(KEY_DATE, collection.getTgl());
+                    values.put(KEY_DUE_DATE, collection.getTglCair());
+                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+                    values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                    values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                    idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+
+                    for (Invoice inv : collection.getInvoiceList()) {
+                        values = new ContentValues();
+                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                        values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                        values.put(KEY_CUSTOMER_ID, inv.getId_customer());
+                        values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
+                        values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
+                        values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_TOTAL, inv.getNett());
+                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                        values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                        idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
+
+                        for (Material material : inv.getMaterialList()) {
+                            values = new ContentValues();
+                            values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+                            values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
+                            values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
+                            values.put(KEY_INVOICE_NO, inv.getNo_invoice());
+                            values.put(KEY_MATERIAL_ID, material.getId());
+                            values.put(KEY_MATERIAL_NAME, material.getNama());
+                            values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+                            values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+                            values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+                            values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+                            values.put(KEY_PRICE, material.getNett());
+                            values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+                            values.put(KEY_CREATED_BY, request.getUser().getUsername());
+                            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                            values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
+
+                            idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+                        }
+                    }
+                }
+            }
             result = true;
             db.setTransactionSuccessful();
         } catch (Exception e) {
@@ -4303,14 +4652,23 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Invoice> getAllInvoiceCustomerCollection(String idCust, String invNo) {
-        idCust = "201000008";
+    public List<Invoice> getAllInvoiceCustomerCollection(String idCust) {
+//        idCust = "201000008";
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? and " + KEY_INVOICE_NO + " like ? ";
+        //select sum(amountPaid), invoiceNo, materialId from CollectionItem group by invoiceNo,materialId => total amount paid per material
+        String selectQuery = "SELECT a.*, ifnull(b.paidAmount, 0) as paidAmount FROM InvoiceHeader a, " +
+                "(select sum(amountPaid) as paidAmount, invoiceNo, materialId from CollectionItem group by invoiceNo) b on a.invoiceNo = b.invoiceNo " +
+                "where a.isVerif = 1 and a.customerId = ? and paidAmount < a.invoiceTotal ";
+
+        String selectQueryOrder = "SELECT a.*, b.paidAmount FROM OrderHeader a, " +
+                "(select sum(amountPaid) as paidAmount, invoiceNo, materialId from CollectionItem group by invoiceNo) b on a.idOrderHeaderDB = b.invoiceNo " +
+                "where a.customerId = ? and paidAmount < a.omzet ";
+
+//        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, "%" + invNo + "%"});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -4321,8 +4679,9 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow("paidAmount")));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
+                paramModel.setCategoryPayment("invoice");
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
@@ -4332,7 +4691,31 @@ public class Database extends SQLiteOpenHelper {
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
+
+        cursor = db.rawQuery(selectQueryOrder, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice paramModel = new Invoice();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow("paidAmount")));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
+                paramModel.setCategoryPayment("order");
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(null);//cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME))
+                paramModel.setMaterialList(getAllDetailOrder(paramModel.getIdHeader()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+
         cursor.close();
+
+
         return arrayList;
     }
 
@@ -4572,6 +4955,8 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return arrayList;
     }
+
+    UBAH SEMUA YG ADA HUBUNGANNYA SAMA TABLE_COLLECTION_HEADER/TABLE_COLLECTION_DETAIL/TABLE_COLLECTION_ITEM
 
     public List<Material> getAllDetailOrder(String idHeader) {
         List<Material> arrayList = new ArrayList<>();
@@ -8458,6 +8843,7 @@ public class Database extends SQLiteOpenHelper {
         deleteReturn();
         deleteCollectionHeader();
         deleteCollectionDetail();
+        deleteCollectionInvoice();
         deleteCollectionItem();
         deleteMasterReason();
         deleteMasterBank();
@@ -8647,6 +9033,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteCollectionDetail() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_COLLECTION_DETAIL);
+    }
+
+    public void deleteCollectionInvoice() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_COLLECTION_INVOICE);
     }
 
     public void deleteCollectionItem() {

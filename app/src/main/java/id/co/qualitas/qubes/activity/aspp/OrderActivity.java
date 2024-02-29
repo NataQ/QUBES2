@@ -299,7 +299,8 @@ public class OrderActivity extends BaseActivity {
                 SessionManagerQubes.setOrder(header);
                 SessionManagerQubes.setAlreadyPrint(true);
                 SessionManagerQubes.setCollectionSource(3);
-                Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
+//                Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
+                Intent intent = new Intent(OrderActivity.this, CollectionVisitActivity.class);
                 startActivity(intent);
             }
         });

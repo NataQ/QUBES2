@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,9 +14,9 @@
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        card_view:cardBackgroundColor="@color/white3_aspp"
-        card_view:cardCornerRadius="4dp"
-        card_view:cardElevation="1dp">
+        app:cardBackgroundColor="@color/white3_aspp"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -134,10 +134,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Amount" />
+                            android:text="Total Invoice" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtAmountInv"
+                            android:id="@+id/txtTotalInv"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -168,7 +168,69 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Total Paid" />
+                            android:text="Amount" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtAmountInvoice"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Left Amount" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtOutstanding"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Total Payment" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/txtTotalPaid"
@@ -215,9 +277,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
-                    card_view:cardBackgroundColor="@color/space_transparent"
-                    card_view:cardCornerRadius="@dimen/corner_fragment"
-                    card_view:cardElevation="0dp">
+                    app:cardBackgroundColor="@color/space_transparent"
+                    app:cardCornerRadius="@dimen/corner_fragment"
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -231,12 +293,22 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/imgViewFullPayment"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_marginEnd="5dp"
+                                android:background="@drawable/selector_checklist"
+                                android:clickable="true"
+                                android:visibility="gone" />
+
                             <androidx.appcompat.widget.AppCompatCheckBox
                                 android:id="@+id/cbAll"
                                 style="@style/TextView_Small"
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:layout_marginEnd="5dp"
+                                android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/black_aspp"
                                 android:visibility="visible" />
@@ -246,6 +318,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".05"
+                                android:visibility="gone"
                                 android:text="No"
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
@@ -271,23 +344,23 @@
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
-                            <!--                            <TextView-->
-                            <!--                                style="@style/TextView_Small"-->
-                            <!--                                android:layout_width="0dp"-->
-                            <!--                                android:layout_height="wrap_content"-->
-                            <!--                                android:layout_marginStart="2dp"-->
-                            <!--                                android:layout_marginEnd="2dp"-->
-                            <!--                                android:layout_weight=".2"-->
-                            <!--                                android:text="Left"-->
-                            <!--                                android:textColor="@color/black_aspp"-->
-                            <!--                                android:textStyle="bold" />-->
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:layout_marginEnd="2dp"
+                                android:layout_weight=".2"
+                                android:text="Left"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight=".2"
-                                android:text="Amount Paid"
+                                android:text="Paid"
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 

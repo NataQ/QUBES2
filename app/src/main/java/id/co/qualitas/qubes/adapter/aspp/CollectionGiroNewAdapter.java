@@ -18,6 +18,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -42,6 +43,7 @@ import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
 import id.co.qualitas.qubes.model.Bank;
 import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.Material;
 
 public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGiroNewAdapter.Holder> implements Filterable {
     private Database database;
@@ -61,10 +63,10 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
     double totalPayment, left;
     RecyclerViewMaxHeight rv;
     private CardView cvUnCheckAll, cvCheckedAll;
-    private List<Invoice> listSpinner, listFilteredSpinner;
+    private List<Invoice> listMasterInvoice, listFilteredSpinner, listAdded;
     boolean checkedAll = false;
     private LinearLayoutManager linearLayoutManMaterial;
-    private SpinnerInvoiceAdapter invoiceAdapter;
+    private SpinnerInvoiceGiroAdapter invoiceAdapter;
     private String searchInv;
 
     public CollectionGiroNewAdapter(CollectionFormActivityNew mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
@@ -118,12 +120,6 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
                 notifyDataSetChanged();
             }
         };
-    }
-
-    public void updateKurangBayar(int pos) {
-        if (mAdapter != null) {
-            mAdapter.notifyItemChanged(pos);
-        }
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -180,11 +176,27 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
         CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         todayDate = Helper.getTodayDate();
         todayString = new SimpleDateFormat(Constants.DATE_FORMAT_5).format(todayDate);
+
         String idBankCust = Helper.isEmpty(detail.getIdBankCust(), "");
         String nameBankCust = Helper.isEmpty(detail.getBankCust(), "");
-
         String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
         String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
+
+        if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).isOpen()) {
+            visible = true;
+            holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
+            holder.llPayment.setVisibility(View.VISIBLE);
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(true);
+        } else {
+            visible = false;
+            holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(false);
+            holder.llPayment.setVisibility(View.GONE);
+        }
+
+        holder.edtPayment.setText("Rp." + format.format(detail.getTotalPayment()));
+        holder.txtLeft.setText("Rp." + format.format(calculateLeft(holder.getAbsoluteAdapterPosition())));
+        holder.edtNoGiro.setText(Helper.isEmpty(detail.getNo(),null));
 
         if (!Helper.isNullOrEmpty(detail.getTgl())) {
             String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
@@ -200,10 +212,9 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             holder.txtTglCair.setText(null);
         }
 
-        List<Bank> bankASPPList = database.getAllBank("Bank ASPP");//Bank ASPP
-        List<Bank> bankCustomerList = database.getAllBank("Bank Customer");//Bank Customer
+        List<Bank> bankASPPList = database.getAllBank("01");//Bank ASPP
+        List<Bank> bankCustomerList = database.getAllBank("02");//Bank Customer
 
-        holder.edtPayment.setText(Helper.setDotCurrencyAmount(detail.getTotalPayment()));
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
         holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
 
@@ -221,7 +232,7 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             @Override
             public void afterTextChanged(Editable s) {
                 if (!s.toString().equals("") && !s.toString().equals("-")) {
-                    detail.setNo(s.toString().trim());
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setNo(s.toString().trim());
                 }
             }
         });
@@ -244,7 +255,7 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
 
                     chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                    detail.setTgl(tglTf);
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTgl(tglTf);
                     holder.txtTglGiro.setText(chooseDateString);
                     holder.txtTglGiro.setError(null);
                 }
@@ -272,7 +283,7 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
 
                     chooseDateString = new SimpleDateFormat(Constants.DATE_FORMAT_4).format(calendar.getTime());
                     String tglTf = new SimpleDateFormat(Constants.DATE_FORMAT_3).format(calendar.getTime());
-                    detail.setTglCair(tglTf);
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTglCair(tglTf);
                     holder.txtTglCair.setText(chooseDateString);
                     holder.txtTglCair.setError(null);
                 }
@@ -295,8 +306,8 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             btnSearch.setVisibility(View.GONE);
 
             SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankASPPList, true, (header, adapterPosition) -> {
-                detail.setIdBankASPP(header.getId());
-                detail.setBankNameASPP(header.getName());
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setIdBankASPP(header.getId());
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setBankNameASPP(header.getName());
                 holder.spnBankASPP.setText(header.getId() + " - " + header.getName());
                 alertDialog.dismiss();
             });
@@ -336,8 +347,8 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             RecyclerView listView = alertDialog.findViewById(R.id.list_view);
 
             SpinnerBankAdapter spinnerAdapter = new SpinnerBankAdapter(mContext, bankCustomerList, false, (header, adapterPosition) -> {
-                detail.setIdBankCust(header.getId());
-                detail.setBankCust(header.getName());
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setIdBankCust(header.getId());
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setBankCust(header.getName());
                 holder.spnBankCust.setText(header.getId() + " - " + header.getName());
                 alertDialog.dismiss();
             });
@@ -366,7 +377,8 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             });
         });
 
-        mAdapter = new CollectionInvoiceGiroAdapter(mContext, CollectionGiroNewAdapter.this, holder.getAbsoluteAdapterPosition(), mFilteredList.get(holder.getAbsoluteAdapterPosition()).getInvoiceList(), header -> {
+        mAdapter = new CollectionInvoiceGiroAdapter(mContext, CollectionGiroNewAdapter.this, holder.getAbsoluteAdapterPosition(),
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()), header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);
@@ -376,10 +388,12 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
                 visible = false;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
                 holder.llPayment.setVisibility(View.GONE);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(false);
             } else {
                 visible = true;
                 holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
                 holder.llPayment.setVisibility(View.VISIBLE);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(true);
             }
         });
 
@@ -397,7 +411,8 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             Button btnSave = dialog.findViewById(R.id.btnSave);
 
             txtTypePayment.setText("Giro");
-            edtTotalPayment.setText(totalPayment != 0 ? Helper.setDotCurrencyAmount(totalPayment) : null);
+            edtTotalPayment.setText(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalPayment() != 0
+                    ? Helper.setDotCurrencyAmount(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalPayment()) : null);
 
             edtTotalPayment.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -426,6 +441,12 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
+                    totalPayment = qty;
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalPayment(totalPayment);
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setInvoiceList(new ArrayList<>());
+//                    notifyItemChanged(holder.getAbsoluteAdapterPosition());
+                    mContext.notifyAdapter(2);
                     dialog.dismiss();
                 }
             });
@@ -451,6 +472,9 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    mContext.notifyAdapter(2);
                     dialog.dismiss();
                 }
             });
@@ -464,8 +488,45 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
         });
 
         holder.btnAdd.setOnClickListener(v -> {
-            addInvoice(holder.getAbsoluteAdapterPosition());
+            if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalPayment() != 0) {
+                addInvoice(holder.getAbsoluteAdapterPosition());
+            } else {
+                Toast.makeText(mContext, "Masukkan total payment giro", Toast.LENGTH_SHORT).show();
+            }
         });
+    }
+
+    public double getTotalAmount(Material mat, int transferPosition) {
+        double sisaAmount = calculateLeft(transferPosition);
+        double left = sisaAmount + mat.getAmountPaid();
+        return left;
+    }
+
+    public double calculateLeft(int pos) {
+        double totalPaid = 0, left = 0;
+        if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getInvoiceList())) {
+            for (Invoice detail : mFilteredList.get(pos).getInvoiceList()) {
+                for (Material mat : detail.getMaterialList()) {
+                    totalPaid = totalPaid + mat.getAmountPaid();
+                }
+            }
+            left = mFilteredList.get(pos).getTotalPayment() - totalPaid;
+        }
+        return left;
+    }
+
+    public double getSisaTotalAmountExInvoice(int transferPosition, String invoiceNo) {
+        double sisaAmount = 0, paidAmount = 0;
+        for (Invoice inv : mFilteredList.get(transferPosition).getInvoiceList()) {
+            if (!inv.getNo_invoice().equals(invoiceNo)) {
+                for (Material mat : inv.getMaterialList()) {
+                    paidAmount = paidAmount + mat.getAmountPaid();
+                }
+            }
+        }
+
+        sisaAmount = mFilteredList.get(transferPosition).getTotalPayment() - paidAmount;
+        return sisaAmount;
     }
 
     public double getTotalAmount(int idHeader) {
@@ -515,36 +576,38 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
 
         txtTitle.setText("Search Invoice");
 
-        listSpinner = new ArrayList<>();
-        listSpinner = new Database(mContext).getAllInvoiceCustomerCollection("", "");
-        invoiceAdapter = new SpinnerInvoiceAdapter(mContext, listSpinner, (nameItem, adapterPosition) -> {
+        listAdded = new ArrayList<>();
+        listMasterInvoice = new ArrayList<>();
+        listMasterInvoice = new Database(mContext).getAllInvoiceCustomerCollection(mContext.getCustomer());
+        listAdded = getFilteredInvoice(listMasterInvoice, absoluteAdapterPosition);
+        invoiceAdapter = new SpinnerInvoiceGiroAdapter(mContext, CollectionGiroNewAdapter.this, listAdded, (nameItem, adapterPosition) -> {
         });
         rv.setAdapter(invoiceAdapter);
 
-        btnSearch.setOnClickListener(v -> {
-            if (!Helper.isEmptyEditText(editText)) {
-                searchInv = editText.getText().toString().trim();
-                listSpinner = new Database(mContext).getAllInvoiceCustomerCollection("", searchInv);
-                invoiceAdapter.setData(listSpinner);
-//                invoiceAdapter = new SpinnerInvoiceAdapter(CollectionFormActivityNew.this, listSpinner, (nameItem, adapterPosition) -> {
-//                });
-//                rv.setAdapter(invoiceAdapter);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                invoiceAdapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
         cvCheckedAll.setOnClickListener(v -> {
-            if (listFilteredSpinner == null) {
-                listFilteredSpinner = new ArrayList<>();
-            }
+            if (listFilteredSpinner == null) listFilteredSpinner = new ArrayList<>();
             checkedAll = false;
             if (!listFilteredSpinner.isEmpty()) {
-                for (Invoice mat : listFilteredSpinner) {
-                    mat.setCheckedInvoice(checkedAll);
-                }
+                for (Invoice mat : listFilteredSpinner) mat.setCheckedInvoice(checkedAll);
             } else {
-                for (Invoice mat : listSpinner) {
-                    mat.setCheckedInvoice(checkedAll);
-                }
+                for (Invoice mat : listAdded) mat.setCheckedInvoice(checkedAll);
             }
             invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.VISIBLE);
@@ -552,18 +615,12 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
         });
 
         cvUnCheckAll.setOnClickListener(v -> {
-            if (listFilteredSpinner == null) {
-                listFilteredSpinner = new ArrayList<>();
-            }
+            if (listFilteredSpinner == null) listFilteredSpinner = new ArrayList<>();
             checkedAll = true;
             if (!listFilteredSpinner.isEmpty()) {
-                for (Invoice mat : listFilteredSpinner) {
-                    mat.setCheckedInvoice(checkedAll);
-                }
+                for (Invoice mat : listFilteredSpinner) mat.setCheckedInvoice(checkedAll);
             } else {
-                for (Invoice mat : listSpinner) {
-                    mat.setCheckedInvoice(checkedAll);
-                }
+                for (Invoice mat : listAdded) mat.setCheckedInvoice(checkedAll);
             }
             invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.GONE);
@@ -576,40 +633,63 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
 
         btnSave.setOnClickListener(v -> {
             List<Invoice> addList = new ArrayList<>();
-            for (Invoice mat : listSpinner) {
-                if (mat.isCheckedInvoice()) {
-                    addList.add(mat);
-                }
+            for (Invoice mat : listAdded) {
+                if (mat.isCheckedInvoice()) addList.add(mat);
             }
-
             addNewInvoice(addList, absoluteAdapterPosition);
             dialog.dismiss();
         });
     }
 
+    private List<Invoice> getFilteredInvoice(List<Invoice> listMasterInvoice, int absoluteAdapterPosition) {
+        List<Invoice> filteredInvoice = new ArrayList<>();
+        if (mFilteredList.get(absoluteAdapterPosition).getInvoiceList() == null) {
+            mFilteredList.get(absoluteAdapterPosition).setInvoiceList(new ArrayList<>());
+        }
+        for (Invoice detail : listMasterInvoice) {
+            boolean exist = false;
+            for (Invoice detail2 : mFilteredList.get(absoluteAdapterPosition).getInvoiceList()) {
+                if (detail.getNo_invoice().equals(detail2.getNo_invoice())) exist = true;
+            }
+            if (!exist) filteredInvoice.add(detail);
+        }
+        return filteredInvoice;
+    }
+
     private void addNewInvoice(List<Invoice> addedList, int absoluteAdapterPosition) {
-        mFilteredList.get(absoluteAdapterPosition).getInvoiceList().addAll(addedList);
-        mAdapter.notifyDataSetChanged();
+        if (mFilteredList.get(absoluteAdapterPosition).getInvoiceList() == null) {
+            mFilteredList.get(absoluteAdapterPosition).setInvoiceList(new ArrayList<>());
+        }
+        List<Invoice> invoiceList = mFilteredList.get(absoluteAdapterPosition).getInvoiceList();
+        for (Invoice detail : invoiceList) {
+            for (Invoice detail2 : addedList) {
+                if (detail.getNo_invoice().equals(detail2.getNo_invoice())) {
+                    addedList.remove(detail2);
+                }
+            }
+        }
+        invoiceList.addAll(addedList);
+        mFilteredList.get(absoluteAdapterPosition).setInvoiceList(invoiceList);
+        notifyDataSetChanged();
     }
 
     public void setCheckedAll() {
         int checked = 0;
-        for (Invoice mat : listSpinner) {
+        for (Invoice mat : listAdded) {
             if (mat.isCheckedInvoice()) {
                 checked++;
             }
         }
-        if (checked == listSpinner.size()) {
+        if (checked == listAdded.size()) {
             checkedAll = true;
-            invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.GONE);
             cvCheckedAll.setVisibility(View.VISIBLE);
         } else {
             checkedAll = false;
-            invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.VISIBLE);
             cvCheckedAll.setVisibility(View.GONE);
         }
+        invoiceAdapter.notifyDataSetChanged();
     }
 
     public void setFilteredData(List<Invoice> mFilteredList) {
@@ -624,14 +704,13 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
         }
         if (checked == listFilteredSpinner.size()) {
             checkedAll = true;
-            invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.GONE);
             cvCheckedAll.setVisibility(View.VISIBLE);
         } else {
             checkedAll = false;
-            invoiceAdapter.notifyDataSetChanged();
             cvUnCheckAll.setVisibility(View.VISIBLE);
             cvCheckedAll.setVisibility(View.GONE);
         }
+        invoiceAdapter.notifyDataSetChanged();
     }
 }

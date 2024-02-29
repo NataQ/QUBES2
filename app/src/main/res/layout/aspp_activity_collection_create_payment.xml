@@ -105,7 +105,7 @@
                     android:layout_weight=".7"
                     android:background="@drawable/edit_text_default"
                     android:padding="8dp"
-                    android:text="201000008 - PRIMKOPAL SATLIN LAMIL 1"
+                    android:text=""
                     android:singleLine="true"
                     android:textColor="@color/black_aspp" />
 
@@ -118,161 +118,225 @@
                 android:layout_marginBottom="18dp"
                 android:background="@color/gray4_aspp" />
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:id="@+id/buttonCash"
-                        android:layout_width="@dimen/widthType"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_type_select"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="8dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="5dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtCash"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Cash"
-                            android:textColor="@color/new_blue" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/buttonTransfer"
-                        android:layout_width="@dimen/widthType"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_type"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="8dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="5dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtTransfer"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Transfer"
-                            android:textColor="@color/gray5_aspp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/buttonGiro"
-                        android:layout_width="@dimen/widthType"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_type"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="8dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="5dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtGiro"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Giro"
-                            android:textColor="@color/gray5_aspp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/buttonCheq"
-                        android:layout_width="@dimen/widthType"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_type"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="8dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="5dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtCheq"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Cheque"
-                            android:textColor="@color/gray5_aspp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/buttonLain"
-                        android:layout_width="@dimen/widthType"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/bg_type"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingStart="8dp"
-                        android:paddingTop="5dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="5dp">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtLain"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="Lain-Lain"
-                            android:textColor="@color/gray5_aspp" />
-
-                    </LinearLayout>
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <LinearLayout
-                android:id="@+id/llCash"
+                android:id="@+id/llPayment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="12dp"
+                    android:scrollbars="none">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/buttonCash"
+                            android:layout_width="@dimen/widthType"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_type_select"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtCash"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Cash"
+                                android:textColor="@color/new_blue" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/buttonTransfer"
+                            android:layout_width="@dimen/widthType"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_type"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtTransfer"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Transfer"
+                                android:textColor="@color/gray5_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/buttonGiro"
+                            android:layout_width="@dimen/widthType"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_type"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtGiro"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Giro"
+                                android:textColor="@color/gray5_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/buttonCheq"
+                            android:layout_width="@dimen/widthType"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_type"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtCheq"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Cheque"
+                                android:textColor="@color/gray5_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/buttonLain"
+                            android:layout_width="@dimen/widthType"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/bg_type"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="8dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="8dp"
+                            android:paddingBottom="5dp">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLain"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="Lain-Lain"
+                                android:textColor="@color/gray5_aspp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <LinearLayout
+                    android:id="@+id/llCash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".4"
+                                android:text="Total Payment Cash" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/edtPaymentCash"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".6"
+                                android:background="@drawable/editbox"
+                                android:hint="0"
+                                android:inputType="numberDecimal"
+                                android:padding="5dp"
+                                android:text=""
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".4"
+                                android:text="Left" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLeftCash"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".6"
+                                android:padding="5dp"
+                                android:text="0"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -280,29 +344,50 @@
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Total Payment" />
+                            android:layout_weight="1"
+                            android:text="Payment"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/edtPaymentCash"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddCash"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:hint="0"
-                            android:inputType="numberDecimal"
-                            android:padding="5dp"
-                            android:text=""
-                            android:textColor="@color/black_aspp" />
+                            android:layout_gravity="end"
+                            android:layout_marginStart="5dp"
+                            android:text="Faktur"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black_aspp"
+                            android:textSize="@dimen/text_small"
+                            app:cornerRadius="5dp"
+                            app:icon="@drawable/ic_add_aspp"
+                            app:iconSize="@dimen/icon_add_inside_btn"
+                            app:iconTint="@null"
+                            app:strokeColor="@color/blue6_aspp" />
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewCash"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/aspp_row_view_coll_invoice" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llTransfer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -310,234 +395,49 @@
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Left" />
+                            android:layout_weight="1"
+                            android:text="Payment"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtLeftCash"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddTransfer"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:padding="5dp"
-                            android:text="0"
-                            android:textColor="@color/black_aspp" />
+                            android:layout_gravity="end"
+                            android:text="Add"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black_aspp"
+                            android:textSize="@dimen/text_small"
+                            app:cornerRadius="5dp"
+                            app:icon="@drawable/ic_add_aspp"
+                            app:iconSize="@dimen/icon_add_inside_btn"
+                            app:iconTint="@null"
+                            app:strokeColor="@color/blue6_aspp" />
 
                     </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewTransfer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/aspp_row_view_coll_trarnsfer_invoice" />
+
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/llGiro"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Payment"
-                        android:textColor="@color/black_aspp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddCash"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginStart="5dp"
-                        android:text="Faktur"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black_aspp"
-                        android:textSize="@dimen/text_small"
-                        app:cornerRadius="5dp"
-                        app:icon="@drawable/ic_add_aspp"
-                        app:iconSize="@dimen/icon_add_inside_btn"
-                        app:iconTint="@null"
-                        app:strokeColor="@color/blue6_aspp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewCash"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_coll_invoice" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llTransfer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Payment"
-                        android:textColor="@color/black_aspp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddTransfer"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="Add"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black_aspp"
-                        android:textSize="@dimen/text_small"
-                        app:cornerRadius="5dp"
-                        app:icon="@drawable/ic_add_aspp"
-                        app:iconSize="@dimen/icon_add_inside_btn"
-                        app:iconTint="@null"
-                        app:strokeColor="@color/blue6_aspp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewTransfer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_coll_trarnsfer_invoice" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llGiro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Payment"
-                        android:textColor="@color/black_aspp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddGiro"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="Add"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black_aspp"
-                        android:textSize="@dimen/text_small"
-                        app:cornerRadius="5dp"
-                        app:icon="@drawable/ic_add_aspp"
-                        app:iconSize="@dimen/icon_add_inside_btn"
-                        app:iconTint="@null"
-                        app:strokeColor="@color/blue6_aspp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewGiro"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_coll_giro_invoice" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llCheque"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Payment"
-                        android:textColor="@color/black_aspp"
-                        android:textStyle="bold" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddCheque"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:text="Add"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black_aspp"
-                        android:textSize="@dimen/text_small"
-                        app:cornerRadius="5dp"
-                        app:icon="@drawable/ic_add_aspp"
-                        app:iconSize="@dimen/icon_add_inside_btn"
-                        app:iconTint="@null"
-                        app:strokeColor="@color/blue6_aspp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewCheque"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    tools:listitem="@layout/aspp_row_view_coll_cheque_invoice" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llLain"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -545,29 +445,49 @@
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Total Payment" />
+                            android:layout_weight="1"
+                            android:text="Payment"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/edtPaymentLain"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddGiro"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:hint="0"
-                            android:inputType="numberDecimal"
-                            android:padding="5dp"
-                            android:text=""
-                            android:textColor="@color/black_aspp" />
+                            android:layout_gravity="end"
+                            android:text="Add"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black_aspp"
+                            android:textSize="@dimen/text_small"
+                            app:cornerRadius="5dp"
+                            app:icon="@drawable/ic_add_aspp"
+                            app:iconSize="@dimen/icon_add_inside_btn"
+                            app:iconTint="@null"
+                            app:strokeColor="@color/blue6_aspp" />
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewGiro"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/aspp_row_view_coll_giro_invoice" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llCheque"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
                         android:gravity="center"
                         android:orientation="horizontal">
 
@@ -575,81 +495,169 @@
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Left" />
+                            android:layout_weight="1"
+                            android:text="Payment"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtLeftLain"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddCheque"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:padding="5dp"
-                            android:text="0"
-                            android:textColor="@color/black_aspp" />
+                            android:layout_gravity="end"
+                            android:text="Add"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black_aspp"
+                            android:textSize="@dimen/text_small"
+                            app:cornerRadius="5dp"
+                            app:icon="@drawable/ic_add_aspp"
+                            app:iconSize="@dimen/icon_add_inside_btn"
+                            app:iconTint="@null"
+                            app:strokeColor="@color/blue6_aspp" />
 
                     </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewCheque"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/aspp_row_view_coll_cheque_invoice" />
+
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/llLain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        style="@style/TextView_Small"
-                        android:layout_width="0dp"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Payment"
-                        android:textColor="@color/black_aspp"
-                        android:textStyle="bold" />
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnAddlain"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".4"
+                                android:text="Total Payment Lain" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/edtPaymentLain"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".6"
+                                android:background="@drawable/editbox"
+                                android:hint="0"
+                                android:inputType="numberDecimal"
+                                android:padding="5dp"
+                                android:text=""
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".4"
+                                android:text="Left" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLeftLain"
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".6"
+                                android:padding="5dp"
+                                android:text="0"
+                                android:textColor="@color/black_aspp" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:layout_marginStart="5dp"
-                        android:text="Faktur"
-                        android:textAllCaps="true"
-                        android:textColor="@color/black_aspp"
-                        android:textSize="@dimen/text_small"
-                        app:cornerRadius="5dp"
-                        app:icon="@drawable/ic_add_aspp"
-                        app:iconSize="@dimen/icon_add_inside_btn"
-                        app:iconTint="@null"
-                        app:strokeColor="@color/blue6_aspp" />
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Payment"
+                            android:textColor="@color/black_aspp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddlain"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginStart="5dp"
+                            android:text="Faktur"
+                            android:textAllCaps="true"
+                            android:textColor="@color/black_aspp"
+                            android:textSize="@dimen/text_small"
+                            app:cornerRadius="5dp"
+                            app:icon="@drawable/ic_add_aspp"
+                            app:iconSize="@dimen/icon_add_inside_btn"
+                            app:iconTint="@null"
+                            app:strokeColor="@color/blue6_aspp" />
+
+                    </LinearLayout>
+
+    <!--                <androidx.cardview.widget.CardView-->
+    <!--                    android:layout_width="match_parent"-->
+    <!--                    android:layout_height="match_parent"-->
+    <!--                    android:layout_margin="2dp"-->
+    <!--                    app:cardBackgroundColor="@color/white"-->
+    <!--                    app:cardCornerRadius="@dimen/corner_fragment"-->
+    <!--                    app:cardElevation="1dp">-->
+
+    <!--                    <LinearLayout-->
+    <!--                        android:layout_width="match_parent"-->
+    <!--                        android:layout_height="match_parent"-->
+    <!--                        android:orientation="vertical"-->
+    <!--                        android:padding="8dp">-->
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recyclerViewLain"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clipToPadding="false"
+                                tools:listitem="@layout/aspp_row_view_coll_invoice" />
+
+    <!--                    </LinearLayout>-->
+    <!--                </androidx.cardview.widget.CardView>-->
 
                 </LinearLayout>
-
-<!--                <androidx.cardview.widget.CardView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_margin="2dp"-->
-<!--                    app:cardBackgroundColor="@color/white"-->
-<!--                    app:cardCornerRadius="@dimen/corner_fragment"-->
-<!--                    app:cardElevation="1dp">-->
-
-<!--                    <LinearLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"-->
-<!--                        android:orientation="vertical"-->
-<!--                        android:padding="8dp">-->
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerViewLain"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clipToPadding="false"
-                            tools:listitem="@layout/aspp_row_view_coll_invoice" />
-
-<!--                    </LinearLayout>-->
-<!--                </androidx.cardview.widget.CardView>-->
-
             </LinearLayout>
 
         </LinearLayout>

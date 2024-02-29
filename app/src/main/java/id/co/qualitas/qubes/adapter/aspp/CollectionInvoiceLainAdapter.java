@@ -105,7 +105,8 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNoFaktur, txtTglJatuhTempo, txtAmountInv, txtTotalPaid, txtLeftAmount;
+        TextView txtNoFaktur, txtTglJatuhTempo, txtTotalInv, txtTotalPaid, txtLeftAmount;
+        TextView txtOutstanding, txtAmountInvoice;
         LinearLayout layout, llItem, llDelete;
         ImageView imgView;
         CheckBox cbAll;
@@ -114,11 +115,13 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
+            txtAmountInvoice = itemView.findViewById(R.id.txtAmountInvoice);
+            txtOutstanding = itemView.findViewById(R.id.txtOutstanding);
             cbAll = itemView.findViewById(R.id.cbAll);
             txtNoFaktur = itemView.findViewById(R.id.txtNoFaktur);
             txtTglJatuhTempo = itemView.findViewById(R.id.txtTglJatuhTempo);
             txtLeftAmount = itemView.findViewById(R.id.txtLeftAmount);
-            txtAmountInv = itemView.findViewById(R.id.txtAmountInv);
+            txtTotalInv = itemView.findViewById(R.id.txtTotalInv);
             txtTotalPaid = itemView.findViewById(R.id.txtTotalPaid);
             layout = itemView.findViewById(R.id.layout);
             llDelete = itemView.findViewById(R.id.llDelete);
@@ -186,9 +189,11 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
             String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getTanggal_jatuh_tempo());
             holder.txtTglJatuhTempo.setText(dueDate);
         }
-        holder.txtAmountInv.setText("Rp." + format.format(detail.getAmount()));
-        holder.txtLeftAmount.setText("Rp." + format.format(calculateLeft(mFilteredList.get(holder.getAbsoluteAdapterPosition()))));
-        holder.txtTotalPaid.setText("Rp." + format.format(detail.getTotalPayment()));
+        holder.txtTotalInv.setText("Rp." + format.format(detail.getAmount()));
+        holder.txtAmountInvoice.setText("Rp." + format.format(detail.getNett()));
+        holder.txtOutstanding.setText("Rp." + format.format(mContext.getOutstandingInvoice(mFilteredList.get(holder.getAbsoluteAdapterPosition()))));
+//        holder.txtLeftAmount.setText("Rp." + format.format(calculateLeft(mFilteredList.get(holder.getAbsoluteAdapterPosition()))));
+//        holder.txtTotalPaid.setText("Rp." + format.format(detail.getTotalPayment()));
 
         mAdapter = new CollectionItemLainAdapter(mContext, CollectionInvoiceLainAdapter.this, holder.getAbsoluteAdapterPosition(), mFilteredList.get(holder.getAbsoluteAdapterPosition()), header -> {
 
@@ -227,9 +232,9 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
             dialog.show();
         });
 
-        holder.txtTotalPaid.setOnClickListener(v -> {
-            openDialogTotalPaid(holder.getAbsoluteAdapterPosition());
-        });
+//        holder.txtTotalPaid.setOnClickListener(v -> {
+//            openDialogTotalPaid(holder.getAbsoluteAdapterPosition());
+//        });
 
         holder.cbAll.setOnClickListener(v -> {
             if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
@@ -244,41 +249,42 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
         });
     }
 
-    public double calculateLeft(Invoice invoice) {
-        double left = 0, totalPaid = 0;
-        for (Material detail2 : invoice.getMaterialList()) {
-            totalPaid = totalPaid + detail2.getAmountPaid();
-        }
-        left = invoice.getTotalPayment() - totalPaid;
-        return left;
-    }
-
-    public double calculateLeftWoPos(Invoice invoice, String idMat) {
-        double left = 0, totalPaid = 0;
-        for (Material detail2 : invoice.getMaterialList()) {
-            if (!detail2.getId().equals(idMat)) {
-                totalPaid = totalPaid + detail2.getAmountPaid();
-            }
-        }
-        left = invoice.getTotalPayment() - totalPaid;
-        return left;
-    }
+//    public double calculateLeft(Invoice invoice) {
+//        double left = 0, totalPaid = 0;
+//        for (Material detail2 : invoice.getMaterialList()) {
+//            totalPaid = totalPaid + detail2.getAmountPaid();
+//        }
+//        left = invoice.getTotalPayment() - totalPaid;
+//        return left;
+//    }
+//
+//    public double calculateLeftWoPos(Invoice invoice, String idMat) {
+//        double left = 0, totalPaid = 0;
+//        for (Material detail2 : invoice.getMaterialList()) {
+//            if (!detail2.getId().equals(idMat)) {
+//                totalPaid = totalPaid + detail2.getAmountPaid();
+//            }
+//        }
+//        left = invoice.getTotalPayment() - totalPaid;
+//        return left;
+//    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
+//        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
+        double totalPaymentLain = mContext.getSisaTotalAmountExInvoice(2, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
 
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
             if (checked) {
-                if (totalPaymentInvoice > 0) {
-                    double kurangBayarMaterial = mContext.getKurangBayar(mFilteredList.get(absoluteAdapterPosition), detail, 1);
+                if (totalPaymentLain > 0) {
+                    double kurangBayarMaterial = mContext.getKurangBayarMaterial(mFilteredList.get(absoluteAdapterPosition), detail);
                     if (kurangBayarMaterial > 0) {
-                        if (totalPaymentInvoice > kurangBayarMaterial || totalPaymentInvoice == kurangBayarMaterial) {
+                        if (totalPaymentLain > kurangBayarMaterial || totalPaymentLain == kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
-                        } else if (totalPaymentInvoice < kurangBayarMaterial) {
+                        } else if (totalPaymentLain < kurangBayarMaterial) {
                             detail.setChecked(true);
-                            detail.setAmountPaid(totalPaymentInvoice);
+                            detail.setAmountPaid(totalPaymentLain);
                         }
                     }
                 }
@@ -308,66 +314,66 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
     }
 
     private void openDialogTotalPaid(int pos) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        final Dialog dialog = new Dialog(mContext);
-        View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_total, null);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(dialogView);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
-        TextView txtTypePayment = dialog.findViewById(R.id.txtTypePayment);
-        EditText edtTotalPayment = dialog.findViewById(R.id.edtTotalPayment);
-        Button btnCancel = dialog.findViewById(R.id.btnCancel);
-        Button btnSave = dialog.findViewById(R.id.btnSave);
-
-        txtTypePayment.setText("Lain-Lain");
-        edtTotalPayment.setText(mFilteredList.get(pos).getTotalPayment() != 0 ? Helper.setDotCurrencyAmount(mFilteredList.get(pos).getTotalPayment()) : null);
-
-        edtTotalPayment.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Helper.setDotCurrency(edtTotalPayment, this, s);
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                double totalPaymentLain = mContext.getTotalAmount(2);
-                double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
-                if (qty < totalPaymentLain) {
-                    mFilteredList.get(pos).setTotalPayment(qty);
-                    for (Material detail : mFilteredList.get(pos).getMaterialList()) {
-                        detail.setChecked(false);
-                        detail.setAmountPaid(0);
-                    }
-                    notifyItemChanged(pos);
-                    mContext.setLeftLain();
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(mContext, "Melebihi total payment lain", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        dialog.show();
+//        LayoutInflater inflater = LayoutInflater.from(mContext);
+//        final Dialog dialog = new Dialog(mContext);
+//        View dialogView = inflater.inflate(R.layout.aspp_dialog_amount_total, null);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(dialogView);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+//        TextView txtTypePayment = dialog.findViewById(R.id.txtTypePayment);
+//        EditText edtTotalPayment = dialog.findViewById(R.id.edtTotalPayment);
+//        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+//        Button btnSave = dialog.findViewById(R.id.btnSave);
+//
+//        txtTypePayment.setText("Lain-Lain");
+//        edtTotalPayment.setText(mFilteredList.get(pos).getTotalPayment() != 0 ? Helper.setDotCurrencyAmount(mFilteredList.get(pos).getTotalPayment()) : null);
+//
+//        edtTotalPayment.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                Helper.setDotCurrency(edtTotalPayment, this, s);
+//            }
+//        });
+//
+//        btnCancel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        btnSave.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                double totalPaymentLain = mContext.getTotalAmount(2);
+//                double qty = Double.parseDouble(edtTotalPayment.getText().toString().replace(",", ""));
+//                if (qty < totalPaymentLain || qty == totalPaymentLain) {
+//                    mFilteredList.get(pos).setTotalPayment(qty);
+//                    for (Material detail : mFilteredList.get(pos).getMaterialList()) {
+//                        detail.setChecked(false);
+//                        detail.setAmountPaid(0);
+//                    }
+//                    notifyItemChanged(pos);
+//                    mContext.setLeftLain();
+//                    dialog.dismiss();
+//                } else {
+//                    Toast.makeText(mContext, "Melebihi total payment lain", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        dialog.show();
     }
 
     public void setCheckedAll(int idHeader) {
@@ -382,7 +388,13 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
         }
     }
 
-    public double getTotalAmount(int posHeader) {
-        return mFilteredList.get(posHeader).getTotalPayment();
-    }
+//    public double getTotalAmount(int posHeader) {
+//        return mFilteredList.get(posHeader).getTotalPayment();
+//    }
+//
+//    public void setLeftInvoice(int invoicePosition, Invoice invoice) {
+//        double left = calculateLeft(invoice);
+//        mFilteredList.get(invoicePosition).setLeft(left);
+//        notifyItemChanged(invoicePosition);
+//    }
 }

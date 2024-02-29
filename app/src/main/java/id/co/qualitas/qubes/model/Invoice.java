@@ -9,7 +9,7 @@ public class Invoice {
     private String date;
     private String id_customer;
     private double amount;
-    private double totalPayment;
+//    private double totalPayment;
     private double total_paid;
     private double nett;
     private String invoice_date;
@@ -17,12 +17,14 @@ public class Invoice {
     private String route;
     private String status;
     private String signature;
+    private String categoryPayment;
     private boolean isCheckedInvoice;
     private boolean isCheckAllMaterial;
     private int is_route;
     private int isSync;
     private int is_verif;
     private boolean open;
+//    private double left;
     private List<Material> materialList;
 
     public Invoice() {
@@ -49,6 +51,23 @@ public class Invoice {
         this.materialList = materialList;
     }
 
+//    public double getLeft() {
+//        return left;
+//    }
+//
+//    public void setLeft(double left) {
+//        this.left = left;
+//    }
+
+
+    public String getCategoryPayment() {
+        return categoryPayment;
+    }
+
+    public void setCategoryPayment(String categoryPayment) {
+        this.categoryPayment = categoryPayment;
+    }
+
     public boolean isOpen() {
         return open;
     }
@@ -57,13 +76,13 @@ public class Invoice {
         this.open = open;
     }
 
-    public double getTotalPayment() {
-        return totalPayment;
-    }
-
-    public void setTotalPayment(double totalPayment) {
-        this.totalPayment = totalPayment;
-    }
+//    public double getTotalPayment() {
+//        return totalPayment;
+//    }
+//
+//    public void setTotalPayment(double totalPayment) {
+//        this.totalPayment = totalPayment;
+//    }
 
     public boolean isCheckAllMaterial() {
         return isCheckAllMaterial;

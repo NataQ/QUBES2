@@ -1,58 +1,115 @@
 package id.co.qualitas.qubes.model;
 
-/**
- * Created by Foo on 8/22/2016.
- */
+import java.io.Serializable;
+import java.util.List;
 
-public class Collection {
-    private String outletName, date, amount, left;
-    private int img;
+public class Collection implements Serializable {
+    private User user;
+    private Customer customer;
+    private Collection cash;
+    private Collection lain;
+    private double totalPayment;
+    private double left;
+    private List<Invoice> invoiceList;
+    private List<CollectionDetail> tfList;
+    private List<CollectionDetail> giroList;
+    private List<CollectionDetail> cekList;
+    private int isSync;
 
-    public Collection(String outletName, String date, String amount, String left, int img) {
-        this.amount = amount;
-        this.date = date;
-        this.img = img;
+    public Collection() {
+    }
+
+    public Collection(double totalPayment, double left, List<Invoice> invoiceList) {
         this.left = left;
-        this.outletName = outletName;
+        this.totalPayment = totalPayment;
+        this.invoiceList = invoiceList;
     }
 
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getLeft() {
+    public double getLeft() {
         return left;
     }
 
-    public void setLeft(String left) {
+    public void setLeft(double left) {
         this.left = left;
     }
 
-    public String getOutletName() {
-        return outletName;
+    public User getUser() {
+        return user;
     }
 
-    public void setOutletName(String outletName) {
-        this.outletName = outletName;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getImg() {
-        return img;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setImg(int img) {
-        this.img = img;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public Collection getCash() {
+        return cash;
+    }
+
+    public void setCash(Collection cash) {
+        this.cash = cash;
+    }
+
+    public Collection getLain() {
+        return lain;
+    }
+
+    public void setLain(Collection lain) {
+        this.lain = lain;
+    }
+
+    public double getTotalPayment() {
+        return totalPayment;
+    }
+
+    public void setTotalPayment(double totalPayment) {
+        this.totalPayment = totalPayment;
+    }
+
+    public List<Invoice> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(List<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
+    }
+
+    public List<CollectionDetail> getTfList() {
+        return tfList;
+    }
+
+    public void setTfList(List<CollectionDetail> tfList) {
+        this.tfList = tfList;
+    }
+
+    public List<CollectionDetail> getGiroList() {
+        return giroList;
+    }
+
+    public void setGiroList(List<CollectionDetail> giroList) {
+        this.giroList = giroList;
+    }
+
+    public List<CollectionDetail> getCekList() {
+        return cekList;
+    }
+
+    public void setCekList(List<CollectionDetail> cekList) {
+        this.cekList = cekList;
+    }
+
+    public int getIsSync() {
+        return isSync;
+    }
+
+    public void setIsSync(int isSync) {
+        this.isSync = isSync;
     }
 }

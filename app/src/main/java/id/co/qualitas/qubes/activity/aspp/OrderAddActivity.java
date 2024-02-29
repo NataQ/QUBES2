@@ -129,6 +129,9 @@ public class OrderAddActivity extends BaseActivity {
         permissionsList = new ArrayList<>();
         permissionsList.addAll(Arrays.asList(permissionsStr));
 
+        ORDER YG MAU BAYAR PINDAH KE COLLECTION VISIT, PRINTNYA TETEP DI ORDER DETAIL AJA
+                GAK USAH PINDAH KE TEMPAT PRINT BIAR GAK BINGUNG
+
         btnGetDiscount.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
                 if (checkMaterial() == 0) {
@@ -828,7 +831,7 @@ public class OrderAddActivity extends BaseActivity {
                     if (payNow) {
                         SessionManagerQubes.setAlreadyPrint(false);
                         SessionManagerQubes.setCollectionSource(3);
-                        Intent intent = new Intent(OrderAddActivity.this, CollectionFormActivity.class);
+                        Intent intent = new Intent(OrderAddActivity.this, CollectionVisitActivity.class);
                         startActivity(intent);
                     } else {
                         if (Helper.isCanvasSales(user)) {
