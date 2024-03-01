@@ -103,7 +103,7 @@ public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<Collecti
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtAmount, txtPaid, txtInvoiceNo, txtInvoiceDate;
+        TextView txtAmount, txtPaymentNo;
         LinearLayout llDelete, llHeader;
         OnAdapterListener onAdapterListener;
 
@@ -111,10 +111,8 @@ public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<Collecti
             super(itemView);
             llHeader = itemView.findViewById(R.id.llHeader);
             llDelete = itemView.findViewById(R.id.llDelete);
-            txtInvoiceNo = itemView.findViewById(R.id.txtInvoiceNo);
-            txtInvoiceDate = itemView.findViewById(R.id.txtInvoiceDate);
+            txtPaymentNo = itemView.findViewById(R.id.txtPaymentNo);
             txtAmount = itemView.findViewById(R.id.txtAmount);
-            txtPaid = itemView.findViewById(R.id.txtPaid);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -136,13 +134,8 @@ public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<Collecti
         setFormatSeparator();
         CollectionHeader detail = mFilteredList.get(position);
 
-        if (!Helper.isNullOrEmpty(detail.getInvoiceDate())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getInvoiceDate());
-            holder.txtInvoiceDate.setText(date);
-        }
-        holder.txtInvoiceNo.setText(Helper.isEmpty(detail.getInvoiceNo(), "-"));
-        holder.txtAmount.setText("Rp. " + format.format(detail.getInvoiceTotal()));
-        holder.txtPaid.setText("Rp. " + format.format(detail.getTotalPaid()));
+        holder.txtPaymentNo.setText(Helper.isEmpty(detail.getIdHeader(), "-"));
+        holder.txtAmount.setText("Rp. " + format.format(detail.getTotalPaid()));
 
         if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
             if (detail.isDeleted()) {
@@ -175,7 +168,7 @@ public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<Collecti
                 public void onClick(View view) {
                     try {
 //                        if (detail.getTypePayment().equals("invoice")) {
-                        new Database(mContext).deletePayment(detail);
+                        new Database(mContext).deletePayment(detail.getIdHeader(), detail.getCustomerId());
 //                        new Database(mContext).deleteAllCollection(detail);
 //                        } else {
 //                            new Database(mContext).updateOrderAmount(detail);

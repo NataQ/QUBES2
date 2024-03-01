@@ -24,7 +24,6 @@ import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.model.CollectionDetail;
-import id.co.qualitas.qubes.model.CollectionDetail;
 
 public class CollectionChequeDetailAdapter extends RecyclerView.Adapter<CollectionChequeDetailAdapter.Holder> implements Filterable {
     private List<CollectionDetail> mList;
@@ -33,7 +32,7 @@ public class CollectionChequeDetailAdapter extends RecyclerView.Adapter<Collecti
     private CollectionDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
     private boolean visible = false;
-    private CollectionPaymentDetailAdapter mAdapter;
+    private CollectionPaymentInvoiceDetailAdapter mAdapter;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
@@ -91,7 +90,7 @@ public class CollectionChequeDetailAdapter extends RecyclerView.Adapter<Collecti
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTglCheque, txtTglCair, txtBankName, txtBankCust, txtNoCheque, txtPayment, txtLeft;
+        TextView txtTglCheque, txtTglCair, txtBankName, txtBankCust, txtNoCheque, txtPayment;
         RecyclerView recyclerView;
         ImageView imgView;
         LinearLayout llPayment, layout;
@@ -99,7 +98,6 @@ public class CollectionChequeDetailAdapter extends RecyclerView.Adapter<Collecti
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtPayment = itemView.findViewById(R.id.txtPayment);
             txtNoCheque = itemView.findViewById(R.id.txtNoCheque);
             txtBankCust = itemView.findViewById(R.id.txtBankCust);
@@ -157,9 +155,8 @@ public class CollectionChequeDetailAdapter extends RecyclerView.Adapter<Collecti
 
         holder.txtNoCheque.setText(Helper.isEmpty(detail.getNo(), ""));
         holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPayment()));
-        holder.txtLeft.setText("Rp. " + format.format(detail.getLeft()));
 
-        mAdapter = new CollectionPaymentDetailAdapter(mContext, detail.getMaterialList(), header -> {
+        mAdapter = new CollectionPaymentInvoiceDetailAdapter(mContext, detail.getInvoiceList(), header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);

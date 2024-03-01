@@ -698,8 +698,9 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 String name = Helper.isEmpty(cust.getNama(), "-");
                 String address = Helper.isEmpty(cust.getAddress(), "-");
                 String noSJ = Helper.isEmpty(stock.getNo_surat_jalan(), "-");
-                String payment = order.isStatusPaid() ? "Cash" : "Kredit";
+                String payment = order.getTotalPaid() == order.getOmzet()  ? "Cash" : "Kredit";//kalau belum lunas kredit
 
+                textBuffer.append("{reset}P"+ String.valueOf(cust.getPrintBon()) + "{br}");
                 textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
                 textBuffer.append("{reset}{center}Jl.Gatot Subroto Kav. 99{br}");
                 textBuffer.append("{reset}{center}Jakarta Selatan{br}{br}");

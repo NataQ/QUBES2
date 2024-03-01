@@ -63,46 +63,18 @@ public class CollectionActivity extends BaseActivity {
         });
 
         btnAdd.setOnClickListener(v -> {
-            intent = new Intent(this, CollectionFormActivityNew.class);
-            startActivity(intent);
-        });
-    }
-
-    private void setAdapter() {
-        mAdapter = new CollectionAdapter(this, mList, header -> {
-//            if (startVisit != null) {
-//                if (startVisit.getEnd_time() == null) {
-//                    if (header.getAmount() == header.getTotal_paid()) {
-//                        setToast("Invoice sudah lunas");
-//                    } else {
-//                        SessionManagerQubes.setCollectionHeader(header);
-//                        SessionManagerQubes.setCollectionSource(1);
-//                        Intent intent = new Intent(this, CollectionFormActivity.class);
-//                        startActivity(intent);
-//                    }
-//                } else {
-//                    setToast("Sudah selesai kunjungan. Tidak bisa melakukan pembayaran.");
-//                }
-//            } else {
-//                setToast("Silahkan melakukan start visit sebelum melakukan pembayaran");
-//            }
-
             if (startVisit != null) {
                 if (startVisit.getDate() != null) {
                     if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
-                                if (header.getAmount() == header.getTotal_paid()) {
-                                    setToast("Invoice sudah lunas");
-                                } else {
-                                    SessionManagerQubes.setCollectionHeader(header);
-                                    SessionManagerQubes.setCollectionSource(1);
-                                    Intent intent = new Intent(this, CollectionFormActivity.class);
-                                    startActivity(intent);
-                                }
+//                                    SessionManagerQubes.setCollectionHeader(header);
+                                SessionManagerQubes.setCollectionSource(1);
+                                intent = new Intent(this, CollectionFormActivityNew.class);
+                                startActivity(intent);
                                 break;
                             case 2:
                             case 3:
@@ -113,11 +85,19 @@ public class CollectionActivity extends BaseActivity {
                         setToast("Silahkan Start Visit/Next Day");
                     }
                 } else {
-                    setToast("Silahkan Start Visit");
+                    setToast("Silahkan memulai kunjungan");
                 }
             } else {
-                setToast("Silahkan Start Visit");
+                setToast("Silahkan memulai kunjungan");
             }
+        });
+    }
+
+    private void setAdapter() {
+        mAdapter = new CollectionAdapter(this, mList, header -> {
+            SessionManagerQubes.setCollectionHeader(header);
+            Intent intent = new Intent(this, InvoiceDetailActivity.class);
+            startActivity(intent);
         });
 
         recyclerView.setAdapter(mAdapter);
@@ -161,7 +141,7 @@ public class CollectionActivity extends BaseActivity {
         totalPaid = 0;
         totalInvoice = 0;
         mList = new ArrayList<>();
-        mList = database.getAllInvoiceHeaderNotPaid();
+        mList = database.getAllInvoiceHeaderVerif();
 //        startVisit = SessionManagerQubes.getStartDay();
         startVisit = database.getLastStartVisit();
 

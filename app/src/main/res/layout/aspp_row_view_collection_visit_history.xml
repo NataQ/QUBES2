@@ -32,7 +32,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".3"
-                    android:text="Invoice No." />
+                    android:text="Payment No." />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
@@ -42,38 +42,7 @@
                     android:text="@string/colon" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtInvoiceNo"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text=""
-                    android:textColor="@color/darkGray" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="Invoice Date" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtInvoiceDate"
+                    android:id="@+id/txtPaymentNo"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -105,37 +74,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtAmount"
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".7"
-                    android:text=""
-                    android:textColor="@color/darkGray" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/TextView_Small"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".3"
-                    android:text="Paid" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/TextView_Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/colon" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txtPaid"
                     style="@style/TextView_Small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

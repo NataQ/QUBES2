@@ -63,7 +63,7 @@ import id.co.qualitas.qubes.printer.ConnectorAdapter;
 import id.co.qualitas.qubes.session.SessionManagerQubes;
 
 public class CollectionFormActivityNew extends BaseActivity {
-    double totalPaymentCash, totalPaymentLain, leftCash, leftLain;
+    double totalPaymentCash, totalPaymentLain, leftCash, leftLain, totalPaidCash, totalPaidLain;
     private Button btnSubmit, btnAddCash, btnAddTransfer, btnAddGiro, btnAddCheque, btnAddlain;
     private RecyclerView recyclerViewCash, recyclerViewTransfer, recyclerViewGiro, recyclerViewCheque, recyclerViewLain;
     private TextView edtPaymentCash, edtPaymentLain;
@@ -289,10 +289,10 @@ public class CollectionFormActivityNew extends BaseActivity {
         Collection collection = new Collection();
         collection.setUser(user);
         if (Helper.isNotEmptyOrNull(mListCashChecked)) {
-            collection.setCash(new Collection(totalPaymentCash, 0, mListCashChecked));
+            collection.setCash(new Collection(totalPaymentCash, leftCash, totalPaidCash, mListCashChecked));
         }
         if (Helper.isNotEmptyOrNull(mListLainChecked)) {
-            collection.setLain(new Collection(totalPaymentLain, 0, mListLainChecked));
+            collection.setLain(new Collection(totalPaymentLain, leftLain, totalPaidLain, mListLainChecked));
         }
         collection.setTfList(mListTransfer);
         collection.setGiroList(mListGiro);
@@ -304,7 +304,7 @@ public class CollectionFormActivityNew extends BaseActivity {
 
     private boolean checkLeft() {
         boolean result = true;
-        double left = 0, paid = 0;
+        double left = 0, paid = 0, paidInvoice = 0;
         int existMat = 0, em = 0;
         List<Invoice> invList = new ArrayList<>();
 
@@ -312,16 +312,18 @@ public class CollectionFormActivityNew extends BaseActivity {
             if (Helper.isNotEmptyOrNull(mListCash)) {
                 mListCashChecked = new ArrayList<>();
                 for (Invoice inv : mListCash) {
+                    paidInvoice = 0;
                     em = 0;
                     for (Material mat : inv.getMaterialList()) {
                         if (mat.getAmountPaid() != 0) {
+                            paidInvoice = paidInvoice + mat.getAmountPaid();
                             paid = paid + mat.getAmountPaid();
                             existMat++;
                             em++;
                             totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
                         }
                     }
-
+                    inv.setTotal_paid(paidInvoice);
                     if (em > 0) mListCashChecked.add(inv);
                 }
                 left = totalPaymentCash - paid;
@@ -333,16 +335,18 @@ public class CollectionFormActivityNew extends BaseActivity {
             if (Helper.isNotEmptyOrNull(mListLain)) {
                 mListLainChecked = new ArrayList<>();
                 for (Invoice inv : mListLain) {
+                    paidInvoice = 0;
                     em = 0;
                     for (Material mat : inv.getMaterialList()) {
                         if (mat.getAmountPaid() != 0) {
+                            paidInvoice = paidInvoice + mat.getAmountPaid();
                             paid = paid + mat.getAmountPaid();
                             existMat++;
                             em++;
                             totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
                         }
                     }
-
+                    inv.setTotal_paid(paidInvoice);
                     if (em > 0) mListLainChecked.add(inv);
                 }
                 left = totalPaymentLain - paid;
@@ -357,15 +361,18 @@ public class CollectionFormActivityNew extends BaseActivity {
                 } else if (Helper.isNotEmptyOrNull(collectionDetail.getInvoiceList())) {
                     invList = new ArrayList<>();
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
+                        paidInvoice = 0;
                         em = 0;
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
+                                paidInvoice = paidInvoice + mat.getAmountPaid();
                                 paid = paid + mat.getAmountPaid();
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
                             }
                         }
+                        inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }
 
@@ -389,15 +396,18 @@ public class CollectionFormActivityNew extends BaseActivity {
                 } else if (Helper.isNotEmptyOrNull(collectionDetail.getInvoiceList())) {
                     invList = new ArrayList<>();
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
+                        paidInvoice = 0;
                         em = 0;
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
+                                paidInvoice = paidInvoice + mat.getAmountPaid();
                                 paid = paid + mat.getAmountPaid();
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
                             }
                         }
+                        inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }
 
@@ -421,15 +431,18 @@ public class CollectionFormActivityNew extends BaseActivity {
                 } else if (Helper.isNotEmptyOrNull(collectionDetail.getInvoiceList())) {
                     invList = new ArrayList<>();
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
+                        paidInvoice = 0;
                         em = 0;
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
+                                paidInvoice = paidInvoice + mat.getAmountPaid();
                                 paid = paid + mat.getAmountPaid();
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
                             }
                         }
+                        inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }
 
@@ -897,8 +910,10 @@ public class CollectionFormActivityNew extends BaseActivity {
             customer = SessionManagerQubes.getOutletHeader();
             txtCustomer.setText(customer.getId() + "-" + customer.getNama());
             txtCustomer.setEnabled(false);
+            llPayment.setVisibility(View.VISIBLE);
         } else {
             txtCustomer.setEnabled(true);
+            llPayment.setVisibility(View.GONE);
         }
     }
 
@@ -1144,6 +1159,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                 totalPaid = totalPaid + mat.getAmountPaid();
             }
         }
+        totalPaidCash = totalPaid;
         leftCash = totalPaymentCash - totalPaid;
         txtLeftCash.setText("Rp." + format.format(leftCash));
     }
@@ -1155,6 +1171,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                 totalPaid = totalPaid + mat.getAmountPaid();
             }
         }
+        totalPaidLain = totalPaid;
         leftLain = totalPaymentLain - totalPaid;
         txtLeftLain.setText("Rp." + format.format(leftLain));
     }

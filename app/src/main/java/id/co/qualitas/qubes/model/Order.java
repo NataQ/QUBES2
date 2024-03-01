@@ -21,13 +21,26 @@ public class Order {
     private List<Material> materialList;
     private List<Material> extraList;
     private boolean isDiscount;
-    private boolean statusPaid;
+//    private boolean statusPaid;
     private double omzet;
+    private double totalPaid;
     private int printOrder;
     private int isSync;
     private boolean deleted;
 
     public Order() {
+    }
+
+    public double getTotalPaid() {
+        return totalPaid;
+    }
+
+    public void setTotalPaid(double totalPaid) {
+        this.totalPaid = totalPaid;
+    }
+
+    public Order(String idHeader) {
+        this.idHeader = idHeader;
     }
 
     public String getId_driver() {
@@ -94,13 +107,13 @@ public class Order {
         this.order_type = order_type;
     }
 
-    public boolean isStatusPaid() {
-        return statusPaid;
-    }
-
-    public void setStatusPaid(boolean statusPaid) {
-        this.statusPaid = statusPaid;
-    }
+//    public boolean isStatusPaid() {
+//        return statusPaid;
+//    }
+//
+//    public void setStatusPaid(boolean statusPaid) {
+//        this.statusPaid = statusPaid;
+//    }
 
     public String getIdStockHeaderDb() {
         return idStockHeaderDb;

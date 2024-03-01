@@ -427,18 +427,18 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(WSMessage result) {
             progress.dismiss();
-            if (result != null) {
-                if (result.getIdMessage() == 1) {
-                    String ipAddress = result.getResult().toString();
-                    Constants.URL = ipAddress;
-                    Helper.setItemParam(Constants.URL, Constants.URL);
-                    SessionManagerQubes.setUrl(ipAddress);
-                }
-            } else {
-                SessionManagerQubes.setUrl("http://139.255.33.84:8282");
-//                SessionManagerQubes.setUrl("http://192.168.1.8:8282");
-                Constants.URL = SessionManagerQubes.getUrl();
-            }
+//            if (result != null) {
+//                if (result.getIdMessage() == 1) {
+//                    String ipAddress = result.getResult().toString();
+//                    Constants.URL = ipAddress;
+//                    Helper.setItemParam(Constants.URL, Constants.URL);
+//                    SessionManagerQubes.setUrl(ipAddress);
+//                }
+//            } else {
+//                SessionManagerQubes.setUrl("http://139.255.33.84:8282");
+                SessionManagerQubes.setUrl("http://192.168.1.9:8282");
+//                Constants.URL = SessionManagerQubes.getUrl();
+//            }
 
             if (SessionManagerQubes.getUserProfile() == null) {
                 intent = new Intent(getApplicationContext(), LoginActivity.class);

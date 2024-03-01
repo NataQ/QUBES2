@@ -116,7 +116,7 @@ public class SpinnerInvoiceAdapter extends RecyclerView.Adapter<SpinnerInvoiceAd
     public void onBindViewHolder(Holder holder, int position) {
         setFormatSeparator();
         Invoice detail = mFilteredList.get(position);
-        holder.text.setText(detail.getNo_invoice() + "Rp." + format.format(detail.getAmount()));
+        holder.text.setText(detail.getNo_invoice() +" - " + "Rp." + format.format(detail.getAmount()));
         if (detail.isCheckedInvoice()) {
             holder.cvUncheck.setVisibility(View.GONE);
             holder.cvCheck.setVisibility(View.VISIBLE);

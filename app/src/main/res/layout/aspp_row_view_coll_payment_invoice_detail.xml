@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="2dp"
+            android:layout_margin="0dp"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="5dp">
@@ -34,7 +34,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight=".7"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:visibility="visible">
@@ -44,19 +44,19 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".4"
-                        android:text="No. Giro"
+                        android:text="Invoice"
                         android:textColor="@color/gray8_aspp"
                         android:textStyle="bold" />
 
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/txtNoGiro"
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/txtNoFaktur"
                         style="@style/TextView_Small"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight=".6"
-                        android:background="@drawable/editbox"
                         android:padding="5dp"
-                        android:textColor="@color/black_aspp" />
+                        android:textColor="@color/black_aspp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -64,7 +64,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight=".3"
                     android:gravity="end"
                     android:orientation="horizontal"
                     android:visibility="visible">
@@ -80,10 +81,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/llPayment"
+                android:id="@+id/llItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -91,6 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -105,19 +107,17 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Tanggal Giro" />
+                            android:text="Tgl JT" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtTglGiro"
+                            android:id="@+id/txtTglJatuhTempo"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:text=""
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                            android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
 
@@ -134,87 +134,19 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Tanggal Cair" />
+                            android:text="Total Invoice" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtTglCair"
+                            android:id="@+id/txtTotalInv"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:background="@drawable/editbox"
                             android:padding="5dp"
                             android:text=""
-                            android:textColor="@color/darkGray"
-                            android:textStyle="bold" />
+                            android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Bank Name" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtBankName"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:completionThreshold="1"
-                            android:hint="Search bank.."
-                            android:padding="5dp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".4"
-                            android:text="Bank Cust." />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtBankCust"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:completionThreshold="1"
-                            android:hint="Search bank.."
-                            android:padding="5dp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -236,30 +168,53 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".4"
-                            android:text="Total Payment Giro" />
+                            android:text="Amount" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtPayment"
+                            android:id="@+id/txtAmountInvoice"
                             style="@style/TextView_Small"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight=".6"
-                            android:background="@drawable/editbox"
-                            android:hint="0"
-                            android:inputType="numberDecimal"
                             android:padding="5dp"
                             android:text=""
                             android:textColor="@color/black_aspp" />
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".4"
+                            android:text="Total Paid" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/txtTotalPaid"
+                            style="@style/TextView_Small"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".6"
+                            android:padding="5dp"
+                            android:text=""
+                            android:textColor="@color/black_aspp" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
-                    app:cardBackgroundColor="@color/white"
+                    app:cardBackgroundColor="@color/space_transparent"
                     app:cardCornerRadius="@dimen/corner_fragment"
                     app:cardElevation="0dp">
 
@@ -267,21 +222,50 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
-                        android:padding="4dp">
+                        android:padding="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="0dp"
-                            android:gravity="center"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView_Small"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Payment"
+                                android:layout_weight=".05"
+                                android:text="No"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="2dp"
+                                android:layout_weight=".45"
+                                android:text="Product"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="5dp"
+                                android:layout_weight=".25"
+                                android:text="Price"
+                                android:textColor="@color/black_aspp"
+                                android:textStyle="bold" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight=".25"
+                                android:text="Paid"
                                 android:textColor="@color/black_aspp"
                                 android:textStyle="bold" />
 
@@ -292,7 +276,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:clipToPadding="false"
-                            tools:listitem="@layout/aspp_row_view_coll_payment_invoice_detail" />
+                            tools:listitem="@layout/aspp_row_view_coll_payment_item_detail" />
 
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

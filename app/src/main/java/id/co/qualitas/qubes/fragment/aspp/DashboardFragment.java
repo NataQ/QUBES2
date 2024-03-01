@@ -135,7 +135,7 @@ public class DashboardFragment extends BaseFragment {
         setFormatSeparator();
         txtTodayDate.setText(Helper.getTodayDate(Constants.DATE_FORMAT_5));
         txtRoute.setText(Helper.getTodayRoute());
-        txtName.setText(Helper.isEmpty(user.getFull_name(), "-"));
+        txtName.setText(Helper.isEmpty(user.getUsername(), "") + "-" + Helper.isEmpty(user.getFull_name(), ""));
         txtDriver.setText(Helper.isEmpty(user.getDriver_name(), "-"));
         txtJabatanArea.setText(getDepoRegion());
 

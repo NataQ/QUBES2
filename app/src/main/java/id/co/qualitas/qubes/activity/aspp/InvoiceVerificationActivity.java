@@ -1,6 +1,7 @@
 package id.co.qualitas.qubes.activity.aspp;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -41,6 +42,7 @@ import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.StartVisit;
 import id.co.qualitas.qubes.model.User;
 import id.co.qualitas.qubes.model.WSMessage;
+import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class InvoiceVerificationActivity extends BaseActivity {
@@ -87,6 +89,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new InvoiceVerificationAdapter(this, mList, header -> {
+            SessionManagerQubes.setCollectionHeader(header);
+            Intent intent = new Intent(this, InvoiceDetailActivity.class);
+            startActivity(intent);
         });
 
         recyclerView.setAdapter(mAdapter);

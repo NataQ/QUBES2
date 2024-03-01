@@ -318,7 +318,7 @@ public class VisitActivity extends BaseActivity {
                     if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 openDialogAdd();//btnAddVisit click
@@ -332,10 +332,10 @@ public class VisitActivity extends BaseActivity {
                         setToast("Silahkan Start Visit/Next Day");
                     }
                 } else {
-                    setToast("Silahkan Start Visit");
+                    setToast("Silahkan memulai kunjungan");
                 }
             } else {
-                setToast("Silahkan Start Visit");
+                setToast("Silahkan memulai kunjungan");
             }
         });
 
@@ -522,7 +522,7 @@ public class VisitActivity extends BaseActivity {
                     if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 if (header.getStatus() == 0) {
@@ -561,7 +561,7 @@ public class VisitActivity extends BaseActivity {
                     } else {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 if (header.getStatus() == 0) {
@@ -593,10 +593,10 @@ public class VisitActivity extends BaseActivity {
                         }
                     }
                 } else {
-                    setToast("Silahkan Start Visit");
+                    setToast("Silahkan memulai kunjungan");
                 }
             } else {
-                setToast("Silahkan Start Visit");
+                setToast("Silahkan memulai kunjungan");
             }
         });
 
@@ -857,7 +857,7 @@ public class VisitActivity extends BaseActivity {
                     if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 SessionManagerQubes.clearCustomerNooSession();
@@ -874,10 +874,10 @@ public class VisitActivity extends BaseActivity {
                         setToast("Silahkan Start Visit/Next Day");
                     }
                 } else {
-                    setToast("Silahkan Start Visit");
+                    setToast("Silahkan memulai kunjungan");
                 }
             } else {
-                setToast("Silahkan Start Visit");
+                setToast("Silahkan memulai kunjungan");
             }
         });
 
@@ -954,7 +954,7 @@ public class VisitActivity extends BaseActivity {
                     if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 if (header.getStatus() == 0) {
@@ -993,7 +993,7 @@ public class VisitActivity extends BaseActivity {
                     } else {
                         switch (startVisit.getStatus_visit()) {
                             case 0:
-                                setToast("Silahkan Start Visit");
+                                setToast("Silahkan memulai kunjungan");
                                 break;
                             case 1:
                                 if (header.getStatus() == 0) {
@@ -1025,10 +1025,10 @@ public class VisitActivity extends BaseActivity {
                         }
                     }
                 } else {
-                    setToast("Silahkan Start Visit");
+                    setToast("Silahkan memulai kunjungan");
                 }
             } else {
-                setToast("Silahkan Start Visit");
+                setToast("Silahkan memulai kunjungan");
             }
 
 //            if (startVisit != null) {
@@ -1054,10 +1054,10 @@ public class VisitActivity extends BaseActivity {
 //                        }
 //                    }
 //                } else {
-//                    setToast("Silahkan Start Visit");
+//                    setToast("Silahkan memulai kunjungan");
 //                }
 //            } else {
-//                setToast("Silahkan Start Visit");
+//                setToast("Silahkan memulai kunjungan");
 //            }
         });
 
@@ -3113,7 +3113,7 @@ public class VisitActivity extends BaseActivity {
                                 currentLocation = new HashMap();
                                 currentLocation.put("latitude", location.getLatitude());
                                 currentLocation.put("longitude", location.getLongitude());
-                                currentLocation.put("address", result.getAddressLine(0));
+                                currentLocation.put("address", result != null ?result.getAddressLine(0) :"");
                                 if (endVisit) {
                                     if (database.getCountNotVisit() == 0) {
                                         openDialogEndVisit();//get location

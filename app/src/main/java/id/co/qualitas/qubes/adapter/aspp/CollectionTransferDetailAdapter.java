@@ -1,11 +1,8 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
-import android.app.DatePickerDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -18,19 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
-import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionDetail;
 import id.co.qualitas.qubes.model.CollectionDetail;
 
 public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<CollectionTransferDetailAdapter.Holder> implements Filterable {
@@ -40,7 +32,7 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
     private CollectionDetailActivity mContext;
     private OnAdapterListener onAdapterListener;
     boolean visible = false;
-    private CollectionPaymentDetailAdapter mAdapter;
+    private CollectionPaymentInvoiceDetailAdapter mAdapter;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
@@ -98,7 +90,7 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTglTransfer, txtPrice, txtPayment, txtLeft;
+        TextView txtTglTransfer, txtPrice, txtPayment;
         LinearLayout llPayment, layout;
         ImageView imgView;
         RecyclerView recyclerView;
@@ -106,7 +98,6 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtLeft = itemView.findViewById(R.id.txtLeft);
             txtPayment = itemView.findViewById(R.id.txtPayment);
             layout = itemView.findViewById(R.id.layout);
             llPayment = itemView.findViewById(R.id.llPayment);
@@ -128,7 +119,7 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_trarnsfer_detail, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_transfer_detail, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
@@ -145,9 +136,8 @@ public class CollectionTransferDetailAdapter extends RecyclerView.Adapter<Collec
             holder.txtTglTransfer.setText(null);
         }
         holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPayment()));
-        holder.txtLeft.setText("Rp. " + format.format(detail.getLeft()));
 
-        mAdapter = new CollectionPaymentDetailAdapter(mContext, detail.getMaterialList(), header -> {
+        mAdapter = new CollectionPaymentInvoiceDetailAdapter(mContext, detail.getInvoiceList(), header -> {
 
         });
         holder.recyclerView.setAdapter(mAdapter);

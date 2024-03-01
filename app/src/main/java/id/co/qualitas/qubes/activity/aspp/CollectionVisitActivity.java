@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,6 +56,7 @@ public class CollectionVisitActivity extends BaseActivity {
     private SwipeRefreshLayout swipeLayoutHistory, swipeLayoutInvoice;
     private ProgressBar progressCircleHistory, progressCircleInvoice;
     private LinearLayout llNoDataInvoice, llNoDataHistory;
+    private Button btnAdd;
     private Customer outletHeader;
 
     @Override
@@ -72,6 +74,12 @@ public class CollectionVisitActivity extends BaseActivity {
 
         imgLogOut.setOnClickListener(v -> {
             logOut(CollectionVisitActivity.this);
+        });
+
+        btnAdd.setOnClickListener(v -> {
+            SessionManagerQubes.setCollectionSource(1);
+            intent = new Intent(this, CollectionFormActivityNew.class);
+            startActivity(intent);
         });
     }
 
@@ -122,9 +130,9 @@ public class CollectionVisitActivity extends BaseActivity {
             } else {
                 if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                     SessionManagerQubes.setCollectionHeader(header);
-                    SessionManagerQubes.setCollectionSource(2);
+//                    SessionManagerQubes.setCollectionSource(2);
 //                    PINDAH KE HALAMAN DETAIL AJA
-                    Intent intent = new Intent(this, CollectionFormActivity.class);
+                    Intent intent = new Intent(this, InvoiceDetailActivity.class);
                     startActivity(intent);
                 } else if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
                     setToast("Anda sudah pause di customer ini. Jika ingin melakukan pembayaran, silahkan resume customer ini");
@@ -179,6 +187,7 @@ public class CollectionVisitActivity extends BaseActivity {
         outletHeader = SessionManagerQubes.getOutletHeader();
         user = (User) Helper.getItemParam(Constants.USER_DETAIL);
 
+        btnAdd = findViewById(R.id.btnAdd);
         llNoDataHistory = findViewById(R.id.llNoDataHistory);
         llNoDataInvoice = findViewById(R.id.llNoDataInvoice);
         progressCircleHistory = findViewById(R.id.progressCircleHistory);

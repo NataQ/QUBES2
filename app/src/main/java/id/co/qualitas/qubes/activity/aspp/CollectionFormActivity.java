@@ -210,14 +210,14 @@ public class CollectionFormActivity extends BaseActivity {
                         } else {
                             paid = orderHeader.getOmzet();
                         }
-                        if (totalAmountPaid > paid || totalAmountPaid == paid) {
-//                        if (totalAmountPaid > nett || totalAmountPaid == nett) {
-                            request.put("isPaid", 1);
-                            orderHeader.setStatusPaid(true);
-                        } else {
-                            request.put("isPaid", 0);
-                            orderHeader.setStatusPaid(false);
-                        }
+//                        if (totalAmountPaid > paid || totalAmountPaid == paid) {
+////                        if (totalAmountPaid > nett || totalAmountPaid == nett) {
+//                            request.put("isPaid", 1);
+//                            orderHeader.setStatusPaid(true);
+//                        } else {
+//                            request.put("isPaid", 0);
+//                            orderHeader.setStatusPaid(false);
+//                        }
                         orderHeader.setId_driver(user.getId_driver());
                         SessionManagerQubes.setOrder(orderHeader);
                         request.put("header", orderHeader);
@@ -569,7 +569,7 @@ public class CollectionFormActivity extends BaseActivity {
                     edtPaymentCash.setText(Helper.setDotCurrencyAmount(qty));
                     totalPaymentCash = qty;
                     if (colLFrom == 3) {
-                        mListCash = database.getAllDetailOrder(orderHeader.getIdHeader());
+                        mListCash = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
                     } else {
                         mListCash = database.getAllInvoiceDetail(header);
                     }
@@ -579,7 +579,7 @@ public class CollectionFormActivity extends BaseActivity {
                     edtPaymentLain.setText(Helper.setDotCurrencyAmount(qty));
                     totalPaymentLain = qty;
                     if (colLFrom == 3) {
-                        mListLain = database.getAllDetailOrder(orderHeader.getIdHeader());
+                        mListLain = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
                     } else {
                         mListLain = database.getAllInvoiceDetail(header);
                     }
@@ -879,10 +879,10 @@ public class CollectionFormActivity extends BaseActivity {
             orderHeader = SessionManagerQubes.getOrder();
 
 //            mListMaster = orderHeader.getMaterialList();
-            mListMaster = database.getAllDetailOrder(orderHeader.getIdHeader());
-            mListCash = database.getAllDetailOrder(orderHeader.getIdHeader());
-            mListLain = database.getAllDetailOrder(orderHeader.getIdHeader());
-            mListKredit = database.getAllDetailOrder(orderHeader.getIdHeader());
+            mListMaster = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
+            mListCash = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
+            mListLain = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
+            mListKredit = database.getAllDetailOrder(new Order(orderHeader.getIdHeader()));
 
             double paid = 0;
             if (Helper.isNotEmptyOrNull(mListMaster)) {

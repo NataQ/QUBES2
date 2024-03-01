@@ -1,13 +1,22 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,23 +29,25 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.CollectionDetailActivity;
+import id.co.qualitas.qubes.activity.aspp.CollectionFormActivityNew;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
-import id.co.qualitas.qubes.model.CollectionDetail;
+import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.model.Material;
 
-public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<CollectionGiroDetailAdapter.Holder> implements Filterable {
-    private List<CollectionDetail> mList;
-    private List<CollectionDetail> mFilteredList;
+public class CollectionPaymentInvoiceDetailAdapter extends RecyclerView.Adapter<CollectionPaymentInvoiceDetailAdapter.Holder> implements Filterable {
+    private List<Invoice> mList;
+    private List<Invoice> mFilteredList;
     private LayoutInflater mInflater;
-    private CollectionDetailActivity mContext;
+    private Context mContext;
     private OnAdapterListener onAdapterListener;
-    private CollectionPaymentInvoiceDetailAdapter mAdapter;
-    private boolean visible = false;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
+    private CollectionPaymentItemDetailAdapter mAdapter;
+    boolean visible = false;
+    private Holder dataObjectHolder;
 
-    public CollectionGiroDetailAdapter(CollectionDetailActivity mContext, List<CollectionDetail> mList, OnAdapterListener onAdapterListener) {
+    public CollectionPaymentInvoiceDetailAdapter(Context mContext, List<Invoice> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -49,7 +60,7 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<CollectionDetail> mDataSet) {
+    public void setData(List<Invoice> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -64,11 +75,11 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<CollectionDetail> filteredList = new ArrayList<>();
-                    for (CollectionDetail row : mList) {
+                    List<Invoice> filteredList = new ArrayList<>();
+                    for (Invoice row : mList) {
 
                         /*filter by name*/
-                        if (row.getNo().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getNo_invoice().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
@@ -83,30 +94,29 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<CollectionDetail>) filterResults.values;
+                mFilteredList = (ArrayList<Invoice>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtTglGiro, txtTglCair, txtBankName, txtBankCust, txtNoGiro, txtPayment;
-        RecyclerView recyclerView;
+        TextView txtNoFaktur, txtTglJatuhTempo, txtTotalInv, txtTotalPaid, txtAmountInvoice;
+        LinearLayout layout, llItem;
         ImageView imgView;
-        LinearLayout llPayment, layout;
+        RecyclerView recyclerView;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            txtPayment = itemView.findViewById(R.id.txtPayment);
-            txtNoGiro = itemView.findViewById(R.id.txtNoGiro);
-            txtBankCust = itemView.findViewById(R.id.txtBankCust);
-            txtBankName = itemView.findViewById(R.id.txtBankName);
-            txtTglCair = itemView.findViewById(R.id.txtTglCair);
+            txtNoFaktur = itemView.findViewById(R.id.txtNoFaktur);
+            txtTglJatuhTempo = itemView.findViewById(R.id.txtTglJatuhTempo);
+            txtAmountInvoice = itemView.findViewById(R.id.txtAmountInvoice);
+            txtTotalInv = itemView.findViewById(R.id.txtTotalInv);
+            txtTotalPaid = itemView.findViewById(R.id.txtTotalPaid);
             layout = itemView.findViewById(R.id.layout);
-            llPayment = itemView.findViewById(R.id.llPayment);
+            llItem = itemView.findViewById(R.id.llItem);
             imgView = itemView.findViewById(R.id.imgView);
-            txtTglGiro = itemView.findViewById(R.id.txtTglGiro);
             recyclerView = itemView.findViewById(R.id.recyclerView);
             recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
             recyclerView.setHasFixedSize(true);
@@ -122,56 +132,43 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_giro_detail, parent, false);
-        return new Holder(itemView, onAdapterListener);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_payment_invoice_detail, parent, false);
+        dataObjectHolder = new Holder(itemView, onAdapterListener);
+        return dataObjectHolder;
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
-        CollectionDetail detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
-
-        String idBankCust = Helper.isEmpty(detail.getIdBankCust(), "");
-        String nameBankCust = Helper.isEmpty(detail.getBankCust(), "");
-
-        String idBank = Helper.isEmpty(detail.getIdBankASPP(), "");
-        String nameBank = Helper.isEmpty(detail.getBankNameASPP(), "");
-        if (!Helper.isNullOrEmpty(detail.getTgl())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTgl());
-            holder.txtTglGiro.setText(date);
-        } else {
-            holder.txtTglGiro.setText(null);
-        }
-
-        if (!Helper.isNullOrEmpty(detail.getTglCair())) {
-            String date = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_4, detail.getTglCair());
-            holder.txtTglCair.setText(date);
-        } else {
-            holder.txtTglCair.setText(null);
-        }
-
-        holder.txtBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
-        holder.txtBankName.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
-
-        holder.txtNoGiro.setText(Helper.isEmpty(detail.getNo(), ""));
-        holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPayment()));
-
-        mAdapter = new CollectionPaymentInvoiceDetailAdapter(mContext, detail.getInvoiceList(), header -> {
-
-        });
-        holder.recyclerView.setAdapter(mAdapter);
+        Invoice detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
         holder.layout.setOnClickListener(v -> {
             if (visible) {
                 visible = false;
-                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
-                holder.llPayment.setVisibility(View.VISIBLE);
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(false);
+                holder.llItem.setVisibility(View.GONE);
             } else {
                 visible = true;
-                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_down_aspp));
-                holder.llPayment.setVisibility(View.GONE);
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_drop_up));
+                holder.llItem.setVisibility(View.VISIBLE);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setOpen(true);
             }
         });
+
+        holder.txtNoFaktur.setText(Helper.isEmpty(detail.getNo_invoice(), ""));
+        if (!Helper.isNullOrEmpty(detail.getTanggal_jatuh_tempo())) {
+            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getTanggal_jatuh_tempo());
+            holder.txtTglJatuhTempo.setText(dueDate);
+        }
+        holder.txtTotalInv.setText("Rp." + format.format(detail.getAmount()));
+        holder.txtAmountInvoice.setText("Rp." + format.format(detail.getNett()));
+        holder.txtTotalPaid.setText("Rp." + format.format(detail.getTotal_paid()));
+
+        mAdapter = new CollectionPaymentItemDetailAdapter(mContext, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getMaterialList(), header -> {
+
+        });
+        holder.recyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -180,7 +177,7 @@ public class CollectionGiroDetailAdapter extends RecyclerView.Adapter<Collection
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(CollectionDetail detail);
+        void onAdapterClick(Invoice Invoice);
     }
 
     private void setFormatSeparator() {

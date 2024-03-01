@@ -138,7 +138,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
 //        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
-        holder.txtPayment.setText(detail.isStatusPaid() ? "Lunas" : "Kredit");
+        holder.txtPayment.setText("Rp. " + format.format(detail.getTotalPaid()));
         if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
             if (detail.isDeleted()) {
                 holder.llDelete.setVisibility(View.GONE);
@@ -208,8 +208,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
             TextView txtDialog = alertDialog.findViewById(R.id.txtDialog);
             Button btnNo = alertDialog.findViewById(R.id.btnNo);
             Button btnYes = alertDialog.findViewById(R.id.btnYes);
-            txtTitle.setText("Delete Order");
-            txtDialog.setText("Are you sure want to delete this order?");
+            txtTitle.setText("Hapus Order");
+            txtDialog.setText("Anda yakin? MENGHAPUS ORDER AKAN MENGHAPUS PAYMENT YANG SUDAH DI BUAT");
             btnYes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

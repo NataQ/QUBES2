@@ -9,6 +9,7 @@ public class Collection implements Serializable {
     private Collection cash;
     private Collection lain;
     private double totalPayment;
+    private double totalPaid;
     private double left;
     private List<Invoice> invoiceList;
     private List<CollectionDetail> tfList;
@@ -19,10 +20,19 @@ public class Collection implements Serializable {
     public Collection() {
     }
 
-    public Collection(double totalPayment, double left, List<Invoice> invoiceList) {
+    public Collection(double totalPayment, double left,double totalPaid, List<Invoice> invoiceList) {
         this.left = left;
+        this.totalPaid = totalPaid;
         this.totalPayment = totalPayment;
         this.invoiceList = invoiceList;
+    }
+
+    public double getTotalPaid() {
+        return totalPaid;
+    }
+
+    public void setTotalPaid(double totalPaid) {
+        this.totalPaid = totalPaid;
     }
 
     public double getLeft() {

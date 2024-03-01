@@ -1,14 +1,13 @@
 package id.co.qualitas.qubes.adapter.aspp;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -18,23 +17,19 @@ import java.util.List;
 import java.util.Locale;
 
 import id.co.qualitas.qubes.R;
-import id.co.qualitas.qubes.activity.aspp.CollectionFormActivityNew;
-import id.co.qualitas.qubes.listener.OnLoadMoreListener;
-import id.co.qualitas.qubes.model.Invoice;
+import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Material;
 
-public class SpinnerInvoiceChequeAdapter extends RecyclerView.Adapter<SpinnerInvoiceChequeAdapter.Holder> implements Filterable {
-    private List<Invoice> mList;
-    private List<Invoice> mFilteredList;
+public class CollectionPaymentItemDetailAdapter extends RecyclerView.Adapter<CollectionPaymentItemDetailAdapter.Holder> implements Filterable {
+    private List<Material> mList;
+    private List<Material> mFilteredList;
     private LayoutInflater mInflater;
-    private CollectionFormActivityNew mContext;
+    private Context mContext;
     private OnAdapterListener onAdapterListener;
-    private OnLoadMoreListener onLoadMoreListener;
-    private boolean isLoading = false;
-    CollectionChequeNewAdapter chequeAdapter;
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
 
-    public SpinnerInvoiceChequeAdapter(CollectionFormActivityNew mContext, CollectionChequeNewAdapter chequeAdapter, List<Invoice> mList, OnAdapterListener onAdapterListener) {
+    public CollectionPaymentItemDetailAdapter(Context mContext, List<Material> mList, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -43,12 +38,11 @@ public class SpinnerInvoiceChequeAdapter extends RecyclerView.Adapter<SpinnerInv
             this.mFilteredList = new ArrayList<>();
         }
         this.mContext = mContext;
-        this.chequeAdapter = chequeAdapter;
         this.mInflater = LayoutInflater.from(mContext);
         this.onAdapterListener = onAdapterListener;
     }
 
-    public void setData(List<Invoice> mDataSet) {
+    public void setData(List<Material> mDataSet) {
         this.mList = mDataSet;
         this.mFilteredList = mDataSet;
         notifyDataSetChanged();
@@ -63,12 +57,15 @@ public class SpinnerInvoiceChequeAdapter extends RecyclerView.Adapter<SpinnerInv
                 if (charString.isEmpty()) {
                     mFilteredList = mList;
                 } else {
-                    List<Invoice> filteredList = new ArrayList<>();
-                    for (Invoice row : mList) {
-                        if (row.getNo_invoice().toLowerCase().contains(charString.toLowerCase())) {
+                    List<Material> filteredList = new ArrayList<>();
+                    for (Material row : mList) {
+
+                        /*filter by name*/
+                        if (row.getMaterialCode().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }
+
                     mFilteredList = filteredList;
                 }
 
@@ -79,66 +76,47 @@ public class SpinnerInvoiceChequeAdapter extends RecyclerView.Adapter<SpinnerInv
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredList = (ArrayList<Invoice>) filterResults.values;
-                mContext.setFilteredData(mFilteredList);
+                mFilteredList = (ArrayList<Material>) filterResults.values;
                 notifyDataSetChanged();
             }
         };
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        LinearLayout llHeader;
-        TextView text;
-        CardView cvUncheck, cvCheck;
+        TextView txtNo, txtProduct, txtPrice, txtPaid;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
-            cvUncheck = itemView.findViewById(R.id.cvUncheck);
-            text = itemView.findViewById(R.id.text);
-            llHeader = itemView.findViewById(R.id.llHeader);
-            cvCheck = itemView.findViewById(R.id.cvCheck);
+            txtNo = itemView.findViewById(R.id.txtNo);
+            txtProduct = itemView.findViewById(R.id.txtProduct);
+            txtPaid = itemView.findViewById(R.id.txtPaid);
+            txtPrice = itemView.findViewById(R.id.txtPrice);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            onAdapterListener.onAdapterClick(mFilteredList.get(getAdapterPosition()), getAdapterPosition());
+            onAdapterListener.onAdapterClick(mFilteredList.get(getAdapterPosition()));
         }
     }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.aspp_spinner_filtered_item_product, parent, false);
+        View itemView = mInflater.inflate(R.layout.aspp_row_view_coll_payment_item_detail, parent, false);
         return new Holder(itemView, onAdapterListener);
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
+    public void onBindViewHolder(Holder holder, int pos) {
         setFormatSeparator();
-        Invoice detail = mFilteredList.get(position);
-        holder.text.setText(detail.getNo_invoice() +" - " + "Rp." + format.format(detail.getAmount()));
-        if (detail.isCheckedInvoice()) {
-            holder.cvUncheck.setVisibility(View.GONE);
-            holder.cvCheck.setVisibility(View.VISIBLE);
-        } else {
-            holder.cvUncheck.setVisibility(View.VISIBLE);
-            holder.cvCheck.setVisibility(View.GONE);
-        }
+        Material detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
-        holder.llHeader.setOnClickListener(v -> {
-            if (detail.isCheckedInvoice()) {
-                detail.setCheckedInvoice(false);
-                holder.cvUncheck.setVisibility(View.VISIBLE);
-                holder.cvCheck.setVisibility(View.GONE);
-            } else {
-                detail.setCheckedInvoice(true);
-                holder.cvUncheck.setVisibility(View.GONE);
-                holder.cvCheck.setVisibility(View.VISIBLE);
-            }
-            chequeAdapter.setCheckedAll();
-        });
+        holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
+        holder.txtProduct.setText(!Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null);
+        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+        holder.txtPaid.setText("Rp. " + format.format(detail.getAmountPaid()));
     }
 
     @Override
@@ -147,7 +125,7 @@ public class SpinnerInvoiceChequeAdapter extends RecyclerView.Adapter<SpinnerInv
     }
 
     public interface OnAdapterListener {
-        void onAdapterClick(Invoice Invoice, int adapterPosition);
+        void onAdapterClick(Material Material);
     }
 
     private void setFormatSeparator() {

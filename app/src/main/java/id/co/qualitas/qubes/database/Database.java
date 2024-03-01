@@ -594,6 +594,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ADDRESS_NOO + " TEXT,"
             + KEY_ORDER_TYPE + " TEXT,"
             + KEY_ORDER_ROUTE + " TEXT,"
+            + KEY_PRINT_BON + " INTEGER DEFAULT 0,"
             + KEY_STATUS + " INTEGER DEFAULT 0,"
             + KEY_LATITUDE + " REAL,"
             + KEY_LONGITUDE + " REAL,"
@@ -1893,7 +1894,7 @@ public class Database extends SQLiteOpenHelper {
             values.put(KEY_TANGGAL_KIRIM, request.getTanggal_kirim());
             values.put(KEY_OMZET, request.getOmzet());
             values.put(KEY_STATUS, request.getStatus());
-            values.put(KEY_IS_PAID, request.isStatusPaid() ? 1 : 0);
+            values.put(KEY_IS_PAID, 0);//request.isStatusPaid() ? 1 : 0
             values.put(KEY_CREATED_BY, user.getUsername());
             values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
@@ -2116,337 +2117,338 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public boolean addCollectionOrder(Map request) {
-        boolean result = false;
-        SQLiteDatabase db = getWritableDatabase();
-        db.beginTransactionNonExclusive();
-
-        int idCollHeader = -1;
-        try {
-            User user = Helper.ObjectToGSON(request.get("user"), User.class);
-            Order header = Helper.ObjectToGSON(request.get("header"), Order.class);
-            double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
-            double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
-            double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
-
-            List<Material> cashList = new ArrayList<>();
-            Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
-            if (cashListArray != null) {
-                Collections.addAll(cashList, cashListArray);
-            }
-
-            double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
-            double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
-
-            List<Material> lainList = new ArrayList<>();
-            Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
-            if (lainListArray != null) {
-                Collections.addAll(lainList, lainListArray);
-            }
-
-            List<Material> tfList = new ArrayList<>();
-            Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
-            if (tfListArray != null) {
-                Collections.addAll(tfList, tfListArray);
-            }
-
-            List<CollectionDetail> mListTransfer = new ArrayList<>();
-            CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
-            if (mListTransferArray != null) {
-                Collections.addAll(mListTransfer, mListTransferArray);
-            }
-
-            List<Material> giroList = new ArrayList<>();
-            Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
-            if (giroArray != null) {
-                Collections.addAll(giroList, giroArray);
-            }
-
-            List<CollectionDetail> mListGiro = new ArrayList<>();
-            CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
-            if (mListGiroArray != null) {
-                Collections.addAll(mListGiro, mListGiroArray);
-            }
-
-            List<Material> chequeList = new ArrayList<>();
-            Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
-            if (chequeListArray != null) {
-                Collections.addAll(chequeList, chequeListArray);
-            }
-
-            List<CollectionDetail> mListCheque = new ArrayList<>();
-            CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
-            if (mListChequeArray != null) {
-                Collections.addAll(mListCheque, mListChequeArray);
-            }
-
-            List<Material> mListCash = new ArrayList<>();
-            Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
-            if (mListCashArray != null) {
-                Collections.addAll(mListCash, mListCashArray);
-            }
-
-            Map requestHeader = new HashMap();
-            requestHeader.put("id_header", Constants.ID_CO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
-            requestHeader.put("customer_id", header.getId_customer());
-            requestHeader.put("no_invoice", header.getIdHeader());
-            requestHeader.put("id_driver", header.getId_driver());
-            requestHeader.put("invoice_date", header.getOrder_date());
-            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
-            requestHeader.put("status", "paid");
-            requestHeader.put("total_paid", totalAmountPaid);
-            requestHeader.put("amount", header.getOmzet());
-            requestHeader.put("username", user.getUsername());
-            requestHeader.put("isSync", request.get("isSync"));
-            requestHeader.put("isPaid", request.get("isPaid"));
-
-            //addCollectionHeader
-            //int idCollHeader = database.addCollectionHeader(requestHeader);
-            ContentValues values = new ContentValues();
-            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
-            values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
-            values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
-            values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
-            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
-            values.put(KEY_DATE, requestHeader.get("date").toString());
-            values.put(KEY_STATUS, requestHeader.get("status").toString());
-            values.put(KEY_TYPE_PAYMENT, "order");
-            values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
-            values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
-            values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
-            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
-
-//            idCollHeaderA = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
-            db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
-
-            Map requestDetail = new HashMap();
-            requestDetail.put("id_header", requestHeader.get("id_header").toString());
-            requestDetail.put("no_invoice", header.getIdHeader());
-            requestDetail.put("status", "paid");
-            requestDetail.put("username", user.getUsername());
-
-            if (cashList.size() != 0) {
-                requestDetail.put("type_payment", "cash");
-                requestDetail.put("total_payment", totalPaymentCash);
-                requestDetail.put("left", leftCash);
-                values = new ContentValues();
-                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
-                values.put(KEY_STATUS, requestDetail.get("status").toString());
-                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
-                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
-                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
-                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
-                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                for (Material material : cashList) {
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_MATERIAL_ID, material.getId());
-                    values.put(KEY_MATERIAL_NAME, material.getNama());
-                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                    values.put(KEY_PRICE, material.getNett());
-                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                }
-            }
-
-            if (lainList.size() != 0) {
-                requestDetail.put("type_payment", "lain");
-                requestDetail.put("total_payment", totalPaymentLain);
-                requestDetail.put("left", leftLain);
-
-//            int idDetail = database.addCollectionCashLain(requestDetail);
-                values = new ContentValues();
-                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
-                values.put(KEY_STATUS, requestDetail.get("status").toString());
-                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
-                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
-                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
-                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
-                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                for (Material material : lainList) {
-//                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_MATERIAL_ID, material.getId());
-                    values.put(KEY_MATERIAL_NAME, material.getNama());
-                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                    values.put(KEY_PRICE, material.getNett());
-                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                }
-            }
-
-            if (tfList.size() != 0) {
-                for (CollectionDetail collection : mListTransfer) {
-                    collection.setInvoiceNo(header.getIdHeader());
-//                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "transfer");
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            if (giroList.size() != 0) {
-                for (CollectionDetail collection : mListGiro) {
-                    collection.setInvoiceNo(header.getIdHeader());
-//                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "giro");
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_NO, collection.getNo());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_DUE_DATE, collection.getTglCair());
-                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
-                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
-                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
-                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            if (chequeList.size() != 0) {
-                for (CollectionDetail collection : mListCheque) {
-                    collection.setInvoiceNo(header.getIdHeader());
-//                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "cheque");
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_NO, collection.getNo());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_DUE_DATE, collection.getTglCair());
-                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
-                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
-                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
-                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            values = new ContentValues();
-            values.put(KEY_IS_PAID, (int) request.get("isPaid"));
-            values.put(KEY_UPDATED_BY, user.getUsername());
-            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-            db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{header.getIdHeader()});
-
-            result = true;
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.e("Collection", e.getMessage());
-            result = false;
-        }
-        db.endTransaction();
-        return result;
-        //addCollectionHeader
+//        boolean result = false;
+//        SQLiteDatabase db = getWritableDatabase();
+//        db.beginTransactionNonExclusive();
+//
+//        int idCollHeader = -1;
+//        try {
+//            User user = Helper.ObjectToGSON(request.get("user"), User.class);
+//            Order header = Helper.ObjectToGSON(request.get("header"), Order.class);
+//            double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
+//            double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
+//            double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
+//
+//            List<Material> cashList = new ArrayList<>();
+//            Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
+//            if (cashListArray != null) {
+//                Collections.addAll(cashList, cashListArray);
+//            }
+//
+//            double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
+//            double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
+//
+//            List<Material> lainList = new ArrayList<>();
+//            Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
+//            if (lainListArray != null) {
+//                Collections.addAll(lainList, lainListArray);
+//            }
+//
+//            List<Material> tfList = new ArrayList<>();
+//            Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
+//            if (tfListArray != null) {
+//                Collections.addAll(tfList, tfListArray);
+//            }
+//
+//            List<CollectionDetail> mListTransfer = new ArrayList<>();
+//            CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
+//            if (mListTransferArray != null) {
+//                Collections.addAll(mListTransfer, mListTransferArray);
+//            }
+//
+//            List<Material> giroList = new ArrayList<>();
+//            Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
+//            if (giroArray != null) {
+//                Collections.addAll(giroList, giroArray);
+//            }
+//
+//            List<CollectionDetail> mListGiro = new ArrayList<>();
+//            CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
+//            if (mListGiroArray != null) {
+//                Collections.addAll(mListGiro, mListGiroArray);
+//            }
+//
+//            List<Material> chequeList = new ArrayList<>();
+//            Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
+//            if (chequeListArray != null) {
+//                Collections.addAll(chequeList, chequeListArray);
+//            }
+//
+//            List<CollectionDetail> mListCheque = new ArrayList<>();
+//            CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
+//            if (mListChequeArray != null) {
+//                Collections.addAll(mListCheque, mListChequeArray);
+//            }
+//
+//            List<Material> mListCash = new ArrayList<>();
+//            Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
+//            if (mListCashArray != null) {
+//                Collections.addAll(mListCash, mListCashArray);
+//            }
+//
+//            Map requestHeader = new HashMap();
+//            requestHeader.put("id_header", Constants.ID_CO_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+//            requestHeader.put("customer_id", header.getId_customer());
+//            requestHeader.put("no_invoice", header.getIdHeader());
+//            requestHeader.put("id_driver", header.getId_driver());
+//            requestHeader.put("invoice_date", header.getOrder_date());
+//            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+//            requestHeader.put("status", "paid");
+//            requestHeader.put("total_paid", totalAmountPaid);
+//            requestHeader.put("amount", header.getOmzet());
+//            requestHeader.put("username", user.getUsername());
+//            requestHeader.put("isSync", request.get("isSync"));
+//            requestHeader.put("isPaid", request.get("isPaid"));
+//
+//            //addCollectionHeader
+//            //int idCollHeader = database.addCollectionHeader(requestHeader);
+//            ContentValues values = new ContentValues();
+//            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
+//            values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
+//            values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
+//            values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+//            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
+//            values.put(KEY_DATE, requestHeader.get("date").toString());
+//            values.put(KEY_STATUS, requestHeader.get("status").toString());
+//            values.put(KEY_TYPE_PAYMENT, "order");
+//            values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
+//            values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
+//            values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
+//            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//            values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
+//
+////            idCollHeaderA = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+//            db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+//
+//            Map requestDetail = new HashMap();
+//            requestDetail.put("id_header", requestHeader.get("id_header").toString());
+//            requestDetail.put("no_invoice", header.getIdHeader());
+//            requestDetail.put("status", "paid");
+//            requestDetail.put("username", user.getUsername());
+//
+//            if (cashList.size() != 0) {
+//                requestDetail.put("type_payment", "cash");
+//                requestDetail.put("total_payment", totalPaymentCash);
+//                requestDetail.put("left", leftCash);
+//                values = new ContentValues();
+//                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+//                values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+//                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+//                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+//                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+//                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                for (Material material : cashList) {
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_MATERIAL_ID, material.getId());
+//                    values.put(KEY_MATERIAL_NAME, material.getNama());
+//                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                    values.put(KEY_PRICE, material.getNett());
+//                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                }
+//            }
+//
+//            if (lainList.size() != 0) {
+//                requestDetail.put("type_payment", "lain");
+//                requestDetail.put("total_payment", totalPaymentLain);
+//                requestDetail.put("left", leftLain);
+//
+////            int idDetail = database.addCollectionCashLain(requestDetail);
+//                values = new ContentValues();
+//                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+//                values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+//                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+//                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+//                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+//                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                for (Material material : lainList) {
+////                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_MATERIAL_ID, material.getId());
+//                    values.put(KEY_MATERIAL_NAME, material.getNama());
+//                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                    values.put(KEY_PRICE, material.getNett());
+//                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                }
+//            }
+//
+//            if (tfList.size() != 0) {
+//                for (CollectionDetail collection : mListTransfer) {
+//                    collection.setInvoiceNo(header.getIdHeader());
+////                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "transfer");
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            if (giroList.size() != 0) {
+//                for (CollectionDetail collection : mListGiro) {
+//                    collection.setInvoiceNo(header.getIdHeader());
+////                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "giro");
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_NO, collection.getNo());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_DUE_DATE, collection.getTglCair());
+//                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+//                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+//                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+//                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            if (chequeList.size() != 0) {
+//                for (CollectionDetail collection : mListCheque) {
+//                    collection.setInvoiceNo(header.getIdHeader());
+////                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "cheque");
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_NO, collection.getNo());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_DUE_DATE, collection.getTglCair());
+//                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+//                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+//                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+//                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            values = new ContentValues();
+//            values.put(KEY_IS_PAID, (int) request.get("isPaid"));
+//            values.put(KEY_UPDATED_BY, user.getUsername());
+//            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//            db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ?", new String[]{header.getIdHeader()});
+//
+//            result = true;
+//            db.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            Log.e("Collection", e.getMessage());
+//            result = false;
+//        }
+//        db.endTransaction();
+//        return result;
+        return false;
+//        //addCollectionHeader
     }
 
     public boolean addCollectionNew(Collection request) {
@@ -2774,515 +2776,381 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public boolean addCollection(Map request) {
-        boolean result = false;
-        SQLiteDatabase db = getWritableDatabase();
-        db.beginTransactionNonExclusive();
-
-        int idCollHeader = -1;
-        try {
-            User user = Helper.ObjectToGSON(request.get("user"), User.class);
-            Invoice header = Helper.ObjectToGSON(request.get("header"), Invoice.class);
-            double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
-            double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
-            double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
-
-            List<Material> cashList = new ArrayList<>();
-            Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
-            if (cashListArray != null) {
-                Collections.addAll(cashList, cashListArray);
-            }
-
-            double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
-            double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
-
-            List<Material> lainList = new ArrayList<>();
-            Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
-            if (lainListArray != null) {
-                Collections.addAll(lainList, lainListArray);
-            }
-
-            List<Material> tfList = new ArrayList<>();
-            Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
-            if (tfListArray != null) {
-                Collections.addAll(tfList, tfListArray);
-            }
-
-            List<CollectionDetail> mListTransfer = new ArrayList<>();
-            CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
-            if (mListTransferArray != null) {
-                Collections.addAll(mListTransfer, mListTransferArray);
-            }
-
-            List<Material> giroList = new ArrayList<>();
-            Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
-            if (giroArray != null) {
-                Collections.addAll(giroList, giroArray);
-            }
-
-            List<CollectionDetail> mListGiro = new ArrayList<>();
-            CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
-            if (mListGiroArray != null) {
-                Collections.addAll(mListGiro, mListGiroArray);
-            }
-
-            List<Material> chequeList = new ArrayList<>();
-            Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
-            if (chequeListArray != null) {
-                Collections.addAll(chequeList, chequeListArray);
-            }
-
-            List<CollectionDetail> mListCheque = new ArrayList<>();
-            CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
-            if (mListChequeArray != null) {
-                Collections.addAll(mListCheque, mListChequeArray);
-            }
-
-            List<Material> mListCash = new ArrayList<>();
-            Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
-            if (mListCashArray != null) {
-                Collections.addAll(mListCash, mListCashArray);
-            }
-
-            Map requestHeader = new HashMap();
-            requestHeader.put("id_header", Constants.ID_CI_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
-            requestHeader.put("customer_id", header.getId_customer());
-            requestHeader.put("no_invoice", header.getNo_invoice());
-            requestHeader.put("id_driver", user.getId_driver());
-            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
-            requestHeader.put("invoice_date", header.getInvoice_date());
-            requestHeader.put("status", "paid");
-            requestHeader.put("total_paid", totalAmountPaid);
-            requestHeader.put("amount", header.getAmount());
-            requestHeader.put("username", user.getUsername());
-            requestHeader.put("isSync", header.getIsSync());
-
-            //addCollectionHeader
-            //int idCollHeader = database.addCollectionHeader(requestHeader);
-            ContentValues values = new ContentValues();
-            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
-            values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
-            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
-            values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
-            values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
-            values.put(KEY_DATE, requestHeader.get("date").toString());
-            values.put(KEY_STATUS, requestHeader.get("status").toString());
-            values.put(KEY_TYPE_PAYMENT, "invoice");
-            values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
-            values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
-            values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
-            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
-
-
-            idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
-
-            //updatePaidInvoice
-            //database.updatePaidInvoice(requestHeader);//update paid invoice header
-            requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
-            requestHeader.put("nett", header.getAmount() - (header.getTotal_paid() + totalAmountPaid));
-
-            values = new ContentValues();
-            values.put(KEY_PAID, (Double) requestHeader.get("paid"));
-            values.put(KEY_NETT, (Double) requestHeader.get("nett"));
-            values.put(KEY_UPDATED_BY, requestHeader.get("username").toString());
-            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{requestHeader.get("no_invoice").toString()});
-            //updatePaidInvoice
-
-            Map requestDetail = new HashMap();
-            requestDetail.put("id_header", requestHeader.get("id_header").toString());
-            requestDetail.put("no_invoice", header.getNo_invoice());
-            requestDetail.put("status", "paid");
-            requestDetail.put("username", user.getUsername());
-
-            if (cashList.size() != 0) {
-                requestDetail.put("type_payment", "cash");
-                requestDetail.put("total_payment", totalPaymentCash);
-                requestDetail.put("left", leftCash);
-//            int idDetail = database.addCollectionCashLain(requestDetail);
-                values = new ContentValues();
-                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
-                values.put(KEY_STATUS, requestDetail.get("status").toString());
-                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
-                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
-                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
-                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
-                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                for (Material material : cashList) {
-//                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_MATERIAL_ID, material.getId());
-                    values.put(KEY_MATERIAL_NAME, material.getNama());
-                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                    values.put(KEY_PRICE, material.getNett());
-                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                }
-            }
-
-            if (lainList.size() != 0) {
-                requestDetail.put("type_payment", "lain");
-                requestDetail.put("total_payment", totalPaymentLain);
-                requestDetail.put("left", leftLain);
-
-//            int idDetail = database.addCollectionCashLain(requestDetail);
-                values = new ContentValues();
-                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
-                values.put(KEY_STATUS, requestDetail.get("status").toString());
-                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
-                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
-                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
-                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
-                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                for (Material material : lainList) {
-//                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_MATERIAL_ID, material.getId());
-                    values.put(KEY_MATERIAL_NAME, material.getNama());
-                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                    values.put(KEY_PRICE, material.getNett());
-                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                }
-            }
-
-            if (tfList.size() != 0) {
-                for (CollectionDetail collection : mListTransfer) {
-                    collection.setInvoiceNo(header.getNo_invoice());
-//                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "transfer");
-                    values.put(KEY_STATUS, requestDetail.get("status").toString());
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            if (giroList.size() != 0) {
-                for (CollectionDetail collection : mListGiro) {
-                    collection.setInvoiceNo(header.getNo_invoice());
-//                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "giro");
-                    values.put(KEY_STATUS, requestDetail.get("status").toString());
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_NO, collection.getNo());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_DUE_DATE, collection.getTglCair());
-                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
-                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
-                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
-                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            if (chequeList.size() != 0) {
-                for (CollectionDetail collection : mListCheque) {
-                    collection.setInvoiceNo(header.getNo_invoice());
-//                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
-                    values = new ContentValues();
-                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
-                    values.put(KEY_TYPE_PAYMENT, "cheque");
-                    values.put(KEY_STATUS, requestDetail.get("status").toString());
-                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
-                    values.put(KEY_LEFT, collection.getLeft());
-                    values.put(KEY_NO, collection.getNo());
-                    values.put(KEY_DATE, collection.getTgl());
-                    values.put(KEY_DUE_DATE, collection.getTglCair());
-                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
-                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
-                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
-                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
-                    values.put(KEY_CREATED_BY, user.getUsername());
-                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                    int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-
-                    for (Material material : collection.getCheckedMaterialList()) {
-//                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
-                        values = new ContentValues();
-                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
-                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
-                        values.put(KEY_MATERIAL_ID, material.getId());
-                        values.put(KEY_MATERIAL_NAME, material.getNama());
-                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
-                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
-                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
-                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
-                        values.put(KEY_PRICE, material.getNett());
-                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
-                        values.put(KEY_CREATED_BY, user.getUsername());
-                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
-
-                        int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-                    }
-                }
-            }
-
-            if (Helper.isNotEmptyOrNull(mListCash)) {
-                for (Material material : mListCash) {
-//                database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
-                    values = new ContentValues();
-                    double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
-                    paid = paid + (material.getPrice() - material.getSisa());//material.getNett() - material.getSisa(),ambil semua jumlah paid nya
-                    values.put(KEY_PAID, paid);
-                    values.put(KEY_UPDATED_BY, user.getUsername());
-                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-                    db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
-                            + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
-                    //db.close();
-                }
-            }
-            result = true;
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.e("Collection", e.getMessage());
-            result = false;
-        }
-        db.endTransaction();
-        return result;
-        //addCollectionHeader
+//        boolean result = false;
+//        SQLiteDatabase db = getWritableDatabase();
+//        db.beginTransactionNonExclusive();
+//
+//        int idCollHeader = -1;
+//        try {
+//            User user = Helper.ObjectToGSON(request.get("user"), User.class);
+//            Invoice header = Helper.ObjectToGSON(request.get("header"), Invoice.class);
+//            double totalAmountPaid = Helper.ObjectToGSON(request.get("totalAmountPaid"), double.class);
+//            double totalPaymentCash = Helper.ObjectToGSON(request.get("totalPaymentCash"), double.class);
+//            double leftCash = Helper.ObjectToGSON(request.get("leftCash"), double.class);
+//
+//            List<Material> cashList = new ArrayList<>();
+//            Material[] cashListArray = Helper.ObjectToGSON(request.get("cashList"), Material[].class);
+//            if (cashListArray != null) {
+//                Collections.addAll(cashList, cashListArray);
+//            }
+//
+//            double totalPaymentLain = Helper.ObjectToGSON(request.get("totalPaymentLain"), double.class);
+//            double leftLain = Helper.ObjectToGSON(request.get("leftLain"), double.class);
+//
+//            List<Material> lainList = new ArrayList<>();
+//            Material[] lainListArray = Helper.ObjectToGSON(request.get("lainList"), Material[].class);
+//            if (lainListArray != null) {
+//                Collections.addAll(lainList, lainListArray);
+//            }
+//
+//            List<Material> tfList = new ArrayList<>();
+//            Material[] tfListArray = Helper.ObjectToGSON(request.get("tfList"), Material[].class);
+//            if (tfListArray != null) {
+//                Collections.addAll(tfList, tfListArray);
+//            }
+//
+//            List<CollectionDetail> mListTransfer = new ArrayList<>();
+//            CollectionDetail[] mListTransferArray = Helper.ObjectToGSON(request.get("mListTransfer"), CollectionDetail[].class);
+//            if (mListTransferArray != null) {
+//                Collections.addAll(mListTransfer, mListTransferArray);
+//            }
+//
+//            List<Material> giroList = new ArrayList<>();
+//            Material[] giroArray = Helper.ObjectToGSON(request.get("giroList"), Material[].class);
+//            if (giroArray != null) {
+//                Collections.addAll(giroList, giroArray);
+//            }
+//
+//            List<CollectionDetail> mListGiro = new ArrayList<>();
+//            CollectionDetail[] mListGiroArray = Helper.ObjectToGSON(request.get("mListGiro"), CollectionDetail[].class);
+//            if (mListGiroArray != null) {
+//                Collections.addAll(mListGiro, mListGiroArray);
+//            }
+//
+//            List<Material> chequeList = new ArrayList<>();
+//            Material[] chequeListArray = Helper.ObjectToGSON(request.get("chequeList"), Material[].class);
+//            if (chequeListArray != null) {
+//                Collections.addAll(chequeList, chequeListArray);
+//            }
+//
+//            List<CollectionDetail> mListCheque = new ArrayList<>();
+//            CollectionDetail[] mListChequeArray = Helper.ObjectToGSON(request.get("mListCheque"), CollectionDetail[].class);
+//            if (mListChequeArray != null) {
+//                Collections.addAll(mListCheque, mListChequeArray);
+//            }
+//
+//            List<Material> mListCash = new ArrayList<>();
+//            Material[] mListCashArray = Helper.ObjectToGSON(request.get("mListCash"), Material[].class);
+//            if (mListCashArray != null) {
+//                Collections.addAll(mListCash, mListCashArray);
+//            }
+//
+//            Map requestHeader = new HashMap();
+//            requestHeader.put("id_header", Constants.ID_CI_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
+//            requestHeader.put("customer_id", header.getId_customer());
+//            requestHeader.put("no_invoice", header.getNo_invoice());
+//            requestHeader.put("id_driver", user.getId_driver());
+//            requestHeader.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+//            requestHeader.put("invoice_date", header.getInvoice_date());
+//            requestHeader.put("status", "paid");
+//            requestHeader.put("total_paid", totalAmountPaid);
+//            requestHeader.put("amount", header.getAmount());
+//            requestHeader.put("username", user.getUsername());
+//            requestHeader.put("isSync", header.getIsSync());
+//
+//            //addCollectionHeader
+//            //int idCollHeader = database.addCollectionHeader(requestHeader);
+//            ContentValues values = new ContentValues();
+//            values.put(KEY_ID_COLLECTION_HEADER_DB, requestHeader.get("id_header").toString());
+//            values.put(KEY_CUSTOMER_ID, requestHeader.get("customer_id").toString());
+//            values.put(KEY_ID_DRIVER, requestHeader.get("id_driver").toString());
+//            values.put(KEY_INVOICE_NO, requestHeader.get("no_invoice").toString());
+//            values.put(KEY_INVOICE_DATE, requestHeader.get("invoice_date").toString());
+//            values.put(KEY_DATE, requestHeader.get("date").toString());
+//            values.put(KEY_STATUS, requestHeader.get("status").toString());
+//            values.put(KEY_TYPE_PAYMENT, "invoice");
+//            values.put(KEY_INVOICE_TOTAL, (Double) requestHeader.get("amount"));
+//            values.put(KEY_TOTAL_PAID, (Double) requestHeader.get("total_paid"));
+//            values.put(KEY_CREATED_BY, requestHeader.get("username").toString());
+//            values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//            values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync"));
+//
+//
+//            idCollHeader = (int) db.insert(TABLE_COLLECTION_HEADER, null, values);//return id yg ud d create
+//
+//            //updatePaidInvoice
+//            //database.updatePaidInvoice(requestHeader);//update paid invoice header
+//            requestHeader.put("paid", header.getTotal_paid() + totalAmountPaid);
+//            requestHeader.put("nett", header.getAmount() - (header.getTotal_paid() + totalAmountPaid));
+//
+//            values = new ContentValues();
+//            values.put(KEY_PAID, (Double) requestHeader.get("paid"));
+//            values.put(KEY_NETT, (Double) requestHeader.get("nett"));
+//            values.put(KEY_UPDATED_BY, requestHeader.get("username").toString());
+//            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//            db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{requestHeader.get("no_invoice").toString()});
+//            //updatePaidInvoice
+//
+//            Map requestDetail = new HashMap();
+//            requestDetail.put("id_header", requestHeader.get("id_header").toString());
+//            requestDetail.put("no_invoice", header.getNo_invoice());
+//            requestDetail.put("status", "paid");
+//            requestDetail.put("username", user.getUsername());
+//
+//            if (cashList.size() != 0) {
+//                requestDetail.put("type_payment", "cash");
+//                requestDetail.put("total_payment", totalPaymentCash);
+//                requestDetail.put("left", leftCash);
+////            int idDetail = database.addCollectionCashLain(requestDetail);
+//                values = new ContentValues();
+//                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+//                values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+//                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+//                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+//                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+//                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                int idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                for (Material material : cashList) {
+////                database.addCollectionMaterial(material, String.valueOf(idDetail), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_MATERIAL_ID, material.getId());
+//                    values.put(KEY_MATERIAL_NAME, material.getNama());
+//                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                    values.put(KEY_PRICE, material.getNett());
+//                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idItem = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                }
+//            }
+//
+//            if (lainList.size() != 0) {
+//                requestDetail.put("type_payment", "lain");
+//                requestDetail.put("total_payment", totalPaymentLain);
+//                requestDetail.put("left", leftLain);
+//
+////            int idDetail = database.addCollectionCashLain(requestDetail);
+//                values = new ContentValues();
+//                values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                values.put(KEY_INVOICE_NO, requestDetail.get("no_invoice").toString());
+//                values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                values.put(KEY_TYPE_PAYMENT, requestDetail.get("type_payment").toString());
+//                values.put(KEY_TOTAL_PAYMENT, (Double) requestDetail.get("total_payment"));
+//                values.put(KEY_LEFT, (Double) requestDetail.get("left"));
+//                values.put(KEY_CREATED_BY, requestDetail.get("username").toString());
+//                values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                int idDetailLain = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                for (Material material : lainList) {
+////                database.addCollectionMaterial(material, String.valueOf(idDetailLain), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailLain));
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_MATERIAL_ID, material.getId());
+//                    values.put(KEY_MATERIAL_NAME, material.getNama());
+//                    values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                    values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                    values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                    values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                    values.put(KEY_PRICE, material.getNett());
+//                    values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idItemLain = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                }
+//            }
+//
+//            if (tfList.size() != 0) {
+//                for (CollectionDetail collection : mListTransfer) {
+//                    collection.setInvoiceNo(header.getNo_invoice());
+////                int idDetail = database.addCollectionTransfer(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "transfer");
+//                    values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailTf = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailTf), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailTf));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemTf = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            if (giroList.size() != 0) {
+//                for (CollectionDetail collection : mListGiro) {
+//                    collection.setInvoiceNo(header.getNo_invoice());
+////                int idDetail = database.addCollectionGiro(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "giro");
+//                    values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_NO, collection.getNo());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_DUE_DATE, collection.getTglCair());
+//                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+//                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+//                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+//                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailGiro = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailGiro), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailGiro));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemGiro = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            if (chequeList.size() != 0) {
+//                for (CollectionDetail collection : mListCheque) {
+//                    collection.setInvoiceNo(header.getNo_invoice());
+////                int idDetail = database.addCollectionCheque(collection, String.valueOf(idCollHeader), user.getUsername());
+//                    values = new ContentValues();
+//                    values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                    values.put(KEY_INVOICE_NO, collection.getInvoiceNo());
+//                    values.put(KEY_TYPE_PAYMENT, "cheque");
+//                    values.put(KEY_STATUS, requestDetail.get("status").toString());
+//                    values.put(KEY_TOTAL_PAYMENT, collection.getTotalPayment());
+//                    values.put(KEY_LEFT, collection.getLeft());
+//                    values.put(KEY_NO, collection.getNo());
+//                    values.put(KEY_DATE, collection.getTgl());
+//                    values.put(KEY_DUE_DATE, collection.getTglCair());
+//                    values.put(KEY_ID_BANK, collection.getIdBankASPP());
+//                    values.put(KEY_NAME_BANK, collection.getBankNameASPP());
+//                    values.put(KEY_ID_CUST_BANK, collection.getIdBankCust());
+//                    values.put(KEY_NAME_CUST_BANK, collection.getBankCust());
+//                    values.put(KEY_CREATED_BY, user.getUsername());
+//                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                    int idDetailCheque = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
+//
+//                    for (Material material : collection.getCheckedMaterialList()) {
+////                    database.addCollectionMaterial(material, String.valueOf(idDetailCheque), user.getUsername());
+//                        values = new ContentValues();
+//                        values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetailCheque));
+//                        values.put(KEY_ID_COLLECTION_HEADER_DB, requestDetail.get("id_header").toString());
+//                        values.put(KEY_MATERIAL_ID, material.getId());
+//                        values.put(KEY_MATERIAL_NAME, material.getNama());
+//                        values.put(KEY_MATERIAL_GROUP_ID, material.getId_material_group());
+//                        values.put(KEY_MATERIAL_GROUP_NAME, material.getMaterial_group_name());
+//                        values.put(KEY_MATERIAL_PRODUCT_ID, material.getId_product_group());
+//                        values.put(KEY_MATERIAL_PRODUCT_NAME, material.getName_product_group());
+//                        values.put(KEY_PRICE, material.getNett());
+//                        values.put(KEY_AMOUNT_PAID, material.getAmountPaid());
+//                        values.put(KEY_CREATED_BY, user.getUsername());
+//                        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                        values.put(KEY_IS_SYNC, (int) requestHeader.get("isSync")); //0 false, 1 true
+//
+//                        int idItemCheque = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
+//                    }
+//                }
+//            }
+//
+//            if (Helper.isNotEmptyOrNull(mListCash)) {
+//                for (Material material : mListCash) {
+////                database.updateNettPrice(material, user.getUsername(), header.getNo_invoice());//update paid invoice detail
+//                    values = new ContentValues();
+//                    double paid = getPaidInvoiceMaterial(header.getNo_invoice(), material.getId());
+//                    paid = paid + (material.getPrice() - material.getSisa());//material.getNett() - material.getSisa(),ambil semua jumlah paid nya
+//                    values.put(KEY_PAID, paid);
+//                    values.put(KEY_UPDATED_BY, user.getUsername());
+//                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//                    db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and "
+//                            + KEY_MATERIAL_ID + " = ?", new String[]{header.getNo_invoice(), material.getId()});
+//                    //db.close();
+//                }
+//            }
+//            result = true;
+//            db.setTransactionSuccessful();
+//        } catch (Exception e) {
+//            Log.e("Collection", e.getMessage());
+//            result = false;
+//        }
+//        db.endTransaction();
+//        return result;
+        return false;
+//        //addCollectionHeader
     }
 
-    public double getPaidInvoiceMaterial(String invoiceNo, String idMaterial) {
-        double result = 0.0;
-        // Select All Query
-        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_INVOICE_NO + " = ? AND " + KEY_MATERIAL_ID + " = ? ";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoiceNo, idMaterial});
-
-        if (cursor.moveToFirst()) {
-            do {
-                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return result;
-    }
-
-    public int addCollectionCashLain(Map param) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_COLLECTION_HEADER_DB, param.get("id_header").toString());
-        values.put(KEY_INVOICE_NO, param.get("no_invoice").toString());
-        values.put(KEY_STATUS, param.get("status").toString());
-        values.put(KEY_TYPE_PAYMENT, param.get("type_payment").toString());
-        values.put(KEY_TOTAL_PAYMENT, (Double) param.get("total_payment"));
-        values.put(KEY_LEFT, (Double) param.get("left"));
-        values.put(KEY_CREATED_BY, param.get("username").toString());
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addCollectionTransfer(CollectionDetail param, String idHeader, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
-        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
-        values.put(KEY_TYPE_PAYMENT, "transfer");
-        values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
-        values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_DATE, param.getTgl());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addCollectionGiro(CollectionDetail param, String idHeader, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
-        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
-        values.put(KEY_TYPE_PAYMENT, "giro");
-        values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
-        values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_NO, param.getNo());
-        values.put(KEY_DATE, param.getTgl());
-        values.put(KEY_DUE_DATE, param.getTglCair());
-        values.put(KEY_ID_BANK, param.getIdBankASPP());
-        values.put(KEY_NAME_BANK, param.getBankNameASPP());
-        values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
-        values.put(KEY_NAME_CUST_BANK, param.getBankCust());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addCollectionCheque(CollectionDetail param, String idHeader, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_COLLECTION_HEADER_DB, idHeader);
-        values.put(KEY_INVOICE_NO, param.getInvoiceNo());
-        values.put(KEY_TYPE_PAYMENT, "cheque");
-        values.put(KEY_TOTAL_PAYMENT, param.getTotalPayment());
-        values.put(KEY_LEFT, param.getLeft());
-        values.put(KEY_NO, param.getNo());
-        values.put(KEY_DATE, param.getTgl());
-        values.put(KEY_DUE_DATE, param.getTglCair());
-        values.put(KEY_ID_BANK, param.getIdBankASPP());
-        values.put(KEY_NAME_BANK, param.getBankNameASPP());
-        values.put(KEY_ID_CUST_BANK, param.getIdBankCust());
-        values.put(KEY_NAME_CUST_BANK, param.getBankCust());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, param.getIsSync()); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
-
-    public int addCollectionMaterial(Material param, String idHeader, String idSales) {
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_ID_COLLECTION_DETAIL_DB, idHeader);
-        values.put(KEY_MATERIAL_ID, param.getId());
-        values.put(KEY_MATERIAL_NAME, param.getNama());
-        values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
-        values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
-        values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
-        values.put(KEY_MATERIAL_PRODUCT_NAME, param.getName_product_group());
-        values.put(KEY_PRICE, param.getNett());
-        values.put(KEY_AMOUNT_PAID, param.getAmountPaid());
-        values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-        values.put(KEY_IS_SYNC, 0); //0 false, 1 true
-
-        int id = -1;
-        try {
-            id = (int) db.insert(TABLE_COLLECTION_ITEM, null, values);//return id yg ud d create
-        } catch (Exception e) {
-            id = -1;
-        }
-        //db.close();
-        return id;
-    }
+//    public double getPaidInvoiceMaterial(String invoiceNo, String idMaterial) {
+//        double result = 0.0;
+//        // Select All Query
+//        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_INVOICE_NO + " = ? AND " + KEY_MATERIAL_ID + " = ? ";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoiceNo, idMaterial});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        return result;
+//    }
 
     public int addMasterReason(Reason param, String idSales) {
         SQLiteDatabase db = getWritableDatabase();
@@ -3670,63 +3538,92 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<GroupMaxBon> getMaxBonByIdCustomer(String idCust) {
-        List<GroupMaxBon> arrayList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
-                "coalesce(b.limits, a.limits) - COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
-                "from MasterGroupSalesMaxBon a \n" +
-                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
-                "and b.customerId = ? \n" +
-                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
-                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
-                "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
-                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
-                "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
-                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
-                "from OrderHeader a \n" +
-                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
-                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
-                "where a.customerId = ? and a.isPaid = 0 \n" +
-                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
-                "order by a.idGroupMaxBon asc";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
-
-        if (cursor.moveToFirst()) {
-            do {
-                GroupMaxBon paramModel = new GroupMaxBon();
-                paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
-                paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
-                paramModel.setLimits(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LIMITS)));
-
-                arrayList.add(paramModel);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return arrayList;
-    }
+//    public List<GroupMaxBon> getMaxBonByIdCustomer(String idCust) {
+//        List<GroupMaxBon> arrayList = new ArrayList<>();
+//        // Select All Query
+//        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
+//                "coalesce(b.limits, a.limits) - COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
+//                "from MasterGroupSalesMaxBon a \n" +
+//                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
+//                "and b.customerId = ? \n" +
+//                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
+//                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
+//                "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
+//                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
+//                "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
+//                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
+//                "from OrderHeader a \n" +
+//                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+//                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
+//                "where a.customerId = ? and a.isPaid = 0 \n" +
+//                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
+//                "order by a.idGroupMaxBon asc";
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
+//
+//        if (cursor.moveToFirst()) {
+//            do {
+//                GroupMaxBon paramModel = new GroupMaxBon();
+//                paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
+//                paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
+//                paramModel.setLimits(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LIMITS)));
+//
+//                arrayList.add(paramModel);
+//            } while (cursor.moveToNext());
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
 
     public List<GroupMaxBon> getUsedBonByIdCustomer(String idCust) {
         List<GroupMaxBon> arrayList = new ArrayList<>();
         // Select All Query
+//        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
+//                "COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
+//                "from MasterGroupSalesMaxBon a \n" +
+//                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
+//                "and b.customerId = ? \n" +
+//                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
+//                "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
+//                "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
+//                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
+//                "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
+//                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
+//                "from OrderHeader a \n" +
+//                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+//                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
+//                "where a.customerId = ? and a.isPaid = 0 \n" +
+//                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
+//                "order by a.idGroupMaxBon  asc";
+
         String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
                 "COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
                 "from MasterGroupSalesMaxBon a \n" +
                 "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
                 "and b.customerId = ? \n" +
-                "left join (SELECT COUNT(*) as valueInvoice, cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
+                "left join (SELECT cc.idGroupMaxBon, COUNT(*) as valueInvoice FROM InvoiceHeader aa \n" +
                 "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
                 "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
-                "WHERE aa.customerId = ? and aa.invoiceTotal > aa.paid group by cc.idGroupMaxBon) c \n" +
+                "left join (select sum(b.amountPaid) totalPaid, a.invoiceNo, b.materialId\n" +
+                "\tfrom CollectionInvoice a \n" +
+                "\tinner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
+                "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) dd \n" +
+                "\ton dd.invoiceNo = aa.invoiceNo and bb.materialId = dd.materialId\n" +
+                "WHERE aa.customerId = ? and bb.price > coalesce(dd.totalPaid,0) \n" +
+                "group by cc.idGroupMaxBon) c \n" +
                 "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
                 "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
                 "from OrderHeader a \n" +
                 "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
-                "left JOIN MasterMaterial c on c.materialId = b.materialId \n" +
-                "where a.customerId = ? and a.isPaid = 0 \n" +
-                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
+                "inner JOIN MasterMaterial c on c.materialId = b.materialId \n" +
+                "left join (select sum(b.amountPaid) totalPaid, a.invoiceNo, b.materialId\n" +
+                "\tfrom CollectionInvoice a \n" +
+                "\tinner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
+                "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
+                "\ton d.invoiceNo = a.idOrderHeaderDB and b.materialId = d.materialId\n" +
+                "where a.customerId = ? and b.price > coalesce(d.totalPaid,0)  \n" +
+                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon \n" +
                 "order by a.idGroupMaxBon  asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4507,7 +4404,7 @@ public class Database extends SQLiteOpenHelper {
 
     public double getLKCustomer(Customer cust) {
         // Select All Query
-        double result = 0;
+        double result = 0, order = 0, collection = 0;
         String lkQuery = "";
         if (cust.isNoo()) {
             lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_NOO + " WHERE " + KEY_ID_NOO_DB + " = ?) a  , ";
@@ -4515,34 +4412,46 @@ public class Database extends SQLiteOpenHelper {
             lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ?) a  , ";
         }
 
-        String selectQuery = "SELECT (a." + KEY_CREDIT_LIMIT + " - b.value + c.value) as " + KEY_CREDIT_LIMIT + " " +
-                "from " +
-                lkQuery +
-                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DELETED + " = 0) b , " +
-                "(SELECT COALESCE(sum(b.totalPayment), 0) AS value FROM CollectionHeader a " +
-                "INNER JOIN CollectionDetail b on b.idCollectionHeaderDB = a.idCollectionHeaderDB and b.typePayment = 'cash'  WHERE a.customerId = ? and b. deleted = 0) c";
+//        String query = "select (? - a.value + coalesce(b.value,0)) as creditLimit \n" +
+//                "from \n" +
+//                "(select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0) a,\n" +
+//                "(select coalesce(sum(b.totalPayment),0) as value from CollectionHeader a \n" +
+//                "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
+//                "where a.customerId = ? and b.deleted = 0 and b.typePayment = 'cash') b";
 
-        String query = "select (? - a.value + b.value) as creditLimit \n" +
+        String query = "select (? - a.value + coalesce(b.value,0)) as creditLimit \n" +
                 "from \n" +
                 "(select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0) a,\n" +
-                "(select coalesce(sum(b.totalPayment),0) as value from CollectionHeader a \n" +
+                "(select coalesce(sum(c.totalPaid),0) as value from CollectionHeader a \n" +
                 "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
-                "where a.customerId = ? and b.deleted = 0 and b.typePayment = 'cash') b";
+                "inner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
+                "where a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
+                "and b.typePayment = 'cash' group by a.customerId) b";
 
-//                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
-//                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
-//                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b. " + KEY_DELETED + " = 0) c ";
+        String queryOrder = "select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0";
+        String queryCollection =  "select coalesce(sum(c.totalPaid),0) as value from CollectionHeader a \n" +
+                "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
+                "inner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
+                "where a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
+                "and b.typePayment = 'cash' group by a.customerId";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
 //        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(cust.getLimit_kredit()), cust.getId(), cust.getId()});
-
+        Cursor cursor = db.rawQuery(queryOrder, new String[]{cust.getId()});
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
+                order = cursor.getDouble(cursor.getColumnIndexOrThrow("value"));
             }
         }
+
+        cursor = db.rawQuery(queryCollection, new String[]{cust.getId()});
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                collection = cursor.getDouble(cursor.getColumnIndexOrThrow("value"));
+            }
+        }
+        result = cust.getLimit_kredit() - order + collection;
 
         assert cursor != null;
         cursor.close();
@@ -4567,6 +4476,22 @@ public class Database extends SQLiteOpenHelper {
 //                "INNER JOIN " + TABLE_COLLECTION_ITEM + " c ON b." + KEY_ID_COLLECTION_HEADER_DB + " = c." + KEY_ID_COLLECTION_HEADER_DB + " AND c.  " + KEY_MATERIAL_ID + " = ? and c." + KEY_DELETED + " = 0 " +
 //                "WHERE a." + KEY_CUSTOMER_ID + " = ?) c";
 
+//        String selectQuery = "select COALESCE(a.value,0) - COALESCE(b.value,0) - COALESCE(c.value,0) as bonLimit \n" +
+//                "from \n" +
+//                "(select COALESCE(b.limits, a.limits) as value \n" +
+//                "from MasterGroupSalesMaxBon a \n" +
+//                "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon and b.customerId = ? \n" +
+//                "where a.idGroupMaxBon = ?) a,\n" +
+//                "(select COUNT(*) as value from InvoiceHeader a \n" +
+//                "inner join InvoiceDetail b on a.invoiceNo = b.invoiceNo \n" +
+//                "inner join MasterMaterial c on b.materialId = c.materialId \n" +
+//                "where a.customerId = ? and a.invoiceTotal > a.paid and c.idGroupMaxBon = ?) b, \n" +
+//                "(select count(*) as value from OrderHeader a \n" +
+//                "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
+//                "inner join MasterMaterial c on b.materialId = c.materialId \n" +
+//                "where a.customerId = ? and c.idGroupMaxBon = ? \n" +
+//                "and a.isPaid = 0  and a.deleted = 0) c";//and a.orderType = 'co'
+
         String selectQuery = "select COALESCE(a.value,0) - COALESCE(b.value,0) - COALESCE(c.value,0) as bonLimit \n" +
                 "from \n" +
                 "(select COALESCE(b.limits, a.limits) as value \n" +
@@ -4576,12 +4501,22 @@ public class Database extends SQLiteOpenHelper {
                 "(select COUNT(*) as value from InvoiceHeader a \n" +
                 "inner join InvoiceDetail b on a.invoiceNo = b.invoiceNo \n" +
                 "inner join MasterMaterial c on b.materialId = c.materialId \n" +
-                "where a.customerId = ? and a.invoiceTotal > a.paid and c.idGroupMaxBon = ?) b, \n" +
+                "left join (select sum(b.amountPaid) totalPaid, a.invoiceNo, b.materialId\n" +
+                "from CollectionInvoice a \n" +
+                "inner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
+                "where a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
+                "on d.invoiceNo = a.invoiceNo and b.materialId = d.materialId\n" +
+                "where a.customerId = ? and b.price > coalesce(d.totalPaid,0) and c.idGroupMaxBon = ?) b, \n" +
                 "(select count(*) as value from OrderHeader a \n" +
                 "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
                 "inner join MasterMaterial c on b.materialId = c.materialId \n" +
+                "left join (select sum(b.amountPaid) totalPaid, a.invoiceNo, b.materialId\n" +
+                "\tfrom CollectionInvoice a \n" +
+                "\tinner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
+                "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
+                "\ton d.invoiceNo = a.idOrderHeaderDB and b.materialId = d.materialId\n" +
                 "where a.customerId = ? and c.idGroupMaxBon = ? \n" +
-                "and a.isPaid = 0  and a.deleted = 0) c";//and a.orderType = 'co'
+                "and b.price > coalesce(d.totalPaid,0) and a.deleted = 0) c";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4608,7 +4543,7 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT a.invoiceNo\n" +
                 "FROM InvoiceHeader a\n" +
                 "LEFT JOIN (\n" +
-                "SELECT invoiceNo, SUM(totalPayment) AS total_amount FROM CollectionDetail GROUP BY invoiceNo\n" +
+                "SELECT invoiceNo, SUM(totalPaid) AS total_amount FROM CollectionInvoice GROUP BY invoiceNo\n" +
                 ") b ON a.invoiceNo = b.invoiceNo\n" +
                 "WHERE a.customerId = ? and a.isVerif = 1 and a.nett > coalesce(b.total_amount, 0); ";
         Cursor cursor;
@@ -4657,13 +4592,19 @@ public class Database extends SQLiteOpenHelper {
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
         //select sum(amountPaid), invoiceNo, materialId from CollectionItem group by invoiceNo,materialId => total amount paid per material
-        String selectQuery = "SELECT a.*, ifnull(b.paidAmount, 0) as paidAmount FROM InvoiceHeader a, " +
-                "(select sum(amountPaid) as paidAmount, invoiceNo, materialId from CollectionItem group by invoiceNo) b on a.invoiceNo = b.invoiceNo " +
-                "where a.isVerif = 1 and a.customerId = ? and paidAmount < a.invoiceTotal ";
+        String selectQuery = "SELECT a.*, ifnull(b.paidAmount, 0) as paidAmount \n" +
+                "FROM InvoiceHeader a  \n" +
+                "left join (select sum(amountPaid) as paidAmount, invoiceNo, materialId \n" +
+                "from CollectionItem WHERE deleted = 0 group by invoiceNo) b \n" +
+                "on a.invoiceNo = b.invoiceNo \n" +
+                "where a.isVerif = 1 and a.customerId = ? \n" +
+                "and ifnull(b.paidAmount, 0) < a.invoiceTotal  ";
 
-        String selectQueryOrder = "SELECT a.*, b.paidAmount FROM OrderHeader a, " +
-                "(select sum(amountPaid) as paidAmount, invoiceNo, materialId from CollectionItem group by invoiceNo) b on a.idOrderHeaderDB = b.invoiceNo " +
-                "where a.customerId = ? and paidAmount < a.omzet ";
+        String selectQueryOrder = "SELECT a.*, ifnull(b.paidAmount, 0) as paidAmount FROM OrderHeader a \n" +
+                "left join (select sum(amountPaid) as paidAmount, invoiceNo, materialId \n" +
+                "from CollectionItem WHERE deleted = 0 group by invoiceNo) b \n" +
+                "on a.idOrderHeaderDB = b.invoiceNo \n" +
+                "where a.customerId = ? and ifnull(b.paidAmount, 0) < a.omzet ";
 
 //        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? ";
 
@@ -4708,7 +4649,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setCategoryPayment("order");
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(null);//cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME))
-                paramModel.setMaterialList(getAllDetailOrder(paramModel.getIdHeader()));
+                paramModel.setMaterialList(getAllDetailOrderCollection(new Order(paramModel.getIdHeader())));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -4736,7 +4677,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+//                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
@@ -4782,16 +4723,29 @@ public class Database extends SQLiteOpenHelper {
 //        return arrayList;
 
         List<Material> arrayList = new ArrayList<>();
+//        String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
+//                "a.materialProductName, (a.price  - sum(ifnull(d.amountPaid , 0)))  as  total,\n" +
+//                "sum(ifnull(d.amountPaid , 0)) as  paid\n" +
+//                "from  InvoiceDetail a \n" +
+//                "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
+//                "left join  CollectionHeader  b on ih.invoiceNo  = b.invoiceNo and b.customerId  = ih.customerId and ih.invoiceDate = b.invoiceDate and b.deleted = 0 \n" +
+//                "left join  CollectionDetail  c on c.idCollectionHeaderDB  = b.idCollectionHeaderDB and c.deleted = 0\n" +
+//                "left join  CollectionItem  d on d.idCollectionDetailDB = c.idCollectionDetailDB and a.materialId  = d.materialId and d.deleted = 0 \n" +
+//                "where a.invoiceNo = ? and ih.invoiceDate = ? \n" +
+//                "group by a.invoiceNo, a.materialId";
+
         String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
-                "a.materialProductName, (a.price  - sum(ifnull(d.amountPaid , 0)))  as  total,\n" +
-                "sum(ifnull(d.amountPaid , 0)) as  paid\n" +
+                "a.materialProductName, (a.price  - sum(ifnull(coll.amountPaid , 0)))  as  total, \n" +
+                "sum(ifnull(coll.amountPaid , 0)) as  paid \n" +
                 "from  InvoiceDetail a \n" +
                 "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
-                "left join  CollectionHeader  b on ih.invoiceNo  = b.invoiceNo and b.customerId  = ih.customerId and ih.invoiceDate = b.invoiceDate and b.deleted = 0 \n" +
-                "left join  CollectionDetail  c on c.idCollectionHeaderDB  = b.idCollectionHeaderDB and c.deleted = 0\n" +
-                "left join  CollectionItem  d on d.idCollectionDetailDB = c.idCollectionDetailDB and a.materialId  = d.materialId and d.deleted = 0 \n" +
-                "where a.invoiceNo = ? and ih.invoiceDate = ? \n" +
-                "group by a.invoiceNo, a.materialId";
+                "left join \n" +
+                "(select sum(ci.amountPaid) as amountPaid, ci.materialId, ci.invoiceNo, cin.customerId\n" +
+                "from CollectionItem ci \n" +
+                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo \n" +
+                "where cin.deleted = 0 and ci.deleted = 0 \n" +
+                "group by ci.materialId, ci.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
+                "where a.invoiceNo = ? and ih.invoiceDate = ? group by a.invoiceNo, a.materialId";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{invoice.getNo_invoice(), invoice.getInvoice_date()});
@@ -4803,11 +4757,11 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                 paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                 paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 arrayList.add(paramModel);
@@ -4956,55 +4910,53 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    UBAH SEMUA YG ADA HUBUNGANNYA SAMA TABLE_COLLECTION_HEADER/TABLE_COLLECTION_DETAIL/TABLE_COLLECTION_ITEM
+//    public List<Material> getAllDetailOrder(String idHeader) {
+//        List<Material> arrayList = new ArrayList<>();
+//        String selectQuery = "select a." + KEY_ID_ORDER_HEADER_DB + ", a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", a." + KEY_MATERIAL_GROUP_ID + ", a." + KEY_MATERIAL_GROUP_NAME + ", a." +
+//                KEY_MATERIAL_PRODUCT_ID + ", a." + KEY_MATERIAL_PRODUCT_NAME + ", (a." + KEY_TOTAL + " - sum(ifnull(d." + KEY_AMOUNT_PAID + ", 0)))  as " + KEY_TOTAL + "," + " sum(ifnull(d." + KEY_AMOUNT_PAID + ", 0)) as " + KEY_PAID
+//                + " from " + TABLE_ORDER_DETAIL + " a \n" +
+//                "left join " + TABLE_COLLECTION_HEADER + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_INVOICE_NO + " and b." + KEY_CUSTOMER_ID + " = a." + KEY_CUSTOMER_ID + " and b.deleted = 0 \n" +
+//                "left join " + TABLE_COLLECTION_DETAIL + " c on c." + KEY_ID_COLLECTION_HEADER_DB + " = b." + KEY_ID_COLLECTION_HEADER_DB + " and c.deleted = 0 \n" +
+//                "left join " + TABLE_COLLECTION_ITEM + " d on d." + KEY_ID_COLLECTION_DETAIL_DB + " = c." + KEY_ID_COLLECTION_DETAIL_DB + " and a." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " and d.deleted = 0 \n" +
+//                "where a." + KEY_ID_ORDER_HEADER_DB + " = ? " +
+//                "group by a." + KEY_ID_ORDER_HEADER_DB + " , a." + KEY_MATERIAL_ID;
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
+//        double totalPaid = 0;
+//        Material paramModel = null;
+//        if (cursor.moveToFirst()) {
+//            do {
+//                double total = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL));
+//                if (total > 0) {
+//                    paramModel = new Material();
+//                    paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+//                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+//                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+//                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+//                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+//                    paramModel.setSisa(total);
+//                    paramModel.setNett(total);
+//                    arrayList.add(paramModel);
+//                }
+//                totalPaid = totalPaid + cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
+//            } while (cursor.moveToNext());
+//        }
+//
+//        if (Helper.isNotEmptyOrNull(arrayList)) {
+//            arrayList.get(0).setTotalAmountPaid(totalPaid);
+//        }
+//        cursor.close();
+//        return arrayList;
+//    }
 
-    public List<Material> getAllDetailOrder(String idHeader) {
-        List<Material> arrayList = new ArrayList<>();
-        String selectQuery = "select a." + KEY_ID_ORDER_HEADER_DB + ", a." + KEY_MATERIAL_ID + ", a." + KEY_MATERIAL_NAME + ", a." + KEY_MATERIAL_GROUP_ID + ", a." + KEY_MATERIAL_GROUP_NAME + ", a." +
-                KEY_MATERIAL_PRODUCT_ID + ", a." + KEY_MATERIAL_PRODUCT_NAME + ", (a." + KEY_TOTAL + " - sum(ifnull(d." + KEY_AMOUNT_PAID + ", 0)))  as " + KEY_TOTAL + "," + " sum(ifnull(d." + KEY_AMOUNT_PAID + ", 0)) as " + KEY_PAID
-                + " from " + TABLE_ORDER_DETAIL + " a \n" +
-                "left join " + TABLE_COLLECTION_HEADER + " b on a." + KEY_ID_ORDER_HEADER_DB + " = b." + KEY_INVOICE_NO + " and b." + KEY_CUSTOMER_ID + " = a." + KEY_CUSTOMER_ID + " and b.deleted = 0 \n" +
-                "left join " + TABLE_COLLECTION_DETAIL + " c on c." + KEY_ID_COLLECTION_HEADER_DB + " = b." + KEY_ID_COLLECTION_HEADER_DB + " and c.deleted = 0 \n" +
-                "left join " + TABLE_COLLECTION_ITEM + " d on d." + KEY_ID_COLLECTION_DETAIL_DB + " = c." + KEY_ID_COLLECTION_DETAIL_DB + " and a." + KEY_MATERIAL_ID + " = d." + KEY_MATERIAL_ID + " and d.deleted = 0 \n" +
-                "where a." + KEY_ID_ORDER_HEADER_DB + " = ? " +
-                "group by a." + KEY_ID_ORDER_HEADER_DB + " , a." + KEY_MATERIAL_ID;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
-        double totalPaid = 0;
-        Material paramModel = null;
-        if (cursor.moveToFirst()) {
-            do {
-                double total = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL));
-                if (total > 0) {
-                    paramModel = new Material();
-                    paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
-                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
-                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-                    paramModel.setSisa(total);
-                    paramModel.setNett(total);
-                    arrayList.add(paramModel);
-                }
-                totalPaid = totalPaid + cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
-            } while (cursor.moveToNext());
-        }
-
-        if (Helper.isNotEmptyOrNull(arrayList)) {
-            arrayList.get(0).setTotalAmountPaid(totalPaid);
-        }
-        cursor.close();
-        return arrayList;
-    }
-
-    public List<Invoice> getAllInvoiceHeaderNotPaid() {
+    public List<Invoice> getAllInvoiceHeaderVerif() {
         List<Invoice> arrayList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + " != 0)";
+//        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + " != 0)";
+        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -5012,17 +4964,16 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Invoice paramModel = new Invoice();
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
-                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+                paramModel.setTotal_paid(getTotalPaidInvoice(paramModel.getNo_invoice()));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
-//                paramModel.setSignature(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SIGN)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
@@ -5031,6 +4982,27 @@ public class Database extends SQLiteOpenHelper {
         }
         cursor.close();
         return arrayList;
+    }
+
+    private double getTotalPaidInvoice(String noInvoice) {
+        double result = 0.0;
+        String selectQuery = "select sum(a.totalPaid) as totalPaid \n" +
+                "from CollectionInvoice a\n" +
+                "where a.invoiceNo = ? and a.deleted = 0\n" +
+                "group by a.invoiceNo";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{noInvoice});
+
+        if (cursor.moveToFirst()) {
+            do {
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid"));
+                result = result + amount;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return result;
+
     }
 
     public List<Customer> getAllCustomerVisit() {
@@ -5228,6 +5200,47 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Material> getAllDetailOrderCollection(Order header) {
+        List<Material> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "select a.*, a.total - coalesce(b.amountPaid,0) as nett \n" +
+                "from OrderDetail a\n" +
+                "left join (select sum(ci.amountPaid) as amountPaid, ci.materialId, ci.invoiceNo, cin.customerId \n" +
+                "from CollectionItem ci \n" +
+                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo \n" +
+                "where cin.deleted = 0 and ci.deleted = 0\n" +
+                "group by ci.materialId, ci.invoiceNo ) b \n" +
+                "on a.idOrderHeaderDB = b.invoiceNo and a.materialId = b.materialId \n" +
+                "where a.idOrderHeaderDB = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{header.getIdHeader()});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Material paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_DETAIL_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setIdStockRequestHeaderDB(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockRequestHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
+                paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow("nett")));
+                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow("nett")));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow("nett")));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Material> getAllDetailOrder(Order header) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
@@ -5253,6 +5266,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdStockRequestHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                 paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                 paramModel.setTotalDiscount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_DISCOUNT)));
                 paramModel.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
@@ -5347,22 +5361,33 @@ public class Database extends SQLiteOpenHelper {
 
     public double getTotalTagihanInvoiceCustomer(String idCust) {
         double result = 0.0;
-        // Select All Query
-//        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_IS_VERIF + " = 1";
-        String selectQuery = "select sum(a.invoiceTotal) - sum(a.totalPaid) as total\n" +
+//        String selectQuery = "select sum(a.invoiceTotal) - sum(a.totalPaid) as total\n" +
+//                "from \n" +
+//                "(select b.invoiceTotal, sum(coalesce(c.totalPaid, 0)) as totalPaid \n" +
+//                "from \n" +
+//                "(select a.customerId, a.invoiceTotal, a.invoiceNo \n" +
+//                "from InvoiceHeader a \n" +
+//                "where a.customerId = ? \n" +
+//                "group by a.invoiceNo) b \n" +
+//                "left join (select invoiceNo, totalPaid from CollectionHeader where deleted = 0) c \n" +
+//                "on b.invoiceNo = c.invoiceNo\n" +
+//                "group by b.invoiceNo) a";
+
+        String selectQuery = "select coalesce(sum(a.invoiceTotal) - sum(a.totalPaid),0) as total\n" +
                 "from \n" +
-                "(select b.invoiceTotal, sum(coalesce(c.totalPaid, 0)) as totalPaid \n" +
-                "from \n" +
-                "(select a.customerId, a.invoiceTotal, a.invoiceNo \n" +
-                "from InvoiceHeader a \n" +
-                "where a.customerId = ? \n" +
-                "group by a.invoiceNo) b \n" +
-                "left join (select invoiceNo, totalPaid from CollectionHeader where deleted = 0) c \n" +
-                "on b.invoiceNo = c.invoiceNo\n" +
+                "(select b.invoiceTotal, sum(coalesce(c.totalPaid, 0)) as totalPaid, b.customerId, b.invoiceNo from \n" +
+                "\t(select a.customerId, a.invoiceTotal, a.invoiceNo from InvoiceHeader a \n" +
+                "\t\twhere a.customerId = ? group by a.invoiceNo) b \n" +
+                "\tleft join \n" +
+                "\t(select coalesce(sum(c.totalPaid),0) as totalPaid, c.invoiceNo  from CollectionHeader a \n" +
+                "\t\tinner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
+                "\t\tinner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
+                "\t\twhere a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
+                "\t\tgroup by c.invoiceNo) c on b.invoiceNo = c.invoiceNo \n" +
                 "group by b.invoiceNo) a";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -5376,21 +5401,33 @@ public class Database extends SQLiteOpenHelper {
 
     public double getTotalTagihanOrderCustomer(String idCust) {
         double result = 0.0;
-        // Select All Query
-//        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_IS_VERIF + " = 1";
-        String selectQuery = "select sum(a.omzet) - sum(a.totalPaid) as total \n" +
+//        String selectQuery = "select sum(a.omzet) - sum(a.totalPaid) as total \n" +
+//                "from \n" +
+//                "(select b.omzet, sum(coalesce(c.totalPaid, 0)) as totalPaid \n" +
+//                "from \n" +
+//                "(select a.customerId, a.omzet, a.idOrderHeaderDB from OrderHeader a \n" +
+//                "where a.customerId = ? and a.deleted = 0 \n" +
+//                "group by a.idOrderHeaderDB) b \n" +
+//                "left join (select invoiceNo, totalPaid from CollectionHeader where deleted = 0) c \n" +
+//                "on b.idOrderHeaderDB = c.invoiceNo\n" +
+//                "group by b.idOrderHeaderDB) a";
+
+        String selectQuery = "select coalesce(sum(a.omzet) - sum(a.totalPaid),0) as total \n" +
                 "from \n" +
-                "(select b.omzet, sum(coalesce(c.totalPaid, 0)) as totalPaid \n" +
-                "from \n" +
-                "(select a.customerId, a.omzet, a.idOrderHeaderDB from OrderHeader a \n" +
-                "where a.customerId = ? and a.deleted = 0 \n" +
-                "group by a.idOrderHeaderDB) b \n" +
-                "left join (select invoiceNo, totalPaid from CollectionHeader where deleted = 0) c \n" +
-                "on b.idOrderHeaderDB = c.invoiceNo\n" +
-                "group by b.idOrderHeaderDB) a";
+                "\t(select b.omzet, sum(coalesce(c.totalPaid, 0)) as totalPaid \n" +
+                "\tfrom (select a.customerId, a.omzet, a.idOrderHeaderDB from OrderHeader a \n" +
+                "\twhere a.customerId = ? and a.deleted = 0 \n" +
+                "\tgroup by a.idOrderHeaderDB) b \n" +
+                "\tleft join (select coalesce(sum(c.totalPaid),0) as totalPaid, c.invoiceNo  from CollectionHeader a \n" +
+                "\t\tinner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
+                "\t\tinner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
+                "\t\twhere a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
+                "\t\tgroup by c.invoiceNo) \n" +
+                "\tc on b.idOrderHeaderDB = c.invoiceNo \n" +
+                "\tgroup by b.idOrderHeaderDB) a";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust});
 
         if (cursor.moveToFirst()) {
             do {
@@ -5405,14 +5442,17 @@ public class Database extends SQLiteOpenHelper {
     public double getTotalPaymentAmount() {
         double result = 0.0;
         // Select All Query
-        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_HEADER;
+//        String selectQuery = "SELECT " + KEY_PAID + "  FROM " + TABLE_INVOICE_HEADER;
+        String selectQuery = "select coalesce(sum(b.totalPaid),0) as paid \n" +
+                "from InvoiceHeader a\n" +
+                "inner join CollectionInvoice b on a.invoiceNo = b.invoiceNo and b.deleted = 0";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
+                double amount = cursor.getDouble(cursor.getColumnIndexOrThrow("paid"));
                 result = result + amount;
             } while (cursor.moveToNext());
         }
@@ -5423,7 +5463,10 @@ public class Database extends SQLiteOpenHelper {
     public double getTotalOutstandingAmount() {
         double result = 0.0;
         // Select All Query
-        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER;
+//        String selectQuery = "SELECT (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + ") as total FROM " + TABLE_INVOICE_HEADER;
+        String selectQuery = "select sum(a.invoiceTotal - coalesce(b.totalPaid, 0)) as total\n" +
+                "from InvoiceHeader a\n" +
+                "left join CollectionInvoice b on a.invoiceNo = b.invoiceNo and b.deleted = 0";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -5585,38 +5628,42 @@ public class Database extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "SELECT a.* FROM (\n" +
                 "SELECT a.*, nilai - tunai - giro - cheque- transfer - lain2 sisa_piutang FROM\n" +
-                "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, c.date tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, " +
-                "COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, coalesce(h.remove, 0) removeOrder, 0 as removeCollection \n" +
+                "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, \n" +
+                "c.date tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, \n" +
+                "COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, \n" +
+                "COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, coalesce(h.remove, 0) removeOrder, 0 as removeCollection \n" +
                 "FROM VisitSalesman a\n" +
-                "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
-                "LEFT JOIN NOO z ON z.idNooDB = a.customerId\n" +
-                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date and c.deleted = 0 \n" +
-                "LEFT JOIN CollectionHeader e on e.invoiceNo = c.idOrderHeaderDB\n" +
-                "LEFT JOIN CollectionDetail f on f.idCollectionHeaderDB = e.idCollectionHeaderDB AND f.typePayment = 'cash'\n" +
-                "LEFT JOIN CollectionDetail g on g.idCollectionHeaderDB = e.idCollectionHeaderDB AND g.typePayment = 'giro'\n" +
-                "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
-                "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
-                "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
+                "LEFT JOIN customer b ON a.customerId = b.customerId \n" +
+                "LEFT JOIN NOO z ON z.idNooDB = a.customerId \n" +
+                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date \n" +
+                "LEFT JOIN CollectionInvoice e on e.invoiceNo = c.idOrderHeaderDB and e.deleted = 0 \n" +
+                "LEFT JOIN CollectionDetail f on f.idCollectionDetailDB = e.idCollectionDetailDB AND f.typePayment = 'cash'\n" +
+                "LEFT JOIN CollectionDetail g on g.idCollectionDetailDB = e.idCollectionDetailDB AND g.typePayment = 'giro'\n" +
+                "LEFT JOIN CollectionDetail h on h.idCollectionDetailDB = e.idCollectionDetailDB AND h.typePayment = 'transfer'\n" +
+                "LEFT JOIN CollectionDetail i on i.idCollectionDetailDB = e.idCollectionDetailDB AND i.typePayment = 'lain'\n" +
+                "LEFT JOIN CollectionDetail j on j.idCollectionDetailDB = e.idCollectionDetailDB AND j.typePayment = 'cheque'\n" +
                 "LEFT JOIN (select count(*) as remove, customerId  from OrderHeader where deleted = 1 group by customerId ) \n" +
-                "h on h.customerId = a.customerId \n" +
+                "h on h.customerId = a.customerId\n" +
                 "GROUP BY a.customerId, b.customerName, z.nameNoo, c.idOrderHeaderDB) a\n" +
                 "UNION\n" +
                 "SELECT b.*, jumlah - tunai - giro - cheque- transfer - lain2 sisa_piutang\n" +
                 "FROM\n" +
-                "(SELECT a.customerId no_customer, b.customerName nama_outlet, c.invoiceDate tanggal,c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, COALESCE(SUM(j.totalPayment),0) cheque, " +
-                "COALESCE(SUM(h.totalPayment),0) transfer, COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, 0 as removeOrder, coalesce(h.remove, 0) as removeCollection \n" +
+                "(SELECT a.customerId no_customer, b.customerName nama_outlet, c.invoiceDate tanggal, \n" +
+                "c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai,\n" +
+                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, \n" +
+                "COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, \n" +
+                "COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, 0 as removeOrder, coalesce(h.remove, 0) as removeCollection\n" +
                 "FROM  VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
                 "INNER JOIN InvoiceHeader c on c.customerId = a.customerId AND c.date = a.date\n" +
-                "LEFT JOIN CollectionHeader e on e.invoiceNo = c.invoiceNo\n" +
-                "LEFT JOIN CollectionDetail f on f.idCollectionHeaderDB = e.idCollectionHeaderDB AND f.typePayment = 'cash'\n" +
-                "LEFT JOIN CollectionDetail g on g.idCollectionHeaderDB = e.idCollectionHeaderDB AND g.typePayment = 'giro'\n" +
-                "LEFT JOIN CollectionDetail h on h.idCollectionHeaderDB = e.idCollectionHeaderDB AND h.typePayment = 'transfer'\n" +
-                "LEFT JOIN CollectionDetail i on i.idCollectionHeaderDB = e.idCollectionHeaderDB AND i.typePayment = 'lain'\n" +
-                "LEFT JOIN CollectionDetail j on j.idCollectionHeaderDB = e.idCollectionHeaderDB AND j.typePayment = 'cheque'\n" +
-                "LEFT JOIN (select count(*) as remove, customerId, invoiceNo as inv from CollectionHeader where deleted = 1\n" +
+                "LEFT JOIN CollectionInvoice e on e.invoiceNo = c.invoiceNo and e.deleted = 0 \n" +
+                "LEFT JOIN CollectionDetail f on f.idCollectionDetailDB = e.idCollectionDetailDB AND f.typePayment = 'cash'\n" +
+                "LEFT JOIN CollectionDetail g on g.idCollectionDetailDB = e.idCollectionDetailDB AND g.typePayment = 'giro'\n" +
+                "LEFT JOIN CollectionDetail h on h.idCollectionDetailDB = e.idCollectionDetailDB AND h.typePayment = 'transfer'\n" +
+                "LEFT JOIN CollectionDetail i on i.idCollectionDetailDB = e.idCollectionDetailDB AND i.typePayment = 'lain'\n" +
+                "LEFT JOIN CollectionDetail j on j.idCollectionDetailDB = e.idCollectionDetailDB AND j.typePayment = 'cheque'\n" +
+                "LEFT JOIN (select count(*) as remove, customerId, invoiceNo as inv from CollectionInvoice where deleted = 1 \n" +
                 "group by customerId ) h on h.customerId = a.customerId and h.inv = c.invoiceNo\n" +
                 "GROUP BY a.customerId, b.customerName, c.invoiceNo, c.invoiceDate, c.invoiceTotal) b\n" +
                 ")a order by a.no_customer";
@@ -5653,7 +5700,10 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionHeader> getAllInvoiceHistoryCustomer(String request) {
         List<CollectionHeader> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ?";
+        String selectQuery = "select ch.*, coalesce(cd.total,0) as totalPayment from CollectionHeader ch \n" +
+                "inner join (select sum(totalPayment) as total, idCollectionHeaderDB from CollectionDetail \n" +
+                "group by idCollectionHeaderDB) cd on ch.idCollectionHeaderDB = cd.idCollectionHeaderDB \n" +
+                "where ch.customerId = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{request});
@@ -5662,15 +5712,12 @@ public class Database extends SQLiteOpenHelper {
             do {
                 CollectionHeader paramModel = new CollectionHeader();
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
-                paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
-                paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
-                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setTypePayment(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PAYMENT)));
-                paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPayment")));
                 paramModel.setDeleted(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_DELETED)) != 0);
                 paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));
                 paramModel.setTfList(getAllCollectionDetailTransfer(paramModel.getIdHeader()));
@@ -5700,7 +5747,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
                 paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
-                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
 
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
@@ -5726,7 +5773,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
                 paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
                 paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
-                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
+//                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -5757,7 +5805,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setBankNameASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_BANK)));
                 paramModel.setIdBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUST_BANK)));
                 paramModel.setBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CUST_BANK)));
-                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
+//                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -5788,7 +5837,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setBankNameASPP(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_BANK)));
                 paramModel.setIdBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_CUST_BANK)));
                 paramModel.setBankCust(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_CUST_BANK)));
-                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
+//                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -5812,7 +5862,37 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
                 paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
-                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
+//                paramModel.setMaterialList(getAllCollectionItem(paramModel.getIdDetail()));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Invoice> getAllCollectionInvoice(String id) {
+        List<Invoice> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_INVOICE + " WHERE " + KEY_ID_COLLECTION_DETAIL_DB + " = ? ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice paramModel = new Invoice();
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_INVOICE_DB)));
+                paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
+                paramModel.setMaterialList(getAllCollectionItem(paramModel.getId()));
+
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -5823,7 +5903,7 @@ public class Database extends SQLiteOpenHelper {
     public List<Material> getAllCollectionItem(String id) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_ID_COLLECTION_DETAIL_DB + " = ? ";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_ID_COLLECTION_INVOICE_DB + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5852,7 +5932,12 @@ public class Database extends SQLiteOpenHelper {
     public List<Order> getAllOrder(Customer cust) {
         List<Order> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+//        String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+        String selectQuery = "select a.*, coalesce(b.totalPaid, 0) as totalPaid \n" +
+                "from OrderHeader a \n" +
+                "left join (select sum(totalPaid) as totalPaid, invoiceNo from CollectionInvoice \n" +
+                "where deleted = 0 group by invoiceNo ) b on a.idOrderHeaderDB = b.invoiceNo \n" +
+                "where a.customerId = ?";
 //                + "and " + KEY_DATE + " = ? ";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -5871,11 +5956,12 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
                 paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
                 paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
-                paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
+//                paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
                 paramModel.setDeleted(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_DELETED)) != 0);
                 paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
                 paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
+                paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid")));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                 arrayList.add(paramModel);
@@ -6165,34 +6251,6 @@ public class Database extends SQLiteOpenHelper {
         return count;
     }
 
-    public int getCountPaymentCustomer(Map req) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String countQuery;
-        Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_PAID + " != 0";
-        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});
-
-        int count = cursor.getCount();
-        cursor.close();
-
-        // return count
-        return count;
-    }
-
-    public int getCountInvoiceCustomer(Map req) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String countQuery;
-        Cursor cursor;
-        countQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
-        cursor = db.rawQuery(countQuery, new String[]{req.get("id").toString()});
-
-        int count = cursor.getCount();
-        cursor.close();
-
-        // return count
-        return count;
-    }
-
     public int getCountCollectionCustomer(Map req) {
         SQLiteDatabase db = this.getReadableDatabase();
         String countQuery;
@@ -6445,92 +6503,6 @@ public class Database extends SQLiteOpenHelper {
         cursor.close();
         return paramModel;
     }
-
-    public List<Material> getOutstandingFaktur(String custId) {
-        List<Material> arrayList = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "select mm." + KEY_MATERIAL_GROUP_NAME + ", mm." + KEY_MATERIAL_GROUP_ID + ", count(mm." + KEY_MATERIAL_GROUP_ID + ") as " + KEY_QTY +
-                " from " + TABLE_INVOICE_HEADER + " ih " +
-                " join " + TABLE_INVOICE_DETAIL + " id on ih." + KEY_INVOICE_NO + " = id." + KEY_INVOICE_NO +
-                " join " + TABLE_MASTER_MATERIAL + " mm on id." + KEY_MATERIAL_ID + " = mm." + KEY_MATERIAL_ID +
-                " where ih." + KEY_CUSTOMER_ID + " = ? and ih." + KEY_PAID + " = 0 " +
-                " group by mm." + KEY_MATERIAL_GROUP_ID;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{custId});
-
-        if (cursor.moveToFirst()) {
-            do {
-                Material paramModel = new Material();
-                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-                paramModel.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-
-                arrayList.add(paramModel);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return arrayList;
-    }
-
-//    public List<Material> getAllMasterMaterialOrder(Map request) {
-//        List<Material> arrayList = new ArrayList<>();
-//        String priceListCode = null, top = null;
-//
-//        // Select All Query
-//        String queryPriceListCode = "SELECT " + KEY_PRICE_LIST_CODE + " FROM " + TABLE_MASTER_PRICE_CODE + " WHERE " + KEY_UDF_5 + " = ? and " + KEY_MATERIAL_PRODUCT_ID + " = ? ";
-//
-//        String queryTop = "SELECT " + KEY_TOP + " FROM " + TABLE_MASTER_SALES_PRICE_HEADER + " WHERE " + KEY_PRICE_LIST_CODE + " like ? ";
-//
-//        String queryMaterialList = "SELECT spd." + KEY_MATERIAL_ID + ", spd." + KEY_PRICE_LIST_CODE + ", spd." + KEY_UOM + ", spd." + KEY_QTY + ", spd." + SELLING_PRICE
-//                + ", m." + KEY_MATERIAL_NAME + ", m." + KEY_MATERIAL_SALES + ", m." + KEY_MATERIAL_GROUP_ID + ", m." + KEY_MATERIAL_GROUP_NAME
-//                + ", m." + KEY_MATERIAL_PRODUCT_ID + ", m." + KEY_MATERIAL_PRODUCT_NAME
-//                + " FROM " + TABLE_MASTER_SALES_PRICE_DETAIL + " spd join " + TABLE_MASTER_MATERIAL + " m on spd." + KEY_MATERIAL_ID + " = m." + KEY_MATERIAL_ID
-//                + " WHERE spd." + KEY_PRICE_LIST_CODE + " = ? ";
-//
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursorPriceListCode = db.rawQuery(queryPriceListCode, new String[]{request.get("udf5").toString(), request.get("productId").toString()});
-//
-//        if (cursorPriceListCode.moveToFirst()) {
-//            priceListCode = cursorPriceListCode.getString(cursorPriceListCode.getColumnIndexOrThrow(KEY_PRICE_LIST_CODE));
-//        }
-//        cursorPriceListCode.close();
-//
-//        if (priceListCode != null) {
-//            Cursor cursorTop = db.rawQuery(queryTop, new String[]{"%" + priceListCode + "%"});
-//
-//            if (cursorTop.moveToFirst()) {
-//                top = cursorTop.getString(cursorTop.getColumnIndexOrThrow(KEY_TOP));
-//            }
-//            //SELECT top FROM MasterSalesPriceHeader WHERE priceListCode = 'GT - TOP 14'
-//            cursorTop.close();
-//
-//            Cursor cursor = db.rawQuery(queryMaterialList, new String[]{priceListCode});
-//
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Material paramModel = new Material();
-//                    paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-//                    paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
-//                    paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-//                    paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
-//                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(SELLING_PRICE)));
-//                    paramModel.setMaterial_sales(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_SALES)));
-//                    paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-//                    paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-//                    paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-//                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-//                    paramModel.setTop(top);
-//                    paramModel.setPriceListCode(priceListCode);
-//
-//                    arrayList.add(paramModel);
-//                } while (cursor.moveToNext());
-//            }
-//        }
-//
-//        return arrayList;
-//    }
-//
 
     public List<Material> getTOMaterialExtra(Map request) {
         List<Material> arrayList = new ArrayList<>();
@@ -7021,11 +6993,13 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
             paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ADDRESS)));
+            paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
         } else {
             cursor = db.rawQuery(selectQueryNoo, new String[]{idCustomer});
             if (cursor.moveToFirst()) {
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
                 paramModel.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ADDRESS_NOO)));
+                paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
             }
         }
 
@@ -8017,7 +7991,6 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
-                    paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
                     paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                     paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
@@ -8059,7 +8032,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
                     paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
                     paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
-                    paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
+//                    paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
                     paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                     paramModel.setMaterialList(getAllOrderDetail(paramModel.getIdHeader()));
@@ -8234,7 +8207,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setTypePayment(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PAYMENT)));
                     paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
-                    paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));
+                    paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));//sync data
                     paramModel.setTfList(getAllCollectionDetailTransfer(paramModel.getIdHeader()));
                     paramModel.setGiroList(getAllCollectionDetailGiro(paramModel.getIdHeader()));
                     paramModel.setChequeList(getAllCollectionDetailCheque(paramModel.getIdHeader()));
@@ -8413,101 +8386,188 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_ORDER_DETAIL, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
         db.update(TABLE_ORDER_DETAIL_EXTRA, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
         db.update(TABLE_ORDER_DETAIL_DISCOUNT, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
+
+        String selectQuery = "select idCollectionHeaderDB from CollectionInvoice where a.invoiceNo = ? ";
+        String idCollectionHeaderDB = null;
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{detail.getIdHeader()});
+        if (cursor.moveToFirst()) {
+            idCollectionHeaderDB = cursor.getString(cursor.getColumnIndexOrThrow("idCollectionHeaderDB"));
+        }
+        cursor.close();
+        db.close();
+        if (!Helper.isNullOrEmpty(idCollectionHeaderDB)) {
+            deletePayment(idCollectionHeaderDB, detail.getId_customer());
+        }
+    }
+
+//    public void deleteAllCollection(CollectionHeader collHeader) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(KEY_DELETED, 1);
+//        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+//        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//
+//        db.update(TABLE_COLLECTION_HEADER, values, KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{collHeader.getIdHeader(), collHeader.getCustomerId()});
+//        db.update(TABLE_COLLECTION_DETAIL, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
+//        db.update(TABLE_COLLECTION_ITEM, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
+//
+//        if (collHeader.getTypePayment().equals("order")) {
+//            Order paramModel = new Order();
+//            // Select All Query
+//            String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
+//            Cursor cursor = db.rawQuery(selectQuery, new String[]{collHeader.getInvoiceNo()});
+//
+//            if (cursor.moveToFirst()) {
+//                paramModel = new Order();
+//                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+//                paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
+//                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
+//                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+//                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
+//                paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+//                paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+//                paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
+//                paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+//                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+//                paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
+//                paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
+//                paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+//                paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+//                paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
+//                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+//            }
+//
+//            cursor.close();
+//
+//            if (paramModel != null) {
+//                List<Material> orderDetail = getAllDetailOrder(collHeader.getInvoiceNo());
+//                if (Helper.isNotEmptyOrNull(orderDetail)) {
+//                    double totalPaid = orderDetail.get(0).getAmountPaid();
+//                    values = new ContentValues();
+//                    if (totalPaid < paramModel.getOmzet()) {
+//                        values.put(KEY_IS_PAID, 0);
+//                    } else {
+//                        values.put(KEY_IS_PAID, 1);
+//                    }
+//                    values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+//                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                    db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{collHeader.getInvoiceNo()});
+//                }
+//            }
+//        }
+//
+//        db.close();
+//    }
+
+    public void deletePayment(String idHeader, String idCust) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_DELETED, 1);
+        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+        db.update(TABLE_COLLECTION_HEADER, values, KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{idHeader, idCust});
+        db.update(TABLE_COLLECTION_DETAIL, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{idHeader});
+        db.update(TABLE_COLLECTION_INVOICE, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{idHeader});
+        db.update(TABLE_COLLECTION_ITEM, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{idHeader});
         db.close();
     }
 
-    public void deletePayment(CollectionHeader req) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        if (req.getTypePayment().equals("order")) {
-            deleteAllCollection(req);
-        } else {
-            Invoice paramModel = null;
-            String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_INVOICE_NO + " = ? and " + KEY_INVOICE_DATE + " = ? ";
-            Cursor cursor = db.rawQuery(selectQuery, new String[]{req.getInvoiceNo(), req.getInvoiceDate()});
-
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    paramModel = new Invoice();
-                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
-                    paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
-                    paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                    paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
-                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
-                    paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-                    paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
-                }
-            }
-
-            assert cursor != null;
-            cursor.close();
-
-            double paid = paramModel.getTotal_paid() - req.getTotalPaid();
-            double nett = paramModel.getAmount() - paid;
-
-            ContentValues values = new ContentValues();
-            values.put(KEY_PAID, paid);
-            values.put(KEY_NETT, nett);
-            values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-            db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ? and " + KEY_INVOICE_DATE + " = ? ", new String[]{req.getInvoiceNo(), req.getInvoiceDate()});
-
-            //detail invoice
-            String selectQueryDetail = "SELECT * FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_INVOICE_NO + " = ? and " + KEY_ID_INVOICE_HEADER_DB + " = ? ";
-            Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{paramModel.getNo_invoice(), paramModel.getIdHeader()});
-            List<Material> arrayList = new ArrayList<>();
-            if (cursorDetail.moveToFirst()) {
-                do {
-                    Material mat = new Material();
-                    mat.setIdheader(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
-                    mat.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    mat.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    mat.setPrice(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PRICE)));
-                    mat.setAmountPaid(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PAID)));
-                    mat.setSisa(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PRICE)) - cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PAID)));
-                    arrayList.add(mat);
-                } while (cursorDetail.moveToNext());
-            }
-            cursorDetail.close();
-
-            //detail collection Detail
-            String selectQueryDetailCollection = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? ";
-            Cursor cursorDetailCollection = db.rawQuery(selectQueryDetailCollection, new String[]{req.getIdHeader()});
-            List<Material> arrayListCollection = new ArrayList<>();
-            if (cursorDetailCollection.moveToFirst()) {
-                do {
-                    Material mat = new Material();
-                    mat.setIdheader(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_ID_COLLECTION_ITEM_DB)));
-                    mat.setId(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-                    mat.setNama(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-                    mat.setPrice(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_PRICE)));
-                    mat.setAmountPaid(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
-                    mat.setSisa(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_PRICE)) - cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
-                    arrayListCollection.add(mat);
-                } while (cursorDetailCollection.moveToNext());
-            }
-            cursorDetailCollection.close();
-
-            for (Material matInvoice : arrayList) {
-                paid = 0;
-                for (Material matColl : arrayListCollection) {
-                    if (matColl.getId().equals(matInvoice.getId())) {
-                        paid = paid + matColl.getAmountPaid();
-
-                    }
-                }
-                values = new ContentValues();
-                values.put(KEY_PAID, matInvoice.getAmountPaid() - paid);
-                values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-                values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and " + KEY_ID_INVOICE_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ?",
-                        new String[]{req.getInvoiceNo(), paramModel.getIdHeader(), matInvoice.getId()});
-            }
-
-            deleteAllCollection(req);
-        }
-        //db.close();
-    }
+//    public void deletePayment(CollectionHeader req) {
+//        ubah delete
+//        SQLiteDatabase db = this.getWritableDatabase();
+//
+//        if (req.getTypePayment().equals("order")) {
+//            deleteAllCollection(req);
+//        } else {
+//            Invoice paramModel = null;
+//            String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_INVOICE_NO + " = ? and " + KEY_INVOICE_DATE + " = ? ";
+//            Cursor cursor = db.rawQuery(selectQuery, new String[]{req.getInvoiceNo(), req.getInvoiceDate()});
+//
+//            if (cursor != null) {
+//                if (cursor.moveToFirst()) {
+//                    paramModel = new Invoice();
+//                    paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+//                    paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+//                    paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+//                    paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
+//                    paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
+//                    paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+//                    paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+//                }
+//            }
+//
+//            assert cursor != null;
+//            cursor.close();
+//
+//            double paid = paramModel.getTotal_paid() - req.getTotalPaid();
+//            double nett = paramModel.getAmount() - paid;
+//
+//            ContentValues values = new ContentValues();
+//            values.put(KEY_PAID, paid);
+//            values.put(KEY_NETT, nett);
+//            values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+//            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//            db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ? and " + KEY_INVOICE_DATE + " = ? ", new String[]{req.getInvoiceNo(), req.getInvoiceDate()});
+//
+//            //detail invoice
+//            String selectQueryDetail = "SELECT * FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_INVOICE_NO + " = ? and " + KEY_ID_INVOICE_HEADER_DB + " = ? ";
+//            Cursor cursorDetail = db.rawQuery(selectQueryDetail, new String[]{paramModel.getNo_invoice(), paramModel.getIdHeader()});
+//            List<Material> arrayList = new ArrayList<>();
+//            if (cursorDetail.moveToFirst()) {
+//                do {
+//                    Material mat = new Material();
+//                    mat.setIdheader(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
+//                    mat.setId(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    mat.setNama(cursorDetail.getString(cursorDetail.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    mat.setPrice(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PRICE)));
+//                    mat.setAmountPaid(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PAID)));
+//                    mat.setSisa(cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PRICE)) - cursorDetail.getDouble(cursorDetail.getColumnIndexOrThrow(KEY_PAID)));
+//                    arrayList.add(mat);
+//                } while (cursorDetail.moveToNext());
+//            }
+//            cursorDetail.close();
+//
+//            //detail collection Detail
+//            String selectQueryDetailCollection = "SELECT * FROM " + TABLE_COLLECTION_ITEM + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? ";
+//            Cursor cursorDetailCollection = db.rawQuery(selectQueryDetailCollection, new String[]{req.getIdHeader()});
+//            List<Material> arrayListCollection = new ArrayList<>();
+//            if (cursorDetailCollection.moveToFirst()) {
+//                do {
+//                    Material mat = new Material();
+//                    mat.setIdheader(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_ID_COLLECTION_ITEM_DB)));
+//                    mat.setId(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+//                    mat.setNama(cursorDetailCollection.getString(cursorDetailCollection.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+//                    mat.setPrice(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_PRICE)));
+//                    mat.setAmountPaid(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
+//                    mat.setSisa(cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_PRICE)) - cursorDetailCollection.getDouble(cursorDetailCollection.getColumnIndexOrThrow(KEY_AMOUNT_PAID)));
+//                    arrayListCollection.add(mat);
+//                } while (cursorDetailCollection.moveToNext());
+//            }
+//            cursorDetailCollection.close();
+//
+//            for (Material matInvoice : arrayList) {
+//                paid = 0;
+//                for (Material matColl : arrayListCollection) {
+//                    if (matColl.getId().equals(matInvoice.getId())) {
+//                        paid = paid + matColl.getAmountPaid();
+//
+//                    }
+//                }
+//                values = new ContentValues();
+//                values.put(KEY_PAID, matInvoice.getAmountPaid() - paid);
+//                values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+//                values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//                db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and " + KEY_ID_INVOICE_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ?",
+//                        new String[]{req.getInvoiceNo(), paramModel.getIdHeader(), matInvoice.getId()});
+//            }
+//
+//            deleteAllCollection(req);
+//        }
+//        //db.close();
+//    }
 
     public void updateSyncNoo(Customer req) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -8615,33 +8675,6 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_PHOTO, values, KEY_ID_PHOTO_DB + " = ? ", new String[]{req.get("idHeader").toString()});
     }
 
-    public void updatePaidInvoice(Map request) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_PAID, (Double) request.get("paid"));
-        values.put(KEY_NETT, (Double) request.get("nett"));
-        values.put(KEY_UPDATED_BY, request.get("username").toString());
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{request.get("no_invoice").toString()});
-        //db.close();
-    }
-
-    public void updateNettPrice(Material request, String username, String invoiceNo) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        double paid = getPaidInvoiceMaterial(invoiceNo, request.getId());
-        paid = paid + request.getAmountPaid();
-        values.put(KEY_PAID, paid);
-        values.put(KEY_UPDATED_BY, username);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_INVOICE_DETAIL, values, KEY_INVOICE_NO + " = ? and " + KEY_MATERIAL_ID + " = ?", new String[]{invoiceNo, request.getId()});
-        //db.close();
-    }
-
     public void updateStatusOutletNoo(Customer param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -8666,19 +8699,6 @@ public class Database extends SQLiteOpenHelper {
         //db.close();
     }
 
-    public void updateSisaStock(Map request) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_PAID, (Double) request.get("paid"));
-        values.put(KEY_NETT, (Double) request.get("nett"));
-        values.put(KEY_UPDATED_BY, request.get("username").toString());
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_INVOICE_HEADER, values, KEY_INVOICE_NO + " = ?", new String[]{request.get("no_invoice").toString()});
-        //db.close();
-    }
-
     public void updateStatusOutletVisit(Customer param, String username) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -8690,47 +8710,6 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_CUSTOMER, values, KEY_CUSTOMER_ID + " = ?", new String[]{param.getId()});
         //db.close();
     }
-
-//    public void updatePhoto(Customer param, String username) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
-//        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
-//        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
-//        values.put(KEY_UPDATED_BY, username);
-//        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//
-//        db.update(TABLE_CUSTOMER, values, KEY_CUSTOMER_ID + " = ?", new String[]{param.getId()});
-//        //db.close();
-//    }
-
-    public void updatePhoto(Map req) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_PHOTO, req.get("photo").toString());
-        values.put(KEY_PHOTO_NAME, req.get("photoName").toString());
-        values.put(KEY_UPDATED_BY, req.get("username").toString());
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_PHOTO, values, KEY_CUSTOMER_ID + " = ? and " + KEY_TYPE_PHOTO + " = ? ", new String[]{req.get("customerID").toString(), req.get("typePhoto").toString()});
-        //db.close();
-    }
-
-//    public void updatePhotoNoo(Customer param, String username) {
-//        SQLiteDatabase db = this.getWritableDatabase();
-//
-//        ContentValues values = new ContentValues();
-//        values.put(KEY_PHOTO_KTP, param.getPhotoKtp());
-//        values.put(KEY_PHOTO_NPWP, param.getPhotoNpwp());
-//        values.put(KEY_PHOTO_OUTLET, param.getPhotoOutlet());
-//        values.put(KEY_UPDATED_BY, username);
-//        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//
-//        db.update(TABLE_NOO, values, KEY_ID_NOO_DB + " = ?", new String[]{param.getIdHeader()});
-//        //db.close();
-//    }
 
     public void updateFinishVisit(StartVisit param) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -8863,70 +8842,6 @@ public class Database extends SQLiteOpenHelper {
         deleteMasterGroupSalesMaxBon();
 //        deleteMasterMaxBonLimits();
         deletePhoto();
-    }
-
-    public void deleteAllCollection(CollectionHeader collHeader) {
-        SQLiteDatabase db = this.getWritableDatabase();
-//        db.delete(TABLE_COLLECTION_HEADER, KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_CUSTOMER_ID + " = ? ",
-//                new String[]{collHeader.getIdHeader(), collHeader.getCustomerId()});
-//        db.delete(TABLE_COLLECTION_DETAIL, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
-//        db.delete(TABLE_COLLECTION_ITEM, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_DELETED, 1);
-        values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-        values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-
-        db.update(TABLE_COLLECTION_HEADER, values, KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_CUSTOMER_ID + " = ? ", new String[]{collHeader.getIdHeader(), collHeader.getCustomerId()});
-        db.update(TABLE_COLLECTION_DETAIL, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
-        db.update(TABLE_COLLECTION_ITEM, values, KEY_ID_COLLECTION_HEADER_DB + " = ? ", new String[]{collHeader.getIdHeader()});
-
-        if (collHeader.getTypePayment().equals("order")) {
-            Order paramModel = new Order();
-            // Select All Query
-            String selectQuery = "SELECT * FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
-            Cursor cursor = db.rawQuery(selectQuery, new String[]{collHeader.getInvoiceNo()});
-
-            if (cursor.moveToFirst()) {
-                paramModel = new Order();
-                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
-                paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
-                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
-                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
-                paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
-                paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
-                paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
-                paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
-                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
-                paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
-                paramModel.setStatusPaid(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_PAID)) != 0);
-                paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
-                paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
-                paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
-                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
-            }
-
-            cursor.close();
-
-            if (paramModel != null) {
-                List<Material> orderDetail = getAllDetailOrder(collHeader.getInvoiceNo());
-                if (Helper.isNotEmptyOrNull(orderDetail)) {
-                    double totalPaid = orderDetail.get(0).getAmountPaid();
-                    values = new ContentValues();
-                    if (totalPaid < paramModel.getOmzet()) {
-                        values.put(KEY_IS_PAID, 0);
-                    } else {
-                        values.put(KEY_IS_PAID, 1);
-                    }
-                    values.put(KEY_UPDATED_BY, SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-                    values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
-                    db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{collHeader.getInvoiceNo()});
-                }
-            }
-        }
-
-        db.close();
     }
 
     public void deleteStockRequestHeader() {

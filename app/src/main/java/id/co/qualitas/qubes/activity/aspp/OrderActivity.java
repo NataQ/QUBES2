@@ -177,19 +177,19 @@ public class OrderActivity extends BaseActivity {
 
     private void setAdapter() {
         mAdapter = new OrderAdapter(this, mList, outletHeader, header -> {
-            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT && !header.isDeleted() && header.getOrder_type().equals("co")) {
-                if (!header.isStatusPaid()) {
-                    dialogConfirm(header);
-                } else {
-                    SessionManagerQubes.setOrder(header);
-                    Intent intent = new Intent(this, OrderDetailActivity.class);
-                    startActivity(intent);
-                }
-            } else {
+//            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT && !header.isDeleted() && header.getOrder_type().equals("co")) {
+//                if (!header.isStatusPaid()) {
+//                    dialogConfirm(header);
+//                } else {
+//                SessionManagerQubes.setOrder(header);
+//                Intent intent = new Intent(this, OrderDetailActivity.class);
+//                startActivity(intent);
+//                }
+//            } else {
                 SessionManagerQubes.setOrder(header);
                 Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
                 startActivity(intent);
-            }
+//            }
         });
         recyclerView.setAdapter(mAdapter);
     }
@@ -278,43 +278,43 @@ public class OrderActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    public void dialogConfirm(Order header) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        final Dialog dialog = new Dialog(this);
-        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(dialogView);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
-        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
-        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
-        Button btnNo = dialog.findViewById(R.id.btnNo);
-        Button btnYes = dialog.findViewById(R.id.btnYes);
-        txtTitle.setText("Collection");
-        txtDialog.setText("Apakah outlet ini akan melakukan pembayaran?");
-        btnYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                SessionManagerQubes.setOrder(header);
-                SessionManagerQubes.setAlreadyPrint(true);
-                SessionManagerQubes.setCollectionSource(3);
-//                Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
-                Intent intent = new Intent(OrderActivity.this, CollectionVisitActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        btnNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                SessionManagerQubes.setOrder(header);
-                Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        dialog.show();
-    }
+//    public void dialogConfirm(Order header) {
+//        LayoutInflater inflater = LayoutInflater.from(this);
+//        final Dialog dialog = new Dialog(this);
+//        View dialogView = inflater.inflate(R.layout.aspp_dialog_confirmation, null);
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        dialog.setContentView(dialogView);
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.getWindow().setLayout(400, ViewGroup.LayoutParams.WRAP_CONTENT);//height => (4 * height) / 5
+//        TextView txtTitle = dialog.findViewById(R.id.txtTitle);
+//        TextView txtDialog = dialog.findViewById(R.id.txtDialog);
+//        Button btnNo = dialog.findViewById(R.id.btnNo);
+//        Button btnYes = dialog.findViewById(R.id.btnYes);
+//        txtTitle.setText("Collection");
+//        txtDialog.setText("Apakah outlet ini akan melakukan pembayaran?");
+//        btnYes.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//                SessionManagerQubes.setOrder(header);
+//                SessionManagerQubes.setAlreadyPrint(true);
+//                SessionManagerQubes.setCollectionSource(3);
+////                Intent intent = new Intent(OrderActivity.this, CollectionFormActivity.class);
+//                Intent intent = new Intent(OrderActivity.this, CollectionVisitActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        btnNo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//                SessionManagerQubes.setOrder(header);
+//                Intent intent = new Intent(OrderActivity.this, OrderDetailActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        dialog.show();
+//    }
 }

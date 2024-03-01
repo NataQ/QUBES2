@@ -3,6 +3,8 @@ package id.co.qualitas.qubes.model;
 import java.util.List;
 
 public class Invoice {
+    private String id;
+    private String idDetail;
     private String idHeader;
     private String no_invoice;
     private String nama;
@@ -51,14 +53,21 @@ public class Invoice {
         this.materialList = materialList;
     }
 
-//    public double getLeft() {
-//        return left;
-//    }
-//
-//    public void setLeft(double left) {
-//        this.left = left;
-//    }
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIdDetail() {
+        return idDetail;
+    }
+
+    public void setIdDetail(String idDetail) {
+        this.idDetail = idDetail;
+    }
 
     public String getCategoryPayment() {
         return categoryPayment;
@@ -75,14 +84,6 @@ public class Invoice {
     public void setOpen(boolean open) {
         this.open = open;
     }
-
-//    public double getTotalPayment() {
-//        return totalPayment;
-//    }
-//
-//    public void setTotalPayment(double totalPayment) {
-//        this.totalPayment = totalPayment;
-//    }
 
     public boolean isCheckAllMaterial() {
         return isCheckAllMaterial;
