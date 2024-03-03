@@ -28,6 +28,7 @@ public class Invoice {
     private boolean open;
 //    private double left;
     private List<Material> materialList;
+    private List<Material> checkedMaterialList;
 
     public Invoice() {
     }
@@ -51,6 +52,14 @@ public class Invoice {
         this.invoice_date = invoice_date;
         this.is_route = is_route ? 1 : 0;
         this.materialList = materialList;
+    }
+
+    public List<Material> getCheckedMaterialList() {
+        return checkedMaterialList;
+    }
+
+    public void setCheckedMaterialList(List<Material> checkedMaterialList) {
+        this.checkedMaterialList = checkedMaterialList;
     }
 
     public String getId() {

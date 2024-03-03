@@ -101,7 +101,7 @@ public class CollectionPaymentInvoiceDetailAdapter extends RecyclerView.Adapter<
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNoFaktur, txtTglJatuhTempo, txtTotalInv, txtTotalPaid, txtAmountInvoice;
+        TextView txtNoFaktur, txtTotalInv, txtTotalPaid;
         LinearLayout layout, llItem;
         ImageView imgView;
         RecyclerView recyclerView;
@@ -110,8 +110,6 @@ public class CollectionPaymentInvoiceDetailAdapter extends RecyclerView.Adapter<
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
             super(itemView);
             txtNoFaktur = itemView.findViewById(R.id.txtNoFaktur);
-            txtTglJatuhTempo = itemView.findViewById(R.id.txtTglJatuhTempo);
-            txtAmountInvoice = itemView.findViewById(R.id.txtAmountInvoice);
             txtTotalInv = itemView.findViewById(R.id.txtTotalInv);
             txtTotalPaid = itemView.findViewById(R.id.txtTotalPaid);
             layout = itemView.findViewById(R.id.layout);
@@ -157,12 +155,7 @@ public class CollectionPaymentInvoiceDetailAdapter extends RecyclerView.Adapter<
         });
 
         holder.txtNoFaktur.setText(Helper.isEmpty(detail.getNo_invoice(), ""));
-        if (!Helper.isNullOrEmpty(detail.getTanggal_jatuh_tempo())) {
-            String dueDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_1, detail.getTanggal_jatuh_tempo());
-            holder.txtTglJatuhTempo.setText(dueDate);
-        }
         holder.txtTotalInv.setText("Rp." + format.format(detail.getAmount()));
-        holder.txtAmountInvoice.setText("Rp." + format.format(detail.getNett()));
         holder.txtTotalPaid.setText("Rp." + format.format(detail.getTotal_paid()));
 
         mAdapter = new CollectionPaymentItemDetailAdapter(mContext, mFilteredList.get(holder.getAbsoluteAdapterPosition()).getMaterialList(), header -> {

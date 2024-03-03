@@ -181,7 +181,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
     @Override
     public void onBindViewHolder(Holder holder, int pos) {
-        final Material[] detail = {mFilteredList.get(holder.getAbsoluteAdapterPosition())};
+        final Material details = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         setFormatSeparator();
         setProgress();
         user = SessionManagerQubes.getUserProfile();
@@ -190,15 +190,15 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         }
         mListExtra = new ArrayList<>();
         mListDiskon = new ArrayList<>();
-        if (Helper.isNotEmptyOrNull(detail[0].getExtraItem())) {
-            mListExtra.addAll(detail[0].getExtraItem());
+        if (Helper.isNotEmptyOrNull(details.getExtraItem())) {
+            mListExtra.addAll(details.getExtraItem());
         }
-        if (Helper.isNotEmptyOrNull(detail[0].getDiskonList())) {
-            mListDiskon.addAll(detail[0].getDiskonList());
+        if (Helper.isNotEmptyOrNull(details.getDiskonList())) {
+            mListDiskon.addAll(details.getDiskonList());
         }
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
-        String productName = !Helper.isNullOrEmpty(detail[0].getNama()) ? detail[0].getNama() : null;
-        String productId = String.valueOf(detail[0].getId());
+        String productName = !Helper.isNullOrEmpty(details.getNama()) ? details.getNama() : null;
+        String productId = String.valueOf(details.getId());
         holder.edtProduct.setText(productId + " - " + productName);
 //        if (detail.getQty() == 0 && !Helper.isEmpty(detail.getUom())) {
 //            Map req = new HashMap();
@@ -208,14 +208,14 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 //            holder.edtQty.setText(Helper.setDotCurrencyAmount(minMaxOrder.getQty()));
 //        } else {
         holder.edtQty.clearFocus();
-        holder.edtQty.setText(Helper.setDotCurrencyAmount(detail[0].getQty()));
+        holder.edtQty.setText(Helper.setDotCurrencyAmount(details.getQty()));
 //        }
-        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
-        holder.txtTotalDiscount.setText("Rp. " + format.format(detail[0].getTotalDiscount()));
-        double priceTotal = detail[0].getPrice() - detail[0].getTotalDiscount();
+        holder.txtPrice.setText("Rp. " + format.format(details.getPrice()));
+        holder.txtTotalDiscount.setText("Rp. " + format.format(details.getTotalDiscount()));
+        double priceTotal = details.getPrice() - details.getTotalDiscount();
         holder.txtTotal.setText("Rp. " + format.format(priceTotal));
 
-        if (Helper.isNotEmptyOrNull(detail[0].getDiskonList())) {
+        if (Helper.isNotEmptyOrNull(details.getDiskonList())) {
             holder.llDiscountAll.setVisibility(View.VISIBLE);
             mAdapterDiscount = new OrderDiscountAdapter(mContext, mListDiskon, header -> {
             });
@@ -224,7 +224,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
             holder.llDiscountAll.setVisibility(View.GONE);
         }
 
-        List<String> listSpinner = new Database(mContext).getUom(detail[0].getId());
+        List<String> listSpinner = new Database(mContext).getUom(details.getId());
         if (listSpinner == null || listSpinner.size() == 0) {
             listSpinner.add("-");
         }
@@ -245,15 +245,14 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         uomAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         uomAdapter.addAll(listSpinner);
         holder.autoCompleteUom.setAdapter(uomAdapter);
-        holder.autoCompleteUom.setText(detail[0].getUom(), false);
+        holder.autoCompleteUom.setText(details.getUom(), false);
         holder.autoCompleteUom.setOnItemClickListener((adapterView, view, i, l) -> {
-            detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
             String selected = listSpinner.get(i).toString();
-            detail[0].setUom(selected);
-            if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(detail[0].getUom())) {
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setUom(selected);
+            if (!Helper.isEmptyEditText(holder.edtQty) && !Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
                 Map req = new HashMap();
                 req.put("id_material", productId);
-                req.put("uom", detail[0].getUom());
+                req.put("uom", mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom());
                 req.put("id_customer", outletHeader.getId());
                 minMaxOrder = new Database(mContext).getMinimalOrder(req);
                 double qty = Double.parseDouble(holder.edtQty.getText().toString().replace(",", ""));
@@ -267,17 +266,17 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
-                        detail[0].setQty(0);
-                        detail[0].setPrice(0);
-                        detail[0].setDiskonList(null);
-                        detail[0].setTotalDiscount(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                         holder.txtPrice.setText("0");
                         holder.txtTotal.setText("0");
                         holder.llDiscountAll.setVisibility(View.GONE);
                     } else {
-                        detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
-                        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
-                        double pt = detail[0].getPrice() - detail[0].getTotalDiscount();
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                        holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                        double pt = mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice() - mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalDiscount();
                         holder.txtTotal.setText("Rp. " + format.format(pt));
                     }
                 } else {
@@ -285,7 +284,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                     Material mat = new Material();
                     mat.setQty(qty);
                     mat.setId(productId);
-                    mat.setUom(detail[0].getUom());
+                    mat.setUom(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom());
                     itemOrder = new Database(mContext).getQtySmallUom(mat);
                     boolean overMaxQty = minMaxOrder.getQtyMax() == 0 ? true : false;
                     if (qty < minMaxOrder.getQtyMin() || (overMaxQty ? false : (qty > minMaxOrder.getQtyMax()))) {
@@ -294,10 +293,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
-                        detail[0].setQty(0);
-                        detail[0].setPrice(0);
-                        detail[0].setDiskonList(null);
-                        detail[0].setTotalDiscount(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                         holder.txtPrice.setText("0");
                         holder.txtTotal.setText("0");
                         holder.llDiscountAll.setVisibility(View.GONE);
@@ -306,17 +305,17 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
-                        detail[0].setQty(0);
-                        detail[0].setPrice(0);
-                        detail[0].setDiskonList(null);
-                        detail[0].setTotalDiscount(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                         holder.txtPrice.setText("0");
                         holder.txtTotal.setText("0");
                         holder.llDiscountAll.setVisibility(View.GONE);
                     } else {
-                        detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
-                        holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
-                        double pt = detail[0].getPrice() - detail[0].getTotalDiscount();
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                        holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                        double pt = mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice() - mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalDiscount();
                         holder.txtTotal.setText("Rp. " + format.format(pt));
                     }
                 }
@@ -326,142 +325,151 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         //uom
 
         holder.llAddExtraItem.setOnClickListener(v -> {
-            detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
-//            addExtraItem(holder.getAbsoluteAdapterPosition(), detail);
-            if (detail[0].getQty() > 0 || !Helper.isNullOrEmpty(detail[0].getUom())) {
-                Dialog dialog = new Dialog(mContext);
+            if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).getExtraItem() == null) {
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setExtraItem(new ArrayList<>());
+            }
+            if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).getExtraItem().size() < 1) {
+                if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).getQty() > 0 || !Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
+                    Dialog dialog = new Dialog(mContext);
 
-                dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.show();
+                    dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    dialog.show();
 
-                Button btnSearch = dialog.findViewById(R.id.btnSearch);
-                btnSearch.setVisibility(View.GONE);
-                CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
-                CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-                RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
-                EditText editText = dialog.findViewById(R.id.edit_text);
-                RecyclerView rv = dialog.findViewById(R.id.rv);
-                Button btnCancel = dialog.findViewById(R.id.btnCancel);
-                Button btnSave = dialog.findViewById(R.id.btnSave);
+                    Button btnSearch = dialog.findViewById(R.id.btnSearch);
+                    btnSearch.setVisibility(View.GONE);
+                    CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
+                    CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
+                    RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
+                    EditText editText = dialog.findViewById(R.id.edit_text);
+                    RecyclerView rv = dialog.findViewById(R.id.rv);
+                    Button btnCancel = dialog.findViewById(R.id.btnCancel);
+                    Button btnSave = dialog.findViewById(R.id.btnSave);
 
-                if (Helper.isNotEmptyOrNull(mList)) {
-                    checkbox.setVisibility(View.VISIBLE);
-                } else {
-                    checkbox.setVisibility(View.GONE);
-                }
-
-                List<Material> listSpinnerMat = new ArrayList<>();
-                listSpinnerMat.addAll(initDataMaterial(pos, detail[0]));
-
-                SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, user, (nameItem, adapterPosition) -> {
-                });
-
-                rv.setLayoutManager(new LinearLayoutManager(mContext));
-                rv.setHasFixedSize(true);
-                rv.setNestedScrollingEnabled(false);
-                rv.setAdapter(spinnerAdapter);
-
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        spinnerAdapter.getFilter().filter(s);
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-
-                    }
-                });
-
-                cvCheckedAll.setOnClickListener(v1 -> {
-                    if (listFilteredSpinner == null) {
-                        listFilteredSpinner = new ArrayList<>();
-                    }
-                    checkedAll = false;
-                    if (!listFilteredSpinner.isEmpty()) {
-                        for (Material mat : listFilteredSpinner) {
-                            mat.setChecked(checkedAll);
-                        }
-                    } else {
-                        for (Material mat : listSpinnerMat) {
-                            mat.setChecked(checkedAll);
-                        }
-                    }
-                    spinnerAdapter.notifyDataSetChanged();
-                    cvUnCheckAll.setVisibility(View.VISIBLE);
                     cvCheckedAll.setVisibility(View.GONE);
-                });
-
-                cvUnCheckAll.setOnClickListener(v2 -> {
-                    if (listFilteredSpinner == null) {
-                        listFilteredSpinner = new ArrayList<>();
-                    }
-                    checkedAll = true;
-                    if (!listFilteredSpinner.isEmpty()) {
-                        for (Material mat : listFilteredSpinner) {
-                            mat.setChecked(checkedAll);
-                        }
-                    } else {
-                        for (Material mat : listSpinnerMat) {
-                            mat.setChecked(checkedAll);
-                        }
-                    }
-                    spinnerAdapter.notifyDataSetChanged();
                     cvUnCheckAll.setVisibility(View.GONE);
-                    cvCheckedAll.setVisibility(View.VISIBLE);
-                });
 
-                btnCancel.setOnClickListener(v4 -> {
-                    dialog.dismiss();
-                });
-
-                btnSave.setOnClickListener(v5 -> {
-                    if(Helper.isNotEmptyOrNull(listSpinnerMat)) {
-                        List<Material> addList = new ArrayList<>();
-                        for (Material mat : listSpinnerMat) {
-                            if (mat.isChecked()) {
-                                addList.add(mat);
-                            }
-                        }
-                        mListExtra = new ArrayList<>();
-                        if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
-                            mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
-                        }
-                        mListExtra.addAll(addList);
-                        mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
-                        });
-                        holder.rvExtra.setAdapter(mAdapter);
-//                    if (mListExtra.size() > 0) {
-                        mFilteredList.get(pos).setExtraItem(mListExtra);
-                        mAdapter.setData(mListExtra);
-//                    } else {
-                        new CountDownTimer(1000, 1000) {
-                            public void onTick(long millisUntilFinished) {
-                                progress.show();
-                                int sizeList = mListExtra.size();
-                                mAdapter.notifyItemInserted(sizeList);
-                            }
-
-                            public void onFinish() {
-                                progress.dismiss();
-                                holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
-                            }
-                        }.start();
-                    }else{
-                        Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
+                    if (Helper.isNotEmptyOrNull(mList)) {
+                        checkbox.setVisibility(View.VISIBLE);
+                    } else {
+                        checkbox.setVisibility(View.GONE);
                     }
-//                    }
-                    dialog.dismiss();
-                });
+
+                    List<Material> listSpinnerMat = new ArrayList<>();
+                    listSpinnerMat.addAll(initDataMaterial(pos, mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+
+                    SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, user, true, (nameItem, adapterPosition) -> {
+
+                    });
+
+                    rv.setLayoutManager(new LinearLayoutManager(mContext));
+                    rv.setHasFixedSize(true);
+                    rv.setNestedScrollingEnabled(false);
+                    rv.setAdapter(spinnerAdapter);
+
+                    editText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            spinnerAdapter.getFilter().filter(s);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    cvCheckedAll.setOnClickListener(v1 -> {
+                        if (listFilteredSpinner == null) {
+                            listFilteredSpinner = new ArrayList<>();
+                        }
+                        checkedAll = false;
+                        if (!listFilteredSpinner.isEmpty()) {
+                            for (Material mat : listFilteredSpinner) {
+                                mat.setChecked(checkedAll);
+                            }
+                        } else {
+                            for (Material mat : listSpinnerMat) {
+                                mat.setChecked(checkedAll);
+                            }
+                        }
+                        spinnerAdapter.notifyDataSetChanged();
+                        cvUnCheckAll.setVisibility(View.VISIBLE);
+                        cvCheckedAll.setVisibility(View.GONE);
+                    });
+
+                    cvUnCheckAll.setOnClickListener(v2 -> {
+                        if (listFilteredSpinner == null) {
+                            listFilteredSpinner = new ArrayList<>();
+                        }
+                        checkedAll = true;
+                        if (!listFilteredSpinner.isEmpty()) {
+                            for (Material mat : listFilteredSpinner) {
+                                mat.setChecked(checkedAll);
+                            }
+                        } else {
+                            for (Material mat : listSpinnerMat) {
+                                mat.setChecked(checkedAll);
+                            }
+                        }
+                        spinnerAdapter.notifyDataSetChanged();
+                        cvUnCheckAll.setVisibility(View.GONE);
+                        cvCheckedAll.setVisibility(View.VISIBLE);
+                    });
+
+                    btnCancel.setOnClickListener(v4 -> {
+                        dialog.dismiss();
+                    });
+
+                    btnSave.setOnClickListener(v5 -> {
+                        if (Helper.isNotEmptyOrNull(listSpinnerMat)) {
+                            mListExtra = new ArrayList<>();
+                            if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
+                                mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
+                            }
+
+
+                            List<Material> addList = new ArrayList<>();
+                            for (Material mat : listSpinnerMat) {
+                                if (mat.isChecked()) {
+                                    addList.add(mat);
+                                    break;
+                                }
+                            }
+                            mListExtra.addAll(addList);
+                            mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+                            });
+                            holder.rvExtra.setAdapter(mAdapter);
+                            mFilteredList.get(pos).setExtraItem(mListExtra);
+                            mAdapter.setData(mListExtra);
+                            new CountDownTimer(1000, 1000) {
+                                public void onTick(long millisUntilFinished) {
+                                    progress.show();
+                                    int sizeList = mListExtra.size();
+                                    mAdapter.notifyItemInserted(sizeList);
+                                }
+
+                                public void onFinish() {
+                                    progress.dismiss();
+                                    holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
+                                }
+                            }.start();
+                        } else {
+                            Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+                    });
+                } else {
+                    Toast.makeText(mContext, "Qty dan Uom tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(mContext, "Qty dan Uom tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "Extra barang hanya boleh 1", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -479,7 +487,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 @Override
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    notifyDataSetChanged();
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
                     mContext.removeOmzet();
                     mContext.resizeView();
                     alertDialog.dismiss();
@@ -520,7 +529,6 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
             @Override
             public void afterTextChanged(Editable s) {
-                detail[0] = mFilteredList.get(holder.getAbsoluteAdapterPosition());
                 if (holder.edtQty.isFocused()) {
                     Helper.setDotCurrency(holder.edtQty, this, s);
                     timer.cancel();
@@ -532,10 +540,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                     Looper.prepare();
                                     if (!s.toString().equals("") && !s.toString().equals("-")) {
                                         double qty = Double.parseDouble(s.toString().replace(",", ""));
-                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
+                                        if (!Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
                                             Map req = new HashMap();
                                             req.put("id_material", productId);
-                                            req.put("uom", detail[0].getUom());
+                                            req.put("uom", mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom());
                                             req.put("id_customer", outletHeader.getId());
                                             minMaxOrder = new Database(mContext).getMinimalOrder(req);
                                             if (!Helper.isCanvasSales(user)) {
@@ -558,17 +566,17 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                                         holder.llDiscountAll.setVisibility(View.GONE);
                                                     });
                                                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                                    detail[0].setQty(0);
-                                                    detail[0].setPrice(0);
-                                                    detail[0].setDiskonList(null);
-                                                    detail[0].setTotalDiscount(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                                                 } else {
                                                     mContext.runOnUiThread(() -> {
-                                                        detail[0].setQty(qty);
-                                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
-                                                            detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
-                                                            holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
-                                                            double priceTotal1 = detail[0].getPrice() - detail[0].getTotalDiscount();
+                                                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                                                        if (!Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
+                                                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                                                            holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                                                            double priceTotal1 = mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice() - mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalDiscount();
                                                             holder.txtTotal.setText("Rp. " + format.format(priceTotal1));
                                                         }
                                                     });
@@ -578,7 +586,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                                 Material mat = new Material();
                                                 mat.setQty(qty);
                                                 mat.setId(productId);
-                                                mat.setUom(detail[0].getUom());
+                                                mat.setUom(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom());
                                                 itemOrder = new Database(mContext).getQtySmallUom(mat);
                                                 boolean overMaxQty = minMaxOrder.getQtyMax() == 0 ? true : false;
 //                                                if (qty < minMaxOrder.getQtyMin() || qty > (minMaxOrder.getQtyMax() == 0 ? qty + 1 : minMaxOrder.getQtyMax())) {
@@ -592,10 +600,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                                         holder.llDiscountAll.setVisibility(View.GONE);
                                                     });
                                                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                                    detail[0].setQty(0);
-                                                    detail[0].setPrice(0);
-                                                    detail[0].setDiskonList(null);
-                                                    detail[0].setTotalDiscount(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                                                 } else if (itemOrder.getQty() > stockItem.getQty()) {
                                                     String ket = "Stock item ini: " + format.format(stockItem.getQty()) + " " + stockItem.getUom();
                                                     mContext.runOnUiThread(() -> {
@@ -606,24 +614,24 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                                                         holder.llDiscountAll.setVisibility(View.GONE);
                                                     });
                                                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
-                                                    detail[0].setQty(0);
-                                                    detail[0].setPrice(0);
-                                                    detail[0].setDiskonList(null);
-                                                    detail[0].setTotalDiscount(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
                                                 } else {
                                                     mContext.runOnUiThread(() -> {
-                                                        detail[0].setQty(qty);
-                                                        if (!Helper.isNullOrEmpty(detail[0].getUom())) {
-                                                            detail[0].setPrice(new Database(mContext).getPrice(detail[0]));
-                                                            holder.txtPrice.setText("Rp. " + format.format(detail[0].getPrice()));
-                                                            double priceTotal12 = detail[0].getPrice() - detail[0].getTotalDiscount();
+                                                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                                                        if (!Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
+                                                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                                                            holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                                                            double priceTotal12 = mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice() - mFilteredList.get(holder.getAbsoluteAdapterPosition()).getTotalDiscount();
                                                             holder.txtTotal.setText("Rp. " + format.format(priceTotal12));
                                                         }
                                                     });
                                                 }
                                             }
                                         } else {
-                                            mContext.runOnUiThread(() -> detail[0].setQty(qty));
+                                            mContext.runOnUiThread(() -> mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty));
                                         }
                                     }
                                 }
@@ -700,33 +708,33 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
     }
 
     private List<Material> initDataMaterial(int pos, Material detail) {
-        //perlu d tany extra item itu bebas, atau sesuai sama top nya
         List<Material> listSpinner = new ArrayList<>(), listFinalStock = new ArrayList<>();
         ;
         List<Material> listMat = new ArrayList<>();
         Map req = new HashMap();
-//        req.put("udf_5", outletHeader.getUdf_5());
         req.put("id_sales_group", user.getId_sales_group());//gt/on
         req.put("id_customer", outletHeader.getId());
         req.put("type_customer", outletHeader.getType_customer());
         req.put("sales_category", user.getSales_category());//rg/bt
         req.put("id_stock_request_header", stockHeader != null ? stockHeader.getIdHeader() : null);
         if (Helper.isNotEmptyOrNull(mList)) {
-//            req.put("price_list_code", mList.get(0).getPriceListCode());
-//            String top = user.getId_sales_group().equals("ON") ? mList.get(0).getTop_on() : mList.get(0).getTop_gt();
             req.put("top", mList.get(0).getTop());
             req.put("material_group_id", mList.get(0).getId_material_group());
         } else {
-//            req.put("price_list_code", null);
             req.put("top", null);
             req.put("material_group_id", null);
         }
+//        if (!Helper.isCanvasSales(user)) {
+//            listMat.addAll(new Database(mContext).getTOMaterialExtra(req));
+//        } else {
+//            listMat.addAll(new Database(mContext).getCOMaterialExtra(req));
+//        }
+
         if (!Helper.isCanvasSales(user)) {
-            listMat.addAll(new Database(mContext).getTOMaterialExtra(req));
+            listMat.addAll(new Database(mContext).getTOMaterialPricing(req));
         } else {
-            listMat.addAll(new Database(mContext).getCOMaterialExtra(req));
+            listMat.addAll(new Database(mContext).getCOMaterialPricing(req));
         }
-//        listMat.addAll(new Database(mContext).getAllMasterMaterialByCustomer(req));ubah ambil materialnya
 
         if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
             for (Material param : listMat) {

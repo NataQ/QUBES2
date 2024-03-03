@@ -219,7 +219,8 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
                 @Override
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    notifyDataSetChanged();
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
                     dialog.dismiss();
                 }
             });
@@ -281,7 +282,7 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
 //        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
-        double totalPaymentCash = mContext.getSisaTotalAmountExInvoice(1, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
+        double totalPaymentCash =mContext.getSisaTotalAmountExInvoice(1, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
 
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);

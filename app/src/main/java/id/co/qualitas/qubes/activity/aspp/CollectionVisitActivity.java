@@ -159,6 +159,7 @@ public class CollectionVisitActivity extends BaseActivity {
     private void initData() {
         mList = new ArrayList<>();
         mList.addAll(database.getAllInvoiceCustomer(SessionManagerQubes.getOutletHeader().getId()));
+        totalInvoiceAmount = 0;
         totalInvoice = 0;
         totalPaid = 0;
         for (Invoice inv : mList) {
@@ -233,15 +234,13 @@ public class CollectionVisitActivity extends BaseActivity {
         setAdapterInvoice();
         setAdapterHistory();
 
-        if ((mList == null || mList.isEmpty()) && (mListHistory == null || mListHistory.isEmpty())) {
-            progressCircleInvoice.setVisibility(View.VISIBLE);
-            progressCircleHistory.setVisibility(View.VISIBLE);
-            recyclerViewInvoice.setVisibility(View.GONE);
-            recyclerViewHistory.setVisibility(View.GONE);
-            llNoDataHistory.setVisibility(View.GONE);
-            llNoDataInvoice.setVisibility(View.GONE);
-            new RequestUrl().execute();//on resume
-        }
+        progressCircleInvoice.setVisibility(View.VISIBLE);
+        progressCircleHistory.setVisibility(View.VISIBLE);
+        recyclerViewInvoice.setVisibility(View.GONE);
+        recyclerViewHistory.setVisibility(View.GONE);
+        llNoDataHistory.setVisibility(View.GONE);
+        llNoDataInvoice.setVisibility(View.GONE);
+        new RequestUrl().execute();//on resume
     }
 
     public void refreshData() {

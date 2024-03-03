@@ -74,6 +74,7 @@ public class CollectionFormActivityNew extends BaseActivity {
     private LinearLayout buttonCash, buttonTransfer, buttonCheq, buttonGiro, buttonLain;
     private LinearLayout llCash, llTransfer, llGiro, llCheque, llLain, llPayment;
     private List<CollectionDetail> mListTransfer, mListGiro, mListCheque;
+    private List<Material> mListMaterial;
     private List<Invoice> mListCash, mListLain;
     private List<Invoice> mListCashChecked, mListLainChecked;
     private WSMessage logResult;
@@ -162,7 +163,7 @@ public class CollectionFormActivityNew extends BaseActivity {
         protected WSMessage doInBackground(Void... voids) {
             try {
                 if (PARAM == 1) {
-                    Collection request = prepareData();
+                    Collection request = prepareData();//api
                     String URL_ = Constants.API_SAVE_COLLECTION;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
@@ -171,7 +172,7 @@ public class CollectionFormActivityNew extends BaseActivity {
 //                    if (colLFrom == 3) {
 //
 //                    } else {
-                    Collection request = prepareData();
+                    Collection request = prepareData();//offline
                     saveCollection = database.addCollectionNew(request);
 //                    }
 
@@ -274,8 +275,9 @@ public class CollectionFormActivityNew extends BaseActivity {
                             break;
                         case 1:
                         default:
-                            intent = new Intent(CollectionFormActivityNew.this, CollectionActivity.class);
-                            startActivity(intent);
+                            onBackPressed();
+//                            intent = new Intent(CollectionFormActivityNew.this, CollectionActivity.class);
+//                            startActivity(intent);
                             break;
                     }
                 } else {
@@ -314,6 +316,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                 for (Invoice inv : mListCash) {
                     paidInvoice = 0;
                     em = 0;
+                    mListMaterial = new ArrayList<>();
                     for (Material mat : inv.getMaterialList()) {
                         if (mat.getAmountPaid() != 0) {
                             paidInvoice = paidInvoice + mat.getAmountPaid();
@@ -321,8 +324,10 @@ public class CollectionFormActivityNew extends BaseActivity {
                             existMat++;
                             em++;
                             totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
+                            mListMaterial.add(mat);
                         }
                     }
+                    inv.setCheckedMaterialList(mListMaterial);
                     inv.setTotal_paid(paidInvoice);
                     if (em > 0) mListCashChecked.add(inv);
                 }
@@ -337,6 +342,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                 for (Invoice inv : mListLain) {
                     paidInvoice = 0;
                     em = 0;
+                    mListMaterial = new ArrayList<>();
                     for (Material mat : inv.getMaterialList()) {
                         if (mat.getAmountPaid() != 0) {
                             paidInvoice = paidInvoice + mat.getAmountPaid();
@@ -344,8 +350,10 @@ public class CollectionFormActivityNew extends BaseActivity {
                             existMat++;
                             em++;
                             totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
+                            mListMaterial.add(mat);
                         }
                     }
+                    inv.setCheckedMaterialList(mListMaterial);
                     inv.setTotal_paid(paidInvoice);
                     if (em > 0) mListLainChecked.add(inv);
                 }
@@ -363,6 +371,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
                         paidInvoice = 0;
                         em = 0;
+                        mListMaterial = new ArrayList<>();
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
                                 paidInvoice = paidInvoice + mat.getAmountPaid();
@@ -370,8 +379,10 @@ public class CollectionFormActivityNew extends BaseActivity {
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
+                                mListMaterial.add(mat);
                             }
                         }
+                        inv.setCheckedMaterialList(mListMaterial);
                         inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }
@@ -398,6 +409,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
                         paidInvoice = 0;
                         em = 0;
+                        mListMaterial = new ArrayList<>();
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
                                 paidInvoice = paidInvoice + mat.getAmountPaid();
@@ -405,8 +417,10 @@ public class CollectionFormActivityNew extends BaseActivity {
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
+                                mListMaterial.add(mat);
                             }
                         }
+                        inv.setCheckedMaterialList(mListMaterial);
                         inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }
@@ -433,6 +447,7 @@ public class CollectionFormActivityNew extends BaseActivity {
                     for (Invoice inv : collectionDetail.getInvoiceList()) {
                         paidInvoice = 0;
                         em = 0;
+                        mListMaterial = new ArrayList<>();
                         for (Material mat : inv.getMaterialList()) {
                             if (mat.getAmountPaid() != 0) {
                                 paidInvoice = paidInvoice + mat.getAmountPaid();
@@ -440,8 +455,10 @@ public class CollectionFormActivityNew extends BaseActivity {
                                 existMat++;
                                 em++;
                                 totalAmountPaid = totalAmountPaid + mat.getAmountPaid();
+                                mListMaterial.add(mat);
                             }
                         }
+                        inv.setCheckedMaterialList(mListMaterial);
                         inv.setTotal_paid(paidInvoice);
                         if (em > 0) invList.add(inv);
                     }

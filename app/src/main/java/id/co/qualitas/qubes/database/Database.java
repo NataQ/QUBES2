@@ -2479,8 +2479,8 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
                 values.put(KEY_STATUS, "paid");
                 values.put(KEY_TYPE_PAYMENT, "cash");
-                values.put(KEY_TOTAL_PAYMENT, request.getTotalPayment());
-                values.put(KEY_LEFT, request.getLeft());
+                values.put(KEY_TOTAL_PAYMENT, request.getCash().getTotalPayment());
+                values.put(KEY_LEFT, request.getCash().getLeft());
                 values.put(KEY_CREATED_BY, request.getUser().getUsername());
                 values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                 values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
@@ -2495,17 +2495,17 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
                     values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
                     values.put(KEY_INVOICE_NO, inv.getNo_invoice());
-                    values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
+                    values.put(KEY_INVOICE_DATE, inv.getInvoice_date());
                     values.put(KEY_INVOICE_TOTAL, inv.getNett());
                     values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
-                    values.put(KEY_TOTAL_PAID, 0);
+                    values.put(KEY_TOTAL_PAID, inv.getTotal_paid());
                     values.put(KEY_CREATED_BY, request.getUser().getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
 
                     idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
 
-                    for (Material material : inv.getMaterialList()) {
+                    for (Material material : inv.getCheckedMaterialList()) {
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                         values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
@@ -2533,8 +2533,8 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
                 values.put(KEY_STATUS, "paid");
                 values.put(KEY_TYPE_PAYMENT, "lain");
-                values.put(KEY_TOTAL_PAYMENT, request.getTotalPayment());
-                values.put(KEY_LEFT, request.getLeft());
+                values.put(KEY_TOTAL_PAYMENT, request.getLain().getTotalPayment());
+                values.put(KEY_LEFT, request.getLain().getLeft());
                 values.put(KEY_CREATED_BY, request.getUser().getUsername());
                 values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                 values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
@@ -2549,17 +2549,17 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
                     values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
                     values.put(KEY_INVOICE_NO, inv.getNo_invoice());
-                    values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
-                    values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                    values.put(KEY_INVOICE_DATE, inv.getInvoice_date());
                     values.put(KEY_INVOICE_TOTAL, inv.getNett());
-                    values.put(KEY_TOTAL_PAID, 0);
+                    values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                    values.put(KEY_TOTAL_PAID, inv.getTotal_paid());
                     values.put(KEY_CREATED_BY, request.getUser().getUsername());
                     values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                     values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
 
                     idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
 
-                    for (Material material : inv.getMaterialList()) {
+                    for (Material material : inv.getCheckedMaterialList()) {
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                         values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
@@ -2597,7 +2597,7 @@ public class Database extends SQLiteOpenHelper {
 
                     idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
-                    for (Invoice inv : collection.getInvoiceList()) {
+                    for (Invoice inv : collection.getCheckedInvoiceList()) {
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                         values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
@@ -2605,17 +2605,17 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
                         values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
                         values.put(KEY_INVOICE_NO, inv.getNo_invoice());
-                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
-                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_DATE, inv.getInvoice_date());
                         values.put(KEY_INVOICE_TOTAL, inv.getNett());
-                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_TOTAL_PAID, inv.getTotal_paid());
                         values.put(KEY_CREATED_BY, request.getUser().getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                         values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
 
                         idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
 
-                        for (Material material : inv.getMaterialList()) {
+                        for (Material material : inv.getCheckedMaterialList()) {
                             values = new ContentValues();
                             values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                             values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
@@ -2660,7 +2660,7 @@ public class Database extends SQLiteOpenHelper {
 
                     idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
-                    for (Invoice inv : collection.getInvoiceList()) {
+                    for (Invoice inv : collection.getCheckedInvoiceList()) {
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                         values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
@@ -2668,17 +2668,17 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
                         values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
                         values.put(KEY_INVOICE_NO, inv.getNo_invoice());
-                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
-                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_DATE, inv.getInvoice_date());
                         values.put(KEY_INVOICE_TOTAL, inv.getNett());
-                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_TOTAL_PAID, inv.getTotal_paid());
                         values.put(KEY_CREATED_BY, request.getUser().getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                         values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
 
                         idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
 
-                        for (Material material : inv.getMaterialList()) {
+                        for (Material material : inv.getCheckedMaterialList()) {
                             values = new ContentValues();
                             values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                             values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
@@ -2723,7 +2723,7 @@ public class Database extends SQLiteOpenHelper {
 
                     idDetail = (int) db.insert(TABLE_COLLECTION_DETAIL, null, values);//return id yg ud d create
 
-                    for (Invoice inv : collection.getInvoiceList()) {
+                    for (Invoice inv : collection.getCheckedInvoiceList()) {
                         values = new ContentValues();
                         values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                         values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
@@ -2731,17 +2731,17 @@ public class Database extends SQLiteOpenHelper {
                         values.put(KEY_ID_DRIVER, request.getUser().getId_driver());
                         values.put(KEY_ID_SALESMAN, request.getUser().getUsername());
                         values.put(KEY_INVOICE_NO, inv.getNo_invoice());
-                        values.put(KEY_INVOICE_DATE, inv.getNo_invoice());
-                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_INVOICE_DATE, inv.getInvoice_date());
                         values.put(KEY_INVOICE_TOTAL, inv.getNett());
-                        values.put(KEY_TOTAL_PAID, 0);
+                        values.put(KEY_CATEGORY_PAYMENT, inv.getCategoryPayment());
+                        values.put(KEY_TOTAL_PAID, inv.getTotal_paid());
                         values.put(KEY_CREATED_BY, request.getUser().getUsername());
                         values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
                         values.put(KEY_IS_SYNC, request.getIsSync()); //0 false, 1 true
 
                         idInvoice = (int) db.insert(TABLE_COLLECTION_INVOICE, null, values);//return id yg ud d create
 
-                        for (Material material : inv.getMaterialList()) {
+                        for (Material material : inv.getCheckedMaterialList()) {
                             values = new ContentValues();
                             values.put(KEY_ID_COLLECTION_DETAIL_DB, String.valueOf(idDetail));
                             values.put(KEY_ID_COLLECTION_INVOICE_DB, String.valueOf(idInvoice));
@@ -4429,7 +4429,7 @@ public class Database extends SQLiteOpenHelper {
                 "and b.typePayment = 'cash' group by a.customerId) b";
 
         String queryOrder = "select coalesce(sum(omzet), 0) as value from OrderHeader where customerId = ? and deleted = 0";
-        String queryCollection =  "select coalesce(sum(c.totalPaid),0) as value from CollectionHeader a \n" +
+        String queryCollection = "select coalesce(sum(c.totalPaid),0) as value from CollectionHeader a \n" +
                 "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
                 "inner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
                 "where a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
@@ -4559,7 +4559,11 @@ public class Database extends SQLiteOpenHelper {
     public List<Invoice> getAllInvoiceCustomer(String idCust) {
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? ";
+        String selectQuery = "select coalesce(b.totalPaid, 0) as totalPaid , a.*\n" +
+                "from InvoiceHeader a \n" +
+                "left join (select sum(totalPaid) as totalPaid, invoiceNo from CollectionInvoice where deleted = 0 group by invoiceNo)\n" +
+                "b on a.invoiceNo = b.invoiceNo\n" +
+                "where a.isVerif = 1 and a.customerId = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
@@ -4573,8 +4577,8 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_NETT)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid")));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
@@ -5890,7 +5894,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
-                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
                 paramModel.setMaterialList(getAllCollectionItem(paramModel.getId()));
 
                 arrayList.add(paramModel);
@@ -6607,7 +6611,7 @@ public class Database extends SQLiteOpenHelper {
 //        String groupBy = " GROUP BY d." + KEY_MATERIAL_ID + "";
 //        String limit = " ORDER BY " + KEY_MATERIAL_ID + " ASC LIMIT " + Constants.LIMIT_ITEM_LIST + " OFFSET " + "0";
 
-        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n";
+//        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n"; gak pakai validasi ini
         String queryOrder = "order by a.materialId ASC ";
         String queryTop = "AND CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END \n";
 
@@ -6626,9 +6630,9 @@ public class Database extends SQLiteOpenHelper {
 
         try {
 //            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
-            if (material_group_id != null) {
-                cursor = db.rawQuery(query + queryTop + queryMaterialGroup + queryOrder,
-                        new String[]{id_sales_group, type_customer, sales_category, id_sales_group, top, top, material_group_id});
+            if (top != null) {
+                cursor = db.rawQuery(query + queryTop + queryOrder,
+                        new String[]{id_sales_group, type_customer, sales_category, id_sales_group, top, top});
             } else {
                 cursor = db.rawQuery(query + queryOrder, new String[]{id_sales_group, type_customer, sales_category});
             }
@@ -6688,7 +6692,7 @@ public class Database extends SQLiteOpenHelper {
                 "where CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END \n";
 
         String queryTop = "AND CASE WHEN ? = 'ON' THEN a.topON = COALESCE(?, a.topON) else a.topGT = COALESCE(?, a.topGT) END \n";
-        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n";
+//        String queryMaterialGroup = "AND a.materialGroupId = COALESCE(?, a.materialGroupId) \n";
         String queryOrder = "order by a.materialId ASC ";
 
         //"LIMIT " + Constants.LIMIT_ITEM_LIST + " offset 0 ";??
@@ -6712,9 +6716,9 @@ public class Database extends SQLiteOpenHelper {
         // Select All Query
         try {
 //            cursor = db.rawQuery(allQuery, new String[]{Helper.getTodayDate(Constants.DATE_FORMAT_3), request.get("udf_5").toString()});
-            if (material_group_id != null) {
-                cursor = db.rawQuery(query + queryTop + queryMaterialGroup + queryOrder,
-                        new String[]{id_sales_group, type_customer, id_stock_request_header, sales_category, id_sales_group, top, top, material_group_id});
+            if (top != null) {
+                cursor = db.rawQuery(query + queryTop + queryOrder,
+                        new String[]{id_sales_group, type_customer, id_stock_request_header, sales_category, id_sales_group, top, top});//material_group_id
             } else {
                 cursor = db.rawQuery(query + queryOrder, new String[]{id_sales_group, type_customer, id_stock_request_header, sales_category});
             }
@@ -6730,6 +6734,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
                     arrayList.add(paramModel);
@@ -8387,7 +8392,7 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_ORDER_DETAIL_EXTRA, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
         db.update(TABLE_ORDER_DETAIL_DISCOUNT, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
 
-        String selectQuery = "select idCollectionHeaderDB from CollectionInvoice where a.invoiceNo = ? ";
+        String selectQuery = "select idCollectionHeaderDB from CollectionInvoice where invoiceNo = ? ";
         String idCollectionHeaderDB = null;
         Cursor cursor = db.rawQuery(selectQuery, new String[]{detail.getIdHeader()});
         if (cursor.moveToFirst()) {

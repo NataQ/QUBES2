@@ -149,7 +149,7 @@ public class OrderDetailActivity extends BaseActivity {
             txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
 //            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
 
-            if (!Helper.isCanvasSales(user)) {
+            if (!Helper.isCanvasSales(user) && orderHeader.isDeleted()) {
                 btnPrint.setVisibility(View.GONE);
             } else {
                 btnPrint.setVisibility(View.VISIBLE);

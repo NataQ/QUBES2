@@ -219,7 +219,8 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
                 @Override
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                    notifyDataSetChanged();
                     dialog.dismiss();
                 }
             });
@@ -282,9 +283,11 @@ public class CollectionInvoiceLainAdapter extends RecyclerView.Adapter<Collectio
                         if (totalPaymentLain > kurangBayarMaterial || totalPaymentLain == kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
+                            totalPaymentLain = totalPaymentLain - kurangBayarMaterial;
                         } else if (totalPaymentLain < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentLain);
+                            totalPaymentLain = totalPaymentLain - kurangBayarMaterial;
                         }
                     }
                 }

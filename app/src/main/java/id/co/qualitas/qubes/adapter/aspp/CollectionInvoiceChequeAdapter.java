@@ -299,9 +299,7 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
 //    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-//        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
         double totalPaymentGiro = chequeAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
-
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
             if (checked) {
@@ -311,9 +309,11 @@ public class CollectionInvoiceChequeAdapter extends RecyclerView.Adapter<Collect
                         if (totalPaymentGiro > kurangBayarMaterial || totalPaymentGiro == kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
+                            totalPaymentGiro = totalPaymentGiro - kurangBayarMaterial;
                         } else if (totalPaymentGiro < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentGiro);
+                            totalPaymentGiro = totalPaymentGiro - totalPaymentGiro;
                         }
                     }
                 }

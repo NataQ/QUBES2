@@ -214,8 +214,8 @@ public class CollectionChequeNewAdapter extends RecyclerView.Adapter<CollectionC
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
         holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);
 
-        List<Bank> bankASPPList = database.getAllBank("Bank ASPP");
-        List<Bank> bankCustomerList = database.getAllBank("Bank Customer");
+        List<Bank> bankASPPList = database.getAllBank("01");
+        List<Bank> bankCustomerList = database.getAllBank("02");
 
         holder.edtNoCheque.addTextChangedListener(new TextWatcher() {
             @Override

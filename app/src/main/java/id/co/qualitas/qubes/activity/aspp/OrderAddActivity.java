@@ -55,7 +55,6 @@ import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Discount;
-import id.co.qualitas.qubes.model.Invoice;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.StockRequest;
@@ -427,7 +426,7 @@ public class OrderAddActivity extends BaseActivity {
         listSpinner = new ArrayList<>();
         listSpinner.addAll(initDataMaterial());
 
-        spinnerAdapter = new SpinnerProductOrderAdapter(OrderAddActivity.this, listSpinner, user, (nameItem, adapterPosition) -> {
+        spinnerAdapter = new SpinnerProductOrderAdapter(OrderAddActivity.this, listSpinner, user, false, (nameItem, adapterPosition) -> {
         });
 
         rv.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -521,16 +520,16 @@ public class OrderAddActivity extends BaseActivity {
 //                            req.put("productId", mat.getId_product_group());
 //                            req.put("matId", mat.getId());
 //                            Material matDetail = database.getPriceMaterial(req);
-                        if (idMatGroup != null) {
-                            if (idMatGroup.equals(mat.getId_material_group())) {
-                                addList.add(mat);
-                            } else {
-                                setToast("Harus product yang grup nya sama");
-                            }
-                        } else {
+//                        if (idMatGroup != null) {
+//                            if (idMatGroup.equals(mat.getId_material_group())) {
+//                                addList.add(mat);
+//                            } else {
+//                                setToast("Harus product yang grup nya sama");
+//                            }
+//                        } else {
                             idMatGroup = mat.getId_material_group();
                             addList.add(mat);
-                        }
+//                        }
 //                        } else {
 //                            addList.add(mat);
 //                        }

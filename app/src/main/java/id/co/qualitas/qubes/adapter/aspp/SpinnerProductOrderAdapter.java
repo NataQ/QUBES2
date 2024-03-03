@@ -33,8 +33,9 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
     protected DecimalFormatSymbols otherSymbols;
     protected DecimalFormat format;
     protected User user;
+    protected boolean extraItem;
 
-    public SpinnerProductOrderAdapter(OrderAddActivity mContext, List<Material> mList, User user, OnAdapterListener onAdapterListener) {
+    public SpinnerProductOrderAdapter(OrderAddActivity mContext, List<Material> mList, User user, boolean extraItem, OnAdapterListener onAdapterListener) {
         if (mList != null) {
             this.mList = mList;
             this.mFilteredList = mList;
@@ -42,6 +43,7 @@ public class SpinnerProductOrderAdapter extends RecyclerView.Adapter<SpinnerProd
             this.mList = new ArrayList<>();
             this.mFilteredList = new ArrayList<>();
         }
+        this.extraItem = extraItem;
         this.user = user;
         this.mContext = mContext;
         this.mInflater = LayoutInflater.from(mContext);

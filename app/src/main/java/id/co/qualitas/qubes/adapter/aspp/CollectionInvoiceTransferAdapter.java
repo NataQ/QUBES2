@@ -299,7 +299,6 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
 //    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-//        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
         double totalPaymentTransfer = transferAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
 
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
@@ -311,9 +310,11 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
                         if (totalPaymentTransfer > kurangBayarMaterial || totalPaymentTransfer == kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
+                            totalPaymentTransfer = totalPaymentTransfer - kurangBayarMaterial;
                         } else if (totalPaymentTransfer < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentTransfer);
+                            totalPaymentTransfer = totalPaymentTransfer - kurangBayarMaterial;
                         }
                     }
                 }

@@ -259,7 +259,7 @@ public class CollectionItemLainAdapter extends RecyclerView.Adapter<CollectionIt
             }
 //            invoiceAdapter.setCheckedAll(invoicePosition);
             invoiceAdapter.notifyItemChanged(invoicePosition);
-            mContext.setLeftCash();
+            mContext.setLeftLain();
         });
     }
 

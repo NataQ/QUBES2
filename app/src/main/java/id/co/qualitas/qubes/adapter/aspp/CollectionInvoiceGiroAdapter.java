@@ -300,7 +300,6 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
 //    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-//        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
         double totalPaymentGiro = giroAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
 
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
@@ -312,9 +311,11 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
                         if (totalPaymentGiro > kurangBayarMaterial || totalPaymentGiro == kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
+                            totalPaymentGiro = totalPaymentGiro - kurangBayarMaterial;
                         } else if (totalPaymentGiro < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentGiro);
+                            totalPaymentGiro = totalPaymentGiro - totalPaymentGiro;
                         }
                     }
                 }
