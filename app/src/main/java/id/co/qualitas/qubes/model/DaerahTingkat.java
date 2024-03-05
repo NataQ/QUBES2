@@ -1,5 +1,7 @@
 package id.co.qualitas.qubes.model;
 
+import com.google.gson.annotations.Expose;
+
 public class DaerahTingkat {
     String idHeader;
     String kode_kelurahan;

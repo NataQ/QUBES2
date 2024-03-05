@@ -364,68 +364,6 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
-                            android:id="@+id/linearOrder"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_bg_account"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="14dp">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_sync_aspp" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                style="@style/TextView_Small"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginStart="8dp"
-                                android:text="@string/navmenu5c"
-                                android:textColor="@color/gray8_aspp" />
-                        </LinearLayout>
-
-                        <!--        <View-->
-                        <!--            android:layout_width="1dp"-->
-                        <!--            android:layout_height="match_parent"-->
-                        <!--            android:background="@color/grey"/>-->
-                        <LinearLayout
-                            android:id="@+id/linearReturn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/selector_bg_account"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="14dp">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_sync_aspp" />
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                style="@style/TextView_Small"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginStart="8dp"
-                                android:text="@string/nav_item_return"
-                                android:textColor="@color/gray8_aspp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
                             android:id="@+id/linearPhoto"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -479,6 +417,69 @@
                                 android:text="Get Discount"
                                 android:textColor="@color/gray8_aspp" />
                         </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/linearOrder"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/navmenu5c"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
+                        <!--        <View-->
+                        <!--            android:layout_width="1dp"-->
+                        <!--            android:layout_height="match_parent"-->
+                        <!--            android:background="@color/grey"/>-->
+                        <LinearLayout
+                            android:id="@+id/linearReturn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:visibility="gone"
+                            android:background="@drawable/selector_bg_account"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_sync_aspp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView_Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="8dp"
+                                android:text="@string/nav_item_return"
+                                android:textColor="@color/gray8_aspp" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout

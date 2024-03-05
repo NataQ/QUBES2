@@ -3,6 +3,7 @@ package id.co.qualitas.qubes.adapter.aspp;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.SparseBooleanArray;
@@ -160,6 +161,14 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
         setFormatSeparator();
         Invoice detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
+        if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).isCheckAllMaterial()) {
+            holder.cbAll.setChecked(true);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+        }else{
+            holder.cbAll.setChecked(false);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+        }
+
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cbAll.setChecked(false);
         } else {
@@ -299,8 +308,9 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
 //    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-        double totalPaymentTransfer = transferAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
+        double totalPaymentTransfer = transferAdapter.getSisaTotalAmountExInvoice(transferPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
 
+        int checkMat = 0;
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
             if (checked) {
@@ -311,10 +321,12 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
                             totalPaymentTransfer = totalPaymentTransfer - kurangBayarMaterial;
+                            checkMat++;
                         } else if (totalPaymentTransfer < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentTransfer);
                             totalPaymentTransfer = totalPaymentTransfer - kurangBayarMaterial;
+                            checkMat++;
                         }
                     }
                 }
@@ -323,6 +335,12 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
                 detail.setAmountPaid(0);
             }
         }
+        if(checkMat == mFilteredList.get(absoluteAdapterPosition).getMaterialList().size()){
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(true);
+        }else{
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(false);
+        }
+//        new Handler().postDelayed(() -> mContext.notifyAdapter(1), 2000);
         mContext.notifyAdapter(1);
 //        notifyItemChanged(absoluteAdapterPosition);
     }
@@ -396,9 +414,9 @@ public class CollectionInvoiceTransferAdapter extends RecyclerView.Adapter<Colle
             if (detail.isChecked()) checked++;
         }
         if (checked == mFilteredList.get(idHeader).getMaterialList().size()) {
-            dataObjectHolder.cbAll.setChecked(true);
+            mFilteredList.get(idHeader).setCheckAllMaterial(true);
         } else {
-            dataObjectHolder.cbAll.setChecked(false);
+            mFilteredList.get(idHeader).setCheckAllMaterial(false);
         }
     }
 //    public double getTotalAmount(int transferPosition) {

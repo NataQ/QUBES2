@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.checkerframework.checker.units.qual.C;
 
@@ -76,6 +78,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String TABLE_ORDER_DETAIL = "OrderDetail";
     private static final String TABLE_ORDER_DETAIL_EXTRA = "OrderDetailExtra";
     private static final String TABLE_ORDER_DETAIL_DISCOUNT = "OrderDetailDiscount";
+    private static final String TABLE_ORDER_DETAIL_DISCOUNT_EXTRA = "OrderDetailDiscountExtra";
     private static final String TABLE_RETURN = "Return";
     private static final String TABLE_COLLECTION_HEADER = "CollectionHeader";
     private static final String TABLE_COLLECTION_DETAIL = "CollectionDetail";
@@ -328,6 +331,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String KEY_TOTAL = "total";
 
     // column table OrderDetailExtra
+    private static final String KEY_ID_ORDER_DETAIL_DISCOUNT_EXTRA_DB = "idOrderDetailDiscountExtraDB";
     private static final String KEY_ID_ORDER_DETAIL_EXTRA_DB = "idOrderDetailExtraDB";
 
     // column table OrderDetailDiscount
@@ -426,8 +430,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_ID_START_VISIT + ", " + KEY_DATE + "," + KEY_ID_SALESMAN + ")"
+            + KEY_UPDATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_STOCK_REQUEST_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_STOCK_REQUEST_HEADER + "("
@@ -448,8 +451,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0, "
-            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_BE + ", " + KEY_REQUEST_DATE + "," + KEY_ID_SALESMAN + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_STOCK_REQUEST_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_STOCK_REQUEST_DETAIL + "("
@@ -470,8 +472,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_STOCK_REQUEST_HEADER_DB + ", " + KEY_MATERIAL_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_MASTER_CUSTOMER_SALESMAN = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_CUSTOMER_SALESMAN + "("
@@ -504,8 +505,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
 //    public static String CREATE_TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_NON_ROUTE_CUSTOMER_PROMOTION + "("
@@ -563,8 +563,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_INVOICE_NO + "," + KEY_DATE + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_INVOICE_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_INVOICE_DETAIL + "("
@@ -583,8 +582,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_INVOICE_NO + ", " + KEY_MATERIAL_ID + "," + KEY_ID_INVOICE_HEADER_DB + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_NOO = "CREATE TABLE IF NOT EXISTS " + TABLE_NOO + "("
@@ -670,8 +668,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_PROMOTION = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_PROMOTION + "("
@@ -689,8 +686,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
+            + KEY_UPDATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_MAX_BON = "CREATE TABLE IF NOT EXISTS " + TABLE_CUSTOMER_MAX_BON + "("
@@ -724,9 +720,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_BY + " TEXT,"
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
-            + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_MATERIAL_GROUP_ID + ")"
+            + KEY_UPDATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_VISIT_SALESMAN = "CREATE TABLE IF NOT EXISTS " + TABLE_VISIT_SALESMAN + "("
@@ -768,8 +762,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_ID_SALESMAN + "," + KEY_DATE + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_STORE_CHECK = "CREATE TABLE IF NOT EXISTS " + TABLE_STORE_CHECK + "("
@@ -790,8 +783,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_ORDER_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_HEADER + "("
@@ -817,7 +809,6 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
             + KEY_IS_SYNC + " INTEGER DEFAULT 0"
-//            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_IMEI + "," + KEY_DO_NUMBER + "," + KEY_SHIPMENT_NUMBER + "," + KEY_SHIPMENT_CATEGORY + ")"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL + "("
@@ -843,8 +834,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_MATERIAL_ID + "," + KEY_ID_ORDER_HEADER_DB + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL_EXTRA + "("
@@ -868,8 +858,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_ID_ORDER_DETAIL_DB + "," + KEY_MATERIAL_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL_DISCOUNT + "("
@@ -887,8 +876,26 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_ORDER_HEADER_DB + ", " + KEY_DISCOUNT_ID + "," + KEY_MATERIAL_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
+            + ")";
+
+    public static String CREATE_TABLE_ORDER_DETAIL_DISCOUNT_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_ORDER_DETAIL_DISCOUNT_EXTRA + "("
+            + KEY_ID_ORDER_DETAIL_DISCOUNT_EXTRA_DB + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + KEY_ID_ORDER_DETAIL_EXTRA_DB + " TEXT,"
+            + KEY_ID_ORDER_DETAIL_DB + " TEXT,"
+            + KEY_ID_ORDER_HEADER_DB + " TEXT,"
+            + KEY_CUSTOMER_ID + " TEXT,"
+            + KEY_MATERIAL_ID + " TEXT,"
+            + KEY_DISCOUNT_ID + " TEXT,"
+            + KEY_DISCOUNT_NAME + " TEXT,"
+            + KEY_DISCOUNT_PRICE + " REAL,"
+            + KEY_TOTAL + " REAL,"
+            + KEY_CREATED_BY + " TEXT,"
+            + KEY_CREATED_DATE + " TEXT,"
+            + KEY_UPDATED_BY + " TEXT,"
+            + KEY_UPDATED_DATE + " TEXT,"
+            + KEY_DELETED + " INTEGER DEFAULT 0,"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_RETURN = "CREATE TABLE IF NOT EXISTS " + TABLE_RETURN + "("
@@ -914,8 +921,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CREATED_DATE + " TEXT,"
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_CUSTOMER_ID + ", " + KEY_DATE + "," + KEY_MATERIAL_ID + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_HEADER = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_HEADER + "("
@@ -953,8 +959,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_INVOICE = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_INVOICE + "("
@@ -974,8 +979,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_COLLECTION_DETAIL_DB + ", " + KEY_ID_COLLECTION_HEADER_DB + "," + KEY_ID_COLLECTION_INVOICE_DB + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_COLLECTION_ITEM = "CREATE TABLE IF NOT EXISTS " + TABLE_COLLECTION_ITEM + "("
@@ -997,8 +1001,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_UPDATED_BY + " TEXT,"
             + KEY_UPDATED_DATE + " TEXT,"
             + KEY_DELETED + " INTEGER DEFAULT 0,"
-            + KEY_IS_SYNC + " INTEGER DEFAULT 0,"
-            + " UNIQUE (" + KEY_ID_COLLECTION_ITEM_DB + ", " + KEY_ID_COLLECTION_DETAIL_DB + "," + KEY_ID_COLLECTION_HEADER_DB + "," + KEY_ID_COLLECTION_INVOICE_DB + ")"
+            + KEY_IS_SYNC + " INTEGER DEFAULT 0"
             + ")";
 
     public static String CREATE_TABLE_MASTER_REASON = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_REASON + "("
@@ -1027,8 +1030,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_VALID_FROM_PROMOTION + " TEXT,"
             + KEY_VALID_TO_PROMOTION + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_ID_PROMOTION + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_LOG = "CREATE TABLE IF NOT EXISTS " + TABLE_LOG + "("
@@ -1048,8 +1050,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_CATEGORY + " TEXT,"
             + KEY_NO_REK + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_ID_BANK_BE + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_MASTER_MATERIAL = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MATERIAL + "("
@@ -1067,8 +1068,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_TOP_GT + " TEXT,"
             + KEY_TOP_ON + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_MATERIAL_ID + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_MASTER_PRICE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE + "("
@@ -1103,8 +1103,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_QTY_MIN + " REAL,"
             + KEY_QTY_MAX + " REAL,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_UOM + ", " + KEY_MATERIAL_ID + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_MASTER_DAERAH_TINGKAT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_DAERAH_TINGKAT + "("
@@ -1119,8 +1118,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_ID_PROVINSI + " TEXT,"
             + KEY_NAME_PROVINSI + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_KODE_POS + ", " + KEY_ID_DESA_KELURAHAN + "," + KEY_ID_KECAMATAN + "," + KEY_ID_KOTA_KABUPATEN + "," + KEY_ID_PROVINSI + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
 //    public static String CREATE_TABLE_MASTER_PRICE_CODE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_PRICE_CODE + "("
@@ -1162,9 +1160,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_KEY_PARAMETER + " TEXT,"
             + KEY_VALUE + " TEXT,"
             + KEY_DESC + " TEXT,"
-            + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_KEY_PARAMETER + ")"
+            + KEY_CREATED_BY + " TEXT"
             + ")";
 
     public static String CREATE_TABLE_CUSTOMER_TYPE = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_CUSTOMER_TYPE + "("
@@ -1173,8 +1169,7 @@ public class Database extends SQLiteOpenHelper {
             + KEY_SALES_GROUP + " TEXT,"
             + KEY_NAME_TYPE_PRICE + " TEXT,"
             + KEY_CREATED_BY + " TEXT,"
-            + KEY_CREATED_DATE + " TEXT,"
-            + " UNIQUE (" + KEY_ID_TYPE_PRICE + ")"
+            + KEY_CREATED_DATE + " TEXT"
             + ")";
 
 //    public static String CREATE_TABLE_MAX_BON_LIMIT = "CREATE TABLE IF NOT EXISTS " + TABLE_MASTER_MAX_BON_LIMIT + "("
@@ -1231,6 +1226,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ORDER_DETAIL);
         db.execSQL(CREATE_TABLE_ORDER_DETAIL_DISCOUNT);
         db.execSQL(CREATE_TABLE_ORDER_DETAIL_EXTRA);
+        db.execSQL(CREATE_TABLE_ORDER_DETAIL_DISCOUNT_EXTRA);
         db.execSQL(CREATE_TABLE_RETURN);
         db.execSQL(CREATE_TABLE_COLLECTION_HEADER);
         db.execSQL(CREATE_TABLE_COLLECTION_DETAIL);
@@ -1278,6 +1274,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAIL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAIL_DISCOUNT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAIL_EXTRA);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_DETAIL_DISCOUNT_EXTRA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RETURN);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_HEADER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COLLECTION_DETAIL);
@@ -2479,6 +2476,7 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
                 values.put(KEY_STATUS, "paid");
                 values.put(KEY_TYPE_PAYMENT, "cash");
+                values.put(KEY_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_3));
                 values.put(KEY_TOTAL_PAYMENT, request.getCash().getTotalPayment());
                 values.put(KEY_LEFT, request.getCash().getLeft());
                 values.put(KEY_CREATED_BY, request.getUser().getUsername());
@@ -2533,6 +2531,7 @@ public class Database extends SQLiteOpenHelper {
                 values.put(KEY_ID_COLLECTION_HEADER_DB, idMobileCollection);
                 values.put(KEY_STATUS, "paid");
                 values.put(KEY_TYPE_PAYMENT, "lain");
+                values.put(KEY_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_3));
                 values.put(KEY_TOTAL_PAYMENT, request.getLain().getTotalPayment());
                 values.put(KEY_LEFT, request.getLain().getLeft());
                 values.put(KEY_CREATED_BY, request.getUser().getUsername());
@@ -3336,6 +3335,35 @@ public class Database extends SQLiteOpenHelper {
         }
         //db.close();
         return id;
+    }
+
+    public void addMasterDaerahTingkat(List<DaerahTingkat> mList, String idSales, Context context) {
+        SQLiteDatabase db = getWritableDatabase();
+        String sql = "INSERT OR IGNORE INTO " + TABLE_MASTER_DAERAH_TINGKAT + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+        SQLiteStatement statement = db.compileStatement(sql);
+        db.beginTransaction();
+        try {
+            for (DaerahTingkat param : mList) {
+                statement.clearBindings();
+                statement.bindLong(1, param.getKode_pos());
+                statement.bindString(2, param.getKode_kelurahan());
+                statement.bindString(3, param.getNama_kelurahan());
+                statement.bindString(4, param.getKode_kecamatan());
+                statement.bindString(5, param.getNama_kecamatan());
+                statement.bindString(6, param.getKode_kabupaten());
+                statement.bindString(7, param.getNama_kabupaten());
+                statement.bindString(8, param.getKode_provinsi());
+                statement.bindString(9, param.getNama_provinsi());
+                statement.bindString(10, idSales);
+                statement.bindString(11, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                statement.executeInsert();
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public int addMasterDaerahTingkat(DaerahTingkat param, String idSales) {
@@ -4368,39 +4396,39 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
-    public double getLKCustomerDailySalesman(Customer cust) {
-        // Select All Query
-        double result = 0;
-        String lkQuery = "";
-        if (cust.isNoo()) {
-            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_NOO + " WHERE " + KEY_ID_NOO_DB + " = ?) a  , ";
-        } else {
-            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ?) a  , ";
-        }
-
-        String selectQuery = "SELECT a." + KEY_CREDIT_LIMIT + " - b.value + c.value as " + KEY_CREDIT_LIMIT + " " +
-                "from " +
-                lkQuery +
-//                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'CO') b , " +
-                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DELETED + " = 0 ) b , " +
-                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
-                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
-                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b." + KEY_DELETED + " = 0) c ";
-
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
-            }
-        }
-
-        assert cursor != null;
-        cursor.close();
-        return result;
-    }
+//    public double getLKCustomerDailySalesman(Customer cust) {
+//        // Select All Query
+//        double result = 0;
+//        String lkQuery = "";
+//        if (cust.isNoo()) {
+//            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_NOO + " WHERE " + KEY_ID_NOO_DB + " = ?) a  , ";
+//        } else {
+//            lkQuery = "(SELECT " + KEY_CREDIT_LIMIT + " FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ?) a  , ";
+//        }
+//
+//        String selectQuery = "SELECT a." + KEY_CREDIT_LIMIT + " - b.value + c.value as " + KEY_CREDIT_LIMIT + " " +
+//                "from " +
+//                lkQuery +
+////                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_ORDER_TYPE + " = 'CO') b , " +
+//                "(SELECT COALESCE(sum(" + KEY_OMZET + "),0) AS value FROM " + TABLE_ORDER_HEADER + " WHERE " + KEY_CUSTOMER_ID + " = ? and " + KEY_DELETED + " = 0 ) b , " +
+//                "(SELECT COALESCE(sum(b." + KEY_TOTAL_PAYMENT + "), 0) AS value FROM " + TABLE_INVOICE_HEADER + " a  " +
+//                "INNER JOIN " + TABLE_COLLECTION_DETAIL + " b on b." + KEY_INVOICE_NO + " = a." + KEY_INVOICE_NO + " and " + KEY_TYPE_PAYMENT + " = 'cash'  " +
+//                "WHERE a." + KEY_CUSTOMER_ID + " = ? and b." + KEY_DELETED + " = 0) c ";
+//
+//
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId(), cust.getId(), cust.getId()});
+//
+//        if (cursor != null) {
+//            if (cursor.moveToFirst()) {
+//                result = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT));
+//            }
+//        }
+//
+//        assert cursor != null;
+//        cursor.close();
+//        return result;
+//    }
 
     public double getLKCustomer(Customer cust) {
         // Select All Query
@@ -4433,7 +4461,7 @@ public class Database extends SQLiteOpenHelper {
                 "inner join CollectionDetail b on a.idCollectionHeaderDB = b.idCollectionHeaderDB \n" +
                 "inner join CollectionInvoice c on b.idCollectionDetailDB = c.idCollectionDetailDB\n" +
                 "where a.customerId = ? and a.deleted = 0 and b.deleted = 0 \n" +
-                "and b.typePayment = 'cash' group by a.customerId";
+                "and b.typePayment != 'giro' and b.typePayment != 'cheque' group by a.customerId";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4608,7 +4636,7 @@ public class Database extends SQLiteOpenHelper {
                 "left join (select sum(amountPaid) as paidAmount, invoiceNo, materialId \n" +
                 "from CollectionItem WHERE deleted = 0 group by invoiceNo) b \n" +
                 "on a.idOrderHeaderDB = b.invoiceNo \n" +
-                "where a.customerId = ? and ifnull(b.paidAmount, 0) < a.omzet ";
+                "where a.customerId = ? and ifnull(b.paidAmount, 0) < a.omzet and a.deleted = 0 ";
 
 //        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and " + KEY_CUSTOMER_ID + " = ? ";
 
@@ -4632,7 +4660,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
-                paramModel.setMaterialList(getAllInvoiceDetail(paramModel));
+                paramModel.setMaterialList(getAllInvoiceCollection(paramModel));
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -4696,59 +4724,22 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Material> getAllInvoiceDetail(Invoice invoice) {
-//        List<Material> arrayList = new ArrayList<>();
-//        // Select All Query
-//        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_DETAIL + " WHERE " + KEY_ID_INVOICE_HEADER_DB + " = ? ";
-//
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(selectQuery, new String[]{idHeader});
-//
-//        if (cursor.moveToFirst()) {
-//            do {
-//                Material paramModel = new Material();
-//                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_DETAIL_DB)));
-//                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
-//                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
-////                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
-//                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)) - cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-//                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
-//                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
-//                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
-//                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
-//                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)) - cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
-//                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
-//                paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
-//
-//                arrayList.add(paramModel);
-//            } while (cursor.moveToNext());
-//        }
-//        cursor.close();
-//        return arrayList;
-
+    public List<Material> getAllInvoiceCollection(Invoice invoice) {
         List<Material> arrayList = new ArrayList<>();
-//        String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
-//                "a.materialProductName, (a.price  - sum(ifnull(d.amountPaid , 0)))  as  total,\n" +
-//                "sum(ifnull(d.amountPaid , 0)) as  paid\n" +
-//                "from  InvoiceDetail a \n" +
-//                "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
-//                "left join  CollectionHeader  b on ih.invoiceNo  = b.invoiceNo and b.customerId  = ih.customerId and ih.invoiceDate = b.invoiceDate and b.deleted = 0 \n" +
-//                "left join  CollectionDetail  c on c.idCollectionHeaderDB  = b.idCollectionHeaderDB and c.deleted = 0\n" +
-//                "left join  CollectionItem  d on d.idCollectionDetailDB = c.idCollectionDetailDB and a.materialId  = d.materialId and d.deleted = 0 \n" +
-//                "where a.invoiceNo = ? and ih.invoiceDate = ? \n" +
-//                "group by a.invoiceNo, a.materialId";
 
         String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
-                "a.materialProductName, (a.price  - sum(ifnull(coll.amountPaid , 0)))  as  total, \n" +
+                "a.materialProductName, a.price, (a.price  - sum(ifnull(coll.amountPaid , 0))) as  total, \n" +
                 "sum(ifnull(coll.amountPaid , 0)) as  paid \n" +
                 "from  InvoiceDetail a \n" +
                 "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
                 "left join \n" +
-                "(select sum(ci.amountPaid) as amountPaid, ci.materialId, ci.invoiceNo, cin.customerId\n" +
+                "(select sum(a.amountPaid) as amountPaid, a.materialId, a.invoiceNo, a.customerId from \n" +
+                "(select ci.materialId, ci.invoiceNo, cin.customerId, ci.amountPaid \n" +
                 "from CollectionItem ci \n" +
-                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo \n" +
-                "where cin.deleted = 0 and ci.deleted = 0 \n" +
-                "group by ci.materialId, ci.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
+                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo and cin.deleted = 0\n" +
+                "where ci.deleted = 0 \n" +
+                "group by ci.idCollectionInvoiceDB\n" +
+                ") a group by a.materialId, a.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
                 "where a.invoiceNo = ? and ih.invoiceDate = ? group by a.invoiceNo, a.materialId";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -4766,16 +4757,52 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                 paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
-                paramModel.setSisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 arrayList.add(paramModel);
-
-                totalPaid = totalPaid + cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID));
             } while (cursor.moveToNext());
         }
+        cursor.close();
+        return arrayList;
+    }
 
-        if (Helper.isNotEmptyOrNull(arrayList)) {
-            arrayList.get(0).setTotalAmountPaid(totalPaid);
+    public List<Material> getAllInvoiceDetail(Invoice invoice) {
+        List<Material> arrayList = new ArrayList<>();
+
+        String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
+                "a.materialProductName, a.price, (a.price  - sum(ifnull(coll.amountPaid , 0))) as  total, \n" +
+                "sum(ifnull(coll.amountPaid , 0)) as  paid \n" +
+                "from  InvoiceDetail a \n" +
+                "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
+                "left join \n" +
+                "(select sum(a.amountPaid) as amountPaid, a.materialId, a.invoiceNo, a.customerId from \n" +
+                "(select ci.materialId, ci.invoiceNo, cin.customerId, ci.amountPaid \n" +
+                "from CollectionItem ci \n" +
+                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo and cin.deleted = 0\n" +
+                "where ci.deleted = 0 \n" +
+                "group by ci.idCollectionInvoiceDB\n" +
+                ") a group by a.materialId, a.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
+                "where a.invoiceNo = ? and ih.invoiceDate = ? group by a.invoiceNo, a.materialId";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoice.getNo_invoice(), invoice.getInvoice_date()});
+        double totalPaid = 0;
+        Material paramModel = null;
+        if (cursor.moveToFirst()) {
+            do {
+                paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setAmountPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
         }
         cursor.close();
         return arrayList;
@@ -4959,8 +4986,12 @@ public class Database extends SQLiteOpenHelper {
 
     public List<Invoice> getAllInvoiceHeaderVerif() {
         List<Invoice> arrayList = new ArrayList<>();
-//        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 and (" + KEY_INVOICE_TOTAL + " - " + KEY_PAID + " != 0)";
-        String selectQuery = "SELECT * FROM " + TABLE_INVOICE_HEADER + " WHERE " + KEY_IS_VERIF + " = 1 ";
+
+        String selectQuery = "select coalesce(b.totalPaid, 0) as totalPaid , a.*\n" +
+                "from InvoiceHeader a \n" +
+                "left join (select sum(totalPaid) as totalPaid, invoiceNo from CollectionInvoice where deleted = 0 group by invoiceNo)\n" +
+                "b on a.invoiceNo = b.invoiceNo\n" +
+                "where a.isVerif = 1";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -4968,13 +4999,13 @@ public class Database extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Invoice paramModel = new Invoice();
-                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_INVOICE_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
                 paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
                 paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                 paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DUE_DATE)));
-                paramModel.setTotal_paid(getTotalPaidInvoice(paramModel.getNo_invoice()));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid")));
                 paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
                 paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
@@ -5738,7 +5769,7 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionDetail> getAllCollectionDetailCash(String id) {
         List<CollectionDetail> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cash\'";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cash\' and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5748,6 +5779,7 @@ public class Database extends SQLiteOpenHelper {
                 CollectionDetail paramModel = new CollectionDetail();
                 paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
                 paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
@@ -5763,7 +5795,7 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionDetail> getAllCollectionDetailTransfer(String id) {
         List<CollectionDetail> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'transfer\'";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'transfer\' and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5789,7 +5821,7 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionDetail> getAllCollectionDetailGiro(String id) {
         List<CollectionDetail> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'giro\'";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'giro\' and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5821,7 +5853,7 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionDetail> getAllCollectionDetailCheque(String id) {
         List<CollectionDetail> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cheque\'";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'cheque\' and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5853,7 +5885,7 @@ public class Database extends SQLiteOpenHelper {
     public List<CollectionDetail> getAllCollectionDetailLain(String id) {
         List<CollectionDetail> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'lain\'";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_DETAIL + " WHERE " + KEY_ID_COLLECTION_HEADER_DB + " = ? and " + KEY_TYPE_PAYMENT + " = \'lain\' and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -5864,6 +5896,7 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdDetail(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_DETAIL_DB)));
                 paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setTgl(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                 paramModel.setTotalPayment(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAYMENT)));
                 paramModel.setLeft(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_LEFT)));
                 paramModel.setInvoiceList(getAllCollectionInvoice(paramModel.getIdDetail()));
@@ -5878,7 +5911,7 @@ public class Database extends SQLiteOpenHelper {
     public List<Invoice> getAllCollectionInvoice(String id) {
         List<Invoice> arrayList = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_INVOICE + " WHERE " + KEY_ID_COLLECTION_DETAIL_DB + " = ? ";
+        String selectQuery = "SELECT * FROM " + TABLE_COLLECTION_INVOICE + " WHERE " + KEY_ID_COLLECTION_DETAIL_DB + " = ? and " + KEY_DELETED + " = 0 ";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{id});
@@ -8205,12 +8238,8 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_COLLECTION_HEADER_DB)));
                     paramModel.setIdDriver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
                     paramModel.setCustomerId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
-                    paramModel.setInvoiceNo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
-                    paramModel.setInvoiceDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_DATE)));
-                    paramModel.setInvoiceTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_INVOICE_TOTAL)));
                     paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
                     paramModel.setTypePayment(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_PAYMENT)));
-                    paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_PAID)));
                     paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                     paramModel.setCashList(getAllCollectionDetailCash(paramModel.getIdHeader()));//sync data
                     paramModel.setTfList(getAllCollectionDetailTransfer(paramModel.getIdHeader()));
@@ -8315,17 +8344,51 @@ public class Database extends SQLiteOpenHelper {
         return result;
     }
 
+    public boolean updatePrintCustomer(Map param) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        boolean result = false;
+
+        int printBonCustomer = 0;
+        // Select All Query
+        String selectQuery = "SELECT " + KEY_PRINT_BON + " FROM " + TABLE_CUSTOMER + " WHERE " + KEY_CUSTOMER_ID + " = ? ";
+
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{param.get("id_customer").toString()});
+
+        try {
+            if (cursor.moveToFirst()) {
+                printBonCustomer = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON));
+            }
+        } catch (Exception e) {
+            printBonCustomer = 0;
+        }
+        cursor.close();
+
+        try {
+            values.put(KEY_PRINT_BON, printBonCustomer + 1);
+            values.put(KEY_UPDATED_BY, param.get("username").toString());
+            values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+
+            db.update(TABLE_CUSTOMER, values, KEY_CUSTOMER_ID + " = ? ", new String[]{param.get("id_customer").toString()});
+//            db.setTransactionSuccessful();
+            result = true;
+        } catch (Exception e) {
+            Log.e("updatePrint", e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
     public boolean updatePrint(Map param) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         boolean result = false;
         try {
-            values.put(KEY_PRINT_ORDER, ((Integer) param.get("print")) + 1);
+            values.put(KEY_PRINT_ORDER, ((Integer) param.get("print")));
             values.put(KEY_UPDATED_BY, param.get("username").toString());
             values.put(KEY_UPDATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
             db.update(TABLE_ORDER_HEADER, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{param.get("id").toString()});
-//            db.setTransactionSuccessful();
             result = true;
         } catch (Exception e) {
             Log.e("updatePrint", e.getMessage());
@@ -8391,6 +8454,7 @@ public class Database extends SQLiteOpenHelper {
         db.update(TABLE_ORDER_DETAIL, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
         db.update(TABLE_ORDER_DETAIL_EXTRA, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
         db.update(TABLE_ORDER_DETAIL_DISCOUNT, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
+        db.update(TABLE_ORDER_DETAIL_DISCOUNT_EXTRA, values, KEY_ID_ORDER_HEADER_DB + " = ? ", new String[]{detail.getIdHeader()});
 
         String selectQuery = "select idCollectionHeaderDB from CollectionInvoice where invoiceNo = ? ";
         String idCollectionHeaderDB = null;
@@ -8823,6 +8887,7 @@ public class Database extends SQLiteOpenHelper {
         deleteOrderHeader();
         deleteOrderDetail();
         deleteOrderDetailDiscount();
+        deleteOrderDetailDiscountExtra();
         deleteOrderDetailExtra();
         deleteReturn();
         deleteCollectionHeader();
@@ -8941,6 +9006,10 @@ public class Database extends SQLiteOpenHelper {
 
     public void deleteOrderDetailDiscount() {
         this.getWritableDatabase().execSQL("delete from " + TABLE_ORDER_DETAIL_DISCOUNT);
+    }
+
+    public void deleteOrderDetailDiscountExtra() {
+        this.getWritableDatabase().execSQL("delete from " + TABLE_ORDER_DETAIL_DISCOUNT_EXTRA);
     }
 
     public void deleteReturn() {

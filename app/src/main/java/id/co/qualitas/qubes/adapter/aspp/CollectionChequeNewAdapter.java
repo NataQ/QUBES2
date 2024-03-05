@@ -516,9 +516,9 @@ public class CollectionChequeNewAdapter extends RecyclerView.Adapter<CollectionC
         return left;
     }
 
-    public double getSisaTotalAmountExInvoice(int transferPosition, String invoiceNo) {
+    public double getSisaTotalAmountExInvoice(int chequePosition, String invoiceNo) {
         double sisaAmount = 0, paidAmount = 0;
-        for (Invoice inv : mFilteredList.get(transferPosition).getInvoiceList()) {
+        for (Invoice inv : mFilteredList.get(chequePosition).getInvoiceList()) {
             if (!inv.getNo_invoice().equals(invoiceNo)) {
                 for (Material mat : inv.getMaterialList()) {
                     paidAmount = paidAmount + mat.getAmountPaid();
@@ -526,7 +526,7 @@ public class CollectionChequeNewAdapter extends RecyclerView.Adapter<CollectionC
             }
         }
 
-        sisaAmount = mFilteredList.get(transferPosition).getTotalPayment() - paidAmount;
+        sisaAmount = mFilteredList.get(chequePosition).getTotalPayment() - paidAmount;
         return sisaAmount;
     }
 

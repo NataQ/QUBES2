@@ -74,7 +74,7 @@ public class NotiWorker extends Worker {
             syncDataStoreCheck();
             syncDataCollection();
             syncDataOrder();
-            syncDataReturn();
+//            syncDataReturn();
         }
         if (saveSuccess) {
             Log.e("worker", "success");
@@ -474,8 +474,6 @@ public class NotiWorker extends Worker {
         if (customerList != null) {
             if (!customerList.isEmpty()) {
                 returnList = new ArrayList<>();
-//                List<Material> mList = new ArrayList<>();
-//                Map header = new HashMap();
                 for (Customer customer : customerList) {
                     returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
                     if (returnList != null) {
@@ -483,24 +481,6 @@ public class NotiWorker extends Worker {
                     } else {
                         setDataSyncSuccess = false;
                     }
-//                    mList = new ArrayList<>();
-//                    mList = database.getAllReturnCheckOut(customer.getId());
-//                    if (mList != null) {
-//                        if (!mList.isEmpty()) {
-//                            header = new HashMap();
-//                            header.put("id_mobile", mList.get(0).getIdheader());
-//                            header.put("date", mList.get(0).getDate());
-//                            header.put("id_salesman", user.getUsername());
-//                            header.put("id_customer", mList.get(0).getId_customer());
-//                            header.put("listData", mList);
-//                            returnList.add(header);
-//                            setDataSyncSuccess = true;
-//                        } else {
-//                            setDataSyncSuccess = true;
-//                        }
-//                    } else {
-//                        setDataSyncSuccess = false;
-//                    }
                 }
                 if (!setDataSyncSuccess) {
                     logResult = new WSMessage();

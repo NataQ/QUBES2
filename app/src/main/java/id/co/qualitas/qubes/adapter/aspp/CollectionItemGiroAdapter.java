@@ -263,7 +263,7 @@ public class CollectionItemGiroAdapter extends RecyclerView.Adapter<CollectionIt
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setChecked(false);
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(0);
             }
-//            invoiceAdapter.setCheckedAll(invoicePosition);
+            invoiceAdapter.setCheckedAll(invoicePosition);
             mContext.notifyAdapter(2);
 //            giroAdapter.notifyItemChanged(giroPosition);
         });

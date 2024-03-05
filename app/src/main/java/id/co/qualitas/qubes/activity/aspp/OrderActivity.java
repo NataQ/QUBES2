@@ -223,7 +223,8 @@ public class OrderActivity extends BaseActivity {
         }
 
         setAdapter();
-        if (Helper.isEmptyOrNull(mList)) requestData();
+        requestData();
+//        if (Helper.isEmptyOrNull(mList)) requestData();
     }
 
     public void requestData() {

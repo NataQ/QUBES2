@@ -10,10 +10,10 @@ public class CollectionHeader implements Serializable, Cloneable {
     public String date;
     public String customerId;
     public String idDriver;
-    public String invoiceNo;
-    public String invoiceDate;
+//    public String invoiceNo;
+//    public String invoiceDate;
     public String typePayment;
-    public double invoiceTotal;
+//    public double invoiceTotal;
     public double totalPaid;
     public String status;
     public List<CollectionDetail> detailList;
@@ -116,29 +116,29 @@ public class CollectionHeader implements Serializable, Cloneable {
         this.customerId = customerId;
     }
 
-    public String getInvoiceNo() {
-        return invoiceNo;
-    }
-
-    public void setInvoiceNo(String invoiceNo) {
-        this.invoiceNo = invoiceNo;
-    }
-
-    public String getInvoiceDate() {
-        return invoiceDate;
-    }
-
-    public void setInvoiceDate(String invoiceDate) {
-        this.invoiceDate = invoiceDate;
-    }
-
-    public double getInvoiceTotal() {
-        return invoiceTotal;
-    }
-
-    public void setInvoiceTotal(double invoiceTotal) {
-        this.invoiceTotal = invoiceTotal;
-    }
+//    public String getInvoiceNo() {
+//        return invoiceNo;
+//    }
+//
+//    public void setInvoiceNo(String invoiceNo) {
+//        this.invoiceNo = invoiceNo;
+//    }
+//
+//    public String getInvoiceDate() {
+//        return invoiceDate;
+//    }
+//
+//    public void setInvoiceDate(String invoiceDate) {
+//        this.invoiceDate = invoiceDate;
+//    }
+//
+//    public double getInvoiceTotal() {
+//        return invoiceTotal;
+//    }
+//
+//    public void setInvoiceTotal(double invoiceTotal) {
+//        this.invoiceTotal = invoiceTotal;
+//    }
 
     public double getTotalPaid() {
         return totalPaid;

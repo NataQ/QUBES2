@@ -49,7 +49,8 @@ import id.co.qualitas.qubes.utils.Utils;
 
 public class InvoiceDetailActivity extends BaseActivity {
     private InvoiceDetailAdapter mAdapter;
-    private TextView txtInvoiceDate, txtInvoiceNo, txtTglJatuhTempo, txtCustomer, txtInvoiceTotal;
+    private TextView txtInvoiceDate, txtInvoiceNo, txtTglJatuhTempo,
+            txtCustomer, txtInvoiceTotal, txtInvoicePaid, txtNett;
     private Invoice header;
     private List<Material> mList;
 
@@ -93,6 +94,8 @@ public class InvoiceDetailActivity extends BaseActivity {
             txtCustomer.setText(idCustomer + "-" + nameCustomer);
             txtInvoiceNo.setText(Helper.isEmpty(header.getNo_invoice(), "-"));
             txtInvoiceTotal.setText("Rp." + format.format(header.getAmount()));
+            txtInvoicePaid.setText("Rp." + format.format(header.getTotal_paid()));
+            txtNett.setText("Rp." + format.format(header.getNett()));
 
             if (!Helper.isNullOrEmpty(header.getInvoice_date())) {
                 String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, header.getInvoice_date());
@@ -123,11 +126,13 @@ public class InvoiceDetailActivity extends BaseActivity {
         txtTglJatuhTempo = findViewById(R.id.txtTglJatuhTempo);
         txtInvoiceNo = findViewById(R.id.txtInvoiceNo);
         txtInvoiceDate = findViewById(R.id.txtInvoiceDate);
+        txtInvoiceTotal = findViewById(R.id.txtInvoiceTotal);
+        txtNett = findViewById(R.id.txtNett);
+        txtInvoicePaid = findViewById(R.id.txtInvoicePaid);
         swipeLayout = findViewById(R.id.swipeLayout);
         progressCircle = findViewById(R.id.progressCircle);
         imgBack = findViewById(R.id.imgBack);
         imgLogOut = findViewById(R.id.imgLogOut);
-        txtInvoiceTotal = findViewById(R.id.txtInvoiceTotal);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);

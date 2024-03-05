@@ -61,7 +61,6 @@ public class OrderDetailActivity extends BaseActivity {
         setContentView(R.layout.aspp_activity_order_detail);
 
         initialize();
-        initData();
 
         btnPrint.setOnClickListener(v -> {
             if (orderHeader.getPrintOrder() < database.getMaxPrint()) {
@@ -93,7 +92,7 @@ public class OrderDetailActivity extends BaseActivity {
         Button btnNo = dialog.findViewById(R.id.btnNo);
         Button btnYes = dialog.findViewById(R.id.btnYes);
         txtTitle.setText("Print");
-        txtDialog.setText("Print again?");
+        txtDialog.setText("Print Order?");
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,11 +148,13 @@ public class OrderDetailActivity extends BaseActivity {
             txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
 //            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
 
-            if (!Helper.isCanvasSales(user) && orderHeader.isDeleted()) {
+            if (!Helper.isCanvasSales(user) || orderHeader.isDeleted()) {
                 btnPrint.setVisibility(View.GONE);
             } else {
                 btnPrint.setVisibility(View.VISIBLE);
             }
+
+            btnPrint.setText("Print\n" + String.valueOf(orderHeader.getPrintOrder()) + "/" + database.getMaxPrint());
 
             if (!Helper.isEmpty(orderHeader.getStatus())) {
                 switch (orderHeader.getStatus()) {
@@ -228,5 +229,7 @@ public class OrderDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+        initData();
+
     }
 }

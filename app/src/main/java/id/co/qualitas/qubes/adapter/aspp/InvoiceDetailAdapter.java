@@ -84,7 +84,7 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtNo, txtProduct, txtPrice;
+        TextView txtNo, txtProduct, txtPrice, txtPaid;
         OnAdapterListener onAdapterListener;
 
         public Holder(View itemView, OnAdapterListener onAdapterListener) {
@@ -92,6 +92,7 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
             txtNo = itemView.findViewById(R.id.txtNo);
             txtProduct = itemView.findViewById(R.id.txtProduct);
             txtPrice = itemView.findViewById(R.id.txtPrice);
+            txtPaid = itemView.findViewById(R.id.txtPaid);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -119,6 +120,7 @@ public class InvoiceDetailAdapter extends RecyclerView.Adapter<InvoiceDetailAdap
         holder.txtNo.setText(format.format(holder.getAbsoluteAdapterPosition() + 1) + ".");
         holder.txtProduct.setText(idMat + " - " + nameMat);
         holder.txtPrice.setText("Rp."+format.format(detail.getPrice()));
+        holder.txtPaid.setText("Rp."+format.format(detail.getAmountPaid()));
     }
 
     @Override

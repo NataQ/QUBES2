@@ -515,9 +515,9 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
         return left;
     }
 
-    public double getSisaTotalAmountExInvoice(int transferPosition, String invoiceNo) {
+    public double getSisaTotalAmountExInvoice(int giroPosition, String invoiceNo) {
         double sisaAmount = 0, paidAmount = 0;
-        for (Invoice inv : mFilteredList.get(transferPosition).getInvoiceList()) {
+        for (Invoice inv : mFilteredList.get(giroPosition).getInvoiceList()) {
             if (!inv.getNo_invoice().equals(invoiceNo)) {
                 for (Material mat : inv.getMaterialList()) {
                     paidAmount = paidAmount + mat.getAmountPaid();
@@ -525,7 +525,7 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             }
         }
 
-        sisaAmount = mFilteredList.get(transferPosition).getTotalPayment() - paidAmount;
+        sisaAmount = mFilteredList.get(giroPosition).getTotalPayment() - paidAmount;
         return sisaAmount;
     }
 

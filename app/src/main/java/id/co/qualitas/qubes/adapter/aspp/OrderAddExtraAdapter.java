@@ -216,6 +216,8 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                         Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                         holder.edtQty.clearFocus();
                         holder.edtQty.setText("0");
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
                     }
                 }
             }
@@ -256,12 +258,15 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                                     holder.edtQty.setText("0");
                                 } else {
                                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
                                 }
                             } else {
                                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
                             }
                         } else {
                             mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
+                            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
                         }
                     }
 //                else {
@@ -281,21 +286,13 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             Button btnYes = alertDialog.findViewById(R.id.btnYes);
             txtTitle.setText("Delete Extra");
             txtDialog.setText("Are you sure want to delete the item?");
-            btnYes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+            btnYes.setOnClickListener(view -> {
+                mFilteredList.remove(holder.getAbsoluteAdapterPosition());
 //                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-                    notifyDataSetChanged();
-                    alertDialog.dismiss();
-                }
+                notifyDataSetChanged();
+                alertDialog.dismiss();
             });
-            btnNo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    alertDialog.dismiss();
-                }
-            });
+            btnNo.setOnClickListener(view -> alertDialog.dismiss());
             alertDialog.show();
         });
     }

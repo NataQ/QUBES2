@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_weight=".1"
         android:text="1"
-        android:textAlignment="center"
         android:textColor="@color/gray8_aspp" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -26,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_weight=".6"
+        android:layout_weight=".5"
         android:text="Product"
         android:textColor="@color/gray8_aspp" />
 
@@ -35,9 +34,18 @@
         style="@style/TextView_Small"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_weight=".3"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_weight=".2"
+        android:text="0"
+        android:textColor="@color/gray8_aspp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txtPaid"
+        style="@style/TextView_Small"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
         android:text="0"
         android:textColor="@color/gray8_aspp" />
 

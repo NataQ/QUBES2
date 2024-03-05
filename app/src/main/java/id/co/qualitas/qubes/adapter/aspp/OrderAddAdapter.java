@@ -751,6 +751,8 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
         } else {
             listSpinner.addAll(listMat);
         }
+//        tambahharga di mListExtra
+//                ambil daerah tingkat dari json
 
         if (Helper.isCanvasSales(user)) {
             //itung stock dari order skrg

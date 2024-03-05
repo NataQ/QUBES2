@@ -1202,20 +1202,20 @@ public class UnloadingActivity extends BaseActivity {
                             listWSMsg.add(logResult);
                             break;
                         case 5:
-                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
                             counter++;
-                            for (Map data : offlineData.get(i).getReturnList()) {
-                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                if (logResult.getIdMessage() == 1) {
-                                    logResult = new WSMessage();
-                                    logResult.setIdMessage(1);
-                                    logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                                    database.updateSyncReturn(data);
-                                }
-                                database.addLog(logResult);
-                            }
+//                            url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
+//                            for (Map data : offlineData.get(i).getReturnList()) {
+//                                logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+//                                if (logResult.getIdMessage() == 1) {
+//                                    logResult = new WSMessage();
+//                                    logResult.setIdMessage(1);
+//                                    logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+//                                    database.updateSyncReturn(data);
+//                                }
+//                                database.addLog(logResult);
+//                            }
+//                            listWSMsg.add(logResult);
                             publishProgress(counter);
-                            listWSMsg.add(logResult);
                             break;
                         case 6:
                             counter++;

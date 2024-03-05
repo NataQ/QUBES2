@@ -95,6 +95,7 @@ import javax.net.ssl.X509TrustManager;
 import id.co.qualitas.qubes.R;
 import id.co.qualitas.qubes.activity.aspp.CameraActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.fragment.BaseFragment;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Role;
@@ -991,9 +992,9 @@ public class Helper extends BaseFragment {
         return !isEmptyOrNull(collection);
     }
 
-    public static boolean checkRadius(Location currentLocation, Location custLocation) {
+    public static boolean checkRadius(Context context, Location currentLocation, Location custLocation) {
         boolean inside = false;
-        float radius = database.getRadius(); //in meters
+        float radius = new Database(context).getRadius(); //in meters
         float distance = custLocation.distanceTo(currentLocation);
         if (distance < radius || distance == radius) {
             inside = true;

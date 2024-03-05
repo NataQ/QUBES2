@@ -570,6 +570,7 @@ public class Constants {
     public static final String API_SYNC_ONE_PHOTO = "syncOnePhoto";
     public static final String API_GET_IMAGE = "getImage";
     public static final String API_SEND_DATABASE_LOCAL = "sendDatabaseLocal";
+    public static final String API_SEND_LASH = "sendLash";
     public static final String API_UPDATE_REGISTER_ID = "updateRegisterId";
 
     public static final String CLICK_START_VISIT = "clickStartVisit";

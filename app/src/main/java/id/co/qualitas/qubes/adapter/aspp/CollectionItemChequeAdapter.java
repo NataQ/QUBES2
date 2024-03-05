@@ -262,7 +262,7 @@ public class CollectionItemChequeAdapter extends RecyclerView.Adapter<Collection
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setChecked(false);
                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setAmountPaid(0);
             }
-//            invoiceAdapter.setCheckedAll(invoicePosition);
+            invoiceAdapter.setCheckedAll(invoicePosition);
 //            chequeAdapter.notifyItemChanged(chequePosition);
             mContext.notifyAdapter(3);
         });

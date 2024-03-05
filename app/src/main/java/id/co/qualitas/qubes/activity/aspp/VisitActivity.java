@@ -694,7 +694,7 @@ public class VisitActivity extends BaseActivity {
                 Location currLoc = new Location(LocationManager.GPS_PROVIDER);
                 currLoc.setLatitude(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
                 currLoc.setLongitude(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);
-                inside = Helper.checkRadius(currLoc, locCustomer);
+                inside = Helper.checkRadius(VisitActivity.this, currLoc, locCustomer);
 
                 visitSalesman = new VisitSalesman();
                 visitSalesman.setIdHeader(Constants.ID_VS_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
@@ -1304,7 +1304,7 @@ public class VisitActivity extends BaseActivity {
         Location currLoc = new Location(LocationManager.GPS_PROVIDER);
         currLoc.setLatitude(vs.getLatCheckOut());
         currLoc.setLongitude(vs.getLongCheckOut());
-        inside = Helper.checkRadius(currLoc, locCustomer);
+        inside = Helper.checkRadius(VisitActivity.this, currLoc, locCustomer);
 
         vs.setIdSalesman(user.getUsername());
         vs.setIdDriver(user.getId_driver());
@@ -1787,68 +1787,20 @@ public class VisitActivity extends BaseActivity {
             } else {
                 if (result) {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
+                    progress.show();
+                    PARAM = 10;
+                    new RequestUrl().execute();
                 } else {
-                    setToast("Gagal membuat pdf.. Silahkan coba lagi");
+                    setToast("Gagal membuat pdf. Silahkan coba lagi");
+                    new RequestUrlSync().execute();
                 }
 
-//                if (user.getRute_inap() == 1) {
-//                    new RequestUrlSync().execute();
-//                } else {
-//                    if (!Helper.isCanvasSales(user)) {
-                new RequestUrlSync().execute();
-//                    } else {???
-//                        SessionManagerQubes.setStockRequestHeader(database.getStockRequestByDate(startVisit.getDate()));
-//                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
-//                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-//                        startActivity(intent);
-//                    }
-//                }
-
-//                if (user.getRute_inap() != 1) {
-//                    //bukan rute inap
-//                    if (!Helper.isCanvasSales(user)) {
-//                        new RequestUrlSync().execute();
-//                    } else {
-//                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
-//                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
-//                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-//                        startActivity(intent);
-//                    }
-//                } else {
-//                    if (startVisit.getEnd_time() == null) {
-//                        new RequestUrlSync().execute();
-//                    } else {
-//                        SessionManagerQubes.setStockRequestHeader(database.getLastStockRequest());
-//                        Helper.setItemParam(Constants.FROM_STOCK_REQUEST, 0);
-//                        Intent intent = new Intent(VisitActivity.this, UnloadingActivity.class);
-//                        startActivity(intent);
-//                    }
-//                }
             }
         }
     }
 
     private void getFirstDataOffline() {
-//        rlInap.setVisibility(View.GONE);
-//        rlDaily.setVisibility(View.GONE);
-
-//        if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE_STATUS")) {
-//            btnApprove.setVisibility(View.VISIBLE);
-//        } else {
-//            btnApprove.setVisibility(View.VISIBLE);
-//        }
-//
-//        if (Helper.findRole(userRoleList, "MOBILE_REQUEST_STOCK_UPDATE")) {
-//            btnSave.setVisibility(View.VISIBLE);
-//        } else {
-//            btnSave.setVisibility(View.VISIBLE);
-//        }
-
         startVisit = database.getLastStartVisit();
-
-//        if (SessionManagerQubes.getStartDay() != null) {
-//            startVisit = SessionManagerQubes.getStartDay();
-//        }
         getData();//getFirstDataOffline
         setAdapterVisit();
         setAdapterNoo();
@@ -2090,12 +2042,9 @@ public class VisitActivity extends BaseActivity {
                 } else if (PARAM == 8) {
                     String URL_ = Constants.API_GET_DETAIL_CUSTOMER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
-//                    Map req = new HashMap();
-//                    req.put("id", customerNonRoute);
-//                    req.put("username", user.getUsername());
                     logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, customerNonRoute);
                     return null;
-                } else {
+                } else if (PARAM == 9) {
                     Customer cust = Helper.ObjectToGSON(resultWsMessage.getResult(), Customer.class);
 
                     List<Promotion> promotionList;
@@ -2153,6 +2102,26 @@ public class VisitActivity extends BaseActivity {
                     getData();//add non route
                     saveDataSuccess = true;
                     return null;
+                } else if (PARAM == 10) {
+                    Map req = new HashMap();
+                    req.put("username", user.getUsername());
+                    req.put("date_visit", startVisit.getDate());
+                    req.put("id_visit", startVisit.getId());
+                    MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+                    if (pdfFile != null) {
+                        map.add("pdfFile", new FileSystemResource(pdfFile.getPath()));
+                    } else {
+                        map.add("pdfFile", "");
+                    }
+                    String json = new Gson().toJson(req);
+                    map.add("data", json);
+
+                    String URL_ = Constants.API_SEND_LASH;
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
+                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBodyMultiPart(url, WSMessage.class, map);
+                    return null;
+                } else {
+                    return null;
                 }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
@@ -2181,7 +2150,9 @@ public class VisitActivity extends BaseActivity {
                         case 8:
                             logResult.setMessage("Add Non Route Error: " + exMess);
                             break;
-
+                        case 10:
+                            logResult.setMessage("Send LASH failed: " + exMess);
+                            break;
                     }
                 }
                 return null;
@@ -2441,9 +2412,20 @@ public class VisitActivity extends BaseActivity {
                     setToast(logResult.getMessage());
                     openDialogAdd();//failed get detail customer add
                 }
-            } else {
+            } else if (PARAM == 9) {
                 progress.dismiss();
                 mAdapterVisit.setData(mList);
+            } else if (PARAM == 10) {
+                if (logResult.getIdMessage() == 1) {
+                    String message = "Send database offline : " + logResult.getMessage();
+                    logResult.setMessage(message);
+                    setToast(logResult.getMessage());
+                } else {
+                    setToast(logResult.getMessage());
+                }
+                database.addLog(logResult);
+                progress.dismiss();
+                new RequestUrlSync().execute();
             }
         }
     }
@@ -2553,26 +2535,9 @@ public class VisitActivity extends BaseActivity {
                         }
 
                         //return
-                        returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
-                        if (returnList != null) {
-                            setDataSyncSuccess = true;
-                        } else {
-                            setDataSyncSuccess = false;
-                        }
-//                        returnO = database.getAllReturnCheckOut(customer.getId());
-//                        if (returnO != null) {
-//                            if (!returnO.isEmpty()) {
-//                                headerReturn = new HashMap();
-//                                headerReturn.put("id_mobile", returnO.get(0).getIdheader());
-//                                headerReturn.put("date", returnO.get(0).getDate());
-//                                headerReturn.put("id_salesman", user.getUsername());
-//                                headerReturn.put("id_customer", returnO.get(0).getId_customer());
-//                                headerReturn.put("listData", returnO);
-//                                returnList.add(headerReturn);
-//                                setDataSyncSuccess = true;
-//                            } else {
-//                                setDataSyncSuccess = true;
-//                            }
+//                        returnList.addAll(database.getAllReturnDate(customer.getId(), user.getUsername()));
+//                        if (returnList != null) {
+//                            setDataSyncSuccess = true;
 //                        } else {
 //                            setDataSyncSuccess = false;
 //                        }
@@ -2854,25 +2819,25 @@ public class VisitActivity extends BaseActivity {
                             break;
                         case 5:
                             counter++;
-                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getReturnList())) {
-                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
-                                for (Map data : offlineData.get(i).getReturnList()) {
-                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
-                                    if (logResult.getIdMessage() == 1) {
-                                        logResult = new WSMessage();
-                                        logResult.setIdMessage(1);
-                                        logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
-                                        database.updateSyncReturn(data);
-                                    }
-                                    database.addLog(logResult);
-                                    listWSMsg.add(logResult);
-                                }
-                            } else {
-                                logResult = new WSMessage();
-                                logResult.setIdMessage(1);
-                                logResult.setMessage("Tidak ada data return");
-                                listWSMsg.add(logResult);
-                            }
+//                            if (Helper.isNotEmptyOrNull(offlineData.get(i).getReturnList())) {
+//                                url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_SYNC_RETURN);
+//                                for (Map data : offlineData.get(i).getReturnList()) {
+//                                    logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, data);
+//                                    if (logResult.getIdMessage() == 1) {
+//                                        logResult = new WSMessage();
+//                                        logResult.setIdMessage(1);
+//                                        logResult.setMessage("Sync Return " + data.get("id_customer").toString() + " success");
+//                                        database.updateSyncReturn(data);
+//                                    }
+//                                    database.addLog(logResult);
+//                                    listWSMsg.add(logResult);
+//                                }
+//                            } else {
+//                                logResult = new WSMessage();
+//                                logResult.setIdMessage(1);
+//                                logResult.setMessage("Tidak ada data return");
+//                                listWSMsg.add(logResult);
+//                            }
                             publishProgress(counter);
                             break;
                         case 6:
@@ -3113,7 +3078,7 @@ public class VisitActivity extends BaseActivity {
                                 currentLocation = new HashMap();
                                 currentLocation.put("latitude", location.getLatitude());
                                 currentLocation.put("longitude", location.getLongitude());
-                                currentLocation.put("address", result != null ?result.getAddressLine(0) :"");
+                                currentLocation.put("address", result != null ? result.getAddressLine(0) : "");
                                 if (endVisit) {
                                     if (database.getCountNotVisit() == 0) {
                                         openDialogEndVisit();//get location

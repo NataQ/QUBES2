@@ -152,6 +152,14 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
         setFormatSeparator();
         Invoice detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
+        if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).isCheckAllMaterial()) {
+            holder.cbAll.setChecked(true);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+        }else{
+            holder.cbAll.setChecked(false);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+        }
+
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cbAll.setChecked(false);
         } else {
@@ -220,6 +228,7 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
                 public void onClick(View view) {
                     mFilteredList.remove(holder.getAbsoluteAdapterPosition());
                     notifyDataSetChanged();
+                    mContext.setLeftCash();
 //                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
                     dialog.dismiss();
                 }
@@ -283,7 +292,7 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
 //        double totalPaymentInvoice = mFilteredList.get(absoluteAdapterPosition).getTotalPayment();
         double totalPaymentCash =mContext.getSisaTotalAmountExInvoice(1, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
-
+        int checkMat = 0;
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
             if (checked) {
@@ -294,10 +303,12 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
                         detail.setChecked(true);
                         detail.setAmountPaid(kurangBayarMaterial);
                         totalPaymentCash = totalPaymentCash - kurangBayarMaterial;
+                        checkMat++;
                     } else if (totalPaymentCash < kurangBayarMaterial) {
                         detail.setChecked(true);
                         detail.setAmountPaid(totalPaymentCash);
                         totalPaymentCash = totalPaymentCash - totalPaymentCash;
+                        checkMat++;
                     }
                 }
 //                }
@@ -306,6 +317,12 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
                 detail.setAmountPaid(0);
             }
         }
+        if(checkMat == mFilteredList.get(absoluteAdapterPosition).getMaterialList().size()){
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(true);
+        }else{
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(false);
+        }
+        mContext.setLeftCash();
         notifyItemChanged(absoluteAdapterPosition);
     }
 
@@ -395,9 +412,9 @@ public class CollectionInvoiceCashAdapter extends RecyclerView.Adapter<Collectio
             if (detail.isChecked()) checked++;
         }
         if (checked == mFilteredList.get(idHeader).getMaterialList().size()) {
-            dataObjectHolder.cbAll.setChecked(true);
+            mFilteredList.get(idHeader).setCheckAllMaterial(true);
         } else {
-            dataObjectHolder.cbAll.setChecked(false);
+            mFilteredList.get(idHeader).setCheckAllMaterial(false);
         }
     }
 

@@ -700,7 +700,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 String noSJ = Helper.isEmpty(stock.getNo_surat_jalan(), "-");
                 String payment = order.getTotalPaid() == order.getOmzet()  ? "Cash" : "Kredit";//kalau belum lunas kredit
 
-                textBuffer.append("{reset}P"+ String.valueOf(cust.getPrintBon()) + "{br}");
+                textBuffer.append("{reset}P"+ String.valueOf(cust.getPrintBon()+1) + "{br}");
                 textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
                 textBuffer.append("{reset}{center}Jl.Gatot Subroto Kav. 99{br}");
                 textBuffer.append("{reset}{center}Jakarta Selatan{br}{br}");
@@ -833,20 +833,21 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
 
     private void updateMaxPrint() {
         int printOrder = order.getPrintOrder() + 1;
+        order.setPrintOrder(printOrder);
         Map param = new HashMap();
         param.put("id", order.getIdHeader());
         param.put("print", printOrder);
         param.put("username", user.getUsername());
+        param.put("id_customer", order.getId_customer());
+        database.updatePrintCustomer(param);
         database.updatePrint(param);
+        SessionManagerQubes.setOrder(order);
 
         if (printOrder < database.getMaxPrint()) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    openDialogConfirmation();
-                }
-            });
+            runOnUiThread(() -> openDialogConfirmation());
         } else {
-            setToast("Sudah mencapai maksimal print");
+            runOnUiThread(() -> setToast("Sudah mencapai maksimal print"));
+            onBackPressed();
         }
     }
 

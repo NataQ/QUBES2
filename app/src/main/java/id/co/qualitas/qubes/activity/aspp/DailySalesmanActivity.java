@@ -570,7 +570,7 @@ public class DailySalesmanActivity extends BaseActivity {
         currLoc.setLongitude((Double) currentLocation.get("longitude"));
 
         if (currentLocation != null) {
-            boolean outRadius = Helper.checkRadius(currLoc, locCustomer);
+            boolean outRadius = Helper.checkRadius(DailySalesmanActivity.this, currLoc, locCustomer);
             visitSales.setInsideCheckOut(outRadius);
             visitSales.setLatCheckOut(currentLocation.get("latitude") != null ? (Double) currentLocation.get("latitude") : 0);
             visitSales.setLongCheckOut(currentLocation.get("longitude") != null ? (Double) currentLocation.get("longitude") : 0);

@@ -160,6 +160,14 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
         setFormatSeparator();
         Invoice detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
 
+        if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).isCheckAllMaterial()) {
+            holder.cbAll.setChecked(true);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), true);
+        }else{
+            holder.cbAll.setChecked(false);
+            itemStateArray.put(holder.getAbsoluteAdapterPosition(), false);
+        }
+
         if (!itemStateArray.get(holder.getAbsoluteAdapterPosition(), false)) {
             holder.cbAll.setChecked(false);
         } else {
@@ -300,8 +308,8 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
 //    }
 
     private void setCheckedMaterial(int absoluteAdapterPosition, boolean checked) {
-        double totalPaymentGiro = giroAdapter.getSisaTotalAmountExInvoice(absoluteAdapterPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
-
+        double totalPaymentGiro = giroAdapter.getSisaTotalAmountExInvoice(giroPosition, mFilteredList.get(absoluteAdapterPosition).getNo_invoice());
+        int checkMat = 0;
         for (int i = 0; i < mFilteredList.get(absoluteAdapterPosition).getMaterialList().size(); i++) {
             Material detail = mFilteredList.get(absoluteAdapterPosition).getMaterialList().get(i);
             if (checked) {
@@ -312,10 +320,12 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
                             detail.setChecked(true);
                             detail.setAmountPaid(kurangBayarMaterial);
                             totalPaymentGiro = totalPaymentGiro - kurangBayarMaterial;
+                            checkMat++;
                         } else if (totalPaymentGiro < kurangBayarMaterial) {
                             detail.setChecked(true);
                             detail.setAmountPaid(totalPaymentGiro);
                             totalPaymentGiro = totalPaymentGiro - totalPaymentGiro;
+                            checkMat++;
                         }
                     }
                 }
@@ -323,6 +333,11 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
                 detail.setChecked(false);
                 detail.setAmountPaid(0);
             }
+        }
+        if(checkMat == mFilteredList.get(absoluteAdapterPosition).getMaterialList().size()){
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(true);
+        }else{
+            mFilteredList.get(absoluteAdapterPosition).setCheckAllMaterial(false);
         }
         mContext.notifyAdapter(2);
 //        notifyItemChanged(absoluteAdapterPosition);
@@ -396,9 +411,9 @@ public class CollectionInvoiceGiroAdapter extends RecyclerView.Adapter<Collectio
             if (detail.isChecked()) checked++;
         }
         if (checked == mFilteredList.get(idHeader).getMaterialList().size()) {
-            dataObjectHolder.cbAll.setChecked(true);
+            mFilteredList.get(idHeader).setCheckAllMaterial(true);
         } else {
-            dataObjectHolder.cbAll.setChecked(false);
+            mFilteredList.get(idHeader).setCheckAllMaterial(false);
         }
     }
 

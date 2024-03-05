@@ -81,7 +81,7 @@ public class CollectionVisitHistoryAdapter extends RecyclerView.Adapter<Collecti
                     for (CollectionHeader row : mList) {
 
                         /*filter by name*/
-                        if (row.getInvoiceNo().toLowerCase().contains(charString.toLowerCase())) {
+                        if (row.getCustomerId().toLowerCase().contains(charString.toLowerCase())) {
                             filteredList.add(row);
                         }
                     }

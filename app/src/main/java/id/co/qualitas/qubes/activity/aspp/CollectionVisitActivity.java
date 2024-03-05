@@ -231,6 +231,13 @@ public class CollectionVisitActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+            btnAdd.setVisibility(View.VISIBLE);
+        } else {
+            btnAdd.setVisibility(View.GONE);
+        }
+
         setAdapterInvoice();
         setAdapterHistory();
 

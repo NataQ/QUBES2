@@ -54,6 +54,7 @@ import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.model.Customer;
+import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
@@ -703,6 +704,9 @@ public class OrderAddActivity extends BaseActivity {
                     Map request = new HashMap();
                     request.put("id_customer", outletHeader.getId());
                     request.put("tipe_outlet", outletHeader.getType_customer());
+                    request.put("kodeDepo", getDepoRegion());
+                    request.put("kodeSales", user.getUsername());
+                    request.put("kodeJenisSales", "10");
                     request.put("id", null);
                     request.put("order_date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
 
@@ -987,5 +991,19 @@ public class OrderAddActivity extends BaseActivity {
                 alertDialog.show();
             }
         }
+    }
+
+    private String getDepoRegion() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + depoRegion.getId_depo() + " - " + depoRegion.getDepo_name() + " (" + depoRegion.getId_region() + " - " + depoRegion.getRegion_name() + ")";
+                if (i != user.getDepoRegionList().size() - 1) {
+                    depo = depo.concat("\n");
+                }
+            }
+        }
+        return depo;
     }
 }
