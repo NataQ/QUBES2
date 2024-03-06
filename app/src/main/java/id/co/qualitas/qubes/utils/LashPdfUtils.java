@@ -778,8 +778,8 @@ public class LashPdfUtils {
             totalNilai = totalNilai + (detail.get("nilai") != null ? (double) detail.get("nilai") : 0);
             totalTunai = totalTunai + (detail.get("tunai") != null ? (double) detail.get("tunai") : 0);
             totalGiro = totalGiro + (detail.get("giro") != null ? (double) detail.get("giro") : 0);
-            totalTf = totalTf + (detail.get("cheque") != null ? (double) detail.get("cheque") : 0);
-            totalCheque = totalCheque + (detail.get("transfer") != null ? (double) detail.get("transfer") : 0);
+            totalCheque = totalCheque + (detail.get("cheque") != null ? (double) detail.get("cheque") : 0);
+            totalTf = totalTf + (detail.get("transfer") != null ? (double) detail.get("transfer") : 0);
             totalLain = totalLain + (detail.get("lain2") != null ? (double) detail.get("lain2") : 0);
             totalSaldo = totalSaldo + (detail.get("sisa_piutang") != null ? (double) detail.get("sisa_piutang") : 0);
 
@@ -901,7 +901,7 @@ public class LashPdfUtils {
 
             cell = new PdfPCell(new Phrase(detail.get("sisa_piutang") != null ? format.format(detail.get("sisa_piutang")) : "0", calibriRegular));//ket
             cell.setUseAscender(true);
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setBorder(Rectangle.BOX);
             cell.setPadding(5);

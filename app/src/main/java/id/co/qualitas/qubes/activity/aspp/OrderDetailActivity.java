@@ -36,6 +36,7 @@ import id.co.qualitas.qubes.adapter.aspp.SummaryDetailAdapter;
 import id.co.qualitas.qubes.constants.Constants;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.Order;
 import id.co.qualitas.qubes.model.User;
@@ -54,6 +55,7 @@ public class OrderDetailActivity extends BaseActivity {
     public static final int PERMISSION_BLUETOOTH_CONNECT = 3;
     public static final int PERMISSION_BLUETOOTH_SCAN = 4;
     private static final int REQUEST_LOCATION_PERMISSION = 5;
+    private Customer outletHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,6 +137,7 @@ public class OrderDetailActivity extends BaseActivity {
 
     private void initData() {
         orderHeader = SessionManagerQubes.getOrder();
+        outletHeader = SessionManagerQubes.getOutletHeader();
         if (orderHeader == null) {
             onBackPressed();
         } else {
@@ -148,7 +151,7 @@ public class OrderDetailActivity extends BaseActivity {
             txtOmzet.setText("Rp. " + format.format(orderHeader.getOmzet()));
 //            txtStatus.setText(!Helper.isEmpty(orderHeader.getStatus()) ? orderHeader.getStatus() : "-");
 
-            if (!Helper.isCanvasSales(user) || orderHeader.isDeleted()) {
+            if (!Helper.isCanvasSales(user) || orderHeader.isDeleted() || (outletHeader.getStatus() != Constants.CHECK_IN_VISIT)) {
                 btnPrint.setVisibility(View.GONE);
             } else {
                 btnPrint.setVisibility(View.VISIBLE);

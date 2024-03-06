@@ -50,9 +50,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -70,6 +73,7 @@ import id.co.qualitas.qubes.fragment.aspp.ConfirmationDialogFragment;
 import id.co.qualitas.qubes.helper.AddressResultReceiver;
 import id.co.qualitas.qubes.helper.FetchAddressIntentService;
 import id.co.qualitas.qubes.helper.Helper;
+import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.RecyclerViewMaxHeight;
 import id.co.qualitas.qubes.interfaces.CallbackOnResult;
 import id.co.qualitas.qubes.interfaces.LocationRequestCallback;
@@ -123,6 +127,7 @@ public class CreateNooActivity extends BaseActivity {
     LinearLayout loadingDataBottom;
     RecyclerViewMaxHeight rv;
     List<DaerahTingkat> daerahTingkatList;
+    List<DaerahTingkat> daerahTingkat2List;
     private LinearLayoutManager linearLayoutManMaterial;
     private boolean loading = true;
 
@@ -1641,6 +1646,18 @@ public class CreateNooActivity extends BaseActivity {
 
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
         SessionManagerQubes.setCustomerNoo(customerNoo);
+
+        getDaerahTingkat();
+    }
+
+    public void getDaerahTingkat(){
+        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "daerah_tingkat.json");
+        Gson gson = new Gson();
+        Type listUserType = new TypeToken<List<DaerahTingkat>>() { }.getType();
+
+        daerahTingkat2List = new ArrayList<>();
+        daerahTingkat2List = gson.fromJson(jsonFileString, listUserType);
+        setToast("Succ");
     }
 
     private void setDataToView() {

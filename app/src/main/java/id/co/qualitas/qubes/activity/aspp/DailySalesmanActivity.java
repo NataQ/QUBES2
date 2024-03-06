@@ -228,25 +228,30 @@ public class DailySalesmanActivity extends BaseActivity {
         });
 
         llOrder.setOnClickListener(v -> {
-            if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
-                if (!Helper.isEmpty(user.getType_sales())) {
-                    if (Helper.isCanvasSales(user)) {
+            if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+                if (!Helper.isNullOrEmpty(outletHeader.getNik()) || !Helper.isNullOrEmpty(outletHeader.getNo_npwp())) {
+                    if (!Helper.isEmpty(user.getType_sales())) {
+                        if (Helper.isCanvasSales(user)) {
 //                        if (Helper.isEmptyOrNull(oustandingFaktur)) {
-                        double tagihanInvoice = database.getTotalTagihanInvoiceCustomer(outletHeader.getId());
+                            double tagihanInvoice = database.getTotalTagihanInvoiceCustomer(outletHeader.getId());
 //                        if (outstandingFaktur == 0) {
-                        if (tagihanInvoice == 0) {
-                            moveOrder();
+                            if (tagihanInvoice == 0) {
+                                moveOrder();
+                            } else {
+                                dialogConfirm();
+                            }
                         } else {
-                            dialogConfirm();
+                            moveOrder();
                         }
                     } else {
                         moveOrder();
                     }
                 } else {
-                    moveOrder();
+                    setToast("Customer ini tidak memiliki KTP atau NPWP");
                 }
-            } else {
-                setToast("Customer ini tidak memiliki KTP atau NPWP");
+            }else{
+                Intent intent = new Intent(this, OrderActivity.class);
+                startActivity(intent);
             }
         });
 

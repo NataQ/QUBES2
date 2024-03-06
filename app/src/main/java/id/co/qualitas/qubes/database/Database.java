@@ -5665,41 +5665,69 @@ public class Database extends SQLiteOpenHelper {
                 "SELECT a.*, nilai - tunai - giro - cheque- transfer - lain2 sisa_piutang FROM\n" +
                 "(SELECT a.customerId no_customer, COALESCE(b.customerName, z.nameNoo) nama_outlet, \n" +
                 "c.date tanggal, '' \"no\", 0 jumlah, c.idOrderHeaderDB no_order, c.omzet nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, \n" +
-                "COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, \n" +
-                "COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, coalesce(h.remove, 0) removeOrder, 0 as removeCollection \n" +
+                "COALESCE(SUM(d.tunai),0) tunai, COALESCE(SUM(e.tunai),0) giro, COALESCE(SUM(f.tunai),0) transfer, \n" +
+                "COALESCE(SUM(g.tunai),0) lain2, COALESCE(SUM(h.tunai),0) cheque, \n" +
+                "'' keterangan, coalesce(i.remove, 0) removeOrder, 0 as removeCollection \n" +
                 "FROM VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId \n" +
                 "LEFT JOIN NOO z ON z.idNooDB = a.customerId \n" +
-                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND  c.date = a.date \n" +
-                "LEFT JOIN CollectionInvoice e on e.invoiceNo = c.idOrderHeaderDB and e.deleted = 0 \n" +
-                "LEFT JOIN CollectionDetail f on f.idCollectionDetailDB = e.idCollectionDetailDB AND f.typePayment = 'cash'\n" +
-                "LEFT JOIN CollectionDetail g on g.idCollectionDetailDB = e.idCollectionDetailDB AND g.typePayment = 'giro'\n" +
-                "LEFT JOIN CollectionDetail h on h.idCollectionDetailDB = e.idCollectionDetailDB AND h.typePayment = 'transfer'\n" +
-                "LEFT JOIN CollectionDetail i on i.idCollectionDetailDB = e.idCollectionDetailDB AND i.typePayment = 'lain'\n" +
-                "LEFT JOIN CollectionDetail j on j.idCollectionDetailDB = e.idCollectionDetailDB AND j.typePayment = 'cheque'\n" +
+                "INNER JOIN OrderHeader c ON c.customerId = a.customerId AND c.date = a.date and c.deleted = 0 \n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'cash'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'order' group by a.invoiceNo ) d on d.invoiceNo = c.idOrderHeaderDB\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'giro'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'order' group by a.invoiceNo ) e on e.invoiceNo = c.idOrderHeaderDB\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'transfer'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'order' group by a.invoiceNo ) f on f.invoiceNo = c.idOrderHeaderDB\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'lain'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'order' group by a.invoiceNo ) g on g.invoiceNo = c.idOrderHeaderDB\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'cheque'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'order' group by a.invoiceNo ) h on h.invoiceNo = c.idOrderHeaderDB\n" +
                 "LEFT JOIN (select count(*) as remove, customerId  from OrderHeader where deleted = 1 group by customerId ) \n" +
-                "h on h.customerId = a.customerId\n" +
+                "i on i.customerId = a.customerId\n" +
                 "GROUP BY a.customerId, b.customerName, z.nameNoo, c.idOrderHeaderDB) a\n" +
                 "UNION\n" +
                 "SELECT b.*, jumlah - tunai - giro - cheque- transfer - lain2 sisa_piutang\n" +
                 "FROM\n" +
                 "(SELECT a.customerId no_customer, b.customerName nama_outlet, c.invoiceDate tanggal, \n" +
-                "c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai,\n" +
-                "COALESCE(SUM(f.totalPayment),0) tunai, COALESCE(SUM(g.totalPayment),0) giro, \n" +
-                "COALESCE(SUM(j.totalPayment),0) cheque, COALESCE(SUM(h.totalPayment),0) transfer, \n" +
-                "COALESCE(SUM(i.totalPayment),0) lain2, '' keterangan, 0 as removeOrder, coalesce(h.remove, 0) as removeCollection\n" +
+                "c.invoiceNo \"no\", c.invoiceTotal jumlah, '' no_order, 0 nilai, \n" +
+                "COALESCE(SUM(d.tunai),0) tunai, COALESCE(SUM(e.tunai),0) giro, COALESCE(SUM(f.tunai),0) transfer, \n" +
+                "COALESCE(SUM(g.tunai),0) lain2, COALESCE(SUM(h.tunai),0) cheque,\n" +
+                "'' keterangan, 0 as removeOrder, coalesce(i.remove, 0) as removeCollection\n" +
                 "FROM  VisitSalesman a\n" +
                 "LEFT JOIN customer b ON a.customerId = b.customerId\n" +
                 "INNER JOIN InvoiceHeader c on c.customerId = a.customerId AND c.date = a.date\n" +
-                "LEFT JOIN CollectionInvoice e on e.invoiceNo = c.invoiceNo and e.deleted = 0 \n" +
-                "LEFT JOIN CollectionDetail f on f.idCollectionDetailDB = e.idCollectionDetailDB AND f.typePayment = 'cash'\n" +
-                "LEFT JOIN CollectionDetail g on g.idCollectionDetailDB = e.idCollectionDetailDB AND g.typePayment = 'giro'\n" +
-                "LEFT JOIN CollectionDetail h on h.idCollectionDetailDB = e.idCollectionDetailDB AND h.typePayment = 'transfer'\n" +
-                "LEFT JOIN CollectionDetail i on i.idCollectionDetailDB = e.idCollectionDetailDB AND i.typePayment = 'lain'\n" +
-                "LEFT JOIN CollectionDetail j on j.idCollectionDetailDB = e.idCollectionDetailDB AND j.typePayment = 'cheque'\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'cash'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'invoice' group by a.invoiceNo ) d on d.invoiceNo = c.invoiceNo\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'giro'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'invoice' group by a.invoiceNo ) e on e.invoiceNo = c.invoiceNo\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'transfer'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'invoice' group by a.invoiceNo ) f on f.invoiceNo = c.invoiceNo\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'lain'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'invoice' group by a.invoiceNo ) g on g.invoiceNo = c.invoiceNo\n" +
+                "LEFT JOIN (select a.invoiceNo, SUM(a.totalPaid) AS tunai \n" +
+                "from CollectionInvoice a \n" +
+                "INNER JOIN CollectionDetail b on b.idCollectionDetailDB = a.idCollectionDetailDB AND b.typePayment = 'cheque'\n" +
+                "where a.deleted = 0 and a.categoryPayment = 'invoice' group by a.invoiceNo ) h on h.invoiceNo = c.invoiceNo\n" +
                 "LEFT JOIN (select count(*) as remove, customerId, invoiceNo as inv from CollectionInvoice where deleted = 1 \n" +
-                "group by customerId ) h on h.customerId = a.customerId and h.inv = c.invoiceNo\n" +
+                "group by customerId, invoiceNo ) i on i.customerId = a.customerId and i.inv = c.invoiceNo\n" +
                 "GROUP BY a.customerId, b.customerName, c.invoiceNo, c.invoiceDate, c.invoiceTotal) b\n" +
                 ")a order by a.no_customer";
 

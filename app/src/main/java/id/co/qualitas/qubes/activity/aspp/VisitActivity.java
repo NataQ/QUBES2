@@ -216,7 +216,6 @@ public class VisitActivity extends BaseActivity {
         }
 
         initialize();
-//        initData();
         setViewVisit();
         setViewNoo();
 
@@ -263,9 +262,6 @@ public class VisitActivity extends BaseActivity {
                     setToast("Anda sudah melakukan kunjungan hari ini");
                 } else {
                     startNewVisit();//start day
-//                    startVisit.setStartDay(true);
-//                    SessionManagerQubes.setStartDay(startVisit);
-//                    validateButton();//start day
                 }
             } else {
                 setToast("Gagal mengambil data visit");
@@ -493,7 +489,7 @@ public class VisitActivity extends BaseActivity {
                 dialog.dismiss();
                 progress.show();
                 PARAM = 8;
-                new RequestUrl().execute();
+                new RequestUrl().execute();//NON RUTE
             }
         });
 
@@ -1346,7 +1342,7 @@ public class VisitActivity extends BaseActivity {
         dialog.setContentView(R.layout.aspp_dialog_end_visit);
         Button btnEnd = dialog.findViewById(R.id.btnEnd);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
-        EditText txtKmAwal = dialog.findViewById(R.id.txtKmAkhir);
+        EditText txtKmAwal = dialog.findViewById(R.id.txtKmAwal);
         EditText txtKmAkhir = dialog.findViewById(R.id.txtKmAkhir);
         LinearLayout llImgSelesai = dialog.findViewById(R.id.llImgSelesai);
         LinearLayout llImgPulang = dialog.findViewById(R.id.llImgPulang);
@@ -1380,7 +1376,7 @@ public class VisitActivity extends BaseActivity {
         }
 
         txtKmAkhir.setText(imageType.getKmAkhir());
-        txtKmAwal.setText(startVisit != null ? format.format(startVisit.getKm_awal()) : null);
+        txtKmAwal.setText(startVisit != null ? startVisit.getKm_awal() : null);
 
         llImgPulang.setOnClickListener(v -> {
             if (imageType == null) {
@@ -1789,7 +1785,7 @@ public class VisitActivity extends BaseActivity {
                     setToast("Downloaded to " + pdfFile.getAbsolutePath());
                     progress.show();
                     PARAM = 10;
-                    new RequestUrl().execute();
+                    new RequestUrl().execute();//10 PDF
                 } else {
                     setToast("Gagal membuat pdf. Silahkan coba lagi");
                     new RequestUrlSync().execute();
@@ -2109,9 +2105,9 @@ public class VisitActivity extends BaseActivity {
                     req.put("id_visit", startVisit.getId());
                     MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
                     if (pdfFile != null) {
-                        map.add("pdfFile", new FileSystemResource(pdfFile.getPath()));
+                        map.add("lash", new FileSystemResource(pdfFile.getPath()));
                     } else {
-                        map.add("pdfFile", "");
+                        map.add("lash", "");
                     }
                     String json = new Gson().toJson(req);
                     map.add("data", json);
@@ -2417,7 +2413,7 @@ public class VisitActivity extends BaseActivity {
                 mAdapterVisit.setData(mList);
             } else if (PARAM == 10) {
                 if (logResult.getIdMessage() == 1) {
-                    String message = "Send database offline : " + logResult.getMessage();
+                    String message = "Send LASH : " + logResult.getMessage();
                     logResult.setMessage(message);
                     setToast(logResult.getMessage());
                 } else {
