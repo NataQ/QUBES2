@@ -77,58 +77,13 @@ public class LocationForegroundService extends Service {
         String action = intent.getAction();
         if (action != null) {
             if (action.equals("stop")) {
-//                removeLocationUpdates(intent);
                 removeLocationUpdates(intent);
-//                Log.i(TAG, "Removing location updates");
-//                try {
-//                    mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-//                    UtilsLocation.setRequestingLocationUpdates(this, false);
-//                    stopSelf();
-//                } catch (SecurityException unlikely) {
-//                    UtilsLocation.setRequestingLocationUpdates(this, true);
-//                    Log.e(TAG, "Lost location permission. Could not remove updates. " + unlikely);
-//                }
             }
         } else {
             setLocation();
             startForegroundService();
-//            handler = new Handler();
-//            runHandler = new Runnable() {
-//                @Override
-//                public void run() {
-//                    getCurrentLocation();
-//                    handler.postDelayed(this, 10000);
-//                }
-//            };
-//            handler.postDelayed(runHandler, 10000);
-
-//            new Thread(
-//                    new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            while (true) {
-//                                Log.e("Service", "Service is running..." + Helper.getTodayDate(Constants.DATE_FORMAT_2));
-//                                try {
-//                                    Thread.sleep(2000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                    }
-//            ).start();
         }
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    private void getCurrentLocation() {
-        /* kalau pakai gps tracker, app nya closed/foreground gak jalan
-        GPSTracker gpsTracker = new GPSTracker(getApplicationContext());
-        if (gpsTracker.canGetLocation()) {
-            Log.e("Service", "Lat : " + String.valueOf(gpsTracker.getLatitude()) + "Long : " + String.valueOf(gpsTracker.getLongitude()));
-        } else {
-        }*/
-//        mFusedLocationClient.getLastLocation().
     }
 
     public void startForegroundService() {
@@ -201,16 +156,13 @@ public class LocationForegroundService extends Service {
         handlerThread.start();
         mServiceHandler = new Handler(handlerThread.getLooper());
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        // Android O requires a Notification Channel.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name;
-            name = getString(R.string.app_name);
-            // Create the channel for the notification
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, NotificationManager.IMPORTANCE_DEFAULT);
-
-            // Set the Notification Channel for the Notification Manager.
-            mNotificationManager.createNotificationChannel(mChannel);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel1 = new NotificationChannel(CHANNEL_ID, "TRACKING", NotificationManager.IMPORTANCE_LOW);
+            channel1.enableVibration(true);
+            channel1.enableLights(true);
+            channel1.setLightColor(R.color.colorPrimary);
+            channel1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            mNotificationManager.createNotificationChannel(channel1);
         }
     }
 
@@ -231,29 +183,20 @@ public class LocationForegroundService extends Service {
         }
 
         if (location != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    liveTracking = new LiveTracking(location.getLatitude(), location.getLongitude());
+            new Thread(() -> {
+                liveTracking = new LiveTracking(location.getLatitude(), location.getLongitude());
 
-                    Log.e("Service", "Lat:" + String.valueOf(location.getLatitude()) + " Long : " + String.valueOf(location.getLongitude()));
-                    setSession();
-                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_UPDATE_LOCATION_SALESMAN);
-                    Map req = new HashMap();
-                    req.put("latitude", location.getLatitude());
-                    req.put("longitude", location.getLongitude());
-                    req.put("username", SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
-                    try {
-                        Helper.postWebserviceWithBody(url, null, req);//post
-                    } catch (Exception e) {
-                        result = false;
-                    }
-
-//                    try {
-//                        WSMessage result = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, liveTracking);
-//                    } catch (Exception e) {
-//
-//                    }
+                Log.e("Service", "Lat:" + String.valueOf(location.getLatitude()) + " Long : " + String.valueOf(location.getLongitude()));
+                setSession();
+                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_UPDATE_LOCATION_SALESMAN);
+                Map req = new HashMap();
+                req.put("latitude", location.getLatitude());
+                req.put("longitude", location.getLongitude());
+                req.put("username", SessionManagerQubes.getUserProfile() != null ? SessionManagerQubes.getUserProfile().getUsername() : null);
+                try {
+                    Helper.postWebserviceWithBody(url, null, req);//post
+                } catch (Exception e) {
+                    result = false;
                 }
             }).start();
         }
@@ -274,14 +217,12 @@ public class LocationForegroundService extends Service {
     }
 
     private Notification getNotification() {
-//        Intent intent = new Intent(this, LocationUpdatesService.class);
-
         Intent notificationIntent = new Intent(this, LocationForegroundService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.ic_qubes_new)
+                        .setSmallIcon(org.osmdroid.library.R.drawable.ic_menu_compass)
                         .setSound(null)
                         .setContentIntent(pendingIntent)
                         .setOngoing(true);

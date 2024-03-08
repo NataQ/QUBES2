@@ -115,23 +115,6 @@ public class Utils {
             notificationManager.createNotificationChannel(channel1);
         }
 
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-//                .setContentTitle("WorkManager Sample")
-//                .setContentText("WorkManager Started")
-//                .setAutoCancel(true)
-//                .setSmallIcon(R.drawable.ic_qubes_new);
-
-//        notificationManager.notify(1, builder.build());
-
-//        Intent intent = new Intent(this, LocationUpdatesService.class);
-//        intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATION, true);//bwt kasih tau stop service
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_MUTABLE);
-//        } else {
-//            servicePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        }
-
-        // The PendingIntent to launch activity.
         PendingIntent activityPendingIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, SplashScreenActivity.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 

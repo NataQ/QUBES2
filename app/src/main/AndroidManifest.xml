@@ -321,15 +321,11 @@
         </provider> <!-- <meta-data -->
         <!-- android:name="com.google.android.maps.v2.API_KEY" -->
         <!-- android:value="AIzaSyAcK4aZFBqUv6OUuDubAG9dX0b8hDkD10M" /> -->
-        <service
-            android:name=".services.LocationUpdatesService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="location" /> <!-- <service -->
-        <!-- android:name=".services.BackgroundLocationService" -->
-        <!-- android:enabled="true" -->
-        <!-- android:exported="true" -->
-        <!-- android:foregroundServiceType="location" /> -->
+<!--        <service-->
+<!--            android:name=".services.LocationUpdatesService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"-->
+<!--            android:foregroundServiceType="location" /> -->
         <service
             android:name=".services.LocationForegroundService"
             android:enabled="true"

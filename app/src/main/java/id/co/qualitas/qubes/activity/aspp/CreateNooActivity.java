@@ -1646,18 +1646,6 @@ public class CreateNooActivity extends BaseActivity {
 
         Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
         SessionManagerQubes.setCustomerNoo(customerNoo);
-
-        getDaerahTingkat();
-    }
-
-    public void getDaerahTingkat(){
-        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "daerah_tingkat.json");
-        Gson gson = new Gson();
-        Type listUserType = new TypeToken<List<DaerahTingkat>>() { }.getType();
-
-        daerahTingkat2List = new ArrayList<>();
-        daerahTingkat2List = gson.fromJson(jsonFileString, listUserType);
-        setToast("Succ");
     }
 
     private void setDataToView() {

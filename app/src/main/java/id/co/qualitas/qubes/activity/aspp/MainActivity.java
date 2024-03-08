@@ -53,11 +53,6 @@ public class MainActivity extends BaseActivity {
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private ImageView imgLogOut;
     private boolean sentToSettings = false;
-    // Tracks the bound state of the service.
-//    private boolean mBound = false;
-    // The BroadcastReceiver used to listen from broadcasts from the service.
-//    private MyReceiver myReceiver;
-//    private static LocationUpdatesService mServiceFusedLocation = null;
     HomeFragment homeFragment = new HomeFragment();
     RouteCustomerFragment routeCustomerFragment = new RouteCustomerFragment();
     ActivityFragment activityFragment = new ActivityFragment();

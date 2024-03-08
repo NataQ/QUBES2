@@ -33,6 +33,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,10 +50,12 @@ import id.co.qualitas.qubes.activity.aspp.LoginActivity;
 import id.co.qualitas.qubes.activity.aspp.MainActivity;
 import id.co.qualitas.qubes.activity.aspp.StockRequestListActivity;
 import id.co.qualitas.qubes.constants.Constants;
+import id.co.qualitas.qubes.database.Database;
 import id.co.qualitas.qubes.database.DatabaseHelper;
 import id.co.qualitas.qubes.helper.Helper;
 import id.co.qualitas.qubes.helper.NetworkHelper;
 import id.co.qualitas.qubes.helper.SecureDate;
+import id.co.qualitas.qubes.model.DaerahTingkat;
 import id.co.qualitas.qubes.model.LoginResponse;
 import id.co.qualitas.qubes.model.Material;
 import id.co.qualitas.qubes.model.OffDate;
@@ -74,7 +80,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     TextView txtApp, txtDetail;
     LinearLayout llText;
     ImageView image;
-
+    int PARAM = 0;
     private User attendance = new User();
 
     ActivityResultLauncher<String[]> mPermissionResultLauncher;
@@ -87,6 +93,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     private Intent intent;
 
     final int REQUEST_CODE = 101;
+    private List<DaerahTingkat> daerahTingkat2List;
+    private boolean saveDaerahTingkat = true;
 
 //    private final ActivityResultLauncher<String> requestPermissionLauncher =
 //            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -319,6 +327,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 //            SecureDate.getInstance().initServerDate(Helper.convertStringtoDate(Constants.DATE_TYPE_16, offlineDat.getCurDate()), offlineDat.getElapseTime());
 //        }
         progress.show();
+        PARAM = 1;
         new RequestUrl().execute();
 
 //        // in the below line, we are checking for permissions
@@ -409,11 +418,22 @@ public class SplashScreenActivity extends AppCompatActivity {
         @Override
         protected WSMessage doInBackground(Void... voids) {
             try {
-                final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_GET_IP_ADDRESS);
-                return (WSMessage) NetworkHelper.getWebserviceWoToken(url, WSMessage.class);
+                if (PARAM == 1) {
+                    final String url = Constants.URL.concat(Constants.API_PREFIX).concat(Constants.API_GET_IP_ADDRESS);
+                    return (WSMessage) NetworkHelper.getWebserviceWoToken(url, WSMessage.class);
+                } else {
+                    Log.e("DAERAH START : ", Helper.getTodayDate(Constants.DATE_FORMAT_6));
+                    getDaerahTingkat();
+                    Log.e("DAERAH END : ", Helper.getTodayDate(Constants.DATE_FORMAT_6));
+                    saveDaerahTingkat = true;
+                    return null;
+                }
             } catch (Exception ex) {
                 if (ex.getMessage() != null) {
-                    Log.e("IPAddress", ex.getMessage());
+                    Log.e("SplashScreen", ex.getMessage());
+                    if (PARAM == 2) {
+                        saveDaerahTingkat = false;
+                    }
                 }
                 return null;
             }
@@ -426,30 +446,66 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(WSMessage result) {
-            progress.dismiss();
-//            if (result != null) {
-//                if (result.getIdMessage() == 1) {
-//                    String ipAddress = result.getResult().toString();
-//                    Constants.URL = ipAddress;
-//                    Helper.setItemParam(Constants.URL, Constants.URL);
-//                    SessionManagerQubes.setUrl(ipAddress);
-//                }
-//            } else {
-//                SessionManagerQubes.setUrl("http://139.255.33.84:8282");
-                SessionManagerQubes.setUrl("http://192.168.1.12:8282");
-//                Constants.URL = SessionManagerQubes.getUrl();
-//            }
-
-            if (SessionManagerQubes.getUserProfile() == null) {
-                intent = new Intent(getApplicationContext(), LoginActivity.class);
-            } else {
+            if (PARAM == 1) {
+                if (result != null) {
+                    if (result.getIdMessage() == 1) {
+                        String ipAddress = result.getResult().toString();
+                        Constants.URL = ipAddress;
+                        Helper.setItemParam(Constants.URL, Constants.URL);
+                        SessionManagerQubes.setUrl(ipAddress);
+                    }
+                } else {
+                    SessionManagerQubes.setUrl("http://139.255.33.84:8282");
+//                SessionManagerQubes.setUrl("http://192.168.1.12:8282");
+                    Constants.URL = SessionManagerQubes.getUrl();
+                }
+                if (new Database(getApplicationContext()).getCountDaerahTingkat() == 0) {
+                    PARAM = 2;
+                    new RequestUrl().execute();
+                } else {
+                    progress.dismiss();
+                    if (SessionManagerQubes.getUserProfile() == null) {
+                        intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    } else {
 //                user = SessionManagerQubes.getUserProfile();
 //                user.setType_sales("CO");
 //                SessionManagerQubes.setUserProfile(user);
-                intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                    }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            } else {
+                if (saveDaerahTingkat) {
+                    progress.dismiss();
+                    if (SessionManagerQubes.getUserProfile() == null) {
+                        intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    } else {
+//                user = SessionManagerQubes.getUserProfile();
+//                user.setType_sales("CO");
+//                SessionManagerQubes.setUserProfile(user);
+                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                    }
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(SplashScreenActivity.this, "GAGAL", Toast.LENGTH_SHORT).show();
+                }
             }
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
         }
+    }
+
+    public void getDaerahTingkat() {
+        String jsonFileString = NetworkHelper.getJsonFromAssets(getApplicationContext(), "daerah_tingkat.json");
+        Gson gson = new Gson();
+        Type listUserType = new TypeToken<List<DaerahTingkat>>() {
+        }.getType();
+
+        daerahTingkat2List = new ArrayList<>();
+        daerahTingkat2List = gson.fromJson(jsonFileString, listUserType);
+        if (Helper.isNotEmptyOrNull(daerahTingkat2List)) {
+            new Database(SplashScreenActivity.this).deleteMasterDaerahTingkat();
+        }
+        new Database(SplashScreenActivity.this).addMasterDaerahTingkat(daerahTingkat2List, "SYSTEM", SplashScreenActivity.this);
     }
 }

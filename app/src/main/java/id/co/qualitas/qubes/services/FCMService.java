@@ -152,23 +152,6 @@ public class FCMService extends FirebaseMessagingService {
     // [END on_new_token]
 
     /**
-     * Schedule async work using WorkManager.
-     */
-    private void scheduleJob() {
-        // [START dispatch_job]
-        OneTimeWorkRequest work = new OneTimeWorkRequest.Builder(MyWorker.class).build();
-        WorkManager.getInstance(this).beginWith(work).enqueue();
-        // [END dispatch_job]
-    }
-
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-    private void handleNow() {
-        Log.d(TAG, "Short lived task is done.");
-    }
-
-    /**
      * Persist token to third-party servers.
      * <p>
      * Modify this method to associate the user's FCM registration token with any

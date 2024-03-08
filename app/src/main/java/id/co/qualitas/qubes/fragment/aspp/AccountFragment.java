@@ -456,12 +456,10 @@ public class AccountFragment extends BaseFragment {
                         Collections.addAll(daerahTingkatList, paramArray3);
                         database.deleteMasterDaerahTingkat();
                     }
-                    Log.e("DAERAH START : ",Helper.getTodayDate(Constants.DATE_FORMAT_6));
                     database.addMasterDaerahTingkat(daerahTingkatList, user.getUsername(), getActivity());
 //                    for (DaerahTingkat param : daerahTingkatList) {
 //                        database.addMasterDaerahTingkat(param, user.getUsername());
 //                    }
-                    Log.e("DAERAH END : ",Helper.getTodayDate(Constants.DATE_FORMAT_6));
                     saveDataSuccess = true;
                     return null;
                 } else if (PARAM == 7) {
