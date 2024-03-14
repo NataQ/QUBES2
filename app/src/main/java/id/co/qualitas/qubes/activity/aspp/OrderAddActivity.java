@@ -528,8 +528,8 @@ public class OrderAddActivity extends BaseActivity {
 //                                setToast("Harus product yang grup nya sama");
 //                            }
 //                        } else {
-                            idMatGroup = mat.getId_material_group();
-                            addList.add(mat);
+                        idMatGroup = mat.getId_material_group();
+                        addList.add(mat);
 //                        }
 //                        } else {
 //                            addList.add(mat);
@@ -722,6 +722,38 @@ public class OrderAddActivity extends BaseActivity {
                         }
                     }
                     request.put("listDetail", listBarang);
+
+                    List<Map> listBarangHistory = new ArrayList<>();
+                    List<Map> listExtra = new ArrayList<>();
+                    List<Order> mListOrderHistory = database.getAllOrder(outletHeader);
+                    List<Material> mListOrderDetailHistory = new ArrayList<>();
+                    Map tempBarang = new HashMap<>(), extraBarang = new HashMap<>();
+
+                    for (Order order : mListOrderHistory) {
+                        mListOrderDetailHistory = database.getAllDetailOrder(order);
+                        for (Material material : mListOrderDetailHistory) {
+                            tempBarang = new HashMap<>();
+                            tempBarang.put("kodeBarang", material.getId());
+                            tempBarang.put("qty", material.getQty());
+                            tempBarang.put("gross", material.getPrice());
+                            tempBarang.put("netto", material.getTotal());
+
+                            for (Material materialExtra : material.getExtraItem()) {
+                                extraBarang = new HashMap<>();
+                                extraBarang.put("kodeBarang", materialExtra.getId());
+                                extraBarang.put("qty", materialExtra.getQty());
+                                listExtra.add(extraBarang);
+                            }
+
+                            for (Discount disc : material.getDiskonList()) {
+                                tempBarang.put(disc.getKeydiskon(), disc.getDiscValue());
+                            }
+
+                            tempBarang.put("extra", listExtra);
+                            listBarangHistory.add(tempBarang);
+                        }
+                    }
+
                     String URL_ = Constants.API_GET_DISCOUNT_ORDER;
                     final String url = Constants.URL.concat(Constants.API_PREFIX).concat(URL_);
                     return (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, request);
@@ -731,6 +763,8 @@ public class OrderAddActivity extends BaseActivity {
                     barangList = (List<Map>) resultMap.get("barang");
                     for (Map barangMap : barangList) {
                         String kodeBarang = barangMap.get("kodeBarang").toString();
+                        String qty = barangMap.get("qty").toString();
+                        double qtyD = Double.parseDouble(qty);
 
                         //diskon
                         Map<String, String> map = (Map<String, String>) barangMap.get("diskon");
@@ -744,14 +778,28 @@ public class OrderAddActivity extends BaseActivity {
                             discList.add(disc);
                         }
                         //diskon
-
                         Discount extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
-
+                        boolean discExtra = false;
+                        double valueExtra = 0;
                         for (Material material : mList) {
-                            if (material.getId().equals(kodeBarang)) {
+                            if (material.getId().equals(kodeBarang) && material.getQty() == qtyD) {
 //                                material.setDiscount(discount);
                                 material.setExtraDiscount(extra);
                                 material.setTotalDiscount(totalDisc);
+                                valueExtra = material.getPrice() - totalDisc;
+                                for (Discount dis : discList) {
+                                    if (dis.getKeydiskon().equals("discExtra")) {
+                                        dis.setValuediskon(String.valueOf(valueExtra));
+                                        discExtra = true;
+                                        break;
+                                    }
+                                }
+                                if (!discExtra) {
+                                    Discount discount = new Discount();
+                                    discount.setKeydiskon("discExtra");
+                                    discount.setValuediskon(String.valueOf(valueExtra));
+                                    discList.add(discount);
+                                }
                                 material.setDiskonList(discList);
                             }
                         }

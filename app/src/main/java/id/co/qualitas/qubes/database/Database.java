@@ -1970,6 +1970,26 @@ public class Database extends SQLiteOpenHelper {
                             values.put(KEY_IS_SYNC, 0); //0 false, 1 true
 
                             int idExtra = (int) db.insert(TABLE_ORDER_DETAIL_EXTRA, null, values);//return id yg ud d create
+                            if (Helper.isNotEmptyOrNull(matExtra.getDiskonList())) {
+                                for (Discount discount : matExtra.getDiskonList()) {
+                                    values = new ContentValues();
+                                    values.put(KEY_ID_ORDER_DETAIL_EXTRA_DB, idExtra);
+                                    values.put(KEY_ID_ORDER_DETAIL_DB, idOrderDetail);
+                                    values.put(KEY_ID_ORDER_HEADER_DB, request.getIdHeader());
+                                    values.put(KEY_CUSTOMER_ID, request.getId_customer());
+                                    values.put(KEY_MATERIAL_ID, matExtra.getId());
+                                    values.put(KEY_DISCOUNT_ID, discount.getKeydiskon());
+                                    values.put(KEY_DISCOUNT_NAME, discount.getKeydiskon());
+                                    values.put(KEY_DISCOUNT_PRICE, discount.getValuediskon());
+                                    values.put(KEY_CREATED_BY, user.getUsername());
+                                    values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+                                    values.put(KEY_IS_SYNC, 0); //0 false, 1 true
+                                    int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT_EXTRA, null, values);
+                                }
+//                                getDiscount = 1;
+                            } else {
+//                                getDiscount = 0;
+                            }
                         }
                     }
                 }
@@ -3361,7 +3381,7 @@ public class Database extends SQLiteOpenHelper {
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            context.runOnUiThread(() -> Toast.makeText(context, e.getMessage(),Toast.LENGTH_LONG).show());
+            context.runOnUiThread(() -> Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show());
         } finally {
             db.endTransaction();
         }
