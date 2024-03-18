@@ -88,7 +88,7 @@
                     android:padding="3dp"
                     app:hintAnimationEnabled="true">
 
-                    <AutoCompleteTextView
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                         android:id="@+id/autoCompleteUom"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -140,7 +140,7 @@
                     android:padding="3dp"
                     app:hintAnimationEnabled="true">
 
-                    <AutoCompleteTextView
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                         android:id="@+id/autoCompleteCondition"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
@@ -161,7 +161,7 @@
                     android:padding="3dp"
                     app:hintAnimationEnabled="true">
 
-                    <AutoCompleteTextView
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                         android:id="@+id/autoCompleteReason"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"

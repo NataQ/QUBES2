@@ -200,27 +200,50 @@ public class SummaryDetailActivity extends BaseActivity {
                     if (paramArray != null) {
                         Collections.addAll(mList, paramArray);
                     }
+                    List<Material> listMat = new ArrayList<>();
+                    List<Discount> discList = new ArrayList<>();
+                    Material[] matArray;
+                    Discount[] disc;
+                    double totalDiscount = 0, amount = 0;
                     for (Material param : mList) {
-                        List<Material> listMat = new ArrayList<>();
-                        Material[] matArray = Helper.ObjectToGSON(param.getExtraItemObject(), Material[].class);
+                        listMat = new ArrayList<>();
+                        matArray = Helper.ObjectToGSON(param.getExtraItemObject(), Material[].class);
                         if (matArray != null) {
                             Collections.addAll(listMat, matArray);
                         }
                         param.setExtraItem(listMat);
 
-                        List<Discount> discList = new ArrayList<>();
-                        Discount[] disc = Helper.ObjectToGSON(param.getDiskonListObject(), Discount[].class);
+                        discList = new ArrayList<>();
+                        disc = Helper.ObjectToGSON(param.getDiskonListObject(), Discount[].class);
                         if (disc != null) {
                             Collections.addAll(discList, disc);
                         }
                         param.setDiskonList(discList);
-                        double totalDiscount = 0;
+                        totalDiscount = 0;
                         for (Discount discount : discList) {
-                            double amount = Double.parseDouble(discount.getValuediskon());
+                            amount = Double.parseDouble(discount.getValuediskon());
                             totalDiscount = totalDiscount + amount;
                         }
                         param.setTotalDiscount(totalDiscount);
                         param.setTotal(param.getPrice() - totalDiscount);
+
+                        if (Helper.isNotEmptyOrNull(param.getExtraItem())) {
+                            for (Material extra : param.getExtraItem()) {
+                                discList = new ArrayList<>();
+                                disc = Helper.ObjectToGSON(extra.getDiskonListObject(), Discount[].class);
+                                if (disc != null) {
+                                    Collections.addAll(discList, disc);
+                                }
+                                extra.setDiskonList(discList);
+                                totalDiscount = 0;
+                                for (Discount discount : discList) {
+                                    amount = Double.parseDouble(discount.getValuediskon());
+                                    totalDiscount = totalDiscount + amount;
+                                }
+                                extra.setTotalDiscount(totalDiscount);
+                                extra.setTotal(extra.getPrice() - totalDiscount);
+                            }
+                        }
                     }
                     saveDataSuccess = true;
                     return null;

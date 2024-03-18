@@ -45,13 +45,14 @@
                     android:hint="Product"
                     app:hintAnimationEnabled="true">
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtProduct"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:focusableInTouchMode="false"
                         android:inputType="date"
+                        android:minHeight="40dp"
                         android:padding="0dp"
                         android:textColor="@color/black_aspp" />
 
@@ -69,12 +70,13 @@
                     android:padding="3dp"
                     app:hintAnimationEnabled="true">
 
-                    <EditText
+                    <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edtQty"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:inputType="numberDecimal"
+                        android:minHeight="40dp"
                         android:padding="3dp"
                         android:textColor="@color/black_aspp" />
 
@@ -90,12 +92,13 @@
                     android:padding="3dp"
                     app:hintAnimationEnabled="true">
 
-                    <AutoCompleteTextView
+                    <androidx.appcompat.widget.AppCompatAutoCompleteTextView
                         android:id="@+id/autoCompleteUom"
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:focusableInTouchMode="false"
+                        android:minHeight="40dp"
                         android:padding="3dp"
                         android:textColor="@color/black_aspp" />
 
@@ -107,9 +110,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Small"
@@ -143,9 +146,9 @@
                 android:layout_height="wrap_content"
                 android:background="@color/blue8_aspp"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="vertical"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,9 +196,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="horizontal"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatTextView
                     style="@style/TextView_Title"

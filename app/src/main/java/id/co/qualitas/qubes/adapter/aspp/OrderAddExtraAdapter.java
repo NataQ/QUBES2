@@ -61,6 +61,7 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
     private Holder dataObjectHolder;
     private Material stockItem, itemOrder;
     private OrderAddAdapter headerAdapter;
+    private OrderDiscountAdapter mAdapterDiscount;
 
     public OrderAddExtraAdapter(OrderAddActivity mContext, OrderAddAdapter headerAdapter, List<Material> mList, int posHeader, OnAdapterListener onAdapterListener) {
         if (mList != null) {
@@ -119,12 +120,10 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         LinearLayout llDelete, llDiscountAll;
-        LinearLayout llDiscountQty, llDiscountValue, llDiscountKelipatan;
         ImageView imgView;
         RecyclerView rvDiscount;
         AutoCompleteTextView autoCompleteUom;
         TextView txtNo, txtPrice, txtTotalDiscount, txtTotal;
-        TextView txtDiscountQty, txtDiscountValue, txtDiscountKelipatan;
         EditText edtProduct, edtQty;
         OnAdapterListener onAdapterListener;
 
@@ -143,6 +142,9 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             rvDiscount.setLayoutManager(new LinearLayoutManager(mContext));
             rvDiscount.setHasFixedSize(true);
             llDiscountAll = itemView.findViewById(R.id.llDiscountAll);
+            rvDiscount = itemView.findViewById(R.id.rvDiscount);
+            rvDiscount.setLayoutManager(new LinearLayoutManager(mContext));
+            rvDiscount.setHasFixedSize(true);
             this.onAdapterListener = onAdapterListener;
             itemView.setOnClickListener(this);
         }
@@ -171,6 +173,35 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
         String productName = !Helper.isNullOrEmpty(detail.getNama()) ? detail.getNama() : null;
         String productId = String.valueOf(detail.getId());
         holder.edtProduct.setText(productId + " - " + productName);
+        mListDiskon = new ArrayList<>();
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            mListDiskon.addAll(detail.getDiskonList());
+        }
+
+        holder.txtPrice.setText("Rp. " + format.format(detail.getPrice()));
+        holder.txtTotalDiscount.setText("Rp. " + format.format(detail.getTotalDiscount()));
+        holder.txtTotal.setText("Rp. 0");
+
+        if (Helper.isNotEmptyOrNull(detail.getDiskonList())) {
+            holder.llDiscountAll.setVisibility(View.VISIBLE);
+            mAdapterDiscount = new OrderDiscountAdapter(mContext, mListDiskon, header -> {
+            });
+            holder.rvDiscount.setAdapter(mAdapterDiscount);
+        } else {
+            holder.llDiscountAll.setVisibility(View.GONE);
+        }
+
+        holder.txtTotalDiscount.setOnClickListener(v -> {
+            if (!isExpand) {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_up));
+                holder.rvDiscount.setVisibility(View.VISIBLE);
+                isExpand = true;
+            } else {
+                holder.imgView.setImageDrawable(ContextCompat.getDrawable(mContext.getApplicationContext(), R.drawable.ic_drop_down_aspp));
+                holder.rvDiscount.setVisibility(View.GONE);
+                isExpand = false;
+            }
+        });
 
         holder.imgView.setOnClickListener(v -> {
             if (!isExpand) {
@@ -218,6 +249,9 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                         holder.edtQty.setText("0");
                         mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
                         mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(0);
+                    }else{
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                        holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
                     }
                 }
             }
@@ -256,17 +290,26 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                                     Toast.makeText(mContext, ket, Toast.LENGTH_SHORT).show();
                                     holder.edtQty.clearFocus();
                                     holder.edtQty.setText("0");
+                                    holder.txtPrice.setText("0");
+                                    holder.txtTotal.setText("0");
+
                                 } else {
                                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                                     mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                                    holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                                    holder.txtTotal.setText("0");
                                 }
                             } else {
                                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                                 mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                                holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                                holder.txtTotal.setText("0");
                             }
                         } else {
                             mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(qty);
                             mFilteredList.get(holder.getAbsoluteAdapterPosition()).setPrice(new Database(mContext).getPrice(mFilteredList.get(holder.getAbsoluteAdapterPosition())));
+                            holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
+                            holder.txtTotal.setText("0");
                         }
                     }
 //                else {

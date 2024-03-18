@@ -332,35 +332,49 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 if (mFilteredList.get(holder.getAbsoluteAdapterPosition()).getQty() > 0 || !Helper.isNullOrEmpty(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getUom())) {
                     Dialog dialog = new Dialog(mContext);
 
-                    dialog.setContentView(R.layout.aspp_dialog_searchable_spinner_product);
+                    dialog.setContentView(R.layout.aspp_dialog_extra_item);
                     dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     dialog.getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
                     dialog.show();
 
                     Button btnSearch = dialog.findViewById(R.id.btnSearch);
                     btnSearch.setVisibility(View.GONE);
-                    CardView cvUnCheckAll = dialog.findViewById(R.id.cvUnCheckAll);
-                    CardView cvCheckedAll = dialog.findViewById(R.id.cvCheckedAll);
-                    RelativeLayout checkbox = dialog.findViewById(R.id.checkbox);
                     EditText editText = dialog.findViewById(R.id.edit_text);
                     RecyclerView rv = dialog.findViewById(R.id.rv);
                     Button btnCancel = dialog.findViewById(R.id.btnCancel);
-                    Button btnSave = dialog.findViewById(R.id.btnSave);
-
-                    cvCheckedAll.setVisibility(View.GONE);
-                    cvUnCheckAll.setVisibility(View.GONE);
-
-                    if (Helper.isNotEmptyOrNull(mList)) {
-                        checkbox.setVisibility(View.VISIBLE);
-                    } else {
-                        checkbox.setVisibility(View.GONE);
-                    }
 
                     List<Material> listSpinnerMat = new ArrayList<>();
                     listSpinnerMat.addAll(initDataMaterial(pos, mFilteredList.get(holder.getAbsoluteAdapterPosition())));
 
-                    SpinnerProductOrderAdapter spinnerAdapter = new SpinnerProductOrderAdapter(mContext, listSpinnerMat, user, true, (nameItem, adapterPosition) -> {
+                    SpinnerProductOrderExtraAdapter spinnerAdapter = new SpinnerProductOrderExtraAdapter(mContext, listSpinnerMat, user, true, (materialExtra, adapterPosition) -> {
+                        if (Helper.isNotEmptyOrNull(listSpinnerMat)) {
+                            mListExtra = new ArrayList<>();
+//                            if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
+//                                mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
+//                            }
 
+                            mListExtra.add(materialExtra);
+                            mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+                            });
+                            holder.rvExtra.setAdapter(mAdapter);
+                            mFilteredList.get(pos).setExtraItem(mListExtra);
+                            mAdapter.setData(mListExtra);
+                            new CountDownTimer(1000, 1000) {
+                                public void onTick(long millisUntilFinished) {
+                                    progress.show();
+                                    int sizeList = mListExtra.size();
+                                    mAdapter.notifyItemInserted(sizeList);
+                                }
+
+                                public void onFinish() {
+                                    progress.dismiss();
+                                    holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
+                                }
+                            }.start();
+                        } else {
+                            Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
                     });
 
                     rv.setLayoutManager(new LinearLayoutManager(mContext));
@@ -385,86 +399,86 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         }
                     });
 
-                    cvCheckedAll.setOnClickListener(v1 -> {
-                        if (listFilteredSpinner == null) {
-                            listFilteredSpinner = new ArrayList<>();
-                        }
-                        checkedAll = false;
-                        if (!listFilteredSpinner.isEmpty()) {
-                            for (Material mat : listFilteredSpinner) {
-                                mat.setChecked(checkedAll);
-                            }
-                        } else {
-                            for (Material mat : listSpinnerMat) {
-                                mat.setChecked(checkedAll);
-                            }
-                        }
-                        spinnerAdapter.notifyDataSetChanged();
-                        cvUnCheckAll.setVisibility(View.VISIBLE);
-                        cvCheckedAll.setVisibility(View.GONE);
-                    });
-
-                    cvUnCheckAll.setOnClickListener(v2 -> {
-                        if (listFilteredSpinner == null) {
-                            listFilteredSpinner = new ArrayList<>();
-                        }
-                        checkedAll = true;
-                        if (!listFilteredSpinner.isEmpty()) {
-                            for (Material mat : listFilteredSpinner) {
-                                mat.setChecked(checkedAll);
-                            }
-                        } else {
-                            for (Material mat : listSpinnerMat) {
-                                mat.setChecked(checkedAll);
-                            }
-                        }
-                        spinnerAdapter.notifyDataSetChanged();
-                        cvUnCheckAll.setVisibility(View.GONE);
-                        cvCheckedAll.setVisibility(View.VISIBLE);
-                    });
+//                    cvCheckedAll.setOnClickListener(v1 -> {
+//                        if (listFilteredSpinner == null) {
+//                            listFilteredSpinner = new ArrayList<>();
+//                        }
+//                        checkedAll = false;
+//                        if (!listFilteredSpinner.isEmpty()) {
+//                            for (Material mat : listFilteredSpinner) {
+//                                mat.setChecked(checkedAll);
+//                            }
+//                        } else {
+//                            for (Material mat : listSpinnerMat) {
+//                                mat.setChecked(checkedAll);
+//                            }
+//                        }
+//                        spinnerAdapter.notifyDataSetChanged();
+//                        cvUnCheckAll.setVisibility(View.VISIBLE);
+//                        cvCheckedAll.setVisibility(View.GONE);
+//                    });
+//
+//                    cvUnCheckAll.setOnClickListener(v2 -> {
+//                        if (listFilteredSpinner == null) {
+//                            listFilteredSpinner = new ArrayList<>();
+//                        }
+//                        checkedAll = true;
+//                        if (!listFilteredSpinner.isEmpty()) {
+//                            for (Material mat : listFilteredSpinner) {
+//                                mat.setChecked(checkedAll);
+//                            }
+//                        } else {
+//                            for (Material mat : listSpinnerMat) {
+//                                mat.setChecked(checkedAll);
+//                            }
+//                        }
+//                        spinnerAdapter.notifyDataSetChanged();
+//                        cvUnCheckAll.setVisibility(View.GONE);
+//                        cvCheckedAll.setVisibility(View.VISIBLE);
+//                    });
 
                     btnCancel.setOnClickListener(v4 -> {
                         dialog.dismiss();
                     });
 
-                    btnSave.setOnClickListener(v5 -> {
-                        if (Helper.isNotEmptyOrNull(listSpinnerMat)) {
-                            mListExtra = new ArrayList<>();
-                            if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
-                                mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
-                            }
-
-
-                            List<Material> addList = new ArrayList<>();
-                            for (Material mat : listSpinnerMat) {
-                                if (mat.isChecked()) {
-                                    addList.add(mat);
-                                    break;
-                                }
-                            }
-                            mListExtra.addAll(addList);
-                            mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
-                            });
-                            holder.rvExtra.setAdapter(mAdapter);
-                            mFilteredList.get(pos).setExtraItem(mListExtra);
-                            mAdapter.setData(mListExtra);
-                            new CountDownTimer(1000, 1000) {
-                                public void onTick(long millisUntilFinished) {
-                                    progress.show();
-                                    int sizeList = mListExtra.size();
-                                    mAdapter.notifyItemInserted(sizeList);
-                                }
-
-                                public void onFinish() {
-                                    progress.dismiss();
-                                    holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
-                                }
-                            }.start();
-                        } else {
-                            Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
-                        }
-                        dialog.dismiss();
-                    });
+//                    btnSave.setOnClickListener(v5 -> {
+//                        if (Helper.isNotEmptyOrNull(listSpinnerMat)) {
+//                            mListExtra = new ArrayList<>();
+//                            if (Helper.isNotEmptyOrNull(mFilteredList.get(pos).getExtraItem())) {
+//                                mListExtra.addAll(mFilteredList.get(pos).getExtraItem());
+//                            }
+//
+//
+//                            List<Material> addList = new ArrayList<>();
+//                            for (Material mat : listSpinnerMat) {
+//                                if (mat.isChecked()) {
+//                                    addList.add(mat);
+//                                    break;
+//                                }
+//                            }
+//                            mListExtra.addAll(addList);
+//                            mAdapter = new OrderAddExtraAdapter(mContext, OrderAddAdapter.this, mListExtra, pos, header -> {
+//                            });
+//                            holder.rvExtra.setAdapter(mAdapter);
+//                            mFilteredList.get(pos).setExtraItem(mListExtra);
+//                            mAdapter.setData(mListExtra);
+//                            new CountDownTimer(1000, 1000) {
+//                                public void onTick(long millisUntilFinished) {
+//                                    progress.show();
+//                                    int sizeList = mListExtra.size();
+//                                    mAdapter.notifyItemInserted(sizeList);
+//                                }
+//
+//                                public void onFinish() {
+//                                    progress.dismiss();
+//                                    holder.rvExtra.smoothScrollToPosition(holder.rvExtra.getAdapter().getItemCount() - 1);
+//                                }
+//                            }.start();
+//                        } else {
+//                            Toast.makeText(mContext, "No data", Toast.LENGTH_SHORT).show();
+//                        }
+//                        dialog.dismiss();
+//                    });
                 } else {
                     Toast.makeText(mContext, "Qty dan Uom tidak boleh kosong", Toast.LENGTH_SHORT).show();
                 }

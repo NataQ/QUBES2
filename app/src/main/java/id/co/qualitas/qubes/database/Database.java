@@ -1986,9 +1986,6 @@ public class Database extends SQLiteOpenHelper {
                                     values.put(KEY_IS_SYNC, 0); //0 false, 1 true
                                     int idDiscount = (int) db.insert(TABLE_ORDER_DETAIL_DISCOUNT_EXTRA, null, values);
                                 }
-//                                getDiscount = 1;
-                            } else {
-//                                getDiscount = 0;
                             }
                         }
                     }
@@ -3646,8 +3643,7 @@ public class Database extends SQLiteOpenHelper {
 //                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
 //                "order by a.idGroupMaxBon  asc";
 
-        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, \n" +
-                "COALESCE(valueInvoice, 0) - COALESCE(valuePaid, 0) as limits \n" +
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, COALESCE(valuePaid, 0) - COALESCE(valueInvoice, 0)  as limits \n" +
                 "from MasterGroupSalesMaxBon a \n" +
                 "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
                 "and b.customerId = ? \n" +
@@ -5303,6 +5299,7 @@ public class Database extends SQLiteOpenHelper {
         String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? ";
         String selectQueryDiscount = "SELECT * FROM " + TABLE_ORDER_DETAIL_DISCOUNT + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? and " + KEY_MATERIAL_ID + " = ?";
         String selectQueryExtra = "SELECT * FROM " + TABLE_ORDER_DETAIL_EXTRA + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? and " + KEY_ID_ORDER_DETAIL_DB + " = ? ";
+        String selectQueryExtraDiscount = "SELECT * FROM " + TABLE_ORDER_DETAIL_DISCOUNT_EXTRA + " WHERE " + KEY_ID_ORDER_HEADER_DB + " = ? and " + KEY_ID_ORDER_DETAIL_DB + " = ? and " + KEY_ID_ORDER_DETAIL_EXTRA_DB + " = ?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{header.getIdHeader()});
@@ -5346,6 +5343,7 @@ public class Database extends SQLiteOpenHelper {
                 if (cursorExtra.moveToFirst()) {
                     do {
                         Material extra = new Material();
+                        extra.setIdheader(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_ID_ORDER_DETAIL_EXTRA_DB)));
                         extra.setId(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                         extra.setNama(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                         extra.setId_material_group(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
@@ -5354,6 +5352,24 @@ public class Database extends SQLiteOpenHelper {
                         extra.setName_product_group(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                         extra.setQty(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_QTY)));
                         extra.setUom(cursorExtra.getString(cursorExtra.getColumnIndexOrThrow(KEY_UOM)));
+                        extra.setNett(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_PRICE)));
+                        extra.setPrice(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_PRICE)));
+                        extra.setTotalDiscount(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_TOTAL_DISCOUNT)));
+                        extra.setTotal(cursorExtra.getDouble(cursorExtra.getColumnIndexOrThrow(KEY_TOTAL)));
+
+                        diskonList = new ArrayList<>();
+                        cursorDiscount = db.rawQuery(selectQueryExtraDiscount, new String[]{header.getIdHeader(), paramModel.getIdheader(), extra.getIdheader()});
+                        if (cursorDiscount.moveToFirst()) {
+                            do {
+                                Discount disc = new Discount();
+                                disc.setKeydiskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_ID)));
+                                disc.setKeydiskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_NAME)));
+                                disc.setValuediskon(cursorDiscount.getString(cursorDiscount.getColumnIndexOrThrow(KEY_DISCOUNT_PRICE)));
+                                diskonList.add(disc);
+                            } while (cursorDiscount.moveToNext());
+                        }
+                        cursorDiscount.close();
+                        extra.setDiskonList(diskonList);
                         extraList.add(extra);
                     } while (cursorExtra.moveToNext());
                 }
@@ -6048,6 +6064,40 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
                 paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                 paramModel.setTotalPaid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid")));
+                paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
+                paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Order> getAllOrderHistory(Customer cust) {
+        List<Order> arrayList = new ArrayList<>();
+        String selectQuery = "select a.* from OrderHeader a where a.customerId = ? and a.deleted = 0 and a.isSync = 0";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{cust.getId()});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Order paramModel = new Order();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_BACK_END)));
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
+                paramModel.setOrder_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setTanggal_kirim(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TANGGAL_KIRIM)));
+                paramModel.setOrder_type(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ORDER_TYPE)));
+                paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
+                paramModel.setType_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TYPE_CUSTOMER)));
+                paramModel.setDiscount(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_DISCOUNT)) != 0);
+                paramModel.setDeleted(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_DELETED)) != 0);
+                paramModel.setIdStockHeaderDb(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_DB)));
+                paramModel.setIdStockHeaderBE(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_ID_STOCK_REQUEST_HEADER_BE)));
+                paramModel.setOmzet(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
                 paramModel.setStatus(cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS)));
                 paramModel.setPrintOrder(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_ORDER)));
                 arrayList.add(paramModel);
@@ -8959,7 +9009,7 @@ public class Database extends SQLiteOpenHelper {
         deleteMasterBank();
         deleteMasterMaterial();
         deleteMasterUom();
-        deleteMasterDaerahTingkat();
+//        deleteMasterDaerahTingkat();
         deleteMasterPromotion();
 //        deleteMasterPriceCode();
 //        deleteMasterSalesPriceHeader();

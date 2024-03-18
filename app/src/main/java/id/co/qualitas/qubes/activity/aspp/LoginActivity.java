@@ -347,8 +347,8 @@ public class LoginActivity extends AppCompatActivity {
                         Collections.addAll(arrayRoleList, param1Array);
                         userResponse.setRoleList(arrayRoleList);
 
-                        SessionManagerQubes.setUserProfile(userResponse);
-                        SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
+//                        SessionManagerQubes.setUserProfile(userResponse);
+//                        SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
                         saveDataSuccess = true;
                     } else {
                         saveDataSuccess = false;
@@ -723,6 +723,7 @@ public class LoginActivity extends AppCompatActivity {
 //                        PARAM = 10;
 //                        new RequestUrl().execute();//10
                         SessionManagerQubes.setUserProfile(userResponse);
+                        SessionManagerQubes.setImei(Helper.getImei(getApplicationContext()));
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);

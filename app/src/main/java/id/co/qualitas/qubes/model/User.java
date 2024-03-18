@@ -74,10 +74,19 @@ public class User implements Serializable {
     private String token;
     private String type_sales;
     private String group_id;
+    private String kode_jenis_sales;
     private float radius;
     private int max_visit;
     private List<DepoRegion> depoRegionList;
     private List<Role> roleList;
+
+    public String getKode_jenis_sales() {
+        return kode_jenis_sales;
+    }
+
+    public void setKode_jenis_sales(String kode_jenis_sales) {
+        this.kode_jenis_sales = kode_jenis_sales;
+    }
 
     public String getSales_type() {
         return sales_type;

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
 <!--    <View-->
@@ -102,7 +103,7 @@
                         style="@style/TextView_Small"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="BTL"
+                        android:text=""
                         android:textColor="@color/black_aspp" />
                 </LinearLayout>
 
@@ -111,9 +112,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:visibility="gone"
                 android:orientation="horizontal"
                 android:padding="5dp">
 
@@ -144,10 +143,11 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/llDiscountAll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/blue8_aspp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="5dp">
@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="19,500"
+                        android:text="0"
                         android:textColor="@color/black_aspp"
                         android:textStyle="bold" />
 
@@ -185,125 +185,127 @@
                         android:src="@drawable/ic_drop_down_aspp" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/llDiscount"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDiscount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    tools:listitem="@layout/aspp_row_view_discount" />
 
-                    <LinearLayout
-                        android:id="@+id/llDiscountQty"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                <!--                <LinearLayout-->
+                <!--                    android:id="@+id/llDiscount"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:orientation="vertical"-->
+                <!--                    android:visibility="gone">-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Discount Qty"
-                            android:textColor="@color/gray8_aspp" />
+                <!--                    <LinearLayout-->
+                <!--                        android:id="@+id/llDiscountQty"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_marginTop="5dp"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="horizontal">-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtDiscountQty"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="15,500"
-                            android:textColor="@color/black_aspp"
-                            android:textStyle="bold" />
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:text="Discount Qty"-->
+                <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:src="@drawable/ic_drop_down_aspp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            android:id="@+id/txtDiscountQty"-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:gravity="end"-->
+                <!--                            android:text="15,500"-->
+                <!--                            android:textColor="@color/black_aspp"-->
+                <!--                            android:textStyle="bold" />-->
 
-                    <LinearLayout
-                        android:id="@+id/llDiscountValue"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_marginStart="5dp"-->
+                <!--                            android:visibility="invisible" />-->
+                <!--                    </LinearLayout>-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Discount Value"
-                            android:textColor="@color/gray8_aspp" />
+                <!--                    <LinearLayout-->
+                <!--                        android:id="@+id/llDiscountValue"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_marginTop="5dp"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="horizontal">-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtDiscountValue"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="2000"
-                            android:textColor="@color/black_aspp"
-                            android:textStyle="bold" />
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:text="Discount Value"-->
+                <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:src="@drawable/ic_drop_down_aspp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            android:id="@+id/txtDiscountValue"-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:gravity="end"-->
+                <!--                            android:text="2000"-->
+                <!--                            android:textColor="@color/black_aspp"-->
+                <!--                            android:textStyle="bold" />-->
 
-                    <LinearLayout
-                        android:id="@+id/llDiscountKelipatan"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_marginStart="5dp"-->
+                <!--                            android:visibility="invisible" />-->
+                <!--                    </LinearLayout>-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Discount Kelipatan"
-                            android:textColor="@color/gray8_aspp" />
+                <!--                    <LinearLayout-->
+                <!--                        android:id="@+id/llDiscountKelipatan"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:layout_marginTop="5dp"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:orientation="horizontal">-->
 
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/txtDiscountKelipatan"
-                            style="@style/TextView_Small"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="end"
-                            android:text="2000"
-                            android:textColor="@color/black_aspp"
-                            android:textStyle="bold" />
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:text="Discount Kelipatan"-->
+                <!--                            android:textColor="@color/gray8_aspp" />-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="5dp"
-                            android:src="@drawable/ic_drop_down_aspp"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-                </LinearLayout>
+                <!--                        <androidx.appcompat.widget.AppCompatTextView-->
+                <!--                            android:id="@+id/txtDiscountKelipatan"-->
+                <!--                            style="@style/TextView_Small"-->
+                <!--                            android:layout_width="0dp"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_weight="1"-->
+                <!--                            android:gravity="end"-->
+                <!--                            android:text="2000"-->
+                <!--                            android:textColor="@color/black_aspp"-->
+                <!--                            android:textStyle="bold" />-->
+
+                <!--                        <ImageView-->
+                <!--                            android:layout_width="wrap_content"-->
+                <!--                            android:layout_height="wrap_content"-->
+                <!--                            android:layout_marginStart="5dp"-->
+                <!--                            android:visibility="invisible" />-->
+                <!--                    </LinearLayout>-->
+                <!--                </LinearLayout>-->
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:visibility="gone"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:padding="5dp">
@@ -324,7 +326,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="end"
-                    android:text="0"
+                    android:text=""
                     android:textColor="@color/black_aspp"
                     android:textStyle="bold" />
 
@@ -335,12 +337,6 @@
                     android:src="@drawable/ic_drop_down_aspp"
                     android:visibility="invisible" />
             </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvExtra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
 
         </LinearLayout>
 
