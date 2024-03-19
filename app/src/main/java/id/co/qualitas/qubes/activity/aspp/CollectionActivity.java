@@ -145,6 +145,30 @@ public class CollectionActivity extends BaseActivity {
 //        startVisit = SessionManagerQubes.getStartDay();
         startVisit = database.getLastStartVisit();
 
+
+        if (startVisit != null) {
+            if (startVisit.getDate() != null) {
+                if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                    switch (startVisit.getStatus_visit()) {
+                        case 0:
+                        case 2:
+                        case 3:
+                            btnAdd.setVisibility(View.GONE);
+                            break;
+                        case 1:
+                            btnAdd.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                } else {
+                    btnAdd.setVisibility(View.GONE);
+                }
+            } else {
+                btnAdd.setVisibility(View.GONE);
+            }
+        } else {
+            btnAdd.setVisibility(View.GONE);
+        }
+
         for (Invoice inv : mList) {
             totalInvoice = totalInvoice + 1;
             totalPaid = totalPaid + inv.getTotal_paid();

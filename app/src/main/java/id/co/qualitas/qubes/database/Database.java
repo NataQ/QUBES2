@@ -1908,7 +1908,7 @@ public class Database extends SQLiteOpenHelper {
                     values.put(KEY_CUSTOMER_ID, request.getId_customer());
                     values.put(KEY_MATERIAL_ID, param.getId());
                     values.put(KEY_MATERIAL_NAME, param.getNama());
-                    values.put(KEY_PRICE_LIST_CODE, param.getPriceListCode());
+                    values.put(KEY_PRICE_LIST_CODE, request.getTop());
                     values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
                     values.put(KEY_MATERIAL_GROUP_NAME, param.getMaterial_group_name());
                     values.put(KEY_MATERIAL_PRODUCT_ID, param.getId_product_group());
@@ -3542,7 +3542,7 @@ public class Database extends SQLiteOpenHelper {
         values.put(KEY_VALUE, param.getValue());
         values.put(KEY_DESC, param.getDescription());
         values.put(KEY_CREATED_BY, idSales);
-        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
+//        values.put(KEY_CREATED_DATE, Helper.getTodayDate(Constants.DATE_FORMAT_2));
 
         int id = -1;
         try {
@@ -3643,7 +3643,7 @@ public class Database extends SQLiteOpenHelper {
 //                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
 //                "order by a.idGroupMaxBon  asc";
 
-        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, COALESCE(valuePaid, 0) - COALESCE(valueInvoice, 0)  as limits \n" +
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, COALESCE(valuePaid, 0) + COALESCE(valueInvoice, 0)  as limits \n" +
                 "from MasterGroupSalesMaxBon a \n" +
                 "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
                 "and b.customerId = ? \n" +
@@ -3667,7 +3667,7 @@ public class Database extends SQLiteOpenHelper {
                 "\tinner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
                 "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
                 "\ton d.invoiceNo = a.idOrderHeaderDB and b.materialId = d.materialId\n" +
-                "where a.customerId = ? and b.price > coalesce(d.totalPaid,0)  \n" +
+                "where a.customerId = ? and b.total > coalesce(d.totalPaid,0)  \n" +
                 "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon \n" +
                 "order by a.idGroupMaxBon  asc";
 
@@ -4561,7 +4561,7 @@ public class Database extends SQLiteOpenHelper {
                 "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
                 "\ton d.invoiceNo = a.idOrderHeaderDB and b.materialId = d.materialId\n" +
                 "where a.customerId = ? and c.idGroupMaxBon = ? \n" +
-                "and b.price > coalesce(d.totalPaid,0) and a.deleted = 0) c";
+                "and b.total > coalesce(d.totalPaid,0) and a.deleted = 0) c";
 
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -5673,9 +5673,9 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setNo_tlp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_PHONE)));
                 paramModel.setSisaCreditLimit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_SISA_KREDIT_LIMIT)));
                 paramModel.setLimit_kredit(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT)));
-                paramModel.setLimit_kredit_awal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT_AWAL)));
+//                paramModel.setLimit_kredit_awal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_CREDIT_LIMIT_AWAL)));
                 paramModel.setTotalTagihan(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_TAGIHAN)));
-                paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
+//                paramModel.setPrintBon(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRINT_BON)));
                 paramModel.setNik(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_KTP)));
                 paramModel.setNo_npwp(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NO_NPWP)));
 
@@ -8262,6 +8262,31 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
+    public List<Discount> getAllOrderDetailDiscountExtra(String idDetail) {
+        List<Discount> arrayList = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_ORDER_DETAIL_DISCOUNT_EXTRA + " WHERE " + KEY_ID_ORDER_DETAIL_EXTRA_DB + " = ? ";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{idDetail});
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    Discount disc = new Discount();
+                    disc.setKeydiskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_ID)));
+                    disc.setKeydiskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_NAME)));
+                    disc.setValuediskon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DISCOUNT_PRICE)));
+                    arrayList.add(disc);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Helper.setItemParam(Constants.LOG_EXCEPTION, e.getMessage());
+            arrayList = null;
+        }
+        cursor.close();
+        return arrayList;
+    }
+
     public List<Material> getAllOrderDetailExtra(String idDetail) {
         List<Material> arrayList = new ArrayList<>();
         // Select All Query
@@ -8274,6 +8299,7 @@ public class Database extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     Material extra = new Material();
+                    extra.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_DETAIL_EXTRA_DB)));
                     extra.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                     extra.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                     extra.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
@@ -8282,6 +8308,10 @@ public class Database extends SQLiteOpenHelper {
                     extra.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                     extra.setQty(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     extra.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    extra.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                    extra.setTotalDiscount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL_DISCOUNT)));
+                    extra.setTotal(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+                    extra.setDiskonList(getAllOrderDetailDiscountExtra(extra.getIdheader()));
                     arrayList.add(extra);
                 } while (cursor.moveToNext());
             }

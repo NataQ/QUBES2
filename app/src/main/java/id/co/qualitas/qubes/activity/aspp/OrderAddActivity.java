@@ -765,7 +765,7 @@ public class OrderAddActivity extends BaseActivity {
                             }
 
                             for (Discount disc : material.getDiskonList()) {
-                                temp.put(disc.getKeydiskon(), disc.getDiscValue());
+                                temp.put(disc.getKeydiskon(), disc.getValuediskon());
                             }
 
                             temp.put("extra", listExtra);
@@ -780,6 +780,7 @@ public class OrderAddActivity extends BaseActivity {
                 } else if (PARAM == 2) {
                     Map resultMap = (Map) wsMessage.getResult();
                     List<Map> barangList = new ArrayList<>();
+                    Material smallMat = new Material();
                     barangList = (List<Map>) resultMap.get("barang");
                     String kodeBarang, qty;
                     double qtyD, totalDisc = 0, valueExtra = 0;
@@ -805,7 +806,8 @@ public class OrderAddActivity extends BaseActivity {
                             extra = Helper.ObjectToGSON(barangMap.get("extra"), Discount.class);
                             discExtra = false;
                             valueExtra = 0;
-                            if (material.getId().equals(kodeBarang) && material.getQty() == qtyD) {
+                            smallMat = database.getQtySmallUom(material);
+                            if (material.getId().equals(kodeBarang) && smallMat.getQty() == qtyD) {
                                 material.setExtraDiscount(extra);
                                 material.setTotalDiscount(totalDisc);
                                 material.setDiskonList(discList);
@@ -813,7 +815,8 @@ public class OrderAddActivity extends BaseActivity {
 
                             if (Helper.isNotEmptyOrNull(material.getExtraItem())) {
                                 for (Material matExtra : material.getExtraItem()) {
-                                    if (matExtra.getId().equals(kodeBarang) && matExtra.getQty() == qtyD) {
+                                    smallMat = database.getQtySmallUom(matExtra);
+                                    if (matExtra.getId().equals(kodeBarang) && smallMat.getQty() == qtyD) {
                                         valueExtra = matExtra.getPrice() - totalDisc;
                                         totalDisc = totalDisc + valueExtra;
                                         matExtra.setExtraDiscount(extra);

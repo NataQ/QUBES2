@@ -212,8 +212,8 @@ public class CollectionGiroNewAdapter extends RecyclerView.Adapter<CollectionGir
             holder.txtTglCair.setText(null);
         }
 
-        List<Bank> bankASPPList = database.getAllBank("01");//Bank ASPP
-        List<Bank> bankCustomerList = database.getAllBank("02");//Bank Customer
+        List<Bank> bankASPPList = database.getAllBank("1");//Bank ASPP
+        List<Bank> bankCustomerList = database.getAllBank("2");//Bank Customer
 
         holder.spnBankCust.setText(!idBankCust.equals("") && !nameBankCust.equals("") ? idBankCust + " - " + nameBankCust : null);
         holder.spnBankASPP.setText(!idBank.equals("") && !nameBank.equals("") ? idBank + " - " + nameBank : null);

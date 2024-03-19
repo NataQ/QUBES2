@@ -365,6 +365,7 @@ public class VisitActivity extends BaseActivity {
                             }
                         } else {
                             SessionManagerQubes.setOutletHeader(outletClicked);
+                            Helper.removeItemParam(Constants.IMAGE_TYPE);
                             Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                             startActivity(intent);
                         }
@@ -538,6 +539,7 @@ public class VisitActivity extends BaseActivity {
                                     }
                                 } else {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 }
@@ -546,6 +548,7 @@ public class VisitActivity extends BaseActivity {
                             case 3:
                                 if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.CHECK_OUT_VISIT) {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 } else {
@@ -577,6 +580,7 @@ public class VisitActivity extends BaseActivity {
                                     }
                                 } else {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 }
@@ -831,7 +835,7 @@ public class VisitActivity extends BaseActivity {
             database.updateStatusOutletVisit(outletClicked, user.getUsername());
         }
         SessionManagerQubes.setOutletHeader(outletClicked);
-
+        Helper.removeItemParam(Constants.IMAGE_TYPE);
         Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
         startActivity(intent);
     }
@@ -907,6 +911,7 @@ public class VisitActivity extends BaseActivity {
                             }
                         } else {
                             SessionManagerQubes.setOutletHeader(outletClicked);
+                            Helper.removeItemParam(Constants.IMAGE_TYPE);
                             Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                             startActivity(intent);
                         }
@@ -970,6 +975,7 @@ public class VisitActivity extends BaseActivity {
                                     }
                                 } else {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 }
@@ -978,6 +984,7 @@ public class VisitActivity extends BaseActivity {
                             case 3:
                                 if (header.getStatus() == Constants.CHECK_IN_VISIT || header.getStatus() == Constants.CHECK_OUT_VISIT) {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 } else {
@@ -1009,6 +1016,7 @@ public class VisitActivity extends BaseActivity {
                                     }
                                 } else {
                                     SessionManagerQubes.setOutletHeader(outletClicked);
+                                    Helper.removeItemParam(Constants.IMAGE_TYPE);
                                     Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
                                     startActivity(intent);
                                 }
@@ -1065,6 +1073,7 @@ public class VisitActivity extends BaseActivity {
             checkLocationPermission();//from adapter
         } else {
             SessionManagerQubes.setOutletHeader(outletClicked);
+            Helper.removeItemParam(Constants.IMAGE_TYPE);
             Intent intent = new Intent(VisitActivity.this, DailySalesmanActivity.class);
             startActivity(intent);
         }
@@ -2919,17 +2928,22 @@ public class VisitActivity extends BaseActivity {
                         error++;
                     }
                 }
-                if (listResult.size() == offlineData.size()) {//ganti sizeData
-                    if (error == 0) {
+                if (offlineData.size() == 0) {
+                    validateButton();
+                    setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                } else {
+                    if (listResult.size() == offlineData.size()) {
+                        if (error == 0) {
 //                        if (user.getRute_inap() == 1) {
-                        validateButton();//send all data
+                            validateButton();//send all data
 //                        }
-                        setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                            setToast("Sukses mengirim data " + String.valueOf(listResult.size()));
+                        } else {
+                            setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
+                        }
                     } else {
                         setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
                     }
-                } else {
-                    setToast("Gagal mengirim data : " + String.valueOf(error) + "\nSilahkan sync ulang di menu Account");
                 }
             } else {
                 setToast("Gagal mengirim data. Silahkan sync ulang di menu Account");

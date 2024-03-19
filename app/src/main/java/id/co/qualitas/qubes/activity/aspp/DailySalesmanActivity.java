@@ -102,7 +102,7 @@ import id.co.qualitas.qubes.utils.Utils;
 
 public class DailySalesmanActivity extends BaseActivity {
     private TextView txtOutlet, txtTypeOutlet, txtStatus, txtOrder;
-    private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP;
+    private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP, txtKreditLimitAwal;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
     private LinearLayout llLokasiToko, llLokasiGudang, llLokasiTagihan;
@@ -249,7 +249,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 } else {
                     setToast("Customer ini tidak memiliki KTP atau NPWP");
                 }
-            }else{
+            } else {
                 Intent intent = new Intent(this, OrderActivity.class);
                 startActivity(intent);
             }
@@ -922,6 +922,11 @@ public class DailySalesmanActivity extends BaseActivity {
                 totalTagihan = database.getTotalTagihanInvoiceCustomer(outletHeader.getId()) + database.getTotalTagihanOrderCustomer(outletHeader.getId());
                 txtTotalTagihan.setText(format.format(totalTagihan));
                 txtSisaKreditLimit.setText(format.format(database.getLKCustomer(outletHeader)));
+                if (outletHeader.isNoo()) {
+                    txtKreditLimitAwal.setText(format.format(outletHeader.getLimit_kredit()));
+                } else {
+                    txtKreditLimitAwal.setText(format.format(outletHeader.getLimit_kredit_awal()));
+                }
                 txtPhone.setText(Helper.isEmpty(outletHeader.getNo_tlp(), ""));
                 txtNamaPemilik.setText(Helper.isEmpty(outletHeader.getNama_pemilik(), ""));
                 String idOutlet = Helper.isEmpty(outletHeader.getId(), "");
@@ -1021,6 +1026,7 @@ public class DailySalesmanActivity extends BaseActivity {
         txtKTP = findViewById(R.id.txtKTP);
         txtTotalTagihan = findViewById(R.id.txtTotalTagihan);
         txtSisaKreditLimit = findViewById(R.id.txtSisaKreditLimit);
+        txtKreditLimitAwal = findViewById(R.id.txtKreditLimitAwal);
         txtPhone = findViewById(R.id.txtPhone);
         txtNamaPemilik = findViewById(R.id.txtNamaPemilik);
         timerValue = findViewById(R.id.timerValue);

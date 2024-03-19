@@ -8,6 +8,7 @@ public class Parameter implements Serializable {
     String value;
     String description;
 
+
     public int getIdParameterDB() {
         return idParameterDB;
     }

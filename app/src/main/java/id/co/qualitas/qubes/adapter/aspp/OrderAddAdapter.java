@@ -21,15 +21,12 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Data;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -132,6 +129,11 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public void removeExtra(int posHeader, int posExtra) {
+        mFilteredList.get(posHeader).getExtraItem().remove(posExtra);
+        mAdapter.notifyDataSetChanged();
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -319,6 +321,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                         holder.txtTotal.setText("Rp. " + format.format(pt));
                     }
                 }
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
+                holder.llDiscountAll.setVisibility(View.GONE);
+//                notifyItemChanged(holder.getAbsoluteAdapterPosition());
                 mContext.removeOmzet();
             }
         });
@@ -652,6 +658,10 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
                             },
                             DELAY
                     );
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
+                    holder.llDiscountAll.setVisibility(View.GONE);
+//                    notifyItemChanged(holder.getAbsoluteAdapterPosition());
                     mContext.removeOmzet();
                 }
             }

@@ -125,21 +125,21 @@ public class CollectionVisitActivity extends BaseActivity {
 
     private void setAdapterInvoice() {
         mAdapter = new CollectionVisitAdapter(this, mList, header -> {
-            if (header.getAmount() == header.getTotal_paid()) {
-                setToast("Invoice sudah lunas");
-            } else {
-                if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
+//            if (header.getAmount() == header.getTotal_paid()) {
+//                setToast("Invoice sudah lunas");
+//            } else {
+//                if (outletHeader.getStatus() == Constants.CHECK_IN_VISIT) {
                     SessionManagerQubes.setCollectionHeader(header);
 //                    SessionManagerQubes.setCollectionSource(2);
 //                    PINDAH KE HALAMAN DETAIL AJA
                     Intent intent = new Intent(this, InvoiceDetailActivity.class);
                     startActivity(intent);
-                } else if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
-                    setToast("Anda sudah pause di customer ini. Jika ingin melakukan pembayaran, silahkan resume customer ini");
-                } else {
-                    setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, silahkan pilih menu Collection di halaman Activity");
-                }
-            }
+//                } else if (outletHeader.getStatus() == Constants.PAUSE_VISIT) {
+//                    setToast("Anda sudah pause di customer ini. Jika ingin melakukan pembayaran, silahkan resume customer ini");
+//                } else {
+//                    setToast("Anda sudah check out di customer ini. Jika ingin melakukan pembayaran, silahkan pilih menu Collection di halaman Activity");
+//                }
+//            }
         });
 
         recyclerViewInvoice.setAdapter(mAdapter);

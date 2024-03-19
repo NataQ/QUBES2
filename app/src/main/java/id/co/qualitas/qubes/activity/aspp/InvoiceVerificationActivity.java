@@ -81,7 +81,34 @@ public class InvoiceVerificationActivity extends BaseActivity {
         swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestData();
+                if (startVisit != null) {
+                    if (startVisit.getDate() != null) {
+                        if (startVisit.getDate().equals(Helper.getTodayDate(Constants.DATE_FORMAT_3))) {
+                            switch (startVisit.getStatus_visit()) {
+                                case 0:
+                                    requestData();
+                                    break;
+                                case 1:
+                                case 2:
+                                case 3:
+                                    setToast("Kunjungan hari ini sudah selesai.");
+                                    break;
+                            }
+                        } else {
+                            requestData();
+                        }
+                    } else {
+                        requestData();
+                    }
+                } else {
+                    requestData();
+                }
+
+//                if (startVisit != null && startVisit.getStatus_visit() == 1) {
+//                    setToast("Sudah start visit");
+//                } else {
+//                    requestData();
+//                }
                 swipeLayout.setRefreshing(false);
             }
         });
@@ -227,7 +254,9 @@ public class InvoiceVerificationActivity extends BaseActivity {
         setTotal();
 
         if (mList == null || mList.isEmpty()) {
-            requestData();
+            if (startVisit != null && startVisit.getStatus_visit() == 1) {
+                requestData();
+            }
         }
     }
 
@@ -288,11 +317,10 @@ public class InvoiceVerificationActivity extends BaseActivity {
 
                     if (paramArray != null) {
                         Collections.addAll(mList, paramArray);
-                        if (startVisit != null && startVisit.getStatus_visit() == 1) {
-                            database.deleteInvoiceHeader();
-                            database.deleteInvoiceDetail();
-                        }
-
+//                        if (startVisit != null && startVisit.getStatus_visit() == 1) {
+                        database.deleteInvoiceHeader();
+                        database.deleteInvoiceDetail();
+//                        }
                     }
 
                     for (Invoice param : mList) {

@@ -44,8 +44,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@drawable/editbox"
+            android:background="@drawable/editbox_disable"
             android:inputType="numberDecimal"
+            android:enabled="false"
             android:padding="5dp"
             android:textColor="@color/gray8_aspp" />
 

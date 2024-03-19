@@ -53,6 +53,7 @@ import id.co.qualitas.qubes.model.CollectionHeader;
 import id.co.qualitas.qubes.model.Customer;
 import id.co.qualitas.qubes.model.CustomerType;
 import id.co.qualitas.qubes.model.DaerahTingkat;
+import id.co.qualitas.qubes.model.DepoRegion;
 import id.co.qualitas.qubes.model.Discount;
 import id.co.qualitas.qubes.model.GroupMaxBon;
 import id.co.qualitas.qubes.model.LogModel;
@@ -1431,20 +1432,43 @@ public class AccountFragment extends BaseFragment {
                             request.put("tipe_outlet", data.getOrder_type());
                             request.put("id", data.getIdHeader());
                             request.put("order_date", data.getOrder_date());
+                            request.put("kodeDepo", getDepo());
+                            request.put("kodeSales", user.getUsername());
+                            request.put("kodeJenisSales", user.getKode_jenis_sales());
+
                             List<Map> listBarang = new ArrayList<>();
+                            Material smallMat = new Material();
+                            Map temp = new HashMap<>(), extraBarang = new HashMap<>();
                             double omzet = 0;
                             Map tempBarang = new HashMap<>();
                             for (Material material : data.getMaterialList()) {
                                 if (material.getQty() != 0) {
+                                    smallMat = database.getQtySmallUom(material);
                                     tempBarang = new HashMap<>();
                                     tempBarang.put("id", material.getId());
                                     tempBarang.put("harga", material.getPrice());
-                                    tempBarang.put("qty", material.getQty());
-                                    tempBarang.put("satuan", material.getUom());
+                                    tempBarang.put("qty", smallMat.getQty());
+                                    tempBarang.put("satuan", smallMat.getUom());
                                     listBarang.add(tempBarang);
+                                }
+
+                                if (Helper.isNotEmptyOrNull(material.getExtraItem())) {
+                                    for (Material matExtra : material.getExtraItem()) {
+                                        if (matExtra.getQty() != 0) {
+                                            temp = new HashMap<>();
+                                            smallMat = database.getQtySmallUom(matExtra);
+                                            temp.put("id", matExtra.getId());
+                                            temp.put("harga", matExtra.getPrice());
+                                            temp.put("qty", smallMat.getQty());
+                                            temp.put("satuan", smallMat.getUom());
+                                            listBarang.add(temp);
+                                        }
+                                    }
                                 }
                             }
                             request.put("listDetail", listBarang);
+
+
                             if (progressDialog != null) {
                                 progressDialog.setMessage("Mengirim data order...");
                             }
@@ -1573,5 +1597,16 @@ public class AccountFragment extends BaseFragment {
                 progressDialog.dismiss();
             }
         }
+    }
+
+    private String getDepo() {
+        String depo = "";
+        if (user.getDepoRegionList() != null) {
+            for (int i = 0; i < user.getDepoRegionList().size(); i++) {
+                DepoRegion depoRegion = user.getDepoRegionList().get(i);
+                depo = depo + depoRegion.getId_depo();
+            }
+        }
+        return depo;
     }
 }

@@ -255,6 +255,11 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                     }
                 }
             }
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+            mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
+            holder.llDiscountAll.setVisibility(View.GONE);
+            mContext.removeOmzet();
+//            notifyItemChanged(holder.getAbsoluteAdapterPosition());
         });
         //uom
 
@@ -311,6 +316,12 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
                             holder.txtPrice.setText("Rp. " + format.format(mFilteredList.get(holder.getAbsoluteAdapterPosition()).getPrice()));
                             holder.txtTotal.setText("0");
                         }
+
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setDiskonList(null);
+                        mFilteredList.get(holder.getAbsoluteAdapterPosition()).setTotalDiscount(0);
+                        holder.llDiscountAll.setVisibility(View.GONE);
+                        mContext.removeOmzet();
+//                        notifyItemChanged(holder.getAbsoluteAdapterPosition());
                     }
 //                else {
 //                    mFilteredList.get(holder.getAbsoluteAdapterPosition()).setQty(0);
@@ -330,9 +341,8 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             txtTitle.setText("Delete Extra");
             txtDialog.setText("Are you sure want to delete the item?");
             btnYes.setOnClickListener(view -> {
-                mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                headerAdapter.removeExtra(posHeader, holder.getAbsoluteAdapterPosition());
 //                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
-                notifyDataSetChanged();
                 alertDialog.dismiss();
             });
             btnNo.setOnClickListener(view -> alertDialog.dismiss());
