@@ -180,9 +180,16 @@ public class DailySalesmanActivity extends BaseActivity {
             int validateOut = validateCheckOut();
             switch (validateOut) {
                 case 0:
-                    openDialogPhotoCheckOut();//button check out
-//                    updateLocation = 0;
-//                    checkLocationPermission();//0
+                    Map req = new HashMap();
+                    req.put("id", outletHeader.getId());
+                    req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+
+                    int storeCheck = database.getCountStoreCheck(req);
+                    if (storeCheck == 0) {
+                        setToast("Silahkan check stock toko!");
+                    } else {
+                        openDialogPhotoCheckOut();//button check out
+                    }
                     break;
                 case 1:
                     openDialogReasonCheckOut();
@@ -435,21 +442,13 @@ public class DailySalesmanActivity extends BaseActivity {
         orderOutlet = database.getCountOrderCustomer(req);
         payment = database.getCountCollectionCustomer(req);
         storeCheck = database.getCountStoreCheck(req);
-//        if (invoice > 0) {
-//            payment = database.getCountPaymentCustomer(req);
-//        }
 
-        if (storeCheck == 0) {
-            result = 2;
-        } else {
-            if (orderOutlet == 0) {
-                result = 1;// no order
-            }
+//        if (storeCheck == 0) {
+//            result = 2;
+//        } else {
+        if (orderOutlet == 0) {
+            result = 1;// no order
         }
-//        else {
-//            if (invoice > 0 && payment == 0) {
-//                result = 2;//ada invoice tapi belum d bayar
-//            }
 //        }
         return result;
     }
@@ -525,19 +524,42 @@ public class DailySalesmanActivity extends BaseActivity {
             alertDialog.dismiss();
             visitSales.setIdNotBuyReason(String.valueOf(reason.getId()));
             visitSales.setNameNotBuyReason(reason.getDescription());
-            if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
-                typeImage = 12;//not buy
-                imageType.setPosImage(typeImage);
-                imageType.setVisitSalesman(visitSales);
-                imageType.setReason(reason);
-                imageType.setType(2);//1 => pause, 2 => checkout
-                imageType.setIdName(user.getUsername());
-                Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-                openDialogPhotoReason(2);
+
+            Map req = new HashMap();
+            req.put("id", outletHeader.getId());
+            req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+
+            int storeCheck = database.getCountStoreCheck(req);
+            if (reason.getId() != Constants.ID_REASON_TOKO_TUTUP) {//toko tutup, di hard code, agar tdak usah store check
+                if (storeCheck == 0) {
+                    setToast("Silahkan check stock toko!");
+                } else {
+                    if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
+                        typeImage = 12;//not buy
+                        imageType.setPosImage(typeImage);
+                        imageType.setVisitSalesman(visitSales);
+                        imageType.setReason(reason);
+                        imageType.setType(2);//1 => pause, 2 => checkout
+                        imageType.setIdName(user.getUsername());
+                        Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                        openDialogPhotoReason(2);//reason not buy
+                    } else {
+                        openDialogPhotoCheckOut();//dialog reason check out
+                    }
+                }
             } else {
-                openDialogPhotoCheckOut();//dialog reason check out
-//                updateLocation = 0;
-//                checkLocationPermission();//0
+                if (reason.getIs_freetext() == 1 || reason.getIs_photo() == 1) {
+                    typeImage = 12;//not buy
+                    imageType.setPosImage(typeImage);
+                    imageType.setVisitSalesman(visitSales);
+                    imageType.setReason(reason);
+                    imageType.setType(2);//1 => pause, 2 => checkout
+                    imageType.setIdName(user.getUsername());
+                    Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+                    openDialogPhotoReason(2);//reason not buy
+                } else {
+                    openDialogPhotoCheckOut();//dialog reason check out
+                }
             }
         });
 
@@ -651,7 +673,7 @@ public class DailySalesmanActivity extends BaseActivity {
                 imageType.setType(1);//1 => pause, 2 => checkout
                 imageType.setIdName(user.getUsername());
                 Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-                openDialogPhotoReason(1);
+                openDialogPhotoReason(1);//pause
             } else {
                 pauseTimer();
             }
@@ -795,9 +817,20 @@ public class DailySalesmanActivity extends BaseActivity {
                     } else {
                         visitSales.setDescNotBuyReason(descReason[0]);
                         visitSales.setPhotoNotBuyReason(imageType.getPhotoReason());
-                        openDialogPhotoCheckOut();//dialog photo reason
-                        //                updateLocation = 0;
-//                checkLocationPermission();//0
+//                        Map req = new HashMap();
+//                        req.put("id", outletHeader.getId());
+//                        req.put("date", Helper.getTodayDate(Constants.DATE_FORMAT_3));
+//
+//                        int storeCheck = database.getCountStoreCheck(req);
+//                        if (reason.getId() != Constants.ID_REASON_TOKO_TUTUP) {//toko tutup, di hard code, agar tdak usah store check
+//                            if (storeCheck == 0) {
+//                                setToast("Silahkan check stock toko!");
+//                            } else {
+//                                openDialogPhotoCheckOut();//dialog photo reason check out
+//                            }
+//                        } else {
+                        openDialogPhotoCheckOut();//dialog photo reason check out
+//                        }
                     }
                     dialog.dismiss();
                 } else {
@@ -1105,11 +1138,11 @@ public class DailySalesmanActivity extends BaseActivity {
                     break;
                 case 11:
                     imageType.setPhotoReason(uri.getPath());
-                    openDialogPhotoReason(1);
+                    openDialogPhotoReason(1);//on resume pause
                     break;
                 case 12:
                     imageType.setPhotoReason(uri.getPath());
-                    openDialogPhotoReason(2);
+                    openDialogPhotoReason(2);//on resume not buy
                     break;
                 case 16:
                     imageType.setPhotoCheckOut(uri.getPath());

@@ -136,8 +136,8 @@ public class StockRequestEditActivity extends BaseActivity {
         Button btnNo = dialog.findViewById(R.id.btnNo);
         Button btnYes = dialog.findViewById(R.id.btnYes);
 
-        txtTitle.setText("Approve");
-        txtDialog.setText("Are you sure want to approve?");
+        txtTitle.setText("Submit");
+        txtDialog.setText("Are you sure want to submit?");
 
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +152,7 @@ public class StockRequestEditActivity extends BaseActivity {
                 dialog.dismiss();
                 progress.show();
                 PARAM = 3;
-                new RequestUrl().execute();//1
+                new RequestUrl().execute();//3
             }
         });
 
@@ -497,7 +497,7 @@ public class StockRequestEditActivity extends BaseActivity {
                 progress.dismiss();
                 if (saveDataSuccess) {
                     setToast("Update Stock Request Success");
-                    onBackPressed();
+                    openDialogConfirm();
                 } else {
                     setToast("Save to database failed");
                 }

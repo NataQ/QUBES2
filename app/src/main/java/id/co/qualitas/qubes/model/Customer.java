@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Customer {
     private String idHeader;
+    private String sales_group;
     private String id_driver;
     private String id;
     private String nama;
@@ -98,6 +99,14 @@ public class Customer {
         this.route = route;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public String getSales_group() {
+        return sales_group;
+    }
+
+    public void setSales_group(String sales_group) {
+        this.sales_group = sales_group;
     }
 
     public String getId_driver() {

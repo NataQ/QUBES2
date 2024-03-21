@@ -780,42 +780,46 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
         if (Helper.isCanvasSales(user)) {
             //itung stock dari order skrg
-            for (Material materialStock : stockHeader.getMaterialList()) {
-                double qtyOrder = 0;
-                for (Material matOrder : mFilteredList) {
-                    if (materialStock.getId().equals(matOrder.getId())) {
-                        Material conversionOrder = new Database(mContext).getQtySmallUom(matOrder);
-                        qtyOrder = qtyOrder + conversionOrder.getQty();
+            if(stockHeader != null) {
+                for (Material materialStock : stockHeader.getMaterialList()) {
+                    double qtyOrder = 0;
+                    for (Material matOrder : mFilteredList) {
+                        if (materialStock.getId().equals(matOrder.getId())) {
+                            Material conversionOrder = new Database(mContext).getQtySmallUom(matOrder);
+                            qtyOrder = qtyOrder + conversionOrder.getQty();
+                        }
+                        if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
+                            for (Material matExtra : matOrder.getExtraItem()) {
+                                if (materialStock.getId().equals(matExtra.getId())) {
+                                    Material conversionExtra = new Database(mContext).getQtySmallUom(matExtra);
+                                    qtyOrder = qtyOrder + conversionExtra.getQty();
+                                }
+                            }
+                        }
                     }
-                    if (Helper.isNotEmptyOrNull(matOrder.getExtraItem())) {
-                        for (Material matExtra : matOrder.getExtraItem()) {
-                            if (materialStock.getId().equals(matExtra.getId())) {
-                                Material conversionExtra = new Database(mContext).getQtySmallUom(matExtra);
-                                qtyOrder = qtyOrder + conversionExtra.getQty();
+                    Material conversionStock = new Database(mContext).getQtySmallUomSisa(materialStock);
+                    double qtyStock = conversionStock.getQtySisa();
+                    materialStock.setQtySisa(qtyStock);
+                    materialStock.setTotalQtyOrder(qtyOrder);
+                    materialStock.setUom(conversionStock.getUom());
+                }
+
+                listFinalStock = new ArrayList<>();
+                for (Material materialMaster : listSpinner) {
+                    for (Material materialStock : stockHeader.getMaterialList()) {
+                        if (materialMaster.getId().equals(materialStock.getId())) {
+                            double stock = materialStock.getQtySisa() - materialStock.getTotalQtyOrder();
+                            if (stock != 0) {
+                                materialMaster.setQtySisa(stock);
+                                materialMaster.setUomStock(materialStock.getUom());
+                                listFinalStock.add(materialMaster);
+                                break;
                             }
                         }
                     }
                 }
-                Material conversionStock = new Database(mContext).getQtySmallUomSisa(materialStock);
-                double qtyStock = conversionStock.getQtySisa();
-                materialStock.setQtySisa(qtyStock);
-                materialStock.setTotalQtyOrder(qtyOrder);
-                materialStock.setUom(conversionStock.getUom());
-            }
-
-            listFinalStock = new ArrayList<>();
-            for (Material materialMaster : listSpinner) {
-                for (Material materialStock : stockHeader.getMaterialList()) {
-                    if (materialMaster.getId().equals(materialStock.getId())) {
-                        double stock = materialStock.getQtySisa() - materialStock.getTotalQtyOrder();
-                        if (stock != 0) {
-                            materialMaster.setQtySisa(stock);
-                            materialMaster.setUomStock(materialStock.getUom());
-                            listFinalStock.add(materialMaster);
-                            break;
-                        }
-                    }
-                }
+            }else{
+                Toast.makeText(mContext, "Silahkan melakukan request stock", Toast.LENGTH_SHORT).show();
             }
         } else {
             listFinalStock.addAll(listSpinner);

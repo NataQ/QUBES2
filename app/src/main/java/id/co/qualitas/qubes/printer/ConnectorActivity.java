@@ -696,9 +696,9 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 String no = String.valueOf(order.getIdHeader());
                 String id = Helper.isEmpty(order.getId_customer(), "-");
                 String name = Helper.isEmpty(cust.getNama(), "-");
-                String address = Helper.isEmpty(cust.getAddress(), "-");
+                String address = Helper.isEmpty(cust.getAddress(), "-").substring(0, 21);
                 String noSJ = Helper.isEmpty(stock.getNo_surat_jalan(), "-");
-                String payment = order.getTotalPaid() == order.getOmzet()  ? "Cash" : "Kredit";//kalau belum lunas kredit
+                String payment = order.getTotalPaid() == order.getOmzet() ? "Cash" : "Kredit";//kalau belum lunas kredit
 
                 textBuffer.append("{reset}P"+ String.valueOf(cust.getPrintBon()+1) + "{br}");
                 textBuffer.append("{reset}{center}{b}PT. ASIASEJAHTERAPERDANA P{br}");
@@ -711,36 +711,36 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 textBuffer.append("{reset}Alamat  : " + address + "{br}");
                 textBuffer.append("{reset}No.Cust : " + id + "{br}");
                 textBuffer.append("{reset}No.SJ   : " + noSJ + "{br}");
-                textBuffer.append("{reset}Payment : " + payment + "{br}");
+                textBuffer.append("{reset}Payment : {b}" + payment + "{br}");
                 textBuffer.append("{reset}================================{br}");
-
 
                 List<Material> mList = new ArrayList<>();
                 mList.addAll(database.getAllDetailOrder(order));
 
                 double totalDiscount = 0.0, totalPrice = 0.0;
+                String qtyUom, price, priceSpace = "";;
                 for (Material mat : mList) {
                     textBuffer.append("{reset}" + mat.getId() + " - " + mat.getNama() + "{br}");
-                    String qtyUom = format.format(mat.getQty()) + " " + mat.getUom();
-                    String price = format.format(mat.getPrice());
-                    String priceSpace = "";
-//                    while (qtyUom.length() < 20) qtyUom.concat(" ");
-//                    for (int i = qtyUom.length(); i < 20; i++) {
-//                        qtyUom.concat(" ");
-//                    }
+                    qtyUom = format.format(mat.getQty()) + " " + mat.getUom();
+                    price = format.format(mat.getPrice());
                     qtyUom = String.format("%-17s", qtyUom);
+                    priceSpace = "";;
                     priceSpace = String.format("%1$" + ((11 - price.length()) + priceSpace.length()) + "s", priceSpace) + price;
-
-//                    while (priceSpace.length() < (12 - price.length())) priceSpace.concat(" ");
                     textBuffer.append("{reset}" + qtyUom + "Rp. " + priceSpace + "{br}");
-                    textBuffer.append("{reset}{left}Disc {/left}{reset}{right}Rp. " + format.format(mat.getTotalDiscount()) + "{/right}{br}");
+//                    textBuffer.append("{reset}{left}Disc {/left}{reset}{right}Rp. " + format.format(mat.getTotalDiscount()) + "{/right}{br}");
                     totalPrice = totalPrice + mat.getPrice();
                     totalDiscount = totalDiscount + mat.getTotalDiscount();
                     if (mat.getExtraItem() != null) {
                         for (Material matExtra : mat.getExtraItem()) {
-                            textBuffer.append("{reset}" + matExtra.getId() + " - " + matExtra.getNama() + "[PROMO]{br}");
-                            textBuffer.append("{reset}" + format.format(matExtra.getQty()) + " " + matExtra.getUom() + "{reset}{right}Rp. " + matExtra.getPrice() + "{br}");
-//                            textBuffer.append("{reset}{right}Disc Rp. " + format.format(matExtra.getTotalDiscount()) + "{br}");
+                            textBuffer.append("{reset}" + matExtra.getId() + " - " + matExtra.getNama() + " [EXTRA]{br}");
+                            qtyUom = format.format(matExtra.getQty()) + " " + matExtra.getUom();
+//                            price = format.format(matExtra.getPrice());
+                            price = format.format(0);
+                            qtyUom = String.format("%-17s", qtyUom);
+                            priceSpace = "";;
+                            priceSpace = String.format("%1$" + ((11 - price.length()) + priceSpace.length()) + "s", priceSpace) + price;
+                            textBuffer.append("{reset}" + qtyUom + "Rp. " + priceSpace + "{br}");
+//                            textBuffer.append("{reset}" + format.format(matExtra.getQty()) + " " + matExtra.getUom() + "{reset}{right}Rp. 0{br}");
                             totalPrice = totalPrice + matExtra.getPrice();
                             totalDiscount = totalDiscount + matExtra.getTotalDiscount();
                         }
@@ -755,26 +755,24 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
                 if ((nameSales.length() % 2) == 1) {
                     nameSales = String.format("%" + (nameSales.length() + 1) + "s", nameSales).replace(' ', ' ');//left
                 }
-                int lengthToko = ((16 - name.length()) / 2) + name.length();
-                int lengthName = ((16 - nameSales.length()) / 2) + nameSales.length();
+                int lengthToko = ((18 - name.length()) / 2) + name.length();
+                int lengthName = ((14 - nameSales.length()) / 2) + nameSales.length();
 
                 nameSales = String.format("%" + lengthName + "s", nameSales).replace(' ', ' ');//bf
-                nameSales = String.format("%-16s", nameSales).replace(' ', ' ');//af
-                name = String.format("%" + lengthToko + "s", name).replace(' ', ' ');//bf
-                name = String.format("%-16s", name).replace(' ', ' ');//af
+                nameSales = String.format("%-16s", nameSales).replace(' ', ' ').substring(0, 17);//af
+//                name = String.format("%" + lengthToko + "s", name).replace(' ', ' ');//bf
+//                name = String.format("%-16s", name).replace(' ', ' ');//af
                 subTotPrice = String.format("%1$" + 12 + "s", subTotPrice);
                 totDiscount = String.format("%1$" + 12 + "s", totDiscount);
                 total = String.format("%1$" + 12 + "s", total);
-//                String.format("%[L]s", str).replace(' ', ch);//left
-
-//                String.format("%-[L]s", str).replace(' ', ch);//right
 
                 textBuffer.append("{reset}     Sub Total : Rp." + subTotPrice + "{br}");
                 textBuffer.append("{reset}     Discount  : Rp." + totDiscount + "{br}");
-                textBuffer.append("{reset}     Total     : Rp." + total + "{br}");
-                textBuffer.append("{reset}{center}TANDA TANGAN / STEMPEL{br}");
+                textBuffer.append("{reset}     Total     : Rp." + total + "{br}{br}");
+                textBuffer.append("{reset}{center}TANDA TANGAN / STEMPEL{br}");//18/14 (total 32)
                 textBuffer.append("{br}{br}{br}{br}{br}");
-                textBuffer.append("{reset}" + nameSales + name + "{br}");
+                textBuffer.append("{reset}" + nameSales + "     TOKO     {br}");
+//                textBuffer.append("{reset}" + nameSales + name + "{br}");
 
                 printer.reset();
                 printer.printTaggedText(textBuffer.toString());

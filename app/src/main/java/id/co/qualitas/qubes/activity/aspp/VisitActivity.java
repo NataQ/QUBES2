@@ -1353,24 +1353,24 @@ public class VisitActivity extends BaseActivity {
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
         EditText txtKmAwal = dialog.findViewById(R.id.txtKmAwal);
         EditText txtKmAkhir = dialog.findViewById(R.id.txtKmAkhir);
-        LinearLayout llImgSelesai = dialog.findViewById(R.id.llImgSelesai);
+//        LinearLayout llImgSelesai = dialog.findViewById(R.id.llImgSelesai);
         LinearLayout llImgPulang = dialog.findViewById(R.id.llImgPulang);
-        ImageView imgSelesai = dialog.findViewById(R.id.imgSelesai);
-        ImageView imgAddSelesai = dialog.findViewById(R.id.imgAddSelesai);
+//        ImageView imgSelesai = dialog.findViewById(R.id.imgSelesai);
+//        ImageView imgAddSelesai = dialog.findViewById(R.id.imgAddSelesai);
         ImageView imgPulang = dialog.findViewById(R.id.imgPulang);
         ImageView imgAddPulang = dialog.findViewById(R.id.imgAddPulang);
 
-        if (imageType != null) {
-            if (imageType.getPhotoSelesai() != null) {
-                imgSelesai.setImageURI(Uri.parse(imageType.getPhotoSelesai()));
-//                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoSelesai(), imgSelesai);
-                imgAddSelesai.setVisibility(View.GONE);
-            } else {
-                imgAddSelesai.setVisibility(View.VISIBLE);
-            }
-        } else {
-            imgAddSelesai.setVisibility(View.VISIBLE);
-        }
+//        if (imageType != null) {
+//            if (imageType.getPhotoSelesai() != null) {
+//                imgSelesai.setImageURI(Uri.parse(imageType.getPhotoSelesai()));
+////                Utils.loadImageFit(VisitActivity.this, imageType.getPhotoSelesai(), imgSelesai);
+//                imgAddSelesai.setVisibility(View.GONE);
+//            } else {
+//                imgAddSelesai.setVisibility(View.VISIBLE);
+//            }
+//        } else {
+//            imgAddSelesai.setVisibility(View.VISIBLE);
+//        }
 
         if (imageType != null) {
             if (imageType.getPhotoAkhir() != null) {
@@ -1381,7 +1381,7 @@ public class VisitActivity extends BaseActivity {
                 imgAddPulang.setVisibility(View.VISIBLE);
             }
         } else {
-            imgAddSelesai.setVisibility(View.VISIBLE);
+            imgAddPulang.setVisibility(View.VISIBLE);
         }
 
         txtKmAkhir.setText(imageType.getKmAkhir());
@@ -1393,23 +1393,23 @@ public class VisitActivity extends BaseActivity {
             }
             imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
             imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
-            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
+//            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
             imageType.setPosImage(5);
             Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
             askPermissionCamera();
         });
 
-        llImgSelesai.setOnClickListener(v -> {
-            if (imageType == null) {
-                imageType = new ImageType();
-            }
-            imageType.setPosImage(6);
-            imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
-            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
-            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
-            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
-            askPermissionCamera();
-        });
+//        llImgSelesai.setOnClickListener(v -> {
+//            if (imageType == null) {
+//                imageType = new ImageType();
+//            }
+//            imageType.setPosImage(6);
+//            imageType.setKmAkhir(txtKmAkhir.getText().toString().trim());
+//            imageType.setPhotoAkhir(uriPulang != null ? uriPulang.getPath() : imageType.getPhotoAkhir());
+//            imageType.setPhotoSelesai(uriSelesai != null ? uriSelesai.getPath() : imageType.getPhotoSelesai());
+//            Helper.setItemParam(Constants.IMAGE_TYPE, imageType);
+//            askPermissionCamera();
+//        });
 
         btnEnd.setOnClickListener(v -> {
             if (imageType == null) {
@@ -1419,9 +1419,9 @@ public class VisitActivity extends BaseActivity {
             if (Helper.isEmptyEditText(txtKmAkhir)) {
                 txtKmAkhir.setError(getString(R.string.emptyField));
             } else if (imageType.getPhotoAkhir() == null) {
-                setToast("Harus Foto KM Akhir");
-            } else if (imageType.getPhotoSelesai() == null) {
-                setToast("Harus Foto Selesai");
+                setToast("Harus Foto Speedometer");
+//            } else if (imageType.getPhotoSelesai() == null) {
+//                setToast("Harus Foto Selesai");
             } else {
                 kmAkhir = txtKmAkhir.getText().toString().trim();
                 PARAM = 4;
@@ -2441,7 +2441,7 @@ public class VisitActivity extends BaseActivity {
         try {
             //noo
             nooList = new ArrayList<>();
-            nooList = database.getAllNoo();
+            nooList = database.getAllNoo(user);
             if (nooList != null) {
                 logResult = new WSMessage();
                 logResult.setIdMessage(0);

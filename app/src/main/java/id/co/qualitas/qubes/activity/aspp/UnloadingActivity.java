@@ -840,7 +840,7 @@ public class UnloadingActivity extends BaseActivity {
 
         //noo
         nooList = new ArrayList<>();
-        nooList = database.getAllNoo();
+        nooList = database.getAllNoo(user);
         if (nooList == null) {
             logResult = new WSMessage();
             logResult.setIdMessage(0);

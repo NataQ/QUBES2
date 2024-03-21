@@ -3643,11 +3643,12 @@ public class Database extends SQLiteOpenHelper {
 //                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon  \n" +//and a.orderType = 'co'
 //                "order by a.idGroupMaxBon  asc";
 
-        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, COALESCE(valuePaid, 0) + COALESCE(valueInvoice, 0)  as limits \n" +
+        String selectQuery = "select a.idGroupMaxBon, a.nameGroupMaxBon, COALESCE(valuePaid, 0) + COALESCE(valueInvoice, 0) as limits \n" +
                 "from MasterGroupSalesMaxBon a \n" +
                 "left join CustomerMaxBon b on a.idGroupMaxBon = b.idGroupMaxBon \n" +
                 "and b.customerId = ? \n" +
-                "left join (SELECT cc.idGroupMaxBon, COUNT(*) as valueInvoice FROM InvoiceHeader aa \n" +
+                "left join (select b.idGroupMaxBon, count(*) as valueInvoice\n" +
+                "from (SELECT cc.idGroupMaxBon FROM InvoiceHeader aa \n" +
                 "INNER JOIN InvoiceDetail bb ON aa.invoiceNo = bb.invoiceNo \n" +
                 "INNER JOIN MasterMaterial cc on bb.materialId = cc.materialId \n" +
                 "left join (select sum(b.amountPaid) totalPaid, a.invoiceNo, b.materialId\n" +
@@ -3656,9 +3657,11 @@ public class Database extends SQLiteOpenHelper {
                 "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) dd \n" +
                 "\ton dd.invoiceNo = aa.invoiceNo and bb.materialId = dd.materialId\n" +
                 "WHERE aa.customerId = ? and bb.price > coalesce(dd.totalPaid,0) \n" +
-                "group by cc.idGroupMaxBon) c \n" +
+                "group by cc.idGroupMaxBon, aa.invoiceNo) b \n" +
+                "group by b.idGroupMaxBon) c \n" +
                 "on c.idGroupMaxBon = a.idGroupMaxBon  \n" +
-                "left join (select count(*) as valuePaid, c.idGroupMaxBon\n" +
+                "left join (select a.idGroupMaxBon, count(*) as valuePaid\n" +
+                "from (select c.idGroupMaxBon, b.materialId, a.idOrderHeaderDB\n" +
                 "from OrderHeader a \n" +
                 "inner join OrderDetail b on a.idOrderHeaderDB = b.idOrderHeaderDB \n" +
                 "inner JOIN MasterMaterial c on c.materialId = b.materialId \n" +
@@ -3667,9 +3670,10 @@ public class Database extends SQLiteOpenHelper {
                 "\tinner join CollectionItem b on a.idCollectionInvoiceDB = b.idCollectionInvoiceDB\n" +
                 "\twhere a.deleted = 0 group by a.invoiceNo, b.materialId) d \n" +
                 "\ton d.invoiceNo = a.idOrderHeaderDB and b.materialId = d.materialId\n" +
-                "where a.customerId = ? and b.total > coalesce(d.totalPaid,0)  \n" +
-                "and a.deleted = 0 group by c.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon \n" +
-                "order by a.idGroupMaxBon  asc";
+                "where a.customerId = ? and a.deleted = 0 and b.total > coalesce(d.totalPaid,0)  \n" +
+                "group by c.idGroupMaxBon, a.idOrderHeaderDB) a\n" +
+                "group by a.idGroupMaxBon) d on d.idGroupMaxBon = a.idGroupMaxBon \n" +
+                "order by a.idGroupMaxBon asc";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust, idCust, idCust});
@@ -4610,6 +4614,15 @@ public class Database extends SQLiteOpenHelper {
                 "b on a.invoiceNo = b.invoiceNo\n" +
                 "where a.isVerif = 1 and a.customerId = ?";
 
+        String selectQueryOrder = "select coalesce(b.totalPaid, 0) as totalPaid, c.customerName, a.*\n" +
+                "from OrderHeader a \n" +
+                "left join \n" +
+                "(select sum(totalPaid) as totalPaid, invoiceNo \n" +
+                "from CollectionInvoice where deleted = 0 group by invoiceNo)\n" +
+                "b on a.idOrderHeaderDB = b.invoiceNo\n" +
+                "inner join Customer c on a.customerId = c.customerId\n" +
+                "where a.customerId = ? and a.deleted = 0";
+
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{idCust});
 
@@ -4629,6 +4642,27 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setIs_verif(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_VERIF)));
                 paramModel.setIs_route(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_ROUTE)));
                 paramModel.setIsSync(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_IS_SYNC)));
+                paramModel.setInvoice(true);
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+
+        cursor = db.rawQuery(selectQueryOrder, new String[]{idCust});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Invoice paramModel = new Invoice();
+                paramModel.setIdHeader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setNo_invoice(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
+                paramModel.setInvoice_date(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_OMZET)));
+                paramModel.setTanggal_jatuh_tempo(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                paramModel.setTotal_paid(cursor.getDouble(cursor.getColumnIndexOrThrow("totalPaid")));
+                paramModel.setNett(paramModel.getAmount() - paramModel.getTotal_paid());
+                paramModel.setId_customer(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CUSTOMER_NAME)));
+                paramModel.setInvoice(false);
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -4775,6 +4809,49 @@ public class Database extends SQLiteOpenHelper {
                 paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                 paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
                 paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+                arrayList.add(paramModel);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return arrayList;
+    }
+
+    public List<Material> getAllOrderDetail(Invoice invoice) {
+        List<Material> arrayList = new ArrayList<>();
+
+        String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
+                "a.materialProductName, a.price, (a.price  - sum(ifnull(coll.amountPaid , 0))) as  total, \n" +
+                "sum(ifnull(coll.amountPaid , 0)) as  paid \n" +
+                "from  InvoiceDetail a \n" +
+                "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
+                "left join \n" +
+                "(select sum(a.amountPaid) as amountPaid, a.materialId, a.invoiceNo, a.customerId from \n" +
+                "(select ci.materialId, ci.invoiceNo, cin.customerId, ci.amountPaid \n" +
+                "from CollectionItem ci \n" +
+                "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo and cin.deleted = 0\n" +
+                "where ci.deleted = 0 \n" +
+                "group by ci.idCollectionInvoiceDB\n" +
+                ") a group by a.materialId, a.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
+                "where a.invoiceNo = ? and ih.invoiceDate = ? group by a.invoiceNo, a.materialId";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoice.getNo_invoice(), invoice.getInvoice_date()});
+        double totalPaid = 0;
+        Material paramModel = null;
+        if (cursor.moveToFirst()) {
+            do {
+                paramModel = new Material();
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
+                paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
+                paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
+                paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
+                paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
+                paramModel.setPrice(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
+                paramModel.setAmountPaid(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PAID)));
+                paramModel.setNett(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_TOTAL)));
+
                 arrayList.add(paramModel);
             } while (cursor.moveToNext());
         }
@@ -7747,7 +7824,7 @@ public class Database extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public List<Customer> getAllNoo() {
+    public List<Customer> getAllNoo(User user) {
         List<Customer> arrayList = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_NOO + " WHERE " + KEY_IS_SYNC + " = 0 ";
@@ -7759,6 +7836,7 @@ public class Database extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     Customer paramModel = new Customer();
+                    paramModel.setSales_group(user.getId_sales_group());
                     paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_NOO_DB)));
                     paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_NOO)));
                     paramModel.setId_driver(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_DRIVER)));
@@ -7888,10 +7966,15 @@ public class Database extends SQLiteOpenHelper {
     public List<VisitSalesman> getAllVisitSalesman() {
         List<VisitSalesman> arrayList = new ArrayList<>();
         // Select All Query
-//        String selectQuery = "SELECT * FROM " + TABLE_VISIT_SALESMAN + " WHERE " + KEY_IS_SYNC + " = 0 and " + KEY_CHECK_OUT_TIME + " is not null";
-        String selectQuery = "select  sum(coalesce(b." + KEY_OMZET + ",0)) as " + KEY_OMZET + ", a.* from " + TABLE_VISIT_SALESMAN + " a " +
-                "left join " + TABLE_ORDER_HEADER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and b." + KEY_DELETED +
-                " = 0 where a." + KEY_IS_SYNC + " = 0 and a." + KEY_CHECK_OUT_TIME + " is not null group by a." + KEY_CUSTOMER_ID;
+//        String selectQuery = "select  sum(coalesce(b." + KEY_OMZET + ",0)) as " + KEY_OMZET + ", a.* from " + TABLE_VISIT_SALESMAN + " a " +
+//                "left join " + TABLE_ORDER_HEADER + " b on a." + KEY_CUSTOMER_ID + " = b." + KEY_CUSTOMER_ID + " and b." + KEY_DELETED +
+//                " = 0 where a." + KEY_IS_SYNC + " = 0 and a." + KEY_CHECK_OUT_TIME + " is not null group by a." + KEY_CUSTOMER_ID;
+
+        String selectQuery = "select b.omzet, a.* \n" +
+                "from VisitSalesman a \n" +
+                "left join (select sum(omzet) as omzet, customerId from OrderHeader \n" +
+                "where deleted = 0) b on a.customerId = b.customerId\n" +
+                "where a.isSync = 0 and a.CheckOutTime is not null";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

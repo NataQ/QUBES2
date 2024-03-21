@@ -139,8 +139,10 @@ public class StoreCheckActivity extends BaseActivity {
                 header.put("id_header", Constants.ID_SC_MOBILE.concat(user.getUsername()).concat(Helper.mixNumber(Calendar.getInstance(Locale.getDefault()).getTime())));
                 database.deleteStoreCheck(header);
 
-                for (Material material : mList) {
-                    database.addStoreCheck(material, header);
+                if(Helper.isNotEmptyOrNull(mList)) {
+                    for (Material material : mList) {
+                        database.addStoreCheck(material, header);
+                    }
                 }
                 return true;
             } catch (Exception ex) {

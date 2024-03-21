@@ -180,7 +180,7 @@ public class NotiWorker extends Worker {
     private void syncDataNOO() {
         saveSuccess = false;
         nooList = new ArrayList<>();
-        nooList = database.getAllNoo();
+        nooList = database.getAllNoo(user);
         if (nooList == null) {
             logResult = new WSMessage();
             logResult.setIdMessage(0);
@@ -195,6 +195,7 @@ public class NotiWorker extends Worker {
             for (Customer data : nooList) {
                 req = new HashMap();
                 mList = new ArrayList<>();
+                data.setSales_group(user.getId_sales_group());
                 mList.add(data);
                 req.put("listData", mList);
                 logResult = (WSMessage) NetworkHelper.postWebserviceWithBody(url, WSMessage.class, req);

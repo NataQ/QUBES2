@@ -719,7 +719,7 @@ public class OrderAddActivity extends BaseActivity {
                             temp = new HashMap<>();
                             smallMat = database.getQtySmallUom(material);
                             temp.put("id", material.getId());
-                            temp.put("harga", material.getPrice());
+                            temp.put("harga", material.getAmount());
                             temp.put("qty", smallMat.getQty());
                             temp.put("satuan", smallMat.getUom());
                             listBarang.add(temp);
@@ -730,7 +730,7 @@ public class OrderAddActivity extends BaseActivity {
                                     temp = new HashMap<>();
                                     smallMat = database.getQtySmallUom(matExtra);
                                     temp.put("id", matExtra.getId());
-                                    temp.put("harga", matExtra.getPrice());
+                                    temp.put("harga", matExtra.getAmount());
                                     temp.put("qty", smallMat.getQty());
                                     temp.put("satuan", smallMat.getUom());
                                     listBarang.add(temp);

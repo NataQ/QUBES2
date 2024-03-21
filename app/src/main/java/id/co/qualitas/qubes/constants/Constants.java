@@ -27,6 +27,7 @@ public class Constants {
     private static final String PACKAGE_NAME = "id.co.qualitas.qubes";
     public static final String LOG_EXCEPTION = "log exception";
     public static final int COMPRESS_IMAGE = 80;
+    public static final int ID_REASON_TOKO_TUTUP = 21;
     public static final String AUTHORIZATION_LOGIN = "Basic V0VCX0NMSUVOVDpXRUJfQ0xJRU5U";
     public static final String BEARER = "Bearer ";
     public static final String HTTP_HEADER_CONTENT_TYPE = "application/x-www-form-urlencoded";

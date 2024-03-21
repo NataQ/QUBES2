@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Pulang"
+            android:text="Foto Speedometer"
             android:textColor="@color/black_aspp" />
 
         <LinearLayout
@@ -109,6 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:visibility="gone"
             android:text="Selesai"
             android:textColor="@color/black_aspp" />
 
@@ -117,6 +118,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
             android:background="@drawable/bg_add_image"
             android:gravity="center"
             android:minHeight="100dp"

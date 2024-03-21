@@ -111,7 +111,11 @@ public class InvoiceDetailActivity extends BaseActivity {
                 txtTglJatuhTempo.setText("-");
             }
 
-            mList = database.getAllInvoiceDetail(header);
+            if (header.isInvoice()) {
+                mList = database.getAllInvoiceDetail(header);
+            } else {
+                mList = database.getAllOrderDetail(header);
+            }
             mAdapter = new InvoiceDetailAdapter(this, mList, header -> {
             });
             recyclerView.setAdapter(mAdapter);

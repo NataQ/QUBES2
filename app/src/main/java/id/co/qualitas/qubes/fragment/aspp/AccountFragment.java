@@ -659,7 +659,7 @@ public class AccountFragment extends BaseFragment {
                     return null;
                 } else if (PARAM == 13) {
                     nooList = new ArrayList<>();
-                    nooList = database.getAllNoo();
+                    nooList = database.getAllNoo(user);
                     if (nooList == null) {
                         setDataSyncSuccess = false;
                         logResult = new WSMessage();
@@ -1283,6 +1283,7 @@ public class AccountFragment extends BaseFragment {
                             counter++;
                             req = new HashMap();
                             noo = new ArrayList<>();
+                            data.setSales_group(user.getId_sales_group());
                             noo.add(data);
                             req.put("listData", noo);
                             if (progressDialog != null) {
