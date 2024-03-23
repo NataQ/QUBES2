@@ -4819,11 +4819,11 @@ public class Database extends SQLiteOpenHelper {
     public List<Material> getAllOrderDetail(Invoice invoice) {
         List<Material> arrayList = new ArrayList<>();
 
-        String selectQuery = "select a.invoiceNo , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
-                "a.materialProductName, a.price, (a.price  - sum(ifnull(coll.amountPaid , 0))) as  total, \n" +
+        String selectQuery = "select a.idOrderHeaderDB , a.materialId , a.materialName , a.materialGroupId , a.materialGroupName , a.materialProductId , \n" +
+                "a.materialProductName, a.total as price, (a.total  - sum(ifnull(coll.amountPaid , 0))) as  total, \n" +
                 "sum(ifnull(coll.amountPaid , 0)) as  paid \n" +
-                "from  InvoiceDetail a \n" +
-                "inner join InvoiceHeader ih on a.idInvoiceHeaderDB = ih.idInvoiceHeaderDB\n" +
+                "from OrderDetail a \n" +
+                "inner join OrderHeader ih on a.idOrderHeaderDB = ih.idOrderHeaderDB\n" +
                 "left join \n" +
                 "(select sum(a.amountPaid) as amountPaid, a.materialId, a.invoiceNo, a.customerId from \n" +
                 "(select ci.materialId, ci.invoiceNo, cin.customerId, ci.amountPaid \n" +
@@ -4831,17 +4831,17 @@ public class Database extends SQLiteOpenHelper {
                 "inner join CollectionInvoice cin on ci.invoiceNo = ci.invoiceNo and cin.deleted = 0\n" +
                 "where ci.deleted = 0 \n" +
                 "group by ci.idCollectionInvoiceDB\n" +
-                ") a group by a.materialId, a.invoiceNo) coll on a.materialId = coll.materialId and ih.invoiceNo  = coll.invoiceNo\n" +
-                "where a.invoiceNo = ? and ih.invoiceDate = ? group by a.invoiceNo, a.materialId";
+                ") a group by a.materialId, a.invoiceNo) coll on a.materialId = coll.materialId and ih.idOrderHeaderDB  = coll.invoiceNo\n" +
+                "where a.idOrderHeaderDB = ? group by a.idOrderHeaderDB, a.materialId";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoice.getNo_invoice(), invoice.getInvoice_date()});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{invoice.getNo_invoice()});
         double totalPaid = 0;
         Material paramModel = null;
         if (cursor.moveToFirst()) {
             do {
                 paramModel = new Material();
-                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_INVOICE_NO)));
+                paramModel.setIdheader(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_ORDER_HEADER_DB)));
                 paramModel.setId(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_ID)));
                 paramModel.setNama(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_NAME)));
                 paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));

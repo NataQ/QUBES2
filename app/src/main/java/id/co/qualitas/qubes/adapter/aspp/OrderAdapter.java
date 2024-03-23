@@ -101,7 +101,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView txtOrderNo, txtOmzet, txtIdMobile, txtStatus, txtPayment;
+        TextView txtOrderNo, txtOrderDate, txtOmzet, txtIdMobile, txtStatus, txtPayment;
         LinearLayout llStatus, llDelete;
         OnAdapterListener onAdapterListener;
 
@@ -110,6 +110,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
             llDelete = itemView.findViewById(R.id.llDelete);
             llStatus = itemView.findViewById(R.id.llStatus);
             txtOrderNo = itemView.findViewById(R.id.txtOrderNo);
+            txtOrderDate = itemView.findViewById(R.id.txtOrderDate);
             txtOmzet = itemView.findViewById(R.id.txtOmzet);
             txtIdMobile = itemView.findViewById(R.id.txtIdMobile);
             txtPayment = itemView.findViewById(R.id.txtPayment);
@@ -135,6 +136,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
         setFormatSeparator();
         Order detail = mFilteredList.get(holder.getAbsoluteAdapterPosition());
         holder.txtOrderNo.setText(format.format(detail.getId()));
+        if (!Helper.isNullOrEmpty(detail.getOrder_date())) {
+            String requestDate = Helper.changeDateFormat(Constants.DATE_FORMAT_3, Constants.DATE_FORMAT_5, detail.getOrder_date());
+            holder.txtOrderDate.setText(requestDate);
+        } else {
+            holder.txtOrderDate.setText("");
+        }
+
         holder.txtOmzet.setText("Rp. " + format.format(detail.getOmzet()));
         holder.txtIdMobile.setText(Helper.isEmpty(detail.getIdHeader(), ""));
 //        holder.txtStatus.setText(!Helper.isEmpty(detail.getStatus()) ? detail.getStatus() : "-");
@@ -143,7 +151,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
             if (detail.isDeleted()) {
                 holder.llDelete.setVisibility(View.GONE);
             } else {
-                holder.llDelete.setVisibility(View.VISIBLE);
+                if (detail.getPrintOrder() > 0 || !Helper.getTodayDate(Constants.DATE_FORMAT_3).equals(detail.getOrder_date())) {
+                    holder.llDelete.setVisibility(View.GONE);
+                } else {
+                    holder.llDelete.setVisibility(View.VISIBLE);
+                }
             }
         } else {
             holder.llDelete.setVisibility(View.GONE);
@@ -214,14 +226,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.Holder> impl
                 @Override
                 public void onClick(View view) {
                     try {
-//                        if (detail.getTypePayment().equals("invoice")) {
                         new Database(mContext).deleteOrder(detail);
-//                        new Database(mContext).deleteAllCollection(detail);
-//                        } else {
-//                            new Database(mContext).updateOrderAmount(detail);
-//                        }
-//                        mFilteredList.remove(holder.getAbsoluteAdapterPosition());
-//                        notifyItemRemoved(holder.getAbsoluteAdapterPosition());
                         mContext.requestData();
                         Toast.makeText(mContext, "Success remove item", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {

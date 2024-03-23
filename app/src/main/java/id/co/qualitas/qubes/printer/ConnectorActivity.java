@@ -842,7 +842,7 @@ public class ConnectorActivity extends BaseActivity implements SwipeRefreshLayou
         SessionManagerQubes.setOrder(order);
 
         if (printOrder < database.getMaxPrint()) {
-            runOnUiThread(() -> openDialogConfirmation());
+            runOnUiThread(() -> printText());//openDialogConfirmation()
         } else {
             runOnUiThread(() -> setToast("Sudah mencapai maksimal print"));
             onBackPressed();

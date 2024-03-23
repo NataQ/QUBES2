@@ -257,7 +257,7 @@ public class OrderAddActivity extends BaseActivity {
         boolean result = false;
         ketLK = "";
         if (!Helper.isEmpty(txtOmzet)) {
-            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "");
+            String omzet = txtOmzet.getText().toString().replace("Rp.", "").replace(".", "").replace(",",".");
             if (omzet.equals("0")) {
                 result = false;
             } else {
@@ -849,7 +849,7 @@ public class OrderAddActivity extends BaseActivity {
                     headerSave.setOrder_date(Helper.getTodayDate(Constants.DATE_FORMAT_3));
                     double omzet = 0;
                     try {
-                        omzet = Double.parseDouble(txtOmzet.getText().toString().replace("Rp. ", "").replace(".", ""));
+                        omzet = Double.parseDouble(txtOmzet.getText().toString().replace("Rp. ", "").replace(".", "").replace(",", "."));
                     } catch (Exception e) {
                         omzet = 0;
                     }
