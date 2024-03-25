@@ -342,7 +342,8 @@ public class OrderAddExtraAdapter extends RecyclerView.Adapter<OrderAddExtraAdap
             txtDialog.setText("Are you sure want to delete the item?");
             btnYes.setOnClickListener(view -> {
                 headerAdapter.removeExtra(posHeader, holder.getAbsoluteAdapterPosition());
-//                    notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+//                mFilteredList.remove(holder.getAbsoluteAdapterPosition());
+                notifyDataSetChanged();
                 alertDialog.dismiss();
             });
             btnNo.setOnClickListener(view -> alertDialog.dismiss());

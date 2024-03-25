@@ -1843,10 +1843,10 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_CUSTOMER_ID, header.get("id_customer").toString());
-        values.put(KEY_DATE, header.get("date").toString());
-        values.put(KEY_ID_MOBILE, header.get("id_header").toString());
-        values.put(KEY_ID_DRIVER, header.get("id_driver").toString());
+        values.put(KEY_CUSTOMER_ID, header.get("id_customer") != null ? header.get("id_customer").toString() : null);
+        values.put(KEY_DATE, header.get("date") != null ? header.get("date").toString() : null);
+        values.put(KEY_ID_MOBILE, header.get("id_header") != null ? header.get("id_header").toString() : null);
+        values.put(KEY_ID_DRIVER, header.get("id_driver") != null ? header.get("id_driver").toString() : null);
         values.put(KEY_MATERIAL_ID, param.getId());
         values.put(KEY_MATERIAL_NAME, param.getNama());
         values.put(KEY_MATERIAL_GROUP_ID, param.getId_material_group());
@@ -6820,7 +6820,7 @@ public class Database extends SQLiteOpenHelper {
 
         String allQuery = null;
         String query = "select a.materialId, c.priceListCode, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon, \n" +//b.topKhusus, b.typeCustomer,
-                "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top \n" +
+                "a.materialProductId, a.materialProductName, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top \n" +
                 "from MasterMaterial a \n" +
                 "inner join MasterPrice c on a.materialId = c.materialId and c.typeCustomer = ? \n" +
                 "where CASE WHEN ? = 'BT' THEN a.materialProductId = '300' ELSE a.materialProductId = a.materialProductId END \n";
@@ -6865,10 +6865,12 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                     paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
                     paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));
                     paramModel.setUomSisa(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
+                    paramModel.setUom(cursor.getString(cursor.getColumnIndexOrThrow(KEY_UOM)));
                     paramModel.setAmount(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRICE)));
                     paramModel.setTop(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TOP)));
                     arrayList.add(paramModel);
@@ -6906,7 +6908,7 @@ public class Database extends SQLiteOpenHelper {
 
         String allQuery = null;
         String query = "select a.materialId, c.priceListCode, a.materialName, a.materialGroupId, a.materialGroupName, a.idGroupMaxBon, a.nameGroupMaxBon,\n" +
-                "a.materialProductId, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top\n" +
+                "a.materialProductId, a.materialProductName, c.qty, c.uom, c.price, CASE WHEN ? = 'ON' THEN a.topON ELSE a.topGT END AS top\n" +
                 "from MasterMaterial a \n" +
                 "inner join MasterPrice c on a.materialId = c.materialId and c.typeCustomer = ? \n" +
                 "inner join StockRequestDetail d on a.materialId = d.materialId and d.idStockRequestHeaderDB = ?\n" +
@@ -6951,6 +6953,7 @@ public class Database extends SQLiteOpenHelper {
                     paramModel.setId_material_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_ID)));
                     paramModel.setMaterial_group_name(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_GROUP_NAME)));
                     paramModel.setId_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_ID)));
+                    paramModel.setName_product_group(cursor.getString(cursor.getColumnIndexOrThrow(KEY_MATERIAL_PRODUCT_NAME)));
                     paramModel.setId_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_ID_GROUP_MAX_BON)));
                     paramModel.setName_group_max_bon(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME_GROUP_MAX_BON)));
                     paramModel.setQtySisa(cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_QTY)));

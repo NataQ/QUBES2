@@ -101,7 +101,7 @@ import id.co.qualitas.qubes.session.SessionManagerQubes;
 import id.co.qualitas.qubes.utils.Utils;
 
 public class DailySalesmanActivity extends BaseActivity {
-    private TextView txtOutlet, txtTypeOutlet, txtStatus, txtOrder;
+    private TextView txtOutlet, txtTypeOutlet, txtStatus, txtOrder, txtTotalOrder;
     private TextView txtNamaPemilik, txtPhone, txtSisaKreditLimit, txtTotalTagihan, txtKTP, txtNPWP, txtKreditLimitAwal;
     private Button btnCheckOut;
     private LinearLayout llPause, llStoreCheck, llOrder, llCollection, llReturn, llTimer;
@@ -150,7 +150,7 @@ public class DailySalesmanActivity extends BaseActivity {
     private Map currentLocation;
     private int updateLocation = 0;
     private int outstandingFaktur;
-    private double totalTagihan = 0;
+    private double totalTagihan = 0, totalOrder = 0;
 
     public static Chronometer getTimerValue() {
         return timerValue;
@@ -953,7 +953,9 @@ public class DailySalesmanActivity extends BaseActivity {
                 txtNPWP.setText(Helper.isEmpty(outletHeader.getNo_npwp(), ""));
                 txtKTP.setText(Helper.isEmpty(outletHeader.getNik(), ""));
                 totalTagihan = database.getTotalTagihanInvoiceCustomer(outletHeader.getId()) + database.getTotalTagihanOrderCustomer(outletHeader.getId());
+                totalOrder = database.getTotalTagihanOrderCustomer(outletHeader.getId());
                 txtTotalTagihan.setText(format.format(totalTagihan));
+                txtTotalOrder.setText(format.format(totalOrder));
                 txtSisaKreditLimit.setText(format.format(database.getLKCustomer(outletHeader)));
                 if (outletHeader.isNoo()) {
                     txtKreditLimitAwal.setText(format.format(outletHeader.getLimit_kredit()));
@@ -1057,6 +1059,7 @@ public class DailySalesmanActivity extends BaseActivity {
         imgDeleteKTP = findViewById(R.id.imgDeleteKTP);
         txtNPWP = findViewById(R.id.txtNPWP);
         txtKTP = findViewById(R.id.txtKTP);
+        txtTotalOrder = findViewById(R.id.txtTotalOrder);
         txtTotalTagihan = findViewById(R.id.txtTotalTagihan);
         txtSisaKreditLimit = findViewById(R.id.txtSisaKreditLimit);
         txtKreditLimitAwal = findViewById(R.id.txtKreditLimitAwal);

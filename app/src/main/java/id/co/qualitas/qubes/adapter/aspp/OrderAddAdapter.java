@@ -133,7 +133,7 @@ public class OrderAddAdapter extends RecyclerView.Adapter<OrderAddAdapter.Holder
 
     public void removeExtra(int posHeader, int posExtra) {
         mFilteredList.get(posHeader).getExtraItem().remove(posExtra);
-        mAdapter.notifyDataSetChanged();
+//        mAdapter.notifyDataSetChanged();
     }
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
